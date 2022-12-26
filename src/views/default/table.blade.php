@@ -24,8 +24,7 @@
 
                 swal({
                         title: "{{cbLang("confirmation_title")}}",
-                        text: "{{cbLang("alert_bulk_action_button")}} " + title + " 
-			",
+                        text: "{{cbLang("alert_bulk_action_button")}} " + title + "",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#008D4C",
@@ -371,7 +370,7 @@ $total = $result->total();
                                                             class='filter-value-between form-control {{ in_array($col["type_data"],["date","datetime","timestamp"]) ? "datepicker" : ((in_array($col["type_data"],["time"])) ? "timepicker" : "") }}'
                                                             {{ in_array($col["type_data"],["date","datetime","timestamp","time"]) ? "readonly" : "" }}
                                                             placeholder='{{$col["label"]}} {{cbLang("filter_from")}}'
-                                                            name='filter_column[{{$col["field_with"]}}][value][]' 
+                                                            name='filter_column[{{$col["field_with"]}}][value][]'
                                                             value='<?php
                                                                 $value = CRUDBooster::getValueFilter($col["field_with"]);
                                                                 echo (CRUDBooster::getTypeFilter($col["field_with"]) == 'between') ? $value[0] : "";

@@ -22,15 +22,15 @@
                 </a>
 
                 <span class="input-group-btn">
-                    <a id="" onclick="OpenInsertImagesingle('{{ $name }}')" class="btn btn-primary">
-                        @if (@$form['filemanager_type'] == 'file')
+                    @if (@$form['filemanager_type'] == 'file')
+                        <a id="_{{$name}}" onclick="OpenInsertImagesingle('{{ $name }}')" class="btn btn-primary" value="file_type">
                             <i class="fa fa-file-o"></i> {{ cbLang('chose_an_file') }}
                         @else
+                        <a id="_{{$name}}" onclick="OpenInsertImagesingle('{{ $name }}')" class="btn btn-primary" value="img_type">
                             <i class='fa fa-picture-o'></i> {{ cbLang('chose_an_image') }}
                         @endif
                     </a>
                 </span>
-
             </div>
     @endif
 
@@ -55,31 +55,24 @@
                             style="margin-top:15px;max-height:100px;"></a>
                 </p>
             @endif
-
-            @if (!$readonly || !$disabled)
-                <p><a class='btn btn-danger btn-delete btn-sm btn-del-filemanager'
-                        onclick='swal({   title: "{{ cbLang('delete_title_confirm') }}",   text: "{{ cbLang('delete_description_confirm') }}",   type: "warning",   showCancelButton: true,   confirmButtonColor: "#DD6B55",   confirmButtonText: "{{ cbLang('confirmation_yes') }}", cancelButtonText: "{{ cbLang('button_cancel') }}",   closeOnConfirm: false}, function(){ deleteImage();});'><i
-                            class='fa fa-ban'></i> {{ cbLang('text_delete') }} </a></p>
-            @endif
     @endif
 
     <div class='help-block'>{{ @$form['help'] }}</div>
     <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
 </div>
 </div>
-@if (@$form['filemanager_type'])
-    @push('bottom')
-    @endpush
-@else
-    @push('bottom')
-    @endpush
-@endif
+
 <div class="modal fade" id="modalInsertPhotosingle{{ $name }}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Insert Image</h4>
+                <div class="buttons">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button type="button" class="resize" title="<?php echo cbLang('filemanager.resize'); ?>"><i class="fa fa-expand" aria-hidden="true"></i></button>
+                </div>
+                <div class="title-sec">
+                    <h4 class="modal-title">Insert Image</h4>
+                </div>
             </div>
             <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
 
@@ -92,11 +85,23 @@
 
 <script>
     function OpenInsertImagesingle(name) {
-        var link = `<iframe width="100%" height="400" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` + name +
+        // reback size of iframe to default
+        $('.modal.in .modal-dialog').width(900);
+        console.log("name = ", name)
+        // check file manager type
+        if($('#_'+name).attr("value") == 'file_type'){
+            var link = `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` + name +
             `" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll;"></iframe>`;
+        }
+        else{
+            var link = `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&field_id=` + name +
+                `" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll;"></iframe>`;
+        }
 
         $("#modalInsertPhotosingle{{ $name }} .modal-body").html(link);
         $("#modalInsertPhotosingle{{ $name }}").modal();
+        console.log($('.modal.in .modal-dialog').width())
+
     }
 
     function deleteImage() {
@@ -154,6 +159,17 @@
                 $("#img-{{ $name }}").attr("src", check);
                 $("#link-{{ $name }}").attr("href", check);
                 $("#link-{{ $name }}").removeClass("hide");
+            }
+        });
+        $('.modal-header .resize').unbind().click(function(){
+            if($('.modal.in .modal-dialog').width() == 900){
+                console.log("resize yes ",$('.modal.in .modal-dialog').width());
+                $('.modal.in .modal-dialog').width(1300);
+                $('iframe').height(600);
+            }else{
+                console.log("resize no ",$('.modal.in .modal-dialog').width());
+                $('.modal.in .modal-dialog').width(900);
+                $('iframe').height(400);
             }
         });
     });
