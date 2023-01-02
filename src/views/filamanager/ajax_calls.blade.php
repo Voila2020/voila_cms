@@ -119,12 +119,13 @@ if (isset($_GET['action'])) {
 
                 unlink($temp);
             } else {
-                file_put_contents($config['current_path'] . $_POST['path'] . $_POST['name'], $image_data);
-                create_img($config['current_path'] . $_POST['path'] . $_POST['name'], $config['thumbs_base_path'].$_POST['path'].$_POST['name'], 122, 91);
+                file_put_contents($config['current_path'] . $_POST['name'], $image_data);
+                create_img($config['current_path'] . $_POST['name'], $config['thumbs_base_path'].$_POST['name'], 122, 91);
+                // create_img($config['current_path'] . $_POST['path'] . $_POST['name'], $config['thumbs_base_path'].$_POST['path'].$_POST['name'], 122, 91);
                 // TODO something with this function cause its blowing my mind
                 new_thumbnails_creation(
-                    $config['current_path'].$_POST['path'],
-                    $config['current_path'].$_POST['path'].$_POST['name'],
+                    $config['current_path'],
+                    $config['current_path'].$_POST['name'],
                     $_POST['name'],
                     $config['current_path'],
                     $config

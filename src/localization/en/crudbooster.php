@@ -228,7 +228,7 @@ return [
 
     //filemanager
     'chose_an_image' => 'Choose an image ',
-    'chose_an_file' => 'Choose an file ',
+    'chose_an_file' => 'Choose a file ',
 
     //action confirmation
     'confirmation_title' => 'Confirmation',

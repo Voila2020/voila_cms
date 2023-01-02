@@ -639,12 +639,10 @@ $get_params = http_build_query($get_params);
                 die();
             }
         } else {
-            if (!File::isDirectory(public_path() . '/images')) {
-                File::makeDirectory(public_path() . '/images', 0777, true, true);
+            if (!File::isDirectory(public_path() . '/' . $config['current_path'])) {
+                File::makeDirectory(public_path() . '/' . $config['current_path'], 0777, true, true);
             }
-            $files = scandir(public_path() . '/images/' . $rfm_subfolder . $subdir);
-            // dd($files);
-            // dd($config['current_path'] . $rfm_subfolder . $subdir);
+            $files = scandir(public_path() . '/' . $config['current_path'] . $rfm_subfolder . $subdir);
         }
 
         $n_files = count($files);
@@ -1520,7 +1518,6 @@ if (!empty($bc)) {
             //cache loaded image
             imageEditor.loadImageFromURL = (function() {
                 var cached_function = imageEditor.loadImageFromURL;
-
                 function waitUntilImageEditorIsUnlocked(imageEditor) {
                     return new Promise((resolve, reject) => {
                         const interval = setInterval(() => {
@@ -1532,6 +1529,8 @@ if (!empty($bc)) {
                     })
                 }
                 return function() {
+                    // arguments[0] =arguments[0].substring(1);
+                    // arguments[0] = "{{URL::asset('')}}" + arguments[0];
                     return waitUntilImageEditorIsUnlocked(imageEditor).then(() => cached_function.apply(this,
                         arguments));
                 };
@@ -1565,7 +1564,7 @@ if (!empty($bc)) {
                     url: "ajax_calls?action=save_img",
                     data: {
                         url: newURL,
-                        path: $('#sub_folder').val() + $('#fldr_value').val(),
+                        path: '{{URL::asset('')}}' + $('#sub_folder').val() + $('#fldr_value').val(),
                         name: $('#tui-image-editor').attr('data-name')
                     }
                 }).done(function(msg) {
@@ -1574,10 +1573,11 @@ if (!empty($bc)) {
                     $("figure[data-name='" + $('#tui-image-editor').attr('data-name') + "']").find(
                         '.img-container img').each(function() {
                         $(this).attr('src', $(this).attr('src') + "?" + d.getTime());
+                        $(this).attr('src', $(this).attr('data-src') + "?" + d.getTime());
                     });
                     $("figure[data-name='" + $('#tui-image-editor').attr('data-name') + "']").find(
                         'figcaption a.preview').each(function() {
-                        $(this).attr('data-url', $(this).data('url') + "?" + d.apply_linkgetTime());
+                        $(this).attr('data-url', $(this).data('url') + "?" + d.getTime());
                     });
                     hide_animation();
                 });

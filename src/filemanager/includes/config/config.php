@@ -77,14 +77,15 @@ $config = array(
     | with start and final /
     |
     */
-    'upload_dir' => '/images/',
+    'upload_dir' => config("crudbooster.filemanager_upload_dir"),
+    // 'upload_dir' => '/images/',
     /*
     |--------------------------------------------------------------------------
     | relative path from filemanager folder to upload folder
     |--------------------------------------------------------------------------
     */
     // 'current_path' => '../../../images/',
-    'current_path' => 'images/',
+    'current_path' => config('crudbooster.filemanager_current_path'),
 
     /*
     |--------------------------------------------------------------------------
@@ -92,7 +93,7 @@ $config = array(
     |--------------------------------------------------------------------------
     */
     // 'thumbs_base_path' => '../../../thumbs/',
-    'thumbs_base_path' => 'thumbs/',
+    'thumbs_base_path' => config('crudbooster.filemanager_thumbs_base_path'),
 
     /*
     |--------------------------------------------------------------------------
@@ -103,7 +104,7 @@ $config = array(
     | DO NOT put inside upload folder
     |
     */
-    'thumbs_upload_dir' => '/thumbs/',
+    'thumbs_upload_dir' => config('crudbooster.filemanager_thumbs_upload_dir'),
 
 
     /*
@@ -207,7 +208,7 @@ $config = array(
     | in Megabytes
     |
     */
-    'MaxSizeUpload' => 100,
+    'MaxSizeUpload' => config('crudbooster.filemanager_MaxSizeUpload'),
 
     /*
     |--------------------------------------------------------------------------
@@ -324,7 +325,7 @@ $config = array(
     // YOU CAN ALSO PASS THIS PARAMETERS USING SESSION VAR => $_SESSION['RF']["VIEW"]=
     //
     //******************
-    'default_view'                            => 0,
+    'default_view' => config('crudbooster.filemanager_default_view'),
 
     //set if the filename is truncated when overflow first row
     'ellipsis_title_after_first_row'          => true,
@@ -332,22 +333,22 @@ $config = array(
     //*************************
     //Permissions configuration
     //******************
-    'delete_files'                            => true,
-    'create_folders'                          => true,
-    'delete_folders'                          => true,
-    'upload_files'                            => true,
-    'rename_files'                            => true,
-    'rename_folders'                          => true,
-    'duplicate_files'                         => true,
-    'extract_files'                           => true,
-    'copy_cut_files'                          => true, // for copy/cut files
-    'copy_cut_dirs'                           => true, // for copy/cut directories
-    'chmod_files'                             => true, // change file permissions
-    'chmod_dirs'                              => true, // change folder permissions
-    'preview_text_files'                      => true, // eg.: txt, log etc.
-    'edit_text_files'                         => true, // eg.: txt, log etc.
-    'create_text_files'                       => true, // only create files with exts. defined in $config['editable_text_file_exts']
-    'download_files'                          => true, // allow download files or just preview
+    'delete_files'                            => config('crudbooster.filemanager_delete_files', true),
+    'create_folders'                          => config('crudbooster.filemanager_create_folders', true),
+    'delete_folders'                          => config('crudbooster.filemanager_delete_folders', true),
+    'upload_files'                            => config('crudbooster.filemanager_upload_files', true),
+    'rename_files'                            => config('crudbooster.filemanager_rename_files', true),
+    'rename_folders'                          => config('crudbooster.filemanager_rename_folders', true),
+    'duplicate_files'                         => config('crudbooster.filemanager_duplicate_files', true),
+    'extract_files'                           => config('crudbooster.filemanager_extract_files', true),
+    'copy_cut_files'                          => config('crudbooster.filemanager_copy_cut_files', true), // for copy/cut files
+    'copy_cut_dirs'                           => config('crudbooster.filemanager_copy_cut_dirs', true), // for copy/cut directories
+    'chmod_files'                             => config('crudbooster.filemanager_chmod_files', true), // change file permissions
+    'chmod_dirs'                              => config('crudbooster.filemanager_chmod_dirs', true), // change folder permissions
+    'preview_text_files'                      => config('crudbooster.filemanager_preview_text_files', true), // eg.: txt, log etc.
+    'edit_text_files'                         => config('crudbooster.filemanager_edit_text_files', true), // eg.: txt, log etc.
+    'create_text_files'                       => config('crudbooster.filemanager_create_text_files', true), // only create files with exts. defined in $config['editable_text_file_exts']
+    'download_files'                          => config('crudbooster.filemanager_download_files', true), // allow download files or just preview
 
     // you can preview these type of files if $preview_text_files is true
     'previewable_text_file_exts'              => array("bsh", "c", "css", "cc", "cpp", "cs", "csh", "cyc", "cv", "htm", "html", "java", "js", "m", "mxml", "perl", "pl", "pm", "py", "rb", "sh", "xhtml", "xml", "xsl", 'txt', 'log', ''),
