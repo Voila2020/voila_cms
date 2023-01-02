@@ -1,4 +1,4 @@
-@push('bottom')
+@push('head')
     <style>
         .buttons {
             width: 85%;
@@ -19,5 +19,23 @@
             background: none;
             margin-right: 2%;
         }
+
+        .modal-body {
+            padding: 0px !important;
+            margin: 0px !important;
+            width: 100% !important;
+        }
+
+        .file-roadtrip {
+            margin-top: 8px !important;
+        }
+
+        .filemanager-iframe {
+            overflow: scroll !important;
+            overflow-x: hidden !important;
+            overflow-y: scroll !important;
+        }
     </style>
+    <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
+    <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
 @endpush
