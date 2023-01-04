@@ -20,7 +20,8 @@ class AddTableCmsUsers extends Migration
             $table->string('email')->nullable();
             $table->string('password')->nullable();
             $table->integer('id_cms_privileges')->nullable();
-
+            $table->string('token')->nullable();
+            $table->timestamp('token_created_at')->nullable();
             $table->timestamps();
         });
     }

@@ -3,6 +3,7 @@
 namespace crocodicstudio\crudbooster\controllers;
 
 use Carbon\Carbon;
+use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 use CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -124,15 +125,13 @@ class AdminController extends CBController
 
             return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
         }
-
-        $rand_string = str_random(5);
-        $password = \Hash::make($rand_string);
-
-        DB::table(config('crudbooster.USER_TABLE'))->where('email', Request::input('email'))->update(['password' => $password]);
-
+        $token = str_random(60);
+        DB::table(config('crudbooster.USER_TABLE'))->where('email', Request::input('email'))->update(['token' => $token, 'token_created_at' => Carbon::now()]);
         $appname = CRUDBooster::getSetting('appname');
         $user = CRUDBooster::first(config('crudbooster.USER_TABLE'), ['email' => g('email')]);
-        $user->password = $rand_string;
+        $link = HelpersCRUDBooster::adminPath() . '/password/reset/' . $token;
+        $user->link = $link;
+        //$user->password = $rand_string;
         CRUDBooster::sendEmail(['to' => $user->email, 'data' => $user, 'template' => 'forgot_password_backend']);
 
         CRUDBooster::insertLog(cbLang("log_forgot", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
