@@ -30,6 +30,10 @@ return [
     'text_loading' => 'Please wait loading...',
 
     'message_after_logout' => 'Thank You, See You Later !',
+    'message_not_valid_reset_token' => 'This url is not valid any more !',
+    'message_expired_reset_token' => 'This token has been expired !',
+    'password_reset_not_matching' => 'Confirmation password is not matching entered password !',
+    'password_changed_successfully' => 'Your password has been successfully changed',
     'message_forgot_password' => 'We have sent new password to your email, check inbox or spambox !',
 
     'page_not_found' => 'Oops! Page Not Found',

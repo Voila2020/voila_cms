@@ -2,6 +2,7 @@
 
 namespace crocodicstudio\crudbooster\helpers;
 
+use crocodicstudio\crudbooster\controllers\AdminController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\middlewares\CBAuthAPI;
 use Illuminate\Support\Facades\Log;
@@ -145,7 +146,7 @@ class CBRouter
         });
     }
 
-    private static function voilaFileManagerRout()
+    private static function voilaFileManagerRoutes()
     {
         Route::group(['middleware' => ['web'], 'prefix' => "", 'namespace' => static::$cb_namespace], function () {
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');
@@ -153,6 +154,13 @@ class CBRouter
             Route::match(array('GET', 'POST'), '/execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
             Route::match(array('GET', 'POST'), '/ajax_calls', [FileManagerController::class, 'ajaxCall'])->name("filemanager.ajax_calls");
             Route::post('/download', [FileManagerController::class, 'forceDownload'])->name("filemanager.download");
+        });
+        Route::group([
+            'prefix' => config('crudbooster.ADMIN_PATH'),
+            'namespace' => static::$cb_namespace,
+        ], function () {
+            Route::post('/reset-password', [AdminController::class, 'resetPassword'])->name('cms_reset_password');
+            Route::get('/password/reset/{token}', [AdminController::class, 'viewPasswordReset'])->name('cms_view_reset_page');
         });
     }
 
@@ -164,6 +172,6 @@ class CBRouter
         static::authRoute();
         static::userControllerRoute();
         static::cbRoute();
-        static::voilaFileManagerRout();
+        static::voilaFileManagerRoutes();
     }
 }

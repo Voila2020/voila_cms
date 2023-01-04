@@ -1,5 +1,8 @@
-<?php namespace crocodicstudio\crudbooster\controllers;
+<?php
 
+namespace crocodicstudio\crudbooster\controllers;
+
+use Carbon\Carbon;
 use CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
@@ -19,7 +22,7 @@ class AdminController extends CBController
     public function getLockscreen()
     {
 
-        if (! CRUDBooster::myId()) {
+        if (!CRUDBooster::myId()) {
             Session::flush();
 
             return redirect()->route('getLogin')->with('message', cbLang('alert_session_expired'));
@@ -41,7 +44,7 @@ class AdminController extends CBController
 
             return redirect(CRUDBooster::adminPath());
         } else {
-            echo "<script>alert('".cbLang('alert_password_wrong')."');history.go(-1);</script>";
+            echo "<script>alert('" . cbLang('alert_password_wrong') . "');history.go(-1);</script>";
         }
     }
 
@@ -59,7 +62,7 @@ class AdminController extends CBController
     {
 
         $validator = Validator::make(Request::all(), [
-            'email' => 'required|email|exists:'.config('crudbooster.USER_TABLE'),
+            'email' => 'required|email|exists:' . config('crudbooster.USER_TABLE'),
             'password' => 'required',
         ]);
 
@@ -113,7 +116,7 @@ class AdminController extends CBController
     public function postForgot()
     {
         $validator = Validator::make(Request::all(), [
-            'email' => 'required|email|exists:'.config('crudbooster.USER_TABLE'),
+            'email' => 'required|email|exists:' . config('crudbooster.USER_TABLE'),
         ]);
 
         if ($validator->fails()) {
@@ -146,5 +149,47 @@ class AdminController extends CBController
         Session::flush();
 
         return redirect()->route('getLogin')->with('message', cbLang("message_after_logout"));
+    }
+    public function resetPassword(Request $request)
+    {
+        $validator = Validator::make(Request::all(), [
+            'token' => 'required',
+            'reset_password' => 'required',
+            'password_confirmation' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->all();
+            return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
+        }
+
+        $tokenData = DB::table('cms_users')->where('token', $request->token)->first();
+        if (!$tokenData) {
+            return redirect()->route('getLogin')->with(['message', cbLang("message_not_valid_reset_token")]);
+        }
+
+        $currentTime = Carbon::now();
+        if ($currentTime->diffInMinutes($tokenData->token_created_at) > 60) {
+            return redirect()->route('getLogin')->with(['message', cbLang("message_expired_reset_token")]);
+        }
+
+        if ($request->reset_password != $request->password_confirmation) {
+            return redirect()->back()->with(['message', cbLang("password_reset_not_matching")]);
+        }
+
+        $cmsUser = DB::table('cms_users')->where('token', $request->token)->update(['password' => Hash::make($request->reset_password), 'token' => null, 'token_created_at' => null]);
+
+        return redirect()->route('getLogin')->with(['message', cbLang("password_changed_successfully"), 'message_type' => 'success']);
+    }
+
+    public function viewPasswordReset($token)
+    {
+        $user = DB::table('cms_users')->where('token', $token)->first();
+        if (!$user) {
+            return redirect()->back()->with(['message' => cbLang(""), 'message_type' => 'danger']);
+        }
+        if ($user->token == $token) {
+            return view('crudbooster::password-reset')->with(['token' => $token]);
+        }
     }
 }

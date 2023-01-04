@@ -12,7 +12,8 @@
             <input id="{{ $name }}" class="form-control hide" type="text" value='{{ $value }}'
                 name="{{ $name }}">
 
-            <a data-lightbox="roadtrip" class="hide" id="link-{{ $name }}" href="" style="{{ @$form['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
+            <a data-lightbox="roadtrip" class="hide" id="link-{{ $name }}" href=""
+                style="{{ @$form['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
                 <img style="width:150px;height:150px; {{ @$form['filemanager_type'] == 'file' ? 'display:none;' : '' }}"
                     id="img-{{ $name }}" title="Add image for {{ $name }}" src="">
                 <p class="file-roadtrip" id="file-{{ $name }}"
@@ -49,7 +50,7 @@
         @else
             <p><a id="roadtrip-{{ $name }}" class="p-roadtrip" data-lightbox="roadtrip"
                     href="{{ $value ? asset($value) : '' }}"><img id='holder-{{ $name }}'
-                        {{ $value ? 'src=' . asset($value) : '' }} style="margin-top:15px;max-height:100px;"></a>
+                        src="{{ $value ? asset($value) : '' }}" style="margin-top:15px;max-height:100px;"></a>
             </p>
         @endif
         @if (!$readonly || !$disabled)
@@ -166,10 +167,10 @@
                 if ("{{ @$form['filemanager_type'] }}" == 'file')
                     $("#file-{{ $name }}").html(check);
                 else
-                    $("#img-{{ $name }}").attr("src", '{{URL::asset('')}}' + check);
+                    $("#img-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
                 $("#link-{{ $name }}").attr("href", check);
                 $("#link-{{ $name }}").removeClass("hide");
-                $("#thumbnail-{{ $name }}").attr("src", '{{URL::asset('')}}' + check);
+                $("#thumbnail-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
                 $("#thumbnail-{{ $name }}").attr("value", check);
             }
         });
