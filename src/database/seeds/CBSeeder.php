@@ -46,7 +46,7 @@ class CBSeeder extends Seeder
             'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
             'description' => 'no description',
             'from_name' => 'Voila System',
-            'from_email' => 'system@voila.digital',
+            'from_email' => 'test@voila.digital',
             'cc_email' => null,
         ]);
         $this->command->info("Create email templates completed");
