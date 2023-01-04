@@ -44,7 +44,7 @@ class CBSeeder extends Seeder
             'name' => 'Email Template Forgot Password Backend',
             'slug' => 'forgot_password_backend',
             'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
-            'description' => 'no description',
+            'description' => 'Forgot Password',
             'from_name' => 'Voila System',
             'from_email' => 'test@voila.digital',
             'cc_email' => null,

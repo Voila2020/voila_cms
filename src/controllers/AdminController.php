@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 use CRUDBooster;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -158,26 +159,28 @@ class AdminController extends CBController
         ]);
 
         if ($validator->fails()) {
+            dd("failes");
             $message = $validator->errors()->all();
             return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
         }
 
-        $tokenData = DB::table('cms_users')->where('token', $request->token)->first();
+        $tokenData = DB::table('cms_users')->where('token', Request::input("token"))->first();
         if (!$tokenData) {
+            dd("tokenData");
             return redirect()->route('getLogin')->with(['message', cbLang("message_not_valid_reset_token")]);
         }
 
         $currentTime = Carbon::now();
         if ($currentTime->diffInMinutes($tokenData->token_created_at) > 60) {
+            dd("diff");
             return redirect()->route('getLogin')->with(['message', cbLang("message_expired_reset_token")]);
         }
 
-        if ($request->reset_password != $request->password_confirmation) {
+        if (Request::input("reset_password") != Request::input("password_confirmation")) {
+            dd("confirmation");
             return redirect()->back()->with(['message', cbLang("password_reset_not_matching")]);
         }
-
-        $cmsUser = DB::table('cms_users')->where('token', $request->token)->update(['password' => Hash::make($request->reset_password), 'token' => null, 'token_created_at' => null]);
-
+        $cmsUser = DB::table('cms_users')->where('token', Request::input("token"))->update(['password' => Hash::make(Request::input("reset_password")), 'token' => null, 'token_created_at' => null]);
         return redirect()->route('getLogin')->with(['message', cbLang("password_changed_successfully"), 'message_type' => 'success']);
     }
 
