@@ -574,8 +574,8 @@ class CBController extends Controller
                     $checked = '';
                     if ($value == 1)
                         $checked = 'checked';
-                    $value = "<input id='{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked}/>
-                            <label class='cms_switch_label' for='{$row->id}'>Toggle</label>";
+                    $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked}/>
+                            <label class='cms_switch_label' for='{$col["name"]}_{$row->id}'>Toggle</label>";
                 }
 
                 if ($col['str_limit']) {
