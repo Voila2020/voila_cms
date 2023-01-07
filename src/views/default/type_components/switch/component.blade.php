@@ -9,7 +9,7 @@
     <div class="{{$col_width?:'col-sm-10'}}">
         <input class='form-control cms_switch_input'  type='checkbox' title="{{$form['label']}}"
                {{$readonly}} {!!$placeholder!!} {{$disabled}}
-               name="{{$name}}" id="switch_{{ $name }}" value="{{$value ? $value : 0}}" {{$value == 1 ? 'checked' : ''}} />
+               name="{{$name}}" id="switch_{{ $name }}" value="{{$value ? $value : ($form['default_value'] ? $form['default_value'] : '')}}" {{$value == 1 ? 'checked' : ''}} />
         <label class='cms_switch_label' for='switch_{{ $name }}'>Toggle</label>
         <div class="text-danger">{!! $errors->first($name)?"<i class='fa fa-info-circle'></i> ".$errors->first($name):"" !!}</div>
         <p class='help-block'>{{ @$form['help'] }}</p>
