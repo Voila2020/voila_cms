@@ -1,53 +1,165 @@
-.select2-dropdown {z-index: 9999 !important}
+.select2-dropdown {
+    z-index: 9999 !important
+}
 
-	.bootstrap-timepicker-minute,.bootstrap-timepicker-hour,.bootstrap-timepicker-meridian,.bootstrap-timepicker-second {
-		width:50px !important;
-	}
+.bootstrap-timepicker-minute,
+.bootstrap-timepicker-hour,
+.bootstrap-timepicker-meridian,
+.bootstrap-timepicker-second {
+    width: 50px !important;
+}
 
-	::-webkit-scrollbar {
-	    width: 7px;
-	}
+::-webkit-scrollbar {
+    width: 7px;
+}
 
-	::-webkit-scrollbar-track {
-	    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
-	    border-radius: 10px;
-	}
-	::-webkit-scrollbar-thumb {
-	    border-radius: 10px;
-	    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
-	}	
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
 
-	.datepicker{z-index:1151 !important;}
+::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+}
 
-	.sidebar-menu .treeview-menu>li>a {
-		padding:5px 5px 5px 25px;
-	}
-	.form-tab li a:hover {
-		background: #eeeeee !important;
-	}
-	.form-tab li a.selected {
-		background: #3c8dbc !important;
-		color:#ffffff !important;
-	}
-	.alert_floating {
-		bottom:10px;
-		right:10px;
-		position: fixed;
-		z-index:1001;
-		background: rgba(255, 140, 127, 0.7);
-		color:#222222;
-		font-weight: bold;
-		padding:20px 50px 20px 50px;
-		border-radius: 10px;
-		box-shadow: 0px 0px 5px #aaaaaa;
-	}
+.datepicker {
+    z-index: 1151 !important;
+}
 
-	#table_dashboard {
-		font-size: 12px;
-	}
+.sidebar-menu .treeview-menu>li>a {
+    padding: 5px 5px 5px 25px;
+}
 
-	
+.form-tab li a:hover {
+    background: #eeeeee !important;
+}
 
-	.login-box-body {
-      box-shadow: 0px 0px 25px #999999;
+.form-tab li a.selected {
+    background: #3c8dbc !important;
+    color: #ffffff !important;
+}
+
+.alert_floating {
+    bottom: 10px;
+    right: 10px;
+    position: fixed;
+    z-index: 1001;
+    background: rgba(255, 140, 127, 0.7);
+    color: #222222;
+    font-weight: bold;
+    padding: 20px 50px 20px 50px;
+    border-radius: 10px;
+    box-shadow: 0px 0px 5px #aaaaaa;
+}
+
+#table_dashboard {
+    font-size: 12px;
+}
+
+
+
+.login-box-body {
+    box-shadow: 0px 0px 25px #999999;
+}
+
+.cms_switch_input[type=checkbox] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+}
+
+.cms_switch_label {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 40px;
+    height: 20px;
+    background: grey;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+}
+
+.cms_switch_label:after {
+    content: '';
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 20px;
+    height: 20px;
+    background: #fff;
+    border-radius: 90px;
+    transition: 0.3s;
+}
+
+.cms_switch_input:checked+label {
+    background: #3c8dbc;
+}
+
+.cms_switch_input:checked+label:after {
+    left: calc(100% - 1px);
+    transform: translateX(-100%);
+}
+
+.cms_switch_label:active:after {
+    width: 20px;
+}
+
+
+
+.switch-loader {
+    position: absolute;
+    width: 100px;
+    left: 40%;
+    top: 40%;
+    height: 100px;
+    border-radius: 50%;
+    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+    animation: animate 1.2s linear infinite;
+}
+
+@keyframes animate {
+    0% {
+        transform: rotate(0deg);
     }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+.switch-loader span {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: linear-gradient(#f07e6e, #84cdfa, #5ad1cd);
+}
+
+.switch-loader span:nth-child(1) {
+    filter: blur(5px);
+}
+
+.switch-loader span:nth-child(2) {
+    filter: blur(10px);
+}
+
+.switch-loader span:nth-child(3) {
+    filter: blur(25px);
+}
+
+.switch-loader span:nth-child(4) {
+    filter: blur(50px);
+}
+
+.switch-loader:after {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    background: #f1f1f1;
+    border: solid white 10px;
+    border-radius: 50%;
+}

@@ -43,25 +43,35 @@
             })
 
             $('input[type="checkbox"]').on('click', function() {
-                console.log("value=>", $(this).val());
                 if ($(this).val() == 1)
                     $(this).val(0);
                 else
                     $(this).val(1);
+                $('.switch-loader').css('display', 'block');
                 $.ajax({
                     type: "POST",
                     url: "edit-switch-action",
                     data: {
-                        id: $(this).attr("id"),
+                        id: $(this).attr("row_id"),
                         table: "{{ $table }}",
                         feild: $(this).attr("name"),
                         value: $(this).val(),
                     },
-                }).done(function(msg) {});
+                }).done(function(msg) {
+                    $('.switch-loader').css('display', 'none');
+                });
             });
         });
     </script>
 @endpush
+
+<div id="switch-overlay"></div>
+<div class="switch-loader" style="display: none;">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+</div>
 
 <form id='form-table' method='post' action='{{ CRUDBooster::mainpath('action-selected') }}'>
     <input type='hidden' name='button_name' value='' />

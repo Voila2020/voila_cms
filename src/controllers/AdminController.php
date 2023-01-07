@@ -166,7 +166,7 @@ class AdminController extends CBController
 
         $tokenData = DB::table('cms_users')->where('token', Request::input("token"))->first();
         if (!$tokenData) {
-            return redirect()->route('getLogin')->with(['message', cbLang("message_not_valid_reset_token")]);
+            return redirect()->route('getLogin')->with(['message' => cbLang("message_not_valid_reset_token")]);
         }
 
         $currentTime = Carbon::now();
@@ -175,7 +175,7 @@ class AdminController extends CBController
         }
 
         if (Request::input("reset_password") != Request::input("password_confirmation")) {
-            return redirect()->back()->with(['msg', cbLang("password_reset_not_matching")]);
+            return redirect()->back()->with(['message' => cbLang("password_reset_not_matching")]);
         }
 
         $cmsUser = DB::table('cms_users')->where('token', Request::input("token"))->update(['password' => Hash::make(Request::input("reset_password")), 'token' => null, 'token_created_at' => null]);
