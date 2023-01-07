@@ -41,7 +41,7 @@
         .reset-box-body {
             box-shadow: 0px 0px 50px rgba(0, 0, 0, 0.8);
             background: rgba(255, 255, 255, 0.9);
-            color: "{{ CRUDBooster::getSetting('login_font_color') ?: '#666666' }}" !important;
+            color: {{ CRUDBooster::getSetting('login_font_color') ?: '#666666' }} !important;
             padding: 50px 20px 40px 20px;
             width: 360px;
             margin: 0 auto;

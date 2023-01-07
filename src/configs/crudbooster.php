@@ -73,11 +73,11 @@ return [
     * Make sure yo clear your config cache by using command : php artisan config:clear
     */
 
-    "filemanager_upload_dir"=> '/files/',
+    "filemanager_upload_dir" => '/files/',
     "filemanager_current_path" => 'files/',
     "filemanager_thumbs_base_path" => 'thumbs/',
     'filemanager_thumbs_upload_dir' => '/thumbs/',
-    "filemanager_MaxSizeUpload"=> 100,
+    "filemanager_MaxSizeUpload" => 100,
     // Default layout setting
     //
     // 0 => boxes
@@ -85,7 +85,7 @@ return [
     // 2 => columns list (multiple columns depending on the width of the page)
     // YOU CAN ALSO PASS THIS PARAMETERS USING SESSION VAR => $_SESSION['RF']["VIEW"]=
     //
-    "filemanager_default_view"=> 0,
+    "filemanager_default_view" => 0,
     // filemanager permissions
     'filemanager_delete_files'                            => true,
     'filemanager_create_folders'                          => true,
@@ -103,4 +103,7 @@ return [
     'filemanager_edit_text_files'                         => true, // eg.: txt, log etc.
     'filemanager_create_text_files'                       => true, // only create files with exts. defined in $config['editable_text_file_exts']
     'filemanager_download_files'                          => true, // allow download files or just preview
+    //
+
+    'reset_password_expired_time' => 60, // 60 minutes
 ];

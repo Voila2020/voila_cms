@@ -150,6 +150,7 @@ class AdminController extends CBController
 
         return redirect()->route('getLogin')->with('message', cbLang("message_after_logout"));
     }
+
     public function resetPassword(Request $request)
     {
         $validator = Validator::make(Request::all(), [
@@ -159,39 +160,43 @@ class AdminController extends CBController
         ]);
 
         if ($validator->fails()) {
-            dd("failes");
             $message = $validator->errors()->all();
             return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
         }
 
         $tokenData = DB::table('cms_users')->where('token', Request::input("token"))->first();
         if (!$tokenData) {
-            dd("tokenData");
             return redirect()->route('getLogin')->with(['message', cbLang("message_not_valid_reset_token")]);
         }
 
         $currentTime = Carbon::now();
-        if ($currentTime->diffInMinutes($tokenData->token_created_at) > 60) {
-            dd("diff");
-            return redirect()->route('getLogin')->with(['message', cbLang("message_expired_reset_token")]);
+        if ($currentTime->diffInMinutes($tokenData->token_created_at) > config('crudbooster.reset_password_expired_time')) {
+            return redirect()->route('getLogin')->with(['message' => cbLang("message_expired_reset_token")]);
         }
 
         if (Request::input("reset_password") != Request::input("password_confirmation")) {
-            dd("confirmation");
-            return redirect()->back()->with(['message', cbLang("password_reset_not_matching")]);
+            return redirect()->back()->with(['msg', cbLang("password_reset_not_matching")]);
         }
+
         $cmsUser = DB::table('cms_users')->where('token', Request::input("token"))->update(['password' => Hash::make(Request::input("reset_password")), 'token' => null, 'token_created_at' => null]);
-        return redirect()->route('getLogin')->with(['message', cbLang("password_changed_successfully"), 'message_type' => 'success']);
+        return redirect()->route('getLogin')->with(['message' => cbLang("password_changed_successfully"), 'message_type' => 'success']);
     }
 
     public function viewPasswordReset($token)
     {
         $user = DB::table('cms_users')->where('token', $token)->first();
         if (!$user) {
-            return redirect()->back()->with(['message' => cbLang(""), 'message_type' => 'danger']);
+            return redirect()->route('getLogin')->with(['message' => cbLang("alert_danger"), 'message_type' => 'danger']);
         }
         if ($user->token == $token) {
             return view('crudbooster::password-reset')->with(['token' => $token]);
         }
+    }
+
+    public function editSwitchAction(Request $request)
+    {
+        DB::table(Request::input('table'))
+            ->where('id', Request::input('id'))
+            ->update([Request::input('feild') => Request::input('value')]);
     }
 }

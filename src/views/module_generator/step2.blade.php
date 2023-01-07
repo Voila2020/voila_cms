@@ -274,6 +274,7 @@
                     }
                 })
 
+
             })
         </script>
     @endpush
@@ -303,6 +304,7 @@
                         <th width="90px">Width (px)</th>
                         <th width='80px'>Image</th>
                         <th width='80px'>Download</th>
+                        <th width='80px'>Switch</th>
                         <th width="180px">Action</th>
                     </tr>
                     </thead>
@@ -335,6 +337,12 @@
                                     </select>
                                 </td>
                                 <td>
+                                    <select class='form-control is_switch' name='is_switch[]'>
+                                        <option {{ (!$c['switch'])?"selected":""}} value='0'>N</option>
+                                        <option {{ ($c['switch'])?"selected":""}} value='1'>Y</option>
+                                    </select>
+                                </td>
+                                <td>
                                     <a href="javascript:void(0)" class="btn btn-info btn-plus"><i class='fa fa-plus'></i></a>
                                     <a href="javascript:void(0)" class="btn btn-danger btn-delete"><i class='fa fa-trash'></i></a>
                                     <a href="javascript:void(0)" class="btn btn-success btn-up"><i class='fa fa-arrow-up'></i></a>
@@ -363,6 +371,12 @@
                         </td>
                         <td>
                             <select class='form-control is_download' name='is_download[]'>
+                                <option value='0'>N</option>
+                                <option value='1'>Y</option>
+                            </select>
+                        </td>
+                        <td>
+                            <select class='form-control is_switch' name='is_switch[]'>
                                 <option value='0'>N</option>
                                 <option value='1'>Y</option>
                             </select>
