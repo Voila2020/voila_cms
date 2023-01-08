@@ -1034,7 +1034,7 @@ class CBController extends Controller
 
             $inputdata = request($name);
 
-            if ($ro['type'] == 'switch' && !$inputdata) {
+            if($ro['type'] == 'switch' && !$inputdata){
                 $this->arr[$name] = 0;
             }
 

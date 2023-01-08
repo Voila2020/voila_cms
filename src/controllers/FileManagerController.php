@@ -13,7 +13,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
 {
     public function __construct()
     {
-        $this->middleware('\crocodicstudio\crudbooster\middlewares\CBBackend');
+        //$this->middleware('\crocodicstudio\crudbooster\middlewares\CBBackend');
     }
 
     public function index()
