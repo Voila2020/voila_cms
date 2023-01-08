@@ -58,6 +58,18 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
+                                    <label>Sortable</label>
+                                    <label class='radio-inline'>
+                                        <input type='radio' name='sortable' {{($cb_button_sortable)?"checked":""}} value='true'/> TRUE
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{(!$cb_button_sortable)?"checked":""}} type='radio' name='sortable' value='false'/> FALSE
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
                                     <label>Global Privilege</label>
                                     <label class='radio-inline'>
                                         <input type='radio' name='global_privilege' {{($cb_global_privilege)?"checked":""}} value='true'/> TRUE
