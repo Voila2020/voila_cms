@@ -538,7 +538,7 @@ class CBController extends Controller
 
             if ($this->button_bulk_action) {
 
-                $html_content[] = "<input type='checkbox' class='checkbox' name='checkbox[]' value='" . $row->{$tablePK} . "'/>";
+                $html_content[] = "<input type='checkbox' class='checkbox tbl-checkbox' name='checkbox[]' value='" . $row->{$tablePK} . "'/>";
             }
 
             if ($this->show_numbering) {

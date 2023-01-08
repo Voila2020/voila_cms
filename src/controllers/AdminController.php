@@ -199,4 +199,19 @@ class AdminController extends CBController
             ->where('id', Request::input('id'))
             ->update([Request::input('feild') => Request::input('value')]);
     }
+
+    public function postSortTable(Request $request)
+    {
+        if (Request::input("data")) {
+            $sortedItems = Request::input('data');
+            $table_name = Request::input("table_name");
+            foreach ($sortedItems as $key => $sortedItem) {
+                DB::table($table_name)->where("id", $sortedItems[$key])->update([
+                    'sorting' => $key + 1,
+                ]);
+            }
+            return response()->json(array("message" => "done", "status" => true));
+        }
+        return response()->json(array("message" => "faild", "status" => false));
+    }
 }

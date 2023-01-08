@@ -162,6 +162,7 @@ class CBRouter
             'namespace' => static::$cb_namespace,
         ], function () {
             Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
+            Route::post('/sort-table', [AdminController::class, 'postSortTable'])->name('sortTable');
         });
 
         Route::group([

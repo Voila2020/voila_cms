@@ -72,15 +72,14 @@
     <span></span>
     <span></span>
 </div>
-
 <form id='form-table' method='post' action='{{ CRUDBooster::mainpath('action-selected') }}'>
     <input type='hidden' name='button_name' value='' />
     <input type='hidden' name='_token' value='{{ csrf_token() }}' />
     <table id='table_dashboard' class="table table-hover table-striped table-bordered">
-        <thead>
+        <thead class="table-head">
             <tr class="active">
                 <?php if($button_bulk_action):?>
-                <th width='3%'><input type='checkbox' id='checkall' /></th>
+                <th width='3%'><input type='checkbox' class="" id='checkall' /></th>
                 <?php endif;?>
                 <?php if($show_numbering):?>
                 <th width="1%">{{ cbLang('no') }}</th>
@@ -161,13 +160,13 @@
                         }
 
                         @eval("if($query) {
-                                                                                      \$tr_color = \$color;
-                                                                                  }");
+                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                          }");
                         ?>
                     @endforeach
                     <?php echo "<tr class='$tr_color'>"; ?>
                 @else
-                    <tr>
+                    <tr class="tr" id="{{ $html_contents['data'][$i]->id }}">
                 @endif
 
                 @foreach ($hc as $j => $h)
@@ -226,6 +225,40 @@ $total = $result->total();
     @push('bottom')
         <script>
             $(function() {
+                $('#table_dashboard tbody').sortable({
+                    axis: 'y',
+                    update: function(event, ui) {
+                        var data_list = new Array();
+                        $('#table_dashboard').find('tbody tr').each(function(e) {
+                            data_list.push($(this).attr('id'));
+                        });
+                        var table = '{{ $table }}';
+                        console.log("print array => ", data_list, " table=>", table);
+                        $('html, body').css("cursor", "wait");
+
+                        // POST to server using $.post or $.ajax
+                        $.ajax({
+                            data: {
+                                data: data_list,
+                                table_name: table
+                            },
+                            type: 'POST',
+                            url: 'sort-table',
+                            success: function(data) {
+                                $('html, body').css("cursor", "auto");
+                            },
+                            error: function(data) {
+                                $('html, body').css("cursor", "auto");
+                            }
+                        });
+                    }
+                });
+
+                // Sortable column heads
+
+
+                //////////////////
+
                 $('.btn-filter-data').click(function() {
                     $('#filter-data').modal('show');
                 })
@@ -644,7 +677,7 @@ $total = $result->total();
                             <div class='form-group'>
                                 <label>{{ cbLang('export_dialog_columns') }}</label><br />
                                 @foreach ($columns as $col)
-                                    <div class='checkbox inline'><label><input type='checkbox' checked name='columns[]'
+                                    <div class='checkbox  inline'><label><input type='checkbox' checked name='columns[]'
                                                 value='{{ $col['name'] }}'>{{ $col['label'] }}</label></div>
                                 @endforeach
                             </div>
@@ -688,8 +721,9 @@ $total = $result->total();
                                         </option>
                                         <?php endfor;?>
                                     </select>
-                                    <div class='help-block'><input type='checkbox' name='default_paper_size'
-                                            value='1' /> {{ cbLang('export_dialog_set_default') }}</div>
+                                    <div class='help-block'><input class="" type='checkbox'
+                                            name='default_paper_size' value='1' />
+                                        {{ cbLang('export_dialog_set_default') }}</div>
                                 </div>
 
                                 <div class="form-group">
