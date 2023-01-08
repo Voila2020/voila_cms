@@ -161,9 +161,16 @@ class CBRouter
             'prefix' => config('crudbooster.ADMIN_PATH'),
             'namespace' => static::$cb_namespace,
         ], function () {
+            Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
+        });
+
+        Route::group([
+            'middleware' => ['web'],
+            'prefix' => config('crudbooster.ADMIN_PATH'),
+            'namespace' => static::$cb_namespace,
+        ], function () {
             Route::post('/reset-password', [AdminController::class, 'resetPassword'])->name('cms_reset_password');
             Route::get('/password/reset/{token}', [AdminController::class, 'viewPasswordReset'])->name('cms_view_reset_page');
-            Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
         });
     }
 

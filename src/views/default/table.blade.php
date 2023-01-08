@@ -42,7 +42,7 @@
                 e.stopPropagation();
             })
 
-            $('input[type="checkbox"]').on('click', function() {
+            $('.cms_switch_input[type="checkbox"]').on('click', function() {
                 if ($(this).val() == 1)
                     $(this).val(0);
                 else

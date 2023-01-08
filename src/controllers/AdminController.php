@@ -193,7 +193,7 @@ class AdminController extends CBController
         }
     }
 
-    public function editSwitchAction(Request $request)
+    public function postEditSwitchAction(Request $request)
     {
         DB::table(Request::input('table'))
             ->where('id', Request::input('id'))

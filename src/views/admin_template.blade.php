@@ -37,47 +37,6 @@
     <style type="text/css">
         @if ($style_css){!! $style_css !!}
         @endif
-        input[type=checkbox] {
-            height: 0;
-            width: 0;
-            visibility: hidden;
-        }
-
-        .cms_switch_label {
-            cursor: pointer;
-            text-indent: -9999px;
-            width: 40px;
-            height: 20px;
-            background: grey;
-            display: block;
-            border-radius: 100px;
-            position: relative;
-        }
-
-        .cms_switch_label:after {
-            content: '';
-            position: absolute;
-            top: 0px;
-            left: 0px;
-            width: 20px;
-            height: 20px;
-            background: #fff;
-            border-radius: 90px;
-            transition: 0.3s;
-        }
-
-        .cms_switch_input:checked+label {
-            background: #3c8dbc;
-        }
-
-        .cms_switch_input:checked+label:after {
-            left: calc(100% - 1px);
-            transform: translateX(-100%);
-        }
-
-        .cms_switch_label:active:after {
-            width: 20px;
-        }
     </style>
     @if ($load_css)
         @foreach ($load_css as $css)
