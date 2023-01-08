@@ -69,6 +69,8 @@ class CBController extends Controller
 
     public $button_show = true;
 
+    public $button_sortable = true;
+
     public $button_addmore = true;
 
     public $button_table_action = true;
@@ -149,6 +151,7 @@ class CBController extends Controller
         $this->data['button_detail'] = $this->button_detail;
         $this->data['button_edit'] = $this->button_edit;
         $this->data['button_show'] = $this->button_show;
+        $this->data['button_sortable'] = $this->button_sortable;
         $this->data['button_add'] = $this->button_add;
         $this->data['button_delete'] = $this->button_delete;
         $this->data['button_filter'] = $this->button_filter;
@@ -1031,7 +1034,7 @@ class CBController extends Controller
 
             $inputdata = request($name);
 
-            if($ro['type'] == 'switch' && !$inputdata){
+            if ($ro['type'] == 'switch' && !$inputdata) {
                 $this->arr[$name] = 0;
             }
 

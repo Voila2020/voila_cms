@@ -82,6 +82,17 @@ class ModulsController extends CBController
         if (CRUDBooster::getCurrentMethod() == 'getAdd' || CRUDBooster::getCurrentMethod() == 'postAddSave') {
 
             $this->form[] = [
+                "label" => "Sortable",
+                "name" => "global_privilege",
+                "type" => "radio",
+                "dataenum" => ['0|No', '1|Yes'],
+                'value' => 0,
+                'help' => 'Sortable allows you to sort the table manually',
+                'exception' => true,
+            ];
+
+
+            $this->form[] = [
                 "label" => "Global Privilege",
                 "name" => "global_privilege",
                 "type" => "radio",
