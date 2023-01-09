@@ -38,6 +38,7 @@
                 if (slash == '/') is_empty = is_empty.substring(1);
                 tinymce.get('textarea_{{ $name }}').insertContent('<img src="' + '{{ URL::asset('') }}' +
                     is_empty +
+                    '" data-mce-src="' + '{{ URL::asset('') }}' + is_empty +
                     '" style="width:100px;height:100px;">');
             }
             $(this).val("");
