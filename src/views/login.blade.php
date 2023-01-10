@@ -103,8 +103,8 @@
                 @endif
 
                 <div class="form-group has-feedback">
-                    <input autocomplete='off' type="text" class="form-control" name='email' required
-                        placeholder="Email" />
+                    <input autocomplete='off' type="text" class="form-control" name='email'
+                        value="{{ Session::get('remember_email') }}" required placeholder="Email" />
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
@@ -137,13 +137,22 @@
         </div><!-- /.login-box-body -->
 
     </div><!-- /.login-box -->
-
-    <script src="{{asset('vendor/crudbooster/assets/js/main.js')}}"></script>
-
     <!-- jQuery 2.2.3 -->
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
     <!-- Bootstrap 3.4.1 JS -->
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/bootstrap/js/bootstrap.min.js') }}" type="text/javascript">
+    </script>
+    <script>
+        const togglePassword = document.querySelector('#togglePassword');
+        const password = document.querySelector('#id_password');
+
+        togglePassword.addEventListener('click', function(e) {
+            // toggle the type attribute
+            const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+            password.setAttribute('type', type);
+            // toggle the eye slash icon
+
+        });
     </script>
 </body>
 

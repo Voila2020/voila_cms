@@ -83,7 +83,7 @@ class AdminController extends CBController
 
             $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', $users->id_cms_privileges)->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
 
-            $photo = ($users->photo) ? asset($users->photo) : asset('vendor/crudbooster/avatar.jpg');
+            $photo = ($users->photo) ? asset($users->photo) : asset(CRUDBooster::getSetting('default_img'));
             Session::put('admin_id', $users->id);
             Session::put('admin_is_superadmin', $priv->is_superadmin);
             Session::put('admin_name', $users->name);
@@ -102,7 +102,10 @@ class AdminController extends CBController
 
             return redirect(CRUDBooster::adminPath());
         } else {
-            return redirect()->route('getLogin')->with('message', cbLang('alert_password_wrong'));
+            return redirect()->route('getLogin')->with([
+                'message' => cbLang('alert_password_wrong'),
+                'remember_email' => $email
+            ]);
         }
     }
 

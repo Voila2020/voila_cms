@@ -317,6 +317,16 @@ class CBSeeder extends Seeder
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'default_img',
+                'label' => 'Default Image',
+                'content' => '',
+                'content_input_type' => 'upload_image',
+                'group_setting' => cbLang('application_setting'),
+                'dataenum' => null,
+                'helper' => null,
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'favicon',
                 'label' => 'Favicon',
                 'content' => '',
