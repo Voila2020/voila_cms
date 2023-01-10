@@ -5,6 +5,7 @@ namespace crocodicstudio\crudbooster\helpers;
 use crocodicstudio\crudbooster\controllers\AdminController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\controllers\PasswordReset;
+use crocodicstudio\crudbooster\controllers\SeoController;
 use crocodicstudio\crudbooster\middlewares\CBAuthAPI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;
@@ -163,6 +164,9 @@ class CBRouter
         ], function () {
             Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
             Route::post('/sort-table', [AdminController::class, 'postSortTable'])->name('sortTable');
+            Route::get('/seo-home', [SeoController::class, 'get'])->name('seo-home');
+            Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'get'])->name('seo-model');
+            Route::post('/seo-store', [SeoController::class, 'store'])->name('seo-store');
         });
 
         Route::group([
