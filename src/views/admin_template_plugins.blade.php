@@ -53,6 +53,8 @@
     var NOTIFICATION_NOTIFICATIONS = "{{cbLang('notification_notification')}}";
     var NOTIFICATION_NEW = "{{cbLang('notification_new')}}";
 
+    var NOTIFICATION_ACTIVE = "{{ Crudbooster::getSetting('activate_notifications') }}";
+
     $(function () {
         $('.datatables-simple').DataTable();
     })

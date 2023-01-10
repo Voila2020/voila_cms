@@ -59,6 +59,13 @@
         body {
             overflow: hidden;
         }
+
+        .password-reset {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -66,11 +73,9 @@
 
     <div class="login-box">
         <div class="login-logo">
-            <a href="{{ url('/') }}">
-                <img title='{!! Session::get('appname') == 'CRUDBooster' ? '<b>CRUD</b>Booster' : CRUDBooster::getSetting('appname') !!}'
-                    src='{{ CRUDBooster::getSetting('logo') ? asset(CRUDBooster::getSetting('logo')) : asset('vendor/crudbooster/assets/voila_logo.png') }}'
-                    style='max-width: 100%;max-height:170px' />
-            </a>
+            <img title='{!! Session::get('appname') == 'CRUDBooster' ? '<b>CRUD</b>Booster' : CRUDBooster::getSetting('appname') !!}'
+                src='{{ CRUDBooster::getSetting('logo') ? asset(CRUDBooster::getSetting('logo')) : asset('vendor/crudbooster/assets/voila_logo.png') }}'
+                style='max-width: 100%;max-height:170px' />
         </div><!-- /.login-logo -->
         <div class="login-box-body">
 
@@ -103,9 +108,12 @@
                     <span class="glyphicon glyphicon-user form-control-feedback"></span>
                 </div>
                 <div class="form-group has-feedback">
-                    <input autocomplete='off' type="password" class="form-control" name='password' required
-                        placeholder="Password" />
-                    <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    <input autocomplete='off' type="password" id="id_password" class="form-control" name='password'
+                        required placeholder="Password" />
+                    <div id="togglePassword" class="password-reset">
+                        <span class="glyphicon glyphicon-eye-open"></span>
+                    </div>
+
                 </div>
                 <div style="margin-bottom:10px" class='row'>
                     <div class='col-xs-12'>
@@ -130,6 +138,7 @@
 
     </div><!-- /.login-box -->
 
+    <script src="{{asset('vendor/crudbooster/assets/js/main.js')}}"></script>
 
     <!-- jQuery 2.2.3 -->
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>

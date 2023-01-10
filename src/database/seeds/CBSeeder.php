@@ -355,6 +355,16 @@ class CBSeeder extends Seeder
                 'dataenum' => null,
                 'helper' => null,
             ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'activate_notifications',
+                'label' => 'Activate Notifications',
+                'content' => '',
+                'content_input_type' => 'select',
+                'group_setting' => cbLang('application_setting'),
+                'dataenum' => 'true,false',
+                'helper' => null,
+            ],
         ];
 
         foreach ($data as $row) {
