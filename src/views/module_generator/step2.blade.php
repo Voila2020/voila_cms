@@ -270,6 +270,7 @@
                     var tr = $(this).parent().parent();
                     if ($(this).val() == 1) {
                         tr.find('.is_download').val(0);
+                        tr.find('.is_switch').val(0);
                     }
                 })
 
@@ -277,6 +278,15 @@
                     var tr = $(this).parent().parent();
                     if ($(this).val() == 1) {
                         tr.find('.is_image').val(0);
+                        tr.find('.is_switch').val(0);
+                    }
+                })
+
+                $(document).on('change', '.is_switch', function() {
+                    var tr = $(this).parent().parent();
+                    if ($(this).val() == 1) {
+                        tr.find('.is_image').val(0);
+                        tr.find('.is_download').val(0);
                     }
                 })
 

@@ -142,7 +142,7 @@
     <!-- Bootstrap 3.4.1 JS -->
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/bootstrap/js/bootstrap.min.js') }}" type="text/javascript">
     </script>
-    <script>
+    <script language="javascript">
         const togglePassword = document.querySelector('#togglePassword');
         const password = document.querySelector('#id_password');
 
@@ -150,6 +150,14 @@
             // toggle the type attribute
             const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
             password.setAttribute('type', type);
+            if (togglePassword.querySelector('.glyphicon').classList.contains('glyphicon-eye-open')) {
+                togglePassword.querySelector('.glyphicon').classList.remove('glyphicon-eye-open');
+                togglePassword.querySelector('.glyphicon').classList.add('glyphicon-eye-close');
+            } else {
+                togglePassword.querySelector('.glyphicon').classList.add('glyphicon-eye-open');
+                togglePassword.querySelector('.glyphicon').classList.remove('glyphicon-eye-close');
+            }
+
             // toggle the eye slash icon
 
         });
