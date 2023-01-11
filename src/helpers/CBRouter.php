@@ -166,7 +166,7 @@ class CBRouter
             Route::post('/sort-table', [AdminController::class, 'postSortTable'])->name('sortTable');
             Route::get('/seo-home', [SeoController::class, 'get'])->name('seo-home');
             Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'get'])->name('seo-model');
-            Route::post('/seo-store', [SeoController::class, 'store'])->name('seo-store');
+            Route::post('/seo-store/{model}', [SeoController::class, 'store'])->name('seo-store');
         });
 
         Route::group([

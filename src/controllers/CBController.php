@@ -523,6 +523,7 @@ class CBController extends Controller
                     'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']),
                     'color' => $s['button_color'],
                     'showIf' => $s['showIf'],
+                    'target' => isset($s['target']) ?: '_self'
                 ];
             }
         }
@@ -555,9 +556,14 @@ class CBController extends Controller
                 $title = @$row->{$this->title_field};
                 $label = $col['label'];
 
+                if (@$col['str_limit']) {
+                    $value = trim(strip_tags($value));
+                    $value = substr($value, 0, $col['str_limit']);
+                }
+
                 if (isset($col['image'])) {
                     if ($value == '') {
-                        $value = "<a  data-lightbox='roadtrip' rel='group_{{$table}}' title='$label: $title' href='" . asset(CRUDBooster::getSetting('default_img')) . "'><img width='40px' height='40px' src='" . asset(CRUDBooster::getSetting('default_img')) . "'/></a>";
+                        $value = "<a  data-lightbox='roadtrip' rel='group_{{$table}}' title='$label: $title' href='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'><img width='40px' height='40px' src='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'/></a>";
                     } else {
                         $pic = (strpos($value, 'http://') !== false) ? $value : asset($value);
                         $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $pic . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
@@ -581,10 +587,6 @@ class CBController extends Controller
                             <label class='cms_switch_label' for='{$col["name"]}_{$row->id}'>Toggle</label>";
                 }
 
-                if ($col['str_limit']) {
-                    $value = trim(strip_tags($value));
-                    $value = str_limit($value, $col['str_limit']);
-                }
 
                 if ($col['nl2br']) {
                     $value = nl2br($value);

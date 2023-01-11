@@ -160,8 +160,8 @@
                         }
 
                         @eval("if($query) {
-                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                          }");
+                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                                                                                                  }");
                         ?>
                     @endforeach
                     <?php echo "<tr class='$tr_color'>"; ?>
@@ -225,34 +225,36 @@ $total = $result->total();
     @push('bottom')
         <script>
             $(function() {
-                $('#table_dashboard tbody').sortable({
-                    axis: 'y',
-                    update: function(event, ui) {
-                        var data_list = new Array();
-                        $('#table_dashboard').find('tbody tr').each(function(e) {
-                            data_list.push($(this).attr('id'));
-                        });
-                        var table = '{{ $table }}';
-                        console.log("print array => ", data_list, " table=>", table);
-                        $('html, body').css("cursor", "wait");
+                if ("{{ $button_sortable }}" == 1) {
+                    $('#table_dashboard tbody').sortable({
+                        axis: 'y',
+                        update: function(event, ui) {
+                            var data_list = new Array();
+                            $('#table_dashboard').find('tbody tr').each(function(e) {
+                                data_list.push($(this).attr('id'));
+                            });
+                            var table = '{{ $table }}';
+                            console.log("print array => ", data_list, " table=>", table);
+                            $('html, body').css("cursor", "wait");
 
-                        // POST to server using $.post or $.ajax
-                        $.ajax({
-                            data: {
-                                data: data_list,
-                                table_name: table
-                            },
-                            type: 'POST',
-                            url: 'sort-table',
-                            success: function(data) {
-                                $('html, body').css("cursor", "auto");
-                            },
-                            error: function(data) {
-                                $('html, body').css("cursor", "auto");
-                            }
-                        });
-                    }
-                });
+                            // POST to server using $.post or $.ajax
+                            $.ajax({
+                                data: {
+                                    data: data_list,
+                                    table_name: table
+                                },
+                                type: 'POST',
+                                url: 'sort-table',
+                                success: function(data) {
+                                    $('html, body').css("cursor", "auto");
+                                },
+                                error: function(data) {
+                                    $('html, body').css("cursor", "auto");
+                                }
+                            });
+                        }
+                    });
+                }
 
                 // Sortable column heads
 

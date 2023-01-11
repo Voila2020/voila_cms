@@ -91,7 +91,6 @@ class ModulsController extends CBController
                 'exception' => true,
             ];
 
-
             $this->form[] = [
                 "label" => "Global Privilege",
                 "name" => "global_privilege",
@@ -408,6 +407,7 @@ class ModulsController extends CBController
         $is_download = Request::input('is_download');
         $is_switch = Request::input('is_switch');
         $callbackphp = Request::input('callbackphp');
+        $str_limit = Request::input('str_limit');
         $id = Request::input('id');
         $width = Request::input('width');
 
@@ -437,6 +437,10 @@ class ModulsController extends CBController
 
             if ($is_switch[$i]) {
                 $script_cols[$i] .= ',"switch"=>true';
+            }
+
+            if($str_limit[$i]){
+                $script_cols[$i] .= ',"str_limit"=>"' . $str_limit[$i] . '"';
             }
 
             if ($width[$i]) {

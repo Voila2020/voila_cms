@@ -2,6 +2,7 @@
 @section('title', 'SEO') @section('content')
 
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
+<script src="{{ asset ('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
 
 
 <div class="row">
@@ -21,7 +22,7 @@
                     </div>
                 @endif
 
-                <form enctype="multipart/form-data" action="{{ url('/seo-store/' . $type) }}" class="form-horizontal"
+                <form enctype="multipart/form-data" action="{{ url(CRUDBooster::adminPath() . '/seo-store/' . $type) }}" class="form-horizontal"
                     method="post">
                     {{ csrf_field() }}
                     <input type="hidden" name="model_id" value="{{ $id }}">

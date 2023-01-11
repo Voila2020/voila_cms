@@ -49,7 +49,7 @@ class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
                 $seoOld = DB::table('cms_seo')->where($conditions)->delete();
             }
 
-            DB::table('cms_seo')->create([
+            DB::table('cms_seo')->insert([
                 'title_ar' => ($request->title_ar) ? $request->title_ar : null,
                 'title_en' => ($request->title_en) ? $request->title_en : null,
                 'description_ar' => ($request->description_ar) ? $request->description_ar : null,
@@ -61,7 +61,8 @@ class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
                 'model_id' => ($request->model_id) ? $request->model_id : null,
                 'model' => $model,
                 'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now()
+                'updated_at' => Carbon::now(),
+                'active' => 1
             ]);
 
             return CRUDBooster::redirectBack(cbLang("alert_update_data_success"), 'success');

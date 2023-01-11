@@ -1,6 +1,7 @@
 <?php
 //namespace Database\Seeders; Fix: Target class [CBSeeder] does not exist.
 
+use Carbon\Carbon;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -440,6 +441,20 @@ class CBSeeder extends Seeder
                 $i++;
             }
         }
+
+        DB::table('cms_menus')->insert([
+            'name' => 'SEO',
+            'type' => 'Route',
+            'path' => 'seo-home',
+            'color' => 'normal',
+            'icon' => 'fa fa-language',
+            'parent_id' => 0,
+            'is_active' => 1,
+            'is_dashboard' => 0,
+            'id_cms_privileges' => 1,
+            'created_at' => Carbon::now(),
+            'updated_at' => Carbon::now()
+        ]);
         $this->command->info("Create roles completed");
         # CB Privilege End
 
