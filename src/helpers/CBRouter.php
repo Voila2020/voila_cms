@@ -167,6 +167,11 @@ class CBRouter
             Route::get('/seo-home', [SeoController::class, 'get'])->name('seo-home');
             Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'get'])->name('seo-model');
             Route::post('/seo-store/{model}', [SeoController::class, 'store'])->name('seo-store');
+            Route::get('/languages', [TranslationController::class, 'index'])->name('languages');
+            Route::post('translations/update', [TranslationController::class, 'transUpdate'])->name('translation.update.json');
+            Route::post('translations/updateKey', [TranslationController::class, 'transUpdateKey'])->name('translation.update.json.key');
+            Route::delete('translations/destroy/{key}', [TranslationController::class, 'destroy'])->name('translations.destroy');
+            Route::post('translations/create', [TranslationController::class, 'store'])->name('translations.create');
         });
 
         Route::group([
