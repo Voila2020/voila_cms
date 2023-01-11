@@ -441,22 +441,66 @@ class CBSeeder extends Seeder
                 $i++;
             }
         }
-
-        DB::table('cms_menus')->insert([
-            'name' => 'SEO',
-            'type' => 'Route',
-            'path' => 'seo-home',
-            'color' => 'normal',
-            'icon' => 'fa fa-language',
-            'parent_id' => 0,
-            'is_active' => 1,
-            'is_dashboard' => 0,
-            'id_cms_privileges' => 1,
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now()
-        ]);
         $this->command->info("Create roles completed");
         # CB Privilege End
+
+        # Voia Seeder Start
+        if (DB::table('cms_menus')->count() == 0) {
+            $data = [
+                [
+                    'name' => 'SEO',
+                    'type' => 'Route',
+                    'path' => 'seo-home',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-language',
+                    'parent_id' => 0,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ],
+                [
+                    'name' => 'Labels Translation',
+                    'type' => 'Route',
+                    'path' => 'languages',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-language',
+                    'parent_id' => 0,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ]
+            ];
+            DB::table('cms_menus')->insert($data);
+        }
+        $menus = DB::table('cms_menus')->get();
+        foreach ($menus as $menu) {
+            $menuPrivilege = DB::table('cms_menus_privileges')
+                ->where('id_cms_privileges', 1)
+                ->where('id_cms_menus', $menu->id)
+                ->first();
+            if (!$menuPrivilege) {
+                DB::table('cms_menus_privileges')->insert([
+                    'id_cms_menus' => $menu->id,
+                    'id_cms_privileges' => 1
+                ]);
+            }
+        }
+        $data = [
+            [
+                'name' => 'English',
+                'code' => 'en'
+            ],
+            [
+                'name' => 'Arabic',
+                'code' => 'ar'
+            ]
+        ];
+        DB::table('languages')->insert($data);
+        # Voila Seeder End
 
         $this->command->info('All cb seeders completed !');
     }
