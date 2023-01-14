@@ -226,8 +226,8 @@ class ModulsController extends CBController
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-
-        if (!CRUDBooster::isView() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_read');
+        if (!CRUDBooster::isView() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }

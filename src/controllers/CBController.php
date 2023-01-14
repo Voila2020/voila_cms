@@ -651,7 +651,6 @@ class CBController extends Controller
 
     public function getExportData()
     {
-
         return redirect(CRUDBooster::mainpath());
     }
 

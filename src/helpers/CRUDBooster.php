@@ -4,6 +4,7 @@ namespace crocodicstudio\crudbooster\helpers;
 
 use Cache;
 use DB;
+use Illuminate\Support\Facades\DB as FacadesDB;
 use Image;
 use Request;
 use Route;
@@ -511,8 +512,14 @@ class CRUDBooster
                 $menu->children = $child;
             }
         }
-
-        return $menu_active;
+        $myModuls = DB::table('cms_moduls')
+            ->where('cms_moduls.is_protected', 1)
+            ->join('cms_privileges_roles', function ($q) {
+                $q->on('cms_moduls.id', '=', 'cms_privileges_roles.id_cms_moduls')
+                    ->where('cms_privileges_roles.id_cms_privileges', '=', self::myPrivilegeId())
+                    ->where('cms_privileges_roles.is_read', 1);
+            })->get();
+        return [$menu_active, $myModuls];
     }
 
     public static function deleteConfirm($redirectTo)
@@ -1925,5 +1932,14 @@ class CRUDBooster
             }
         } catch (\Exception $e) {
         }
+    }
+
+    public static function checkHasRole($cms_module_table, $condition)
+    {
+        return FacadesDB::table($cms_module_table)
+            ->where('id_cms_moduls', self::getCurrentModule()->id)
+            ->where('id_cms_privileges', self::myPrivilegeId())
+            ->where($condition, 1)
+            ->get();
     }
 }

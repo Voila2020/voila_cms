@@ -1,4 +1,6 @@
-<?php namespace crocodicstudio\crudbooster\controllers;
+<?php
+
+namespace crocodicstudio\crudbooster\controllers;
 
 use CRUDBooster;
 use Illuminate\Support\Facades\Cache;
@@ -59,13 +61,13 @@ class MenusController extends CBController
 					$('#form-group-module_slug').show();
 					$('#form-group-statistic_slug,#form-group-path').hide();
 					$('#module_slug').prop('required',true);
-					$('#form-group-module_slug label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+					$('#form-group-module_slug label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 				}else if(type_menu == 'Statistic') {
 					$('#form-group-statistic_slug').show();
 					$('#module_slug').prop('required',false);
 					$('#form-group-module_slug,#form-group-path').hide();
 					$('#statistic_slug').prop('required',true);
-					$('#form-group-statistic_slug label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+					$('#form-group-statistic_slug label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 				}else{
 					$('#module_slug').prop('required',false);
 					$('#form-group-module_slug,#form-group-statistic_slug').hide();
@@ -73,7 +75,7 @@ class MenusController extends CBController
 				}
 
 
-				function format(icon) {          
+				function format(icon) {
 	                  var originalOption = icon.element;
 	                  var label = $(originalOption).text();
 	                  var val = $(originalOption).val();
@@ -110,13 +112,13 @@ class MenusController extends CBController
 						$('#form-group-statistic_slug').show();
 						$('#statistic_slug').prop('required',true);
 						$('#form-group-statistic_slug label .text-danger').remove();
-						$('#form-group-statistic_slug label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+						$('#form-group-statistic_slug label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 					}else if (n == 'URL') {
 						$('input[name=path]').attr('placeholder','Please enter your URL');
 
 						$('#path').prop('required',true);
 						$('#form-group-path label .text-danger').remove();
-						$('#form-group-path label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+						$('#form-group-path label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 
 						$('#form-group-path').show();
 						$('#form-group-module_slug,#form-group-statistic_slug').hide();
@@ -125,16 +127,16 @@ class MenusController extends CBController
 
 						$('#path').prop('required',true);
 						$('#form-group-path label .text-danger').remove();
-						$('#form-group-path label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+						$('#form-group-path label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 
 						$('#form-group-path').show();
-						$('#form-group-module_slug,#form-group-statistic_slug').hide();					
+						$('#form-group-module_slug,#form-group-statistic_slug').hide();
 					}else {
 						$('#module_slug,#statistic_slug').prop('required',false);
-						
+
 						$('#path').prop('required',true);
 						$('#form-group-path label .text-danger').remove();
-						$('#form-group-path label').append('<span class=\"text-danger\" title=\"".cbLang('this_field_is_required')."\">*</span>');
+						$('#form-group-path label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 
 						$('#form-group-path').show();
 						$('#form-group-module_slug,#form-group-statistic_slug').hide();
@@ -240,7 +242,7 @@ class MenusController extends CBController
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-        if (! CRUDBooster::isView() && $this->global_privilege == false) {
+        if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
@@ -277,14 +279,14 @@ class MenusController extends CBController
 
     public function hook_before_add(&$postdata)
     {
-        if (! $postdata['id_cms_privileges']) {
+        if (!$postdata['id_cms_privileges']) {
             $postdata['id_cms_privileges'] = CRUDBooster::myPrivilegeId();
         }
         $postdata['parent_id'] = 0;
 
         if ($postdata['type'] == 'Statistic') {
             $stat = CRUDBooster::first('cms_statistics', ['id' => $postdata['statistic_slug']]);
-            $postdata['path'] = 'statistic_builder/show/'.$stat->slug;
+            $postdata['path'] = 'statistic_builder/show/' . $stat->slug;
         } elseif ($postdata['type'] == 'Module') {
             $stat = CRUDBooster::first('cms_moduls', ['id' => $postdata['module_slug']]);
             $postdata['path'] = $stat->path;
@@ -296,7 +298,7 @@ class MenusController extends CBController
         if ($postdata['is_dashboard'] == 1) {
             //If set dashboard, so unset for first all dashboard
             //DB::table('cms_menus')->where('id_cms_privileges', $postdata['id_cms_privileges'])->where('is_dashboard', 1)->update(['is_dashboard' => 0]);
-            Cache::forget('sidebarDashboard'.CRUDBooster::myPrivilegeId());
+            Cache::forget('sidebarDashboard' . CRUDBooster::myPrivilegeId());
         }
     }
 
@@ -306,12 +308,12 @@ class MenusController extends CBController
         if ($postdata['is_dashboard'] == 1) {
             //If set dashboard, so unset for first all dashboard
             //DB::table('cms_menus')->where('id_cms_privileges', $postdata['id_cms_privileges'])->where('is_dashboard', 1)->update(['is_dashboard' => 0]);
-            Cache::forget('sidebarDashboard'.CRUDBooster::myPrivilegeId());
+            Cache::forget('sidebarDashboard' . CRUDBooster::myPrivilegeId());
         }
 
         if ($postdata['type'] == 'Statistic') {
             $stat = CRUDBooster::first('cms_statistics', ['id' => $postdata['statistic_slug']]);
-            $postdata['path'] = 'statistic_builder/show/'.$stat->slug;
+            $postdata['path'] = 'statistic_builder/show/' . $stat->slug;
         } elseif ($postdata['type'] == 'Module') {
             $stat = CRUDBooster::first('cms_moduls', ['id' => $postdata['module_slug']]);
             $postdata['path'] = $stat->path;

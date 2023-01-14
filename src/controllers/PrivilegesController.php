@@ -1,4 +1,6 @@
-<?php namespace crocodicstudio\crudbooster\controllers;
+<?php
+
+namespace crocodicstudio\crudbooster\controllers;
 
 use CRUDBooster;
 use Illuminate\Support\Facades\DB;
@@ -45,15 +47,44 @@ class PrivilegesController extends CBController
     public function getAdd()
     {
         $this->cbLoader();
-
-        if (! CRUDBooster::isCreate() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_read');
+        if (!CRUDBooster::isCreate() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang('log_try_add', ['module' => CRUDBooster::getCurrentModule()->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang("denied_access"));
         }
 
         $id = 0;
         $data['page_title'] = "Add Data";
-        $data['moduls'] = DB::table("cms_moduls")->where('is_protected', 0)->whereNull('deleted_at')->select("cms_moduls.*", DB::raw("(select is_visible from cms_privileges_roles where id_cms_moduls = cms_moduls.id and id_cms_privileges = '$id') as is_visible"), DB::raw("(select is_create from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_create"), DB::raw("(select is_read from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_read"), DB::raw("(select is_edit from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_edit"), DB::raw("(select is_delete from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_delete"))->orderby("name", "asc")->get();
+        if (CRUDBooster::isSuperAdmin()) {
+            $data['moduls'] = DB::table("cms_moduls")->where('is_protected', 0)
+                ->whereNull('deleted_at')
+                ->select(
+                    "cms_moduls.*",
+                    DB::raw("(select is_visible from cms_privileges_roles where id_cms_moduls = cms_moduls.id and id_cms_privileges = '$id') as is_visible"),
+                    DB::raw("(select is_create from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_create"),
+                    DB::raw("(select is_read from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_read"),
+                    DB::raw("(select is_edit from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_edit"),
+                    DB::raw("(select is_delete from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_delete")
+                )
+                ->orderby("name", "asc")
+                ->get();
+        } else {
+            $data['moduls'] = DB::table("cms_moduls")->whereNull('deleted_at')
+                ->join('cms_privileges_roles', function ($q) {
+                    $q->on('cms_moduls.id', 'cms_privileges_roles.id_cms_moduls')
+                    ->where('cms_privileges_roles.id_cms_privileges', CRUDBooster::myPrivilegeId());
+                })
+                ->select(
+                    "cms_moduls.*",
+                    DB::raw("(select is_visible from cms_privileges_roles where id_cms_moduls = cms_moduls.id and id_cms_privileges = '$id') as is_visible"),
+                    DB::raw("(select is_create from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_create"),
+                    DB::raw("(select is_read from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_read"),
+                    DB::raw("(select is_edit from cms_privileges_roles where id_cms_moduls    = cms_moduls.id and id_cms_privileges = '$id') as is_edit"),
+                    DB::raw("(select is_delete from cms_privileges_roles where id_cms_moduls  = cms_moduls.id and id_cms_privileges = '$id') as is_delete")
+                )
+                ->orderby("name", "asc")
+                ->get();
+        }
         $data['page_menu'] = Route::getCurrentRoute()->getActionName();
 
         return view('crudbooster::privileges', $data);
@@ -62,8 +93,8 @@ class PrivilegesController extends CBController
     public function postAddSave()
     {
         $this->cbLoader();
-
-        if (! CRUDBooster::isCreate() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_create');
+        if (!CRUDBooster::isCreate() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang('log_try_add_save', [
                 'name' => Request::input($this->title_field),
                 'module' => CRUDBooster::getCurrentModule()->name,
@@ -107,8 +138,8 @@ class PrivilegesController extends CBController
         $this->cbLoader();
 
         $row = DB::table($this->table)->where("id", $id)->first();
-
-        if (! CRUDBooster::isRead() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_edit');
+        if (!CRUDBooster::isRead() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang("log_try_edit", [
                 'name' => $row->{$this->title_field},
                 'module' => CRUDBooster::getCurrentModule()->name,
@@ -118,7 +149,8 @@ class PrivilegesController extends CBController
 
         $page_title = cbLang('edit_data_page_title', ['module' => 'Privilege', 'name' => $row->name]);
 
-        $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
+        // $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
+        $moduls = DB::table("cms_moduls")->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
         $page_menu = Route::getCurrentRoute()->getActionName();
 
         return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu'));
@@ -129,8 +161,8 @@ class PrivilegesController extends CBController
         $this->cbLoader();
 
         $row = CRUDBooster::first($this->table, $id);
-
-        if (! CRUDBooster::isUpdate() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_edit');
+        if (!CRUDBooster::isUpdate() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang("log_try_add", ['name' => $row->{$this->title_field}, 'module' => CRUDBooster::getCurrentModule()->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
@@ -193,8 +225,8 @@ class PrivilegesController extends CBController
         $this->cbLoader();
 
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
-
-        if (! CRUDBooster::isDelete() && $this->global_privilege == false) {
+        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_delete');
+        if (!CRUDBooster::isDelete() && $this->global_privilege == false && !count($hasRole)) {
             CRUDBooster::insertLog(cbLang("log_try_delete", [
                 'name' => $row->{$this->title_field},
                 'module' => CRUDBooster::getCurrentModule()->name,

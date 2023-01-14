@@ -460,7 +460,7 @@ a:focus {
   }
 }
 .sidebar {
-  padding-bottom: 10px;
+  padding-bottom: 0px;
 }
 .sidebar-form input:focus {
   border-color: transparent;
