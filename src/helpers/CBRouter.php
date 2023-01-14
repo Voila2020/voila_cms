@@ -6,6 +6,7 @@ use crocodicstudio\crudbooster\controllers\AdminController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\controllers\PasswordReset;
 use crocodicstudio\crudbooster\controllers\SeoController;
+use crocodicstudio\crudbooster\controllers\TranslationController;
 use crocodicstudio\crudbooster\middlewares\CBAuthAPI;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Route;

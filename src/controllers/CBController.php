@@ -7,6 +7,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 use CB;
 use crocodicstudio\crudbooster\export\DefaultExportXls;
+use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 use CRUDBooster;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
@@ -641,7 +642,11 @@ class CBController extends Controller
 
         $data['html_contents'] = $html_contents;
 
-        return view("crudbooster::default.index", $data);
+        $manualView = null;
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.index'))
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.index', $data);
+        $view = $manualView ?: view("crudbooster::default.index", $data);
+        return $view;
     }
 
     public function getExportData()
@@ -1140,8 +1145,11 @@ class CBController extends Controller
         $page_title = cbLang("add_data_page_title", ['module' => CRUDBooster::getCurrentModule()->name]);
         $page_menu = Route::getCurrentRoute()->getActionName();
         $command = 'add';
-
-        return view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
+        $manualView = null;
+        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView =  view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+        $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
+        return $view;
     }
 
     public function postAddSave()
@@ -1287,8 +1295,11 @@ class CBController extends Controller
         $page_title = cbLang("edit_data_page_title", ['module' => CRUDBooster::getCurrentModule()->name, 'name' => $row->{$this->title_field}]);
         $command = 'edit';
         Session::put('current_row_id', $id);
-
-        return view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        $manualView = null;
+        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView = view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        return $view;
     }
 
 
@@ -1472,8 +1483,11 @@ class CBController extends Controller
         $command = 'detail';
 
         Session::put('current_row_id', $id);
-
-        return view('crudbooster::default.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        $manualView = null;
+        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView =  view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        $view = $manualView ?: view('crudbooster::default.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        return $view;
     }
 
     public function getImportData()
