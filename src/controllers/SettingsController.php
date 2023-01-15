@@ -69,8 +69,7 @@ class SettingsController extends CBController
 
     function getShow()
     {
-        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_read');
-        if (!CRUDBooster::isSuperadmin() && !count($hasRole)) {
+        if (!CRUDBooster::isSuperadmin() && !CRUDBooster::isView()) {
             CRUDBooster::insertLog(cbLang("log_try_view", ['name' => 'Setting', 'module' => 'Setting']));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
@@ -99,8 +98,7 @@ class SettingsController extends CBController
 
     function postSaveSetting()
     {
-        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_create');
-        if (!CRUDBooster::isSuperadmin() && !count($hasRole)) {
+        if (!CRUDBooster::isSuperadmin() && !CRUDBooster::isUpdate()) {
             CRUDBooster::insertLog(cbLang("log_try_view", ['name' => 'Setting', 'module' => 'Setting']));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }

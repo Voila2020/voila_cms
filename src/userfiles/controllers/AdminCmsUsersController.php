@@ -11,7 +11,6 @@ use crocodicstudio\crudbooster\controllers\CBController;
 class AdminCmsUsersController extends CBController
 {
 
-
     public function cbInit()
     {
         # START CONFIGURATION DO NOT REMOVE THIS LINE
@@ -51,6 +50,7 @@ class AdminCmsUsersController extends CBController
         $this->button_show    = FALSE;
         $this->button_add     = FALSE;
         $this->button_delete  = FALSE;
+        $this->button_sortable = false;
         // $this->hide_form 	  = ['id_cms_privileges'];
 
         $data['page_title'] = cbLang("label_button_profile");

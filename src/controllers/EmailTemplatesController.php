@@ -1,4 +1,6 @@
-<?php namespace crocodicstudio\crudbooster\controllers;
+<?php
+
+namespace crocodicstudio\crudbooster\controllers;
 
 use CRUDBooster;
 use Illuminate\Support\Facades\Excel;
@@ -25,6 +27,8 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         $this->button_filter = true;
         $this->button_export = false;
         $this->button_import = false;
+        $this->button_sortable = false;
+
 
         $this->col = [];
         $this->col[] = ["label" => "Template Name", "name" => "name"];

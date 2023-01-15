@@ -63,6 +63,7 @@ class MenusController extends CBController
 					$('#module_slug').prop('required',true);
 					$('#form-group-module_slug label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
 				}else if(type_menu == 'Statistic') {
+                    console.log('statics===');
 					$('#form-group-statistic_slug').show();
 					$('#module_slug').prop('required',false);
 					$('#form-group-module_slug,#form-group-path').hide();
@@ -104,7 +105,10 @@ class MenusController extends CBController
 						$('#form-group-module_slug').show();
 						$('#module_slug').prop('required',true);
 						$('#form-group-module_slug label .text-danger').remove();
+                        $('#form-group-additional_path').css('display', 'block');
+
 					}else if (n == 'Statistic') {
+                        console.log('statics===');
 						$('#form-group-path').hide();
 						$('#form-group-module_slug').hide();
 						$('#module_slug,#path').prop('required',false);
@@ -113,6 +117,7 @@ class MenusController extends CBController
 						$('#statistic_slug').prop('required',true);
 						$('#form-group-statistic_slug label .text-danger').remove();
 						$('#form-group-statistic_slug label').append('<span class=\"text-danger\" title=\"" . cbLang('this_field_is_required') . "\">*</span>');
+                        $('#form-group-additional_path').css('display', 'none');
 					}else if (n == 'URL') {
 						$('input[name=path]').attr('placeholder','Please enter your URL');
 
@@ -122,6 +127,7 @@ class MenusController extends CBController
 
 						$('#form-group-path').show();
 						$('#form-group-module_slug,#form-group-statistic_slug').hide();
+                        $('#form-group-additional_path').css('display', 'none');
 					}else if (n == 'Route') {
 						$('input[name=path]').attr('placeholder','Please enter the Route');
 
@@ -131,6 +137,7 @@ class MenusController extends CBController
 
 						$('#form-group-path').show();
 						$('#form-group-module_slug,#form-group-statistic_slug').hide();
+                        $('#form-group-additional_path').css('display', 'none');
 					}else {
 						$('#module_slug,#statistic_slug').prop('required',false);
 
@@ -140,6 +147,7 @@ class MenusController extends CBController
 
 						$('#form-group-path').show();
 						$('#form-group-module_slug,#form-group-statistic_slug').hide();
+                        $('#form-group-additional_path').css('display', 'none');
 					}
 				})
 			})
@@ -181,9 +189,19 @@ class MenusController extends CBController
             "name" => "module_slug",
             "type" => "select",
             "datatable" => "cms_moduls,name",
-            "datatable_where" => "is_protected = 0",
+            // "datatable_where" => "is_protected = 0",
             "value" => $id_module,
         ];
+
+        $this->form[] = [
+            "label" => "Additional Path",
+            "name" => "additional_path",
+            "type" => "text",
+            'help' => 'If you select type Module, you can write additional route path',
+            'placeholder' => '',
+            "style" => "display:block",
+        ];
+
         $this->form[] = [
             "label" => "Statistic",
             "name" => "statistic_slug",
@@ -240,7 +258,6 @@ class MenusController extends CBController
     public function getIndex()
     {
         $this->cbLoader();
-
         $module = CRUDBooster::getCurrentModule();
         if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
@@ -271,9 +288,7 @@ class MenusController extends CBController
         }
 
         $return_url = Request::fullUrl();
-
         $page_title = 'Menu Management';
-
         return view('crudbooster::menus_management', compact('menu_active', 'menu_inactive', 'privileges', 'id_cms_privileges', 'return_url', 'page_title'));
     }
 

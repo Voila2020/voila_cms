@@ -174,6 +174,7 @@ class CRUDBooster
 
     public static function first($table, $id)
     {
+
         $table = self::parseSqlTable($table)['table'];
         if (is_array($id)) {
             $first = DB::table($table);
@@ -295,7 +296,6 @@ class CRUDBooster
         if (self::isSuperadmin()) {
             return true;
         }
-
         $session = Session::get('admin_privileges_roles');
         foreach ($session as $v) {
             if ($v->path == self::getModulePath()) {
@@ -447,7 +447,6 @@ class CRUDBooster
     public static function sidebarMenu()
     {
         $menu_active = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('parent_id', 0)->where('is_active', 1)->where('is_dashboard', 0)->orderby('sorting', 'asc')->select('cms_menus.*')->get();
-
         foreach ($menu_active as &$menu) {
 
             try {
@@ -474,7 +473,7 @@ class CRUDBooster
                 $menu->is_broken = true;
             }
 
-            $menu->url = $url;
+            $menu->url = $url . $menu->additional_path;
             $menu->url_path = trim(str_replace(url('/'), '', $url), "/");
 
             $child = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('is_dashboard', 0)->where('is_active', 1)->where('parent_id', $menu->id)->select('cms_menus.*')->orderby('sorting', 'asc')->get();
@@ -505,7 +504,7 @@ class CRUDBooster
                         $c->is_broken = true;
                     }
 
-                    $c->url = $url;
+                    $c->url = $url . $c->additional_path;
                     $c->url_path = trim(str_replace(url('/'), '', $url), "/");
                 }
 
@@ -519,6 +518,7 @@ class CRUDBooster
                     ->where('cms_privileges_roles.id_cms_privileges', '=', self::myPrivilegeId())
                     ->where('cms_privileges_roles.is_read', 1);
             })->get();
+
         return [$menu_active, $myModuls];
     }
 
@@ -1932,14 +1932,5 @@ class CRUDBooster
             }
         } catch (\Exception $e) {
         }
-    }
-
-    public static function checkHasRole($cms_module_table, $condition)
-    {
-        return FacadesDB::table($cms_module_table)
-            ->where('id_cms_moduls', self::getCurrentModule()->id)
-            ->where('id_cms_privileges', self::myPrivilegeId())
-            ->where($condition, 1)
-            ->get();
     }
 }

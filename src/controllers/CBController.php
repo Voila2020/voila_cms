@@ -218,7 +218,6 @@ class CBController extends Controller
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-
         if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
@@ -651,6 +650,7 @@ class CBController extends Controller
 
     public function getExportData()
     {
+
         return redirect(CRUDBooster::mainpath());
     }
 
@@ -1370,7 +1370,6 @@ class CBController extends Controller
             }
 
             if ($ro['type'] == 'child') {
-                // dd(Request::all());
                 $name = str_slug($ro['label'], '');
                 $columns = $ro['columns'];
                 $getColName = Request::get($name . '-' . $columns[0]['name']);

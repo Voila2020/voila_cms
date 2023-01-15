@@ -16,6 +16,7 @@ class LogsController extends CBController
         $this->button_add = false;
         $this->button_edit = false;
         $this->button_delete = true;
+        $this->button_sortable = false;
 
         $this->col = [];
         $this->col[] = ["label" => "Time Access", "name" => "created_at"];

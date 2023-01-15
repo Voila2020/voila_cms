@@ -226,8 +226,7 @@ class ModulsController extends CBController
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-        $hasRole = CRUDBooster::checkHasRole('cms_privileges_roles', 'is_read');
-        if (!CRUDBooster::isView() && $this->global_privilege == false && !count($hasRole)) {
+        if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
@@ -240,7 +239,6 @@ class ModulsController extends CBController
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-
         if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
@@ -275,7 +273,6 @@ class ModulsController extends CBController
         $this->cbLoader();
 
         $module = CRUDBooster::getCurrentModule();
-
         if (!CRUDBooster::isView() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang('log_try_view', ['module' => $module->name]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
@@ -439,7 +436,7 @@ class ModulsController extends CBController
                 $script_cols[$i] .= ',"switch"=>true';
             }
 
-            if($str_limit[$i]){
+            if ($str_limit[$i]) {
                 $script_cols[$i] .= ',"str_limit"=>"' . $str_limit[$i] . '"';
             }
 
