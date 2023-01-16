@@ -136,16 +136,10 @@
                             </li>
                         </ul>
                     </li>
-                    <li class='treeview'>
-                        <a href='#'><i class='fa fa-th'></i> <span>{{ cbLang('Module_Generator') }}</span> <i
-                                class="fa fa-angle-{{ cbLang('right') }} pull-{{ cbLang('right') }}"></i></a>
-                        <ul class='treeview-menu'>
-                            <li
-                                class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/module_status') ? 'active' : '' }}">
-                                <a href='{{ Route('ModulsStatusControllerGetIndex') }}'><i class='fa fa-bars'></i>
-                                    <span>{{ cbLang('List_Module') }}</span></a>
-                            </li>
-                        </ul>
+
+                    <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/module_status') ? 'active' : '' }}">
+                        <a href='{{ Route('ModulsStatusControllerGetIndex') }}'><i class='fa fa-bars'></i>
+                            <span>{{ cbLang('Module_Status') }}</span></a>
                     </li>
                     <li class='treeview'>
                         <a href='#'><i class='fa fa-dashboard'></i>
