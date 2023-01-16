@@ -164,6 +164,7 @@ return [
     'API_Generator' => 'API Generator',
     'Statistic_Builder' => 'Statistic Builder',
     'Module_Generator' => 'Module Generator',
+    'Module_Status' => 'Module Status',
     'settings' => 'Settings',
     'Users_Management' => 'Users Management',
     'list_API' => 'List API (Documentation)',

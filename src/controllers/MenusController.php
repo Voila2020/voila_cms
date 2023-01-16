@@ -189,7 +189,7 @@ class MenusController extends CBController
             "name" => "module_slug",
             "type" => "select",
             "datatable" => "cms_moduls,name",
-            // "datatable_where" => "is_protected = 0",
+            "datatable_where" => "is_protected = 0",
             "value" => $id_module,
         ];
 

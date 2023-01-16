@@ -448,7 +448,6 @@ class CRUDBooster
     {
         $menu_active = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('parent_id', 0)->where('is_active', 1)->where('is_dashboard', 0)->orderby('sorting', 'asc')->select('cms_menus.*')->get();
         foreach ($menu_active as &$menu) {
-
             try {
                 switch ($menu->type) {
                     case 'Route':
@@ -469,6 +468,7 @@ class CRUDBooster
 
                 $menu->is_broken = false;
             } catch (\Exception $e) {
+
                 $url = "#";
                 $menu->is_broken = true;
             }
@@ -507,19 +507,11 @@ class CRUDBooster
                     $c->url = $url . $c->additional_path;
                     $c->url_path = trim(str_replace(url('/'), '', $url), "/");
                 }
-
                 $menu->children = $child;
             }
         }
-        $myModuls = DB::table('cms_moduls')
-            ->where('cms_moduls.is_protected', 1)
-            ->join('cms_privileges_roles', function ($q) {
-                $q->on('cms_moduls.id', '=', 'cms_privileges_roles.id_cms_moduls')
-                    ->where('cms_privileges_roles.id_cms_privileges', '=', self::myPrivilegeId())
-                    ->where('cms_privileges_roles.is_read', 1);
-            })->get();
 
-        return [$menu_active, $myModuls];
+        return $menu_active;
     }
 
     public static function deleteConfirm($redirectTo)

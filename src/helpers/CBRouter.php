@@ -89,7 +89,7 @@ class CBRouter
                     ->where('controller', '!=', '')
                     ->whereNotNull("path")
                     ->whereNotNull("controller")
-                    ->where('is_protected', 0)
+                    // ->where('is_protected', 0)
                     ->where('deleted_at', null)
                     ->get();
             } catch (\Exception $e) {

@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use crocodicstudio\crudbooster\fonts\Fontawesome;
+use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 
 class ModulsController extends CBController
 {

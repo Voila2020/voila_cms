@@ -123,6 +123,17 @@ class CBSeeder extends Seeder
             [
 
                 'created_at' => date('Y-m-d H:i:s'),
+                'name' => cbLang('Module_Status'),
+                'icon' => 'fa fa-database',
+                'path' => 'module_status',
+                'table_name' => 'cms_moduls',
+                'controller' => 'ModulsStatusController',
+                'is_protected' => 1,
+                'is_active' => 1,
+            ],
+            [
+
+                'created_at' => date('Y-m-d H:i:s'),
                 'name' => cbLang('Menu_Management'),
                 'icon' => 'fa fa-bars',
                 'path' => 'menu_management',

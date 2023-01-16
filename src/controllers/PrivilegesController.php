@@ -23,6 +23,7 @@ class PrivilegesController extends CBController
         $this->button_action_style = 'button_icon';
         $this->button_detail = false;
         $this->button_bulk_action = false;
+        $this->button_sortable = false;
 
         $this->col = [];
         $this->col[] = ["label" => "ID", "name" => "id"];
@@ -55,6 +56,7 @@ class PrivilegesController extends CBController
         $id = 0;
         $data['page_title'] = "Add Data";
         $data['moduls'] = DB::table("cms_moduls")
+            ->where('is_protected', 0)
             ->whereNull('deleted_at')
             ->select(
                 "cms_moduls.*",
@@ -128,8 +130,7 @@ class PrivilegesController extends CBController
 
         $page_title = cbLang('edit_data_page_title', ['module' => 'Privilege', 'name' => $row->name]);
 
-        // $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
-        $moduls = DB::table("cms_moduls")->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
+        $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
         $page_menu = Route::getCurrentRoute()->getActionName();
 
         return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu'));

@@ -33,7 +33,7 @@
                                 class='fa fa-dashboard'></i>
                             <span>{{ cbLang('text_dashboard') }}</span> </a></li>
                 @endif
-                @foreach (CRUDBooster::sidebarMenu()[0] as $menu)
+                @foreach (CRUDBooster::sidebarMenu() as $menu)
                     <li data-id='{{ $menu->id }}'
                         class='{{ !empty($menu->children) ? 'treeview' : '' }} {{ Request::is($menu->url_path . '*') ? 'active' : '' }}'>
                         <a href='{{ $menu->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $menu->url }}'
@@ -136,7 +136,17 @@
                             </li>
                         </ul>
                     </li>
-
+                    <li class='treeview'>
+                        <a href='#'><i class='fa fa-th'></i> <span>{{ cbLang('Module_Generator') }}</span> <i
+                                class="fa fa-angle-{{ cbLang('right') }} pull-{{ cbLang('right') }}"></i></a>
+                        <ul class='treeview-menu'>
+                            <li
+                                class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/module_status') ? 'active' : '' }}">
+                                <a href='{{ Route('ModulsStatusControllerGetIndex') }}'><i class='fa fa-bars'></i>
+                                    <span>{{ cbLang('List_Module') }}</span></a>
+                            </li>
+                        </ul>
+                    </li>
                     <li class='treeview'>
                         <a href='#'><i class='fa fa-dashboard'></i>
                             <span>{{ cbLang('Statistic_Builder') }}</span> <i
