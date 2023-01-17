@@ -22,7 +22,6 @@ class CRUDBoosterServiceProvider extends ServiceProvider
 
     public function boot()
     {
-
         $this->loadViewsFrom(__DIR__ . '/views', 'crudbooster');
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/localization', 'crudbooster');
@@ -33,13 +32,25 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/userfiles/controllers/CBHook.php' => app_path('Http/Controllers/CBHook.php')], 'CBHook');
             $this->publishes([__DIR__ . '/userfiles/controllers/AdminCmsUsersController.php' => app_path('Http/Controllers/AdminCmsUsersController.php')], 'cb_user_controller');
             $this->publishes([__DIR__ . '/assets' => public_path('vendor/crudbooster')], 'cb_asset');
+            # File-Manager
             $this->publishes([__DIR__ . '/filemanager/includes/img' => public_path('vendor/filemanager/img')], 'filemanager_img');
             $this->publishes([__DIR__ . '/filemanager/includes/images' => public_path('vendor/filemanager/images')], 'filemanager_images');
             $this->publishes([__DIR__ . '/filemanager/includes/css' => public_path('vendor/filemanager/css')], 'filemanager_css');
             $this->publishes([__DIR__ . '/filemanager/includes/js' => public_path('vendor/filemanager/js')], 'filemanager_js');
             $this->publishes([__DIR__ . '/filemanager/includes/lang' => public_path('vendor/filemanager/lang')], 'filemanager_lang');
             $this->publishes([__DIR__ . '/filemanager/includes/svg' => public_path('vendor/filemanager/svg')], 'filemanager_svg');
-
+            # Landing Page
+            $this->publishes([__DIR__ . '/landing_page/css' => public_path('landing_page/css')], 'landing_page_css');
+            $this->publishes([__DIR__ . '/landing_page/js' => public_path('landing_page/js')], 'landing_page_js');
+            $this->publishes([__DIR__ . '/landing_page/vendor1' => public_path('landing_page/vendor1')], 'landing_page_vendor1');
+            # Landing Page Builder
+            $this->publishes([__DIR__ . '/views/landing_page_builder/thankyou.blade.php' => resource_path('views/landing_page_builder/thankyou.blade.php')], 'landing_page_builder_thankyou_view');
+            $this->publishes([__DIR__ . '/views/landing_page_builder/view.blade.php' => resource_path('views/landing_page_builder/view.blade.php')], 'landing_page_builder_view_view');
+            $this->publishes([__DIR__ . '/landing_page_builder/css' => public_path('landing_page_builder/css')], 'landing_page_builder_css');
+            $this->publishes([__DIR__ . '/landing_page_builder/js' => public_path('landing_page_builder/js')], 'landing_page_builder_js');
+            $this->publishes([__DIR__ . '/landing_page_builder/less' => public_path('landing_page_builder/less')], 'landing_page_builder_less');
+            $this->publishes([__DIR__ . '/landing_page_builder/blocks' => public_path('landing_page_builder/blocks')], 'landing_page_builder_blocks');
+            $this->publishes([__DIR__ . '/landing_page_builder/plugins' => public_path('landing_page_builder/plugins')], 'landing_page_builder_plugins');
         }
 
         $this->customValidation();
