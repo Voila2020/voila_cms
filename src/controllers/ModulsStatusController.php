@@ -26,13 +26,14 @@ class ModulsStatusController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->button_filter = false;
         $this->button_detail = false;
         $this->button_bulk_action = false;
+        $this->button_table_action = false;
         $this->orderby = ['is_protected' => 'asc', 'name' => 'asc'];
 
         $this->col = [];
+        $this->col[] = ["label" => "ID", "name" => "id"];
         $this->col[] = ["label" => "Name", "name" => "name"];
         $this->col[] = ["label" => "Table", "name" => "table_name"];
         $this->col[] = ["label" => "Path", "name" => "path"];
-        $this->col[] = ["label" => "Controller", "name" => "controller"];
         $this->col[] = ["label" => "Protected", "name" => "is_protected", "visible" => (CRUDBooster::isSuperAdmin() ? true : false), "switch" => true];
 
     }

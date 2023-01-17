@@ -53,6 +53,27 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('vendor/filemanager/svg'), 0777);
             }
 
+            if (!file_exists(public_path('landing_page_builder'))) {
+                mkdir(public_path('landing_page_builder'), 0777);
+                mkdir(public_path('landing_page_builder/css'), 0777);
+                mkdir(public_path('landing_page_builder/js'), 0777);
+                mkdir(public_path('landing_page_builder/less'), 0777);
+                mkdir(public_path('landing_page_builder/blocks'), 0777);
+                mkdir(public_path('landing_page_builder/plugins'), 0777);
+            }
+
+            if (!file_exists(public_path('landing_page'))) {
+                mkdir(public_path('landing_page'), 0777);
+                mkdir(public_path('landing_page/css'), 0777);
+                mkdir(public_path('landing_page/js'), 0777);
+                mkdir(public_path('landing_page/vendor1'), 0777);
+            }
+
+            if (!file_exists(resource_path('landing_page_builder'))) {
+                mkdir(resource_path('landing_page_builder'), 0777);
+            }
+
+
 
             $this->info('Publishing crudbooster assets...');
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);

@@ -3,6 +3,7 @@
 namespace crocodicstudio\crudbooster\helpers;
 
 use crocodicstudio\crudbooster\controllers\AdminController;
+use crocodicstudio\crudbooster\controllers\CmsFormController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\controllers\PasswordReset;
 use crocodicstudio\crudbooster\controllers\SeoController;
@@ -151,7 +152,16 @@ class CBRouter
 
     private static function voilaCMSRoutes()
     {
+        # page builder
+        Route::get('/{url}', [AdminController::class, 'catchView']);
+        Route::group([
+            'namespace' => static::$cb_namespace,
+        ], function () {
+            Route::post('submit-form/{id}', [CmsFormController::class, 'submit']);
+            Route::get('thankyou/{id}', [CmsFormController::class, 'getLandingPageThankyou']);
+        });
         Route::group(['middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'], 'prefix' => "", 'namespace' => static::$cb_namespace], function () {
+            # file-manager
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');
             Route::match(array('GET', 'POST'), '/upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
             Route::match(array('GET', 'POST'), '/execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
@@ -163,16 +173,22 @@ class CBRouter
             'prefix' => config('crudbooster.ADMIN_PATH'),
             'namespace' => static::$cb_namespace,
         ], function () {
+            # Switch button
             Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
+            # Seo
             Route::post('/sort-table', [AdminController::class, 'postSortTable'])->name('sortTable');
             Route::get('/seo-home', [SeoController::class, 'get'])->name('seo-home');
             Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'get'])->name('seo-model');
             Route::post('/seo-store/{model}', [SeoController::class, 'store'])->name('seo-store');
+            # Translate
             Route::get('/languages', [TranslationController::class, 'index'])->name('languages');
             Route::post('translations/update', [TranslationController::class, 'transUpdate'])->name('translation.update.json');
             Route::post('translations/updateKey', [TranslationController::class, 'transUpdateKey'])->name('translation.update.json.key');
             Route::delete('translations/destroy/{key}', [TranslationController::class, 'destroy'])->name('translations.destroy');
             Route::post('translations/create', [TranslationController::class, 'store'])->name('translations.create');
+            # Form
+            Route::get('/getForms', [CmsFormController::class, 'getForms']);
+            Route::get('/getFormCode/{id}', [CmsFormController::class, 'getFormCode']);
         });
 
         Route::group([
@@ -180,6 +196,7 @@ class CBRouter
             'prefix' => config('crudbooster.ADMIN_PATH'),
             'namespace' => static::$cb_namespace,
         ], function () {
+            # reset password
             Route::post('/reset-password', [AdminController::class, 'resetPassword'])->name('cms_reset_password');
             Route::get('/password/reset/{token}', [AdminController::class, 'viewPasswordReset'])->name('cms_view_reset_page');
         });
@@ -187,7 +204,6 @@ class CBRouter
 
     public static function route()
     {
-
         static::apiRoute();
         static::uploadRoute();
         static::authRoute();

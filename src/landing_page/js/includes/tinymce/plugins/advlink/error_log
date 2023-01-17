@@ -1,0 +1,4 @@
+[24-Jul-2013 12:42:52] PHP Warning:  mysql_result(): supplied argument is not a valid MySQL result resource in /home4/odyneusa/public_html/americanpro/modules/includes/dbUtils.php on line 3320
+[24-Jul-2013 12:42:52] PHP Warning:  mysql_result(): supplied argument is not a valid MySQL result resource in /home4/odyneusa/public_html/americanpro/modules/includes/dbUtils.php on line 3320
+[24-Jul-2013 12:43:00] PHP Warning:  mysql_result(): supplied argument is not a valid MySQL result resource in /home4/odyneusa/public_html/americanpro/modules/includes/dbUtils.php on line 3320
+[24-Jul-2013 12:43:00] PHP Warning:  mysql_result(): supplied argument is not a valid MySQL result resource in /home4/odyneusa/public_html/americanpro/modules/includes/dbUtils.php on line 3320

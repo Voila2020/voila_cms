@@ -235,6 +235,10 @@ return [
     'chose_an_image' => 'Choose an image ',
     'chose_an_file' => 'Choose a file ',
 
+    //forms & landing pages
+    'Pages' => 'Pages',
+    'Forms' => 'Forms',
+
     //action confirmation
     'confirmation_title' => 'Confirmation',
     'confirmation_text' => 'Are you sure want to do this action?',

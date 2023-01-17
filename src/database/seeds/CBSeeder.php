@@ -176,7 +176,6 @@ class CBSeeder extends Seeder
                 'is_active' => 1,
             ],
             [
-
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => cbLang('Log_User_Access'),
                 'icon' => 'fa fa-flag-o',
@@ -186,6 +185,26 @@ class CBSeeder extends Seeder
                 'is_protected' => 1,
                 'is_active' => 1,
             ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => cbLang('Forms'),
+                'icon' => 'fa fa-mail-forward',
+                'path' => 'forms',
+                'table_name' => 'forms',
+                'controller' => 'AdminFormsController',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => cbLang('Pages'),
+                'icon' => 'fa fa-users',
+                'path' => 'landing-pages',
+                'table_name' => 'landing_pages',
+                'controller' => 'LandingPagesController',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ]
         ];
 
         foreach ($data as $k => $d) {
@@ -483,7 +502,47 @@ class CBSeeder extends Seeder
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now()
-                ]
+                ],
+                [
+                    'name' => 'Pages and Forms',
+                    'type' => 'URL',
+                    'path' => '#',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-th-list',
+                    'parent_id' => 0,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ],
+                [
+                    'name' => 'Forms',
+                    'type' => 'Module',
+                    'path' => 'forms',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-list-alt',
+                    'parent_id' => 3,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ],
+                [
+                    'name' => 'Pages',
+                    'type' => 'Module',
+                    'path' => 'landing-pages',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-file-o',
+                    'parent_id' => 3,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now()
+                ],
+
             ];
             DB::table('cms_menus')->insert($data);
         }
@@ -511,6 +570,32 @@ class CBSeeder extends Seeder
             ]
         ];
         DB::table('languages')->insert($data);
+        # Fields
+        if (DB::table('fields')->count() == 0) {
+            $data = [
+                [
+                    'title' => 'text',
+                    'multi' => 0
+                ],
+                [
+                    'title' => 'email',
+                    'multi' => 0
+                ],
+                [
+                    'title' => 'radio',
+                    'multi' => 1
+                ],
+                [
+                    'title' => 'checkbox',
+                    'multi' => 1
+                ],
+                [
+                    'title' => 'select',
+                    'multi' => 1
+                ],
+            ];
+            DB::table('fields')->insert($data);
+        }
         # Voila Seeder End
 
         $this->command->info('All cb seeders completed !');
