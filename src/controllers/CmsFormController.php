@@ -7,6 +7,7 @@ use App\ApplicationField;
 use App\FormField;
 use App\LandingPage;
 use App\Seo;
+use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
 use Illuminate\Http\Request;
@@ -128,7 +129,8 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
             'form_id' => $form->id,
             'ip' => request()->ip(),
             'landing_page_id' => $request->landing_page_id,
-            'active' => 1
+            'active' => 1,
+            'updated_at' => Carbon::now()
         ]);
 
         $submit = "<table class='table'><thead><tr>";

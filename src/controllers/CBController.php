@@ -147,6 +147,8 @@ class CBController extends Controller
         $this->data['title_field'] = $this->title_field;
         $this->data['appname'] = CRUDBooster::getSetting('appname');
         $this->data['alerts'] = $this->alert;
+        if (CRUDBooster::getCurrentModule()->path == 'logs')
+            $this->index_button[] = ['label' => 'Clear All Logs', 'url' => CRUDBooster::adminPath("clear-logs"), "icon" => "fa fa-trash"];
         $this->data['index_button'] = $this->index_button;
         $this->data['show_numbering'] = $this->show_numbering;
         $this->data['button_detail'] = $this->button_detail;
@@ -164,6 +166,12 @@ class CBController extends Controller
         $this->data['button_bulk_action'] = $this->button_bulk_action;
         $this->data['button_import'] = $this->button_import;
         $this->data['button_action_width'] = $this->button_action_width;
+        foreach ($this->col as $col) {
+            if (isset($col['switch']) && $col['switch'] == true) {
+                $this->button_selected[] = ['label' => 'Activate Column ' . $col['label'], 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
+                $this->button_selected[] = ['label' => 'Deactivate Column ' . $col['label'], 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
+            }
+        }
         $this->data['button_selected'] = $this->button_selected;
         $this->data['index_statistic'] = $this->index_statistic;
         $this->data['index_additional_view'] = $this->index_additional_view;
@@ -1728,6 +1736,18 @@ class CBController extends Controller
         if ($this->actionButtonSelected($id_selected, $button_name) === false) {
             $message = !empty($this->alert['message']) ? $this->alert['message'] : 'Error';
             $type = !empty($this->alert['type']) ? $this->alert['type'] : 'danger';
+        }
+
+        if (str_contains($button_name, 'active_all') || str_contains($button_name, 'deactive_all')) {
+            $table_name = CRUDBooster::getCurrentModule()->table_name;
+            if (str_contains($button_name, 'deactive_all')) {
+                // dd($id_selected);
+                $button_name = str_replace('deactive_all-', '', $button_name);
+                DB::table($table_name)->whereIn('id', $id_selected)->update([$button_name => 0]);
+            } else {
+                $button_name = str_replace('active_all-', '', $button_name);
+                DB::table($table_name)->whereIn('id', $id_selected)->update([$button_name => 1]);
+            }
         }
 
         return redirect()->back()->with(['message_type' => $type, 'message' => $message]);

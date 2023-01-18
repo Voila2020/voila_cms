@@ -7,6 +7,7 @@ use Cache;
 use CRUDBooster;
 use DB;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 use Request;
 use Symfony\Component\Process\Process;
 
@@ -73,6 +74,8 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(resource_path('landing_page_builder'), 0777);
             }
 
+            $path = base_path('routes/web.php');
+            File::append($path, "Route::get('{url}', [App\Http\Controllers\RouterController::class, 'catchView']);");
 
 
             $this->info('Publishing crudbooster assets...');

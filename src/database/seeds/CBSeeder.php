@@ -559,16 +559,17 @@ class CBSeeder extends Seeder
                 ]);
             }
         }
-        $data = [
-            [
-                'name' => 'English',
-                'code' => 'en'
-            ],
-            [
-                'name' => 'Arabic',
-                'code' => 'ar'
-            ]
-        ];
+        if (DB::table('languages')->count() == 0)
+            $data = [
+                [
+                    'name' => 'English',
+                    'code' => 'en'
+                ],
+                [
+                    'name' => 'Arabic',
+                    'code' => 'ar'
+                ]
+            ];
         DB::table('languages')->insert($data);
         # Fields
         if (DB::table('fields')->count() == 0) {

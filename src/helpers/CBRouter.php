@@ -153,14 +153,17 @@ class CBRouter
     private static function voilaCMSRoutes()
     {
         # page builder
-        Route::get('/{url}', [AdminController::class, 'catchView']);
         Route::group([
             'namespace' => static::$cb_namespace,
         ], function () {
             Route::post('submit-form/{id}', [CmsFormController::class, 'submit']);
             Route::get('thankyou/{id}', [CmsFormController::class, 'getLandingPageThankyou']);
         });
-        Route::group(['middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'], 'prefix' => "", 'namespace' => static::$cb_namespace], function () {
+        Route::group([
+            'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
+            'prefix' => "",
+            'namespace' => static::$cb_namespace
+        ], function () {
             # file-manager
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');
             Route::match(array('GET', 'POST'), '/upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
@@ -189,6 +192,8 @@ class CBRouter
             # Form
             Route::get('/getForms', [CmsFormController::class, 'getForms']);
             Route::get('/getFormCode/{id}', [CmsFormController::class, 'getFormCode']);
+            # logs
+            Route::get('/clear-logs', [AdminController::class, 'clearLogs']);
         });
 
         Route::group([
