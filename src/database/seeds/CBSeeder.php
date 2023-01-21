@@ -559,7 +559,7 @@ class CBSeeder extends Seeder
                 ]);
             }
         }
-        if (DB::table('languages')->count() == 0)
+        if (DB::table('languages')->count() == 0) {
             $data = [
                 [
                     'name' => 'English',
@@ -570,7 +570,8 @@ class CBSeeder extends Seeder
                     'code' => 'ar'
                 ]
             ];
-        DB::table('languages')->insert($data);
+            DB::table('languages')->insert($data);
+        }
         # Fields
         if (DB::table('fields')->count() == 0) {
             $data = [

@@ -10,6 +10,7 @@ use crocodicstudio\crudbooster\commands\CrudboosterInstallationCommand;
 use crocodicstudio\crudbooster\commands\CrudboosterUpdateCommand;
 use Illuminate\Foundation\AliasLoader;
 use App;
+use Illuminate\Support\Facades\File;
 
 class CRUDBoosterServiceProvider extends ServiceProvider
 {
@@ -51,6 +52,8 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/landing_page_builder/less' => public_path('landing_page_builder/less')], 'landing_page_builder_less');
             $this->publishes([__DIR__ . '/landing_page_builder/blocks' => public_path('landing_page_builder/blocks')], 'landing_page_builder_blocks');
             $this->publishes([__DIR__ . '/landing_page_builder/plugins' => public_path('landing_page_builder/plugins')], 'landing_page_builder_plugins');
+            # controllers
+            $this->publishes([__DIR__ . '/controllers/RouterController.php' => app_path('Http/Controllers/RouterController.php')], 'landing_page_builder_plugins');
         }
 
         $this->customValidation();

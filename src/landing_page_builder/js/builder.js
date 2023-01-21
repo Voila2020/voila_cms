@@ -35,7 +35,7 @@ $(function () {
             type: "remote",
             urlStore:
                 $_SITE +
-                "/admin/landing-pages/landing-page?_token="+$('meta[name="csrf-token"]').attr('content')+"&id=" +
+                "/admin/landing-pages/landing-page?_token=" + $('meta[name="csrf-token"]').attr('content') + "&id=" +
                 $id +
                 "&template=" +
                 $template,
@@ -61,7 +61,7 @@ $(function () {
             custom: {
                 open(props) {
                     let imageId = props.options.target.ccid;
-                    let iframeUrl = `${$_SITE}/js/includes/filemanager/dialog.php?type=1&multiple=0&crossdomain=0&popup=0&field_id=${imageId}`;
+                    let iframeUrl = `${$_SITE}/filemanager-dialog?type=1&multiple=0&crossdomain=0&popup=0&field_id=${imageId}`;
                     let fancybox = $.fancybox.open({
                         width: 900,
                         height: 600,
@@ -72,7 +72,7 @@ $(function () {
                         fitToView: false,
                         autoSize: false,
                         afterClose: function () {
-                            console.log("after close");
+                            console.log("filemanager closed");
                         },
                     });
                 },
