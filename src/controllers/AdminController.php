@@ -139,7 +139,7 @@ class AdminController extends CBController
         $link = HelpersCRUDBooster::adminPath() . '/password/reset/' . $token;
         $user->link = $link;
         //$user->password = $rand_string;
-        CRUDBooster::sendEmail(['to' => [$user->email, 'ahmadzazaz98@gmail.com'], 'data' => $user, 'template' => 'forgot_password_backend']);
+        CRUDBooster::sendEmail(['to' => [$user->email], 'data' => $user, 'template' => 'forgot_password_backend']);
 
         CRUDBooster::insertLog(cbLang("log_forgot", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
 
@@ -221,10 +221,11 @@ class AdminController extends CBController
         return response()->json(array("message" => "faild", "status" => false));
     }
 
-    public function clearLogs(){
-        try{
+    public function clearLogs()
+    {
+        try {
             DB::table('cms_logs')->delete();
-        }catch(Exception $ex){
+        } catch (Exception $ex) {
             Log::log("error", "Error while delete logs" . $ex->getMessage());
         }
         return redirect()->back();

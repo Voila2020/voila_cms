@@ -12,7 +12,7 @@ $(function () {
     //         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     //     }
     // });
-
+    $filemanager_value = "";
     $body = $("body");
     $template = "";
     //---- Loading Icons
@@ -72,11 +72,12 @@ $(function () {
                         fitToView: false,
                         autoSize: false,
                         afterClose: function () {
-                            console.log("filemanager closed");
+
                         },
                     });
                 },
-                close(props) { },
+                close(props) {
+                },
             },
         },
         styleManager: {
@@ -1957,6 +1958,9 @@ const capitalize = (phrase) => {
 
 function responsive_filemanager_callback(field_id, value) {
     $("#" + field_id, $(".gjs-frame").contents()).prop("src", value);
-    editor.getSelected().set("src", $_SITE + value);
+    if (editor.getSelected().attributes.tagName == 'div')
+        editor.getSelected().addStyle({ 'background-image': `url("${$_SITE + value}")` })
+    else
+        editor.getSelected().set("src", $_SITE + value);
     editor.stopCommand("open-assets");
 }

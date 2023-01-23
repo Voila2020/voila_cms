@@ -1,11 +1,15 @@
 <?php
 
-namespace crocodicstudio\crudbooster\controllers;
+namespace App\Http\Controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use crocodicstudio\crudbooster\controllers\CBController;
+use crocodicstudio\crudbooster\export\DefaultExportXls;
+use crocodicstudio\crudbooster\export\LandingPageExport;
+use Illuminate\Support\Facades\App;
 
 class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -454,15 +458,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         foreach ($applications as $application) {
             $application->fields = DB::table('applications_fields')->where("application_id", $application->id)->pluck("value", "field_id")->toArray();
         }
-        Excel::create($landingPage->name, function ($excel) use ($landingPage, $applications, $columns) {
-            $excel->setTitle($landingPage->name)->setCreator("voila.digital")->setCompany("Voila");
-            $excel->sheet($landingPage->name, function ($sheet) use ($columns, $applications) {
-                $sheet->setOrientation("A4");
-                $sheet->loadview('crudbooster::landing_page_builder.applications-export', [
-                    "columns" => $columns, "applications" => $applications,
-                ]);
-            });
-        })->export('xls');
+        return Excel::download(new LandingPageExport($applications, $columns), $landingPage->name . ".xls");
     }
 
     public function postSetTemplate(Request $request)
@@ -486,5 +482,21 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
             'is_rtl' => $templateLandingPage->is_rtl
         ]);
         return response()->json([], 200);
+    }
+
+    public function catchView($url)
+    {
+        $landingPage = DB::table('landing_pages')->where("url", $url)->first();
+        if ($landingPage) {
+            $landingPageSeo  = DB::table('cms_seo')->where("model", "pages")->where("model_id", $landingPage->id)->first();
+            if (!$landingPageSeo) {
+                $landingPageSeo  = DB::table('cms_seo')->where("model", "home")->first();
+            }
+            if ($landingPage->is_rtl) {
+                App::setlocale("ar");
+            }
+            return response()->view("landing_page_builder.view", compact("landingPage", "landingPageSeo"));
+        }
+        abort(404);
     }
 }

@@ -75,7 +75,7 @@ class CrudboosterInstallationCommand extends Command
             }
 
             $path = base_path('routes/web.php');
-            File::append($path, "Route::get('{url}', [App\Http\Controllers\RouterController::class, 'catchView']);");
+            File::append($path, "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);");
 
 
             $this->info('Publishing crudbooster assets...');
