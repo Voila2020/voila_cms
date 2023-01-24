@@ -163,3 +163,7 @@
     border: solid white 10px;
     border-radius: 50%;
 }
+
+#table_dashboard th:not(:first-child) {
+    width: 7%
+}
