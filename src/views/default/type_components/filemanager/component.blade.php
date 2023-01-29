@@ -168,10 +168,10 @@
                     $("#file-{{ $name }}").html(check);
                 else
                     $("#img-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
-                $("#link-{{ $name }}").attr("href", check);
+                $("#link-{{ $name }}").attr("href", '{{ URL::asset('') }}' + check);
                 $("#link-{{ $name }}").removeClass("hide");
                 $("#thumbnail-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
-                $("#thumbnail-{{ $name }}").attr("value", check);
+                $("#thumbnail-{{ $name }}").attr("value", '{{ URL::asset('') }}' + check);
             }
         });
         resizeFilemanagerPopout();

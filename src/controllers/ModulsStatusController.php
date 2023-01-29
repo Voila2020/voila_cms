@@ -35,14 +35,13 @@ class ModulsStatusController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->col[] = ["label" => "Table", "name" => "table_name"];
         $this->col[] = ["label" => "Path", "name" => "path"];
         $this->col[] = ["label" => "Protected", "name" => "is_protected", "visible" => (CRUDBooster::isSuperAdmin() ? true : false), "switch" => true];
-
     }
 
     function hook_query_index(&$query)
     {
         if (!CRUDBooster::isSuperadmin())
             $query->where('is_protected', 0);
-        $query->whereNotIn('cms_moduls.controller', ['AdminCmsUsersController']);
+        $query->whereNotIn('cms_moduls.controller', ['AdminCmsUsersController', 'ModulsStatusController']);
     }
 
     function hook_before_delete($id)
