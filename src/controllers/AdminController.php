@@ -234,7 +234,7 @@ class AdminController extends CBController
 
     public function switchLanguage()
     {
-        if (\Session::get('lang') == 'en') {
+        if (App::getLocale() == 'en') {
             \Session::put('lang', 'ar');
             Session::put('locale', 'ar');
             App::setlocale("ar");
