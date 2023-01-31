@@ -232,17 +232,11 @@ class AdminController extends CBController
         return redirect()->back();
     }
 
-    public function switchLanguage()
+    public function switchLanguage($locale)
     {
-        if (App::getLocale() == 'en') {
-            \Session::put('lang', 'ar');
-            Session::put('locale', 'ar');
-            App::setlocale("ar");
-        } else {
-            \Session::put('lang', 'en');
-            Session::put('locale', 'en');
-            App::setlocale('en');
-        }
+        \Session::put('lang', $locale);
+        Session::put('locale', $locale);
+        App::setlocale($locale);
         return redirect()->back()->withInput();
     }
 }

@@ -8,6 +8,7 @@ use PharData;
 use stdClass;
 use UploadHandler;
 use ZipArchive;
+use Intervention\Image\ImageManagerStatic as Image;
 
 class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -529,7 +530,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
 
     public function upload()
     {
-
         ini_set('display_errors', '0');
         try {
             if (!isset($config)) {
@@ -614,7 +614,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     }
                     curl_close($ch);
                     fclose($fp);
-
                     $_FILES['files'] = array(
                         'name' => array(basename($_POST['url'])),
                         'tmp_name' => array($temp),
@@ -625,7 +624,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     throw new Exception('Is not a valid URL.');
                 }
             }
-
 
             if ($config['mime_extension_rename']) {
                 $info = pathinfo($_FILES['files']['name'][0]);
@@ -704,12 +702,16 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
 
                 $uploadConfig['upload_dir'] = $config['ftp_temp_folder'];
             }
-
-            //print_r($_FILES);die();
+            // print_r($_FILES);die();
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
+            $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
+            $img->resize($img->width(), $img->height(), function ($constraint) {
+                $constraint->aspectRatio();
+                $constraint->upsize();
+            });
+            $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), 75);
         } catch (Exception $e) {
             $return = array();
-
             if ($_FILES['files']) {
                 foreach ($_FILES['files']['name'] as $i => $name) {
                     $return[] = array(

@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <title>{{ $page_title ? get_setting('appname') . ': ' . strip_tags($page_title) : 'Admin Area' }}</title>
     <?php
-    App::setlocale(session()->get('locale'));
+    App::setlocale(session()->get('locale') ?: Config('app.locale'));
     ?>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name='generator'

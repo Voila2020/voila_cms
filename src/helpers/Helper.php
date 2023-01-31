@@ -9,6 +9,7 @@
 |
 */
 
+use Illuminate\Support\Facades\App;
 
 if (!function_exists('ends_with')) {
     /**
@@ -32,6 +33,7 @@ if (!function_exists('cbLang')) {
      */
     function cbLang($key, array $replace = [], $locale = null)
     {
+        App::setlocale(session()->get('locale'));
         $value = trans('crudbooster.' . $key);
         if ($value != 'crudbooster.' . $key)
             return trans("crudbooster." . $key, $replace, $locale);

@@ -25,7 +25,8 @@
         "doctrine/dbal": "~2.3",
         "maatwebsite/excel": "^3.1",
         "intervention/imagecache":"^2.3",
-        "laravel/framework": "^6.18|^7.28|^8.34"
+        "laravel/framework": "^6.18|^7.28|^8.34",
+        "intervention/image": "^2.7"
     },
     "autoload": {
         "psr-4": {
