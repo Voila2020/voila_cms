@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>{{ $page_title ? get_setting('appname') . ': ' . strip_tags($page_title) : 'Admin Area' }}</title>
+    <?php
+    App::setlocale(session()->get('locale'));
+    ?>
     <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name='generator'
         content='CRUDBooster {{ \crocodicstudio\crudbooster\commands\CrudboosterVersionCommand::$version }}' />
@@ -21,10 +24,19 @@
     <!-- Ionicons -->
     <link href="{{ asset('vendor/crudbooster/ionic/css/ionicons.min.css') }}" rel="stylesheet" type="text/css" />
     <!-- Theme style -->
-    <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/AdminLTE.min.css') }}" rel="stylesheet"
-        type="text/css" />
-    <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/skins/_all-skins.min.css') }}" rel="stylesheet"
-        type="text/css" />
+    <!-- support rtl-->
+
+    @if (in_array(\Session::get('lang'), ['ar', 'fa']))
+        <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/AdminLTE_rtl.css') }}" rel="stylesheet"
+            type="text/css" />
+        <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/skins/_all-skins_rtl.min.css') }}"
+            rel="stylesheet" type="text/css" />
+    @else
+        <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/AdminLTE.min.css') }}" rel="stylesheet"
+            type="text/css" />
+        <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/skins/_all-skins.min.css') }}"
+            rel="stylesheet" type="text/css" />
+    @endif
 
     <!-- support rtl-->
     @if (in_array(App::getLocale(), ['ar', 'fa']))
@@ -96,13 +108,13 @@
     @stack('head')
 </head>
 
+
 <body
     class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ $sidebar_mode ?: '' }}">
     <div id='app' class="wrapper">
 
         <!-- Header -->
         @include('crudbooster::header')
-
         <!-- Sidebar -->
         @include('crudbooster::sidebar')
 
@@ -116,7 +128,7 @@
                 @if ($module)
                     <h1>
                         <!--Now you can define $page_icon alongside $page_tite for custom forms to follow CRUDBooster theme style -->
-                        <i class='{!! $page_icon ?: $module->icon !!}'></i> {!! ucwords($page_title ?: $module->name) !!} &nbsp;&nbsp;
+                        <i class='{!! $page_icon ?: $module->icon !!}'></i> {!! ucwords(cbLang($page_title) ?: cbLang($module->name)) !!} &nbsp;&nbsp;
 
                         <!--START BUTTON -->
 

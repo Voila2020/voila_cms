@@ -1,5 +1,5 @@
 <div class='form-group {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}' style="{{@$form['style']}}">
-    <label class='col-sm-2 control-label'>{{$form['label']}}
+    <label class='col-sm-2 control-label'>{{cbLang($form['label'])}}
         @if($required)
             <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
         @endif

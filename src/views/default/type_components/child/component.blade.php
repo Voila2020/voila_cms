@@ -32,7 +32,7 @@ $name = str_slug($form['label'], '');
                                         <?php $name_column = $name . $col['name']; ?>
                                         <div class='form-group'>
                                             @if ($col['type'] != 'hidden')
-                                                <label class="control-label col-sm-2">{{ $col['label'] }}
+                                                <label class="control-label col-sm-2">{{ cbLang($col['label']) }}
                                                     @if (!empty($col['required']))
                                                         <span class="text-danger"
                                                             title="{{ cbLang('this_field_is_required') }}">*</span>

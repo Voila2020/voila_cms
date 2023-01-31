@@ -103,20 +103,20 @@
                         switch ($sort_column[$field]['sorting']) {
                             case 'asc':
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'desc');
-                                echo "<a href='$url' title='Click to sort descending'>$colname &nbsp; <i class='fa fa-sort-desc'></i></a>";
+                                echo "<a href='$url' title='Click to sort descending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort-desc'></i></a>";
                                 break;
                             case 'desc':
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
-                                echo "<a href='$url' title='Click to sort ascending'>$colname &nbsp; <i class='fa fa-sort-asc'></i></a>";
+                                echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname). "&nbsp; <i class='fa fa-sort-asc'></i></a>";
                                 break;
                             default:
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
-                                echo "<a href='$url' title='Click to sort ascending'>$colname &nbsp; <i class='fa fa-sort'></i></a>";
+                                echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort'></i></a>";
                                 break;
                         }
                     } else {
                         $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
-                        echo "<a href='$url' title='Click to sort ascending'>$colname &nbsp; <i class='fa fa-sort'></i></a>";
+                        echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort'></i></a>";
                     }
 
                     echo '</th>';
@@ -195,7 +195,7 @@
                     $colname = $col['label'];
                     $width = isset($col['width']) ? $col['width'] : 'auto';
                     $style = isset($col['style']) ? $col['style'] : '';
-                    echo "<th width='$width' $style>$colname</th>";
+                    echo "<th width='$width' $style>" . cbLang($colname) . "</th>";
                 }
                 ?>
 

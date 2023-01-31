@@ -174,6 +174,8 @@ return [
     'Email_Templates' => 'Email Templates',
     'Log_User_Access' => 'Log User Access',
     'SUPERADMIN' => 'SUPERADMIN',
+    'labels_translation' => 'Lables Translation',
+    'pages_and_forms' => 'Pages And Forms',
 
     'click_here' => 'Click here',
 

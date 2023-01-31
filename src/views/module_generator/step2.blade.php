@@ -22,16 +22,14 @@
     @endpush
 
     <ul class="nav nav-tabs">
-        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep1') . '/' . $id }}"><i class='fa fa-info'></i> Step 1
-                -
-                Module Information</a></li>
+        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep1') . '/' . $id }}"><i class='fa fa-info'></i>
+                {{ cbLang('Step 1') }} - {{ cbLang('Module Information') }}</a></li>
         <li role="presentation" class="active"><a href="{{ Route('ModulsControllerGetStep2') . '/' . $id }}"><i
-                    class='fa fa-table'></i> Step 2 - Table Display</a></li>
+                    class='fa fa-table'></i> {{ cbLang('Step 2') }} - {{ cbLang('Table Display') }}</a></li>
         <li role="presentation"><a href="{{ Route('ModulsControllerGetStep3') . '/' . $id }}"><i
-                    class='fa fa-plus-square-o'></i> Step 3 - Form Display</a></li>
+                    class='fa fa-plus-square-o'></i> {{ cbLang('Step 3') }} - {{ cbLang('Form Display') }}</a></li>
         <li role="presentation"><a href="{{ Route('ModulsControllerGetStep4') . '/' . $id }}"><i class='fa fa-wrench'></i>
-                Step
-                4 - Configuration</a></li>
+                {{ cbLang('Step 4') }} - {{ cbLang('Configuration') }}</a></li>
     </ul>
     @push('head')
         <style>
@@ -297,15 +295,17 @@
 
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Table Display</h3>
+            <h3 class="box-title">{{ cbLang('Table Display') }}</h3>
         </div>
         <div class="box-body">
-
-            <div class="alert alert-info">
-                <strong>Warning</strong>. Make sure that your column format are normally, unless using this Tool maybe make
-                your current configuration broken,
-                because this Tool will replace your configuration.
-            </div>
+            @if (\Session::get('lang') == 'en')
+                <div class="alert alert-info">
+                    <strong>Warning</strong>. Make sure that your column format are normally, unless using this Tool maybe
+                    make
+                    your current configuration broken,
+                    because this Tool will replace your configuration.
+                </div>
+            @endif
 
             <form method="post" action="{{ Route('ModulsControllerPostStep3') }}">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
@@ -314,16 +314,16 @@
                 <table class="table-display table table-striped">
                     <thead>
                         <tr>
-                            <th>Column</th>
-                            <th>Name</th>
-                            <th colspan='2'>Join (Optional)</th>
+                            <th>{{ cbLang('Column') }}</th>
+                            <th>{{ cbLang('Name') }}</th>
+                            <th colspan='2'>{{ cbLang('Join') . '(' . cbLang('Optional') . ')' }} </th>
                             <th>CallbackPHP</th>
-                            <th width="90px">Width (px)</th>
-                            <th width='75px'>Image</th>
-                            <th width='75px'>Download</th>
-                            <th width='75px'>Switch</th>
-                            <th width='85px'>Str Limit</th>
-                            <th width="180px">Action</th>
+                            <th width="90px">{{ cbLang('Width') }} (px)</th>
+                            <th width='75px'>{{ cbLang('Image') }}</th>
+                            <th width='75px'>{{ cbLang('Download') }}</th>
+                            <th width='75px'>{{ cbLang('Switch') }}</th>
+                            <th width='85px'>{{ cbLang('Str Limit') }}</th>
+                            <th width="180px">{{ cbLang('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody>

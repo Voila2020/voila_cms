@@ -47,7 +47,7 @@
     </script>
 @endpush
 <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
-    <label class='control-label col-sm-2'>{{ $form['label'] }}</label>
+    <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}</label>
 
     <div class="{{ $col_width ?: 'col-sm-10' }}">
         <input type="hidden" id="input_{{ $name }}">

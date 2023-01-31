@@ -1,5 +1,5 @@
 <div class='form-group {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}' style="{{@$form['style']}}">
-    <label class='control-label col-sm-2'>{{$form['label']}}
+    <label class='control-label col-sm-2'>{{cbLang($form['label'])}}
         @if($required)
             <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
         @endif
@@ -78,7 +78,7 @@
                 echo "
 											<div data-val='$val' class='input-radio-wrapper $disabled'>
 											  <label class='radio-inline'>
-											    <input type='radio' $disabled $checked name='".$name."' value='".$d->id."'> ".$val." 								    
+											    <input type='radio' $disabled $checked name='".$name."' value='".$d->id."'> ".cbLang($val)."
 											  </label>
 											</div>";
             }
@@ -91,7 +91,7 @@
                     $checked = ($value == $q->value) ? "checked" : "";
                     echo "<div data-val='$val' class=' $disabled'>
 																<label class='radio-inline'>
-																	<input type='radio' $disabled $checked name='".$name."' value='$q->value'> ".$q->label."								    
+																	<input type='radio' $disabled $checked name='".$name."' value='$q->value'> ".cbLang($q->label)."
 																</label>
 																</div>";
                 }

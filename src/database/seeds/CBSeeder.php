@@ -3,6 +3,7 @@
 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -491,7 +492,7 @@ class CBSeeder extends Seeder
                     'updated_at' => Carbon::now()
                 ],
                 [
-                    'name' => 'Labels Translation',
+                    'name' => 'labels_translation',
                     'type' => 'Route',
                     'path' => 'languages',
                     'color' => 'normal',
@@ -504,7 +505,7 @@ class CBSeeder extends Seeder
                     'updated_at' => Carbon::now()
                 ],
                 [
-                    'name' => 'Pages and Forms',
+                    'name' => 'pages_and_forms',
                     'type' => 'URL',
                     'path' => '#',
                     'color' => 'normal',

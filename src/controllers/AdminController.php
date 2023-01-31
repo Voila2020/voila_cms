@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 use CRUDBooster;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -229,5 +230,19 @@ class AdminController extends CBController
             Log::log("error", "Error while delete logs" . $ex->getMessage());
         }
         return redirect()->back();
+    }
+
+    public function switchLanguage()
+    {
+        if (\Session::get('lang') == 'en') {
+            \Session::put('lang', 'ar');
+            Session::put('locale', 'ar');
+            App::setlocale("ar");
+        } else {
+            \Session::put('lang', 'en');
+            Session::put('locale', 'en');
+            App::setlocale('en');
+        }
+        return redirect()->back()->withInput();
     }
 }

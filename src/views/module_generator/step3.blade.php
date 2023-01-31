@@ -21,17 +21,14 @@
         </script>
     @endpush
     <ul class="nav nav-tabs">
-        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep1') . '/' . $id }}"><i class='fa fa-info'></i> Step 1
-                -
-                Module Information</a></li>
-        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep2') . '/' . $id }}"><i class='fa fa-table'></i> Step
-                2 -
-                Table Display</a></li>
+        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep1') . '/' . $id }}"><i class='fa fa-info'></i>
+                {{ cbLang('Step 1') }} - {{ cbLang('Module Information') }}</a></li>
+        <li role="presentation"><a href="{{ Route('ModulsControllerGetStep2') . '/' . $id }}"><i class='fa fa-table'></i>
+                {{ cbLang('Step 2') }} - {{ cbLang('Table Display') }} </a></li>
         <li role="presentation" class="active"><a href="{{ Route('ModulsControllerGetStep3') . '/' . $id }}"><i
-                    class='fa fa-plus-square-o'></i> Step 3 - Form Display</a></li>
+                    class='fa fa-plus-square-o'></i> {{ cbLang('Step 3') }} - {{ cbLang('Form Display') }}</a></li>
         <li role="presentation"><a href="{{ Route('ModulsControllerGetStep4') . '/' . $id }}"><i class='fa fa-wrench'></i>
-                Step
-                4 - Configuration</a></li>
+                {{ cbLang('Step 4') }} - {{ cbLang('Configuration') }}</a></li>
     </ul>
     @push('head')
         <style>
@@ -293,7 +290,8 @@
                                                 "<div class='form-group'>" +
                                                 "<label>" + key + "</label>" +
                                                 "<select class='form-control filemanager-form-control " +
-                                                tr_index + " required' name='option[" + tr_index +
+                                                tr_index + " required' name='option[" +
+                                                tr_index +
                                                 "][" +
                                                 key + "]'>" +
                                                 "<option value='' {{ $value == '' ? 'selected=true' : 'selected=false' }} >Please Choose File or Image</option>" +
@@ -408,7 +406,7 @@
                     var index = 0;
                     $('table > tbody  > tr').each(function(index, tr) {
                         if ($(this).find('td .option_area .form-group .filemanager-form-control')
-                        .val()) {
+                            .val()) {
                             if (typeof fileManagerValue[index] != 'undefined') {
                                 $('.filemanager-form-control.' + index + ' option')
                                     .removeAttr(
@@ -430,7 +428,7 @@
                     var i_required = [];
                     $('table > tbody  > tr').each(function(index, tr) {
                         if ($(this).find('td .option_area .form-group .filemanager-form-control')
-                        .val() != null) {
+                            .val() != null) {
                             fileManagerValue[index] = $('.filemanager-form-control.' + index).val();
                         }
                     });
@@ -471,7 +469,7 @@
                     $('#myModal').modal('hide');
                     $('table > tbody  > tr').each(function(index, tr) {
                         if ($(this).find('td .option_area .form-group .filemanager-form-control')
-                        .val() == '') {
+                            .val() == '') {
                             $('.filemanager-form-control.' + index).val(fileManagerValue[
                                 index]);
                         }
@@ -488,14 +486,14 @@
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                             aria-hidden="true">&times;</span></button>
-                    <h4 class="modal-title"><i class='fa fa-cog'></i> Options</h4>
+                    <h4 class="modal-title"><i class='fa fa-cog'></i> {{ cbLang('Options') }}</h4>
                 </div>
                 <div class="modal-body">
                     <p>One fine body&hellip;</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn-save-option btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">{{ cbLang('Close') }}</button>
+                    <button type="button" class="btn-save-option btn btn-primary">{{ cbLang('Save changes') }}</button>
                 </div>
             </div><!-- /.modal-content -->
         </div><!-- /.modal-dialog -->
@@ -503,7 +501,7 @@
 
     <div class="box box-default">
         <div class="box-header with-border">
-            <h3 class="box-title">Form Display</h3>
+            <h3 class="box-title">{{ cbLang('Form Display') }}</h3>
         </div>
         <div class="box-body">
             <form method="post" autocomplete="off" action="{{ Route('ModulsControllerPostStep4') }}">
@@ -513,13 +511,13 @@
                 <table class='table-form table table-striped'>
                     <thead>
                         <tr>
-                            <th>Label</th>
-                            <th>Name</th>
-                            <th>Type</th>
-                            <th>Validation</th>
-                            <th width="90px">Width</th>
-                            <th width="100px">Options</th>
-                            <th width="180px">Action</th>
+                            <th>{{ cbLang('Label') }}</th>
+                            <th>{{ cbLang('Name') }}</th>
+                            <th>{{ cbLang('Type') }}</th>
+                            <th>{{ cbLang('Validation') }}</th>
+                            <th width="90px">{{ cbLang('Width') }}</th>
+                            <th width="100px">{{ cbLang('Options') }}</th>
+                            <th width="180px">{{ cbLang('Action') }}</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -549,7 +547,7 @@
                                 </td>
                                 <td>
                                     <a class='btn btn-primary btn-options' href='javascript:;'><i class='fa fa-cog'></i>
-                                        Options</a>
+                                        {{ cbLang('Options') }}</a>
                                     <div class='option_area' style="display: none">
                                         <?php
 
@@ -710,7 +708,7 @@
                             </td>
                             <td>
                                 <a class='btn btn-primary btn-options' href='#'><i class='fa fa-cog'></i>
-                                    Options</a>
+                                    {{ cbLang('Options') }}</a>
                                 <div class='option_area' style="display: none">
 
                                 </div>
@@ -735,7 +733,7 @@
             <div align="right">
                 <button type="button" onclick="location.href='{{ CRUDBooster::mainpath('step2') . '/' . $id }}'"
                     class="btn btn-default">&laquo; Back</button>
-                <input type="submit" class="btn btn-primary" value="Step 4 &raquo;">
+                <input type="submit" class="btn btn-primary" value="{{ cbLang('Step 4') }} &raquo;">
             </div>
         </div>
         </form>

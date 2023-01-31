@@ -3,6 +3,7 @@
 namespace crocodicstudio\crudbooster\helpers;
 
 use crocodicstudio\crudbooster\controllers\AdminController;
+use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\controllers\CmsFormController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\controllers\PasswordReset;
@@ -194,6 +195,8 @@ class CBRouter
             Route::get('/getFormCode/{id}', [CmsFormController::class, 'getFormCode']);
             # logs
             Route::get('/clear-logs', [AdminController::class, 'clearLogs']);
+            # Switch Language
+            Route::get('/switch-language', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
         });
 
         Route::group([

@@ -102,5 +102,8 @@
                 </li>
             </ul>
         </div>
+        <div class="navbar-custom-menu" style="margin-top: 10px">
+            <button type="button" class="btn btn-default btn-sm"><a href="{{Route('cb.switch_language')}}">{{ \Session::get('lang') == 'en' ? 'العربية' : 'English' }}</a></button>
+        </div>
     </nav>
 </header>

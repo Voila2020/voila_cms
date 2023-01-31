@@ -54,6 +54,9 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/landing_page_builder/plugins' => public_path('landing_page_builder/plugins')], 'landing_page_builder_plugins');
             # controllers
             $this->publishes([__DIR__ . '/userfiles/controllers/LandingPagesController.php' => app_path('Http/Controllers/LandingPagesController.php')], 'landing_page_builder_plugins');
+            # lang
+            $this->publishes([__DIR__ . '/localization/en/crudbooster.php' => resource_path('lang/en/crudbooster.php')], 'crudbooster_en_lang');
+            $this->publishes([__DIR__ . '/localization/ar' => resource_path('lang/ar')], 'crudbooster_ar_lang');
         }
 
         $this->customValidation();

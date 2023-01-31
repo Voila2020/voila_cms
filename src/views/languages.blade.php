@@ -20,33 +20,36 @@
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-4">
-                <input type="text" name="key" class="form-control" placeholder="Enter Key..." required>
+                <input type="text" name="key" class="form-control"
+                    placeholder="{{ \Session::get('lang') == 'en' ? 'Enter Key' : 'أدخل المفتاح' }}" required>
             </div>
             <div class="col-md-4">
-                <input type="text" name="value" class="form-control" placeholder="Enter Value..." required>
+                <input type="text" name="value" class="form-control"
+                    placeholder="{{ \Session::get('lang') == 'en' ? 'Enter Value' : 'أدخل القيمة' }}" required>
             </div>
             <div class="col-md-4">
 
-                <button type="submit" class="btn btn-success">Add</button>
+                <button type="submit" class="btn btn-success">{{ cbLang('Add') }}</button>
             </div>
         </div>
     </form>
 
     <hr>
-    <input type="text" id="myInput" class="form-control" onkeyup="myFunction()" placeholder="Search for names.."
-        title="Type in a name">
+    <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
+        placeholder="{{ \Session::get('lang') == 'en' ? 'Search for names' : 'ابحث عن ترجمة' }}" title="Type in a name">
     <hr>
     <div class="box-body table-responsive no-padding">
         <table class="table table-hover table-striped table-bordered" id="mytable">
             <thead>
                 <tr>
-                    <th style="width:25%">Key</th>
+                    <th class="translate_tbl_header" style="width:25%">{{ cbLang('Key') }}</th>
                     @if ($languages->count() > 0)
                         @foreach ($languages as $language)
-                            <th style="width:25%">{{ $language->name }}({{ $language->code }})</th>
+                            <th class="translate_tbl_header" style="width:25%">
+                                {{ cbLang($language->name) }}({{ cbLang($language->code) }})</th>
                         @endforeach
                     @endif
-                    <th style="width:10%">Action</th>
+                    <th class="translate_tbl_header" style="width:10%">{{ cbLang('Action') }}</th>
                 </tr>
             </thead>
             <tbody>
@@ -65,7 +68,7 @@
                                 </td>
                             @endfor
                             <td><button data-action="{{ route('translations.destroy', $columnKey) }}"
-                                    class="btn btn-danger btn-xs remove-key">Delete</button></td>
+                                    class="btn btn-danger btn-xs remove-key">{{ cbLang('Delete') }}</button></td>
                         </tr>
                     @endforeach
                 @endif
