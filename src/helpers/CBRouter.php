@@ -196,7 +196,7 @@ class CBRouter
             # logs
             Route::get('/clear-logs', [AdminController::class, 'clearLogs']);
             # Switch Language
-            Route::get('/switch-language', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
+            Route::get('/switch-language/{locale}', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
         });
 
         Route::group([
