@@ -26,7 +26,7 @@
     <!-- Theme style -->
     <!-- support rtl-->
 
-    @if (in_array(\Session::get('lang'), ['ar', 'fa']))
+    @if (in_array(App::getLocale(), ['ar', 'fa']))
         <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/AdminLTE_rtl.css') }}" rel="stylesheet"
             type="text/css" />
         <link href="{{ asset('vendor/crudbooster/assets/adminlte/dist/css/skins/_all-skins_rtl.min.css') }}"

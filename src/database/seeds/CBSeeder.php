@@ -359,6 +359,16 @@ class CBSeeder extends Seeder
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'default_img_compression',
+                'label' => 'Image Compression Value',
+                'content' => '',
+                'content_input_type' => 'text',
+                'group_setting' => cbLang('application_setting'),
+                'dataenum' => null,
+                'helper' => cbLang('compression_quality'),
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'favicon',
                 'label' => 'Favicon',
                 'content' => '',

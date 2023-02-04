@@ -2,13 +2,16 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use PharData;
 use stdClass;
 use UploadHandler;
 use ZipArchive;
 use Intervention\Image\ImageManagerStatic as Image;
+use TCPDF;
 
 class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -705,11 +708,11 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             // print_r($_FILES);die();
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
             $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
-            $img->resize($img->width(), $img->height(), function ($constraint) {
-                $constraint->aspectRatio();
-                $constraint->upsize();
-            });
-            $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), 75);
+            // $img->resize($img->width(), $img->height(), function ($constraint) {
+            //     $constraint->aspectRatio();
+            //     $constraint->upsize();
+            // });
+            $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
         } catch (Exception $e) {
             $return = array();
             if ($_FILES['files']) {
@@ -849,3 +852,4 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
         return view('crudbooster::filamanager.ajax_calls');
     }
 }
+

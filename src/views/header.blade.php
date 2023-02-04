@@ -102,11 +102,16 @@
                 </li>
             </ul>
         </div>
-        <div class="navbar-custom-menu" style="padding: 15px">
-            <a style="{{ App::getlocale() == 'en' ? '' : 'color:#fff;' }}" href="{{ Route('cb.switch_language', ['locale' => 'en']) }}">English</a>
-        </div>
-        <div class="navbar-custom-menu" style="margin-top: 15px">
-            <a style="{{ App::getlocale() == 'en' ? 'color:#fff;' : '' }}" href="{{ Route('cb.switch_language', ['locale' => 'ar']) }}">Arabic</a>
-        </div>
+        @if (App::getlocale() == 'ar')
+            <div class="navbar-custom-menu" style="padding: 15px">
+                <a style="{{ App::getlocale() == 'en' ? '' : 'color:#fff;' }}"
+                    href="{{ Route('cb.switch_language', ['locale' => 'en']) }}">English</a>
+            </div>
+        @else
+            <div class="navbar-custom-menu" style="margin-top: 15px">
+                <a style="{{ App::getlocale() == 'en' ? 'color:#fff;' : '' }}"
+                    href="{{ Route('cb.switch_language', ['locale' => 'ar']) }}">العربية</a>
+            </div>
+        @endif
     </nav>
 </header>

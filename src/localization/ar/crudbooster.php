@@ -302,6 +302,7 @@ return [
     'Login Background Color' => 'لون خلفية تسجيل الدخول',
     'Login Font Color' => 'لون خط تسجيل الدخول',
     'Login Background Image' => 'صورة خلفية تسجيل الدخول',
+    'compression_quality' => 'هذا الحقل يحدد جودة الصورة بعد الرفع',
     'Template Name' => 'اسم القالب',
     'Content' => 'المحتوى',
     'Subject' => 'الموضوع',

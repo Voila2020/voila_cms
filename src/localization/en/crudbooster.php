@@ -344,7 +344,6 @@ return [
         ),
         'Upload_url' => 'From url',
         'Type_dir' => 'dir',
-        'Type' => 'Type',
         'Dimension' => 'Dimension',
         'Size' => 'Size',
         'Date' => 'Date',
@@ -376,6 +375,7 @@ return [
         'Image_Editor_No_Save' => 'Could not save image',
         'Image_Editor_Exit' => "Exit",
         'Image_Editor_Save' => "Save",
+        'compression_quality' => 'This field specifies the quality of the image after uploading',
         'Zip_No_Extract' => 'Could not extract. File might be corrupt.',
         'Zip_Invalid' => 'This extension is not supported. Valid: zip, gz, tar.',
         'Dir_No_Write' => 'The directory you selected is not writable.',
@@ -420,6 +420,7 @@ return [
         'MB' => "MB",
         'GB' => "GB",
         'TB' => "TB",
-        'total size' => "Total size"
+        'total size' => "Total size",
+
     ],
 ];
