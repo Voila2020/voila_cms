@@ -197,6 +197,8 @@ class CBRouter
             Route::get('/clear-logs', [AdminController::class, 'clearLogs']);
             # Switch Language
             Route::get('/switch-language/{locale}', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
+            # Email Builder
+            Route::get('/email-builder', [AdminController::class, 'showEmailBuilder'])->name('email_builder.index');
         });
 
         Route::group([

@@ -30,6 +30,10 @@
             $("#input_{{ $name }}").trigger("change")
         })
 
+        $('#modalInsertEmailTemplate').on('hidden.bs.modal', function() {
+            console.log("hidden iframe");
+        })
+
         $("#input_{{ $name }}").on("change", function() {
             var is_empty = $(this).val();
 
@@ -81,6 +85,26 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
+@if (Crudbooster::getCurrentModule()->path == 'email_templates')
+    <div class="modal fade" id="modalInsertEmailTemplate">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="buttons">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    </div>
+                    <div class="title-sec">
+                        <h4 class="modal-title">Email Template Builder</h4>
+                    </div>
+                </div>
+                <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
+
+                </div>
+
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+@endif
 
 <style>
     #model_scrach .modal-dialog {
@@ -111,7 +135,8 @@
             </div>
 
         </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
+    </div><!-- /.
+        modal-dialog -->
 </div><!-- /.modal -->
 
 
@@ -159,14 +184,15 @@
 @push('bottom')
     <script>
         tinymce.init({
-
             selector: '#textarea_{{ $name }}',
-            plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
+            valid_elements: '*[*]',
+            extended_valid_elements: 'code',
+            plugins: 'preview code importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
             mobile: {
                 plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
             },
             menubar: 'file edit view insert format tools table tc help',
-            toolbar: 'FileManager | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | ltr rtl',
+            toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
             setup: function(editor) {
                 editor.ui.registry.addButton('FileManager', {
                     text: 'File Manager',
@@ -177,8 +203,60 @@
                         $("#modalInsertPhotoEditor").modal();
                     }
                 });
+                if ("{{ Crudbooster::getCurrentModule()->path == 'email_templates' }}") {
+                    editor.ui.registry.addButton('EmailBuilder', {
+                        text: 'Email Builder',
+                        onAction: function(_) {
+                            $("#modalInsertEmailTemplate .modal-body").html(
+                                `<iframe width="100%" height="600px" src="{{ Route('email_builder.index') }}" frameborder="0" style="overflow: scroll; overflow-x: scroll; overflow-y: scroll; "></iframe>`
+                            );
+                            $("#modalInsertEmailTemplate").modal();
+                        }
+                    });
+                }
+
+                //////********************************************
+                editor.ui.registry.addButton('mymodalbutton', {
+                    text: 'My Modal Button',
+                    onAction: function() {
+                        // Open the custom modal window
+                        editor.windowManager.open({
+                            title: 'My Modal Window',
+                            body: {
+                                type: 'panel',
+                                items: [{
+                                    type: 'textbox',
+                                    name: 'textbox',
+                                    label: 'Textbox'
+                                }]
+                            },
+                            buttons: [{
+                                    type: 'cancel',
+                                    text: 'Cancel'
+                                },
+                                {
+                                    type: 'submit',
+                                    text: 'Submit',
+                                    primary: true,
+                                    onAction: function() {
+                                        // Custom button behavior goes here
+                                        editor.insertContent(
+                                            'Hello, ' +
+                                            editor.windowManager.getWindows()[0]
+                                            .getData().textbox +
+                                            '!'
+                                        );
+                                        editor.windowManager.close();
+                                    }
+                                }
+                            ]
+                        });
+                    }
+                });
+                //////********************************************
                 editor.on('change', function(e) {
                     editor.save();
+
                 });
             },
             // init_instance_callback: insert_contents,
