@@ -1,8 +1,11 @@
 @push('bottom')
     <script type="text/javascript">
         var selectId = null;
-
+        var $id = '';
+        var $template = '';
         $(document).ready(function() {
+            $id = "{{ $id }}";
+            $template = `"{{ $row->template }}"`;
 
             function uploadImage{{ $name }}(image) {
                 var data = new FormData();
@@ -16,12 +19,9 @@
                     type: "post",
                     success: function(url) {
                         var image = $('<img>').attr('src', '{{ URL::asset('') }}' + url);
-                        console.log("image => ", image);
                         tinymce.get('textarea_{{ $name }}').insertContent(image[0]);
                     },
-                    error: function(data) {
-                        console.log(data);
-                    }
+                    error: function(data) {}
                 });
             }
         })
@@ -31,12 +31,11 @@
         })
 
         $('#modalInsertEmailTemplate').on('hidden.bs.modal', function() {
-            console.log("hidden iframe");
+            $("#input_{{ $name }}").trigger("change")
         })
 
         $("#input_{{ $name }}").on("change", function() {
             var is_empty = $(this).val();
-
             if (is_empty) {
                 let slash = is_empty.charAt(0);
                 if (slash == '/') is_empty = is_empty.substring(1);
@@ -87,7 +86,7 @@
 
 @if (Crudbooster::getCurrentModule()->path == 'email_templates')
     <div class="modal fade" id="modalInsertEmailTemplate">
-        <div class="modal-dialog modal-lg">
+        <div class="modal-dialog modal-lg" style="width: 1200px;">
             <div class="modal-content">
                 <div class="modal-header">
                     <div class="buttons">
@@ -135,7 +134,8 @@
             </div>
 
         </div><!-- /.modal-content -->
-    </div><!-- /.
+    </div>
+    <!-- /.
         modal-dialog -->
 </div><!-- /.modal -->
 
@@ -183,7 +183,7 @@
 
 @push('bottom')
     <script>
-        tinymce.init({
+        var tinyEditor = tinymce.init({
             selector: '#textarea_{{ $name }}',
             valid_elements: '*[*]',
             extended_valid_elements: 'code',
@@ -208,7 +208,7 @@
                         text: 'Email Builder',
                         onAction: function(_) {
                             $("#modalInsertEmailTemplate .modal-body").html(
-                                `<iframe width="100%" height="600px" src="{{ Route('email_builder.index') }}" frameborder="0" style="overflow: scroll; overflow-x: scroll; overflow-y: scroll; "></iframe>`
+                                `<iframe width="100%" height="600px" src="{{ Route('email_builder.index', ['id' => $id]) }}" frameborder="0" style="overflow: scroll; overflow-x: scroll; overflow-y: scroll; "></iframe>`
                             );
                             $("#modalInsertEmailTemplate").modal();
                         }
@@ -293,6 +293,24 @@
 
             let value = $('<div />').text(`"{{ $value }}"`).html();
             inst.setContent(value);
+        }
+
+        function getHtmlValue(html, mjml) {
+            var editor = tinymce.get('textarea_content');
+            newHtml = '<div id="e_temp_builder" >' + html + ' </div>';
+            editor.setContent(newHtml);
+            if ($id) {
+                $.ajax({
+                    type: "POST",
+                    url: "{{ CRUDBooster::mainpath('save-template') }}",
+                    data: {
+                        id: $id,
+                        template: mjml
+                    },
+                }).done(function(msg) {});
+            } else {
+                $('input name=["templae"]').val(mjml);
+            }
         }
     </script>
 @endpush

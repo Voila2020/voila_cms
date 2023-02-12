@@ -47,3 +47,7 @@ body, h1, h2, h3, h4, h5, h6, .h1, .h2, .h3, .h4, .h5, .h6, .main-header .logo {
         float: none !important;
     }
 }
+
+#table_dashboard th:not(:first-child) {
+    width: auto !important;
+}

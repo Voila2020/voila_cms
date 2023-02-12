@@ -56,10 +56,18 @@
             </mj-body>
         </mjml>
     </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.34/grapes.min.js"></script>
     <script src=""></script>
     <script src="https://unpkg.com/grapesjs-mjml@0.5.2/dist/grapesjs-mjml.min.js"></script>
     <script>
+        var $template;
+        $(document).ready(function() {
+            $template = `"{!! $template !!}"`;
+        });
+    </script>
+    <script>
+        var currentHtml = '';
         var editor = grapesjs.init({
             clearOnRender: true,
             fromElement: 1,
@@ -70,14 +78,22 @@
                 'grapesjs-mjml': {
                     columnsPadding: ''
                 }
-            }
+            },
+            autosave: true,
+            stepsBeforeSave: 50,
         });
+        // set component
+        editor.setComponents(`"{!! $template !!}"`);
         //show modal save..
         editor.Panels.addButton("options", [{
             id: "save",
             className: "fa fa-floppy-o icon-blank",
             command: function(editor1, sender) {
                 editor.store();
+
+                currentHtml = editor.runCommand('mjml-get-code').html;
+                var mjmlTemplate = editor.getHtml();
+                parent.getHtmlValue(currentHtml, mjmlTemplate);
             },
             attributes: {
                 title: "Save Email Template"

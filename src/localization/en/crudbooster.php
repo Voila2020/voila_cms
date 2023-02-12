@@ -422,5 +422,6 @@ return [
         'TB' => "TB",
         'total size' => "Total size",
 
+        'clear_logs' => 'Clear All Logs',
     ],
 ];

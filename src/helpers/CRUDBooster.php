@@ -1362,6 +1362,7 @@ class CRUDBooster
         $pk = CB::pk($table);
 
         $button_sortable = 'TRUE';
+        $pdf_direction = 'ltr';
         $button_table_action = 'TRUE';
         $button_action_style = "button_icon";
         $button_add = 'TRUE';
@@ -1401,6 +1402,7 @@ class CRUDBooster
 			$this->button_detail       = ' . $button_detail . ';
 			$this->button_show         = ' . $button_show . ';
             $this->button_sortable     = ' . $button_sortable . ';
+            $this->pdf_direction       = "' . $pdf_direction . '";
 			$this->button_filter       = ' . $button_filter . ';
 			$this->button_export       = ' . $button_export . ';
 			$this->button_import       = ' . $button_import . ';

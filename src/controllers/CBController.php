@@ -72,6 +72,8 @@ class CBController extends Controller
 
     public $button_sortable = true;
 
+    public $pdf_direction = 'ltr';
+
     public $button_addmore = true;
 
     public $button_table_action = true;
@@ -148,13 +150,14 @@ class CBController extends Controller
         $this->data['appname'] = CRUDBooster::getSetting('appname');
         $this->data['alerts'] = $this->alert;
         if (CRUDBooster::getCurrentModule()->path == 'logs')
-            $this->index_button[] = ['label' => 'Clear All Logs', 'url' => CRUDBooster::adminPath("clear-logs"), "icon" => "fa fa-trash"];
+            $this->index_button[] = ['label' => cbLang('clear_logs'), 'url' => CRUDBooster::adminPath("clear-logs"), "icon" => "fa fa-trash"];
         $this->data['index_button'] = $this->index_button;
         $this->data['show_numbering'] = $this->show_numbering;
         $this->data['button_detail'] = $this->button_detail;
         $this->data['button_edit'] = $this->button_edit;
         $this->data['button_show'] = $this->button_show;
         $this->data['button_sortable'] = $this->button_sortable;
+        $this->data['pdf_direction'] = $this->pdf_direction;
         $this->data['button_add'] = $this->button_add;
         $this->data['button_delete'] = $this->button_delete;
         $this->data['button_filter'] = $this->button_filter;
@@ -678,7 +681,6 @@ class CBController extends Controller
         if (Request::input('default_paper_size')) {
             DB::table('cms_settings')->where('name', 'default_paper_size')->update(['content' => $papersize]);
         }
-
         switch ($filetype) {
             case "pdf":
                 $view = view('crudbooster::export', $response)->render();

@@ -103,7 +103,7 @@ class AdminController extends CBController
 
             $cb_hook_session = new \App\Http\Controllers\CBHook;
             $cb_hook_session->afterLogin();
-
+            // dd("stop");
             return redirect(CRUDBooster::adminPath());
         } else {
             return redirect()->route('getLogin')->with([
@@ -238,5 +238,25 @@ class AdminController extends CBController
         Session::put('locale', $locale);
         App::setlocale($locale);
         return redirect()->back()->withInput();
+    }
+
+    public function showEmailBuilder($id = null)
+    {
+        if ($id) {
+            $template = DB::table('cms_email_templates')
+                ->where('id', $id)
+                ->first()->template;
+            return view('crudbooster::email_templates_builder', compact('template'));
+        }
+        return view('crudbooster::email_templates_builder');
+    }
+
+    public function saveEmailTemplate(Request $request)
+    {
+        DB::table('cms_email_templates')
+            ->where('id', Request::input('id'))
+            ->update([
+                'template' => Request::input('template')
+            ]);
     }
 }
