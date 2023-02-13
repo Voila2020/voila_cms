@@ -63,7 +63,7 @@
     <script>
         var $template;
         $(document).ready(function() {
-            $template = `"{!! $template !!}"`;
+
         });
     </script>
     <script>
@@ -83,7 +83,9 @@
             stepsBeforeSave: 50,
         });
         // set component
-        editor.setComponents(`"{!! $template !!}"`);
+        $template = `"{!! $template !!}"`;
+        if ($template != '""' && typeof $template != 'undefined')
+            editor.setComponents(`"{!! $template !!}"`);
         //show modal save..
         editor.Panels.addButton("options", [{
             id: "save",
