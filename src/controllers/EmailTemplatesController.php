@@ -2,9 +2,11 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;
 use Illuminate\Support\Facades\PDF;
+use Illuminate\Support\Facades\Request;
 
 class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -36,45 +38,51 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
 
         $this->form = [];
         $this->form[] = [
-            "label" => "Template Name",
-            "name" => "name",
-            "type" => "text",
-            "required" => true,
-            "validation" => "required|min:3|max:255|alpha_spaces",
-            "placeholder" => "You can only enter the letter only",
+            "label" => "Template Name", "name" => "name", "type" => "text", "required" => true, "validation" => "required|min:3|max:255|alpha_spaces", "placeholder" => "You can only enter the letter only",
         ];
         $this->form[] = ["label" => "Slug", "type" => "text", "name" => "slug", "required" => true, 'validation' => 'required|unique:cms_email_templates,slug'];
         $this->form[] = ["label" => "Subject", "name" => "subject", "type" => "text", "required" => true, "validation" => "required|min:3|max:255"];
         $this->form[] = ["label" => "Content", "name" => "content", "type" => "wysiwyg", "required" => true, "validation" => "required"];
+        // $this->form[] = ["label" => "Template", "name" => "template", "type" => "hidden", "required" => false, "validation" => "", 'placeholder' => '',];
         $this->form[] = ["label" => "Description", "name" => "description", "type" => "text", "required" => true, "validation" => "required|min:3|max:255"];
 
-        $this->form[] = [
-            "label" => "From Name",
-            "name" => "from_name",
-            "type" => "text",
-            "required" => false,
-            "width" => "col-sm-6",
-            'placeholder' => 'Optional',
-        ];
-        $this->form[] = [
-            "label" => "From Email",
-            "name" => "from_email",
-            "type" => "email",
-            "required" => false,
-            "validation" => "email",
-            "width" => "col-sm-6",
-            'placeholder' => 'Optional',
-        ];
+        $this->form[] = ["label" => "From Name", "name" => "from_name", "type" => "text", "required" => false, "width" => "col-sm-6", 'placeholder' => 'Optional',];
+        $this->form[] = ["label" => "From Email", "name" => "from_email", "type" => "email", "required" => false, "validation" => "email", "width" => "col-sm-6", 'placeholder' => 'Optional',];
 
-        $this->form[] = [
-            "label" => "Cc Email",
-            "name" => "cc_email",
-            "type" => "email",
-            "required" => false,
-            "validation" => "email",
-            'placeholder' => 'Optional',
-        ];
+        $this->form[] = ["label" => "Cc Email", "name" => "cc_email", "type" => "email", "required" => false, "validation" => "email", 'placeholder' => 'Optional',];
+
+
+        # Actions
+        $this->addaction = [];
+        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::adminPath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
     }
     //By the way, you can still create your own method in here... :)
 
+    public function showEmailBuilder($id = null)
+    {
+        if ($id) {
+            $template = DB::table('cms_email_templates')
+                ->where('id', $id)
+                ->first()->template;
+            return view('crudbooster::email_builder.templates_builder', compact('template', 'id'));
+        }
+        return view('crudbooster::email_builder.templates_builder');
+    }
+
+    public function saveEmailTemplate(Request $request, $id)
+    {
+        DB::table('cms_email_templates')
+            ->where('id', $id)
+            ->update([
+                'content' => Request::input('content'),
+                'template' => Request::input('template')
+            ]);
+    }
+
+    public function showEmailBuilderTemplates()
+    {
+        $templates = DB::table('cms_email_templates')->get();
+        return view('crudbooster::email_builder.templates', compact('templates'));
+    }
 }
+ 

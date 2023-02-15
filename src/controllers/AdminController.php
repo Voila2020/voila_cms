@@ -240,23 +240,5 @@ class AdminController extends CBController
         return redirect()->back()->withInput();
     }
 
-    public function showEmailBuilder($id = null)
-    {
-        if ($id) {
-            $template = DB::table('cms_email_templates')
-                ->where('id', $id)
-                ->first()->template;
-            return view('crudbooster::email_templates_builder', compact('template'));
-        }
-        return view('crudbooster::email_templates_builder');
-    }
 
-    public function saveEmailTemplate(Request $request)
-    {
-        DB::table('cms_email_templates')
-            ->where('id', Request::input('id'))
-            ->update([
-                'template' => Request::input('template')
-            ]);
-    }
 }

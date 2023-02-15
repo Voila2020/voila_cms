@@ -5,6 +5,7 @@ namespace crocodicstudio\crudbooster\helpers;
 use crocodicstudio\crudbooster\controllers\AdminController;
 use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\controllers\CmsFormController;
+use crocodicstudio\crudbooster\controllers\EmailTemplatesController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
 use crocodicstudio\crudbooster\controllers\PasswordReset;
 use crocodicstudio\crudbooster\controllers\SeoController;
@@ -198,8 +199,9 @@ class CBRouter
             # Switch Language
             Route::get('/switch-language/{locale}', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
             # Email Builder
-            Route::get('/email-builder/{id?}', [AdminController::class, 'showEmailBuilder'])->name('email_builder.index');
-            Route::post('/email_templates/save-template', [AdminController::class, 'saveEmailTemplate'])->name("email_builder.store");
+            Route::get('/email-builder/{id?}', [EmailTemplatesController::class, 'showEmailBuilder'])->name('email_builder.index');
+            Route::put('/email_templates/save-template/{id}', [EmailTemplatesController::class, 'saveEmailTemplate'])->name("email_builder.store");
+            Route::get('/email-builder-templates/{id}', [EmailTemplatesController::class, 'showEmailBuilderTemplates'])->name('email_builder_templates.index');
         });
 
         Route::group([
