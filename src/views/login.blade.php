@@ -66,6 +66,10 @@
             top: 10px;
             cursor: pointer;
         }
+
+        .login-logo{
+            margin-top: 50%;
+        }
     </style>
 </head>
 
@@ -73,9 +77,6 @@
 
     <div class="login-box">
         <div class="login-logo">
-            <img title='{!! Session::get('appname') == 'CRUDBooster' ? '<b>CRUD</b>Booster' : CRUDBooster::getSetting('appname') !!}'
-                src='{{ CRUDBooster::getSetting('logo') ? asset(CRUDBooster::getSetting('logo')) : asset('vendor/crudbooster/assets/voila_logo.png') }}'
-                style='max-width: 100%;max-height:170px' />
         </div><!-- /.login-logo -->
         <div class="login-box-body">
 

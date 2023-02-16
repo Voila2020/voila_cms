@@ -7,8 +7,7 @@ error_reporting(E_ALL ^ E_NOTICE);
 
 use CB;
 use crocodicstudio\crudbooster\export\DefaultExportXls;
-use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -374,7 +373,6 @@ class CBController extends Controller
                     $columns_table[$index]['field_raw'] = $join_column1;
                 }
             } else {
-
                 if (isset($field_array[1])) {
                     $result->addselect($table . '.' . $field . ' as ' . $table . '_' . $field);
                     $columns_table[$index]['type_data'] = CRUDBooster::getFieldType($table, $field);
@@ -386,7 +384,6 @@ class CBController extends Controller
                     $columns_table[$index]['field'] = $field;
                     $columns_table[$index]['field_raw'] = $field;
                 }
-
                 $columns_table[$index]['field_with'] = $table . '.' . $field;
             }
         }
@@ -576,7 +573,15 @@ class CBController extends Controller
                     if ($value == '') {
                         $value = "<a  data-lightbox='roadtrip' rel='group_{{$table}}' title='$label: $title' href='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'><img width='40px' height='40px' src='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'/></a>";
                     } else {
-                        $pic = (strpos($value, 'http://') !== false) ? $value : asset($value);
+                        $matched_upload_word = '';
+                        if (preg_match('/\w+/', config('crudbooster.filemanager_upload_dir'), $matches)) {
+                            $matched_upload_word = $matches[0];
+                        }
+                        if (!empty($matched_upload_word)) {
+                            $new_upload_word = config('crudbooster.filemanager_thumbs_base_path');
+                            $new_value = preg_replace('/\b' . $matched_upload_word . '\b/', $new_upload_word, $value, 1);
+                        }
+                        $pic = (strpos($new_value, 'http://') !== false) ? $new_value : asset($new_value);
                         $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $pic . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
                     }
                 }
@@ -594,7 +599,7 @@ class CBController extends Controller
                     $checked = '';
                     if ($value == 1)
                         $checked = 'checked';
-                    $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked}/>
+                    $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked} style='display:none;'/>
                             <label class='cms_switch_label' for='{$col["name"]}_{$row->id}'>Toggle</label>";
                 }
 
@@ -1145,6 +1150,8 @@ class CBController extends Controller
 
     public function getAdd()
     {
+
+        // CRUDBooster::sendEmail(['to' => ["ahmadzazaz98@gmail.com"], 'data' => [], 'template' => 'test1']);
         $this->cbLoader();
         if (!CRUDBooster::isCreate() && $this->global_privilege == false || $this->button_add == false) {
             CRUDBooster::insertLog(cbLang('log_try_add', ['module' => CRUDBooster::getCurrentModule()->name]));
@@ -1155,8 +1162,8 @@ class CBController extends Controller
         $page_menu = Route::getCurrentRoute()->getActionName();
         $command = 'add';
         $manualView = null;
-        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
-            $manualView =  view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView =  view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
         $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
         return $view;
     }
@@ -1305,8 +1312,8 @@ class CBController extends Controller
         $command = 'edit';
         Session::put('current_row_id', $id);
         $manualView = null;
-        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
-            $manualView = view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
         $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
         return $view;
     }
@@ -1492,8 +1499,8 @@ class CBController extends Controller
 
         Session::put('current_row_id', $id);
         $manualView = null;
-        if (view()->exists(HelpersCRUDBooster::getCurrentModule()->path . '.form'))
-            $manualView =  view(HelpersCRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
+            $manualView =  view(CRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
         $view = $manualView ?: view('crudbooster::default.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
         return $view;
     }

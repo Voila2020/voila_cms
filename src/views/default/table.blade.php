@@ -1,5 +1,12 @@
 @push('bottom')
     <script type="text/javascript">
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    </script>
+    <script type="text/javascript">
         $(document).ready(function() {
             var $window = $(window);
 
@@ -47,7 +54,8 @@
                     $(this).val(0);
                 else
                     $(this).val(1);
-                $('.switch-loader').css('display', 'block');
+                $('.switch-overlay').css('display', 'block');
+                $('.switch-loader').css('display', 'inline-block');
                 $.ajax({
                     type: "POST",
                     url: "edit-switch-action",
@@ -59,19 +67,29 @@
                     },
                 }).done(function(msg) {
                     $('.switch-loader').css('display', 'none');
+                    $('.switch-overlay').css('display', 'none');
                 });
             });
         });
     </script>
 @endpush
 
-<div id="switch-overlay"></div>
-<div class="switch-loader" style="display: none;">
-    <span></span>
-    <span></span>
-    <span></span>
-    <span></span>
+<div class="switch-overlay"></div>
+<div class="switch-loader">
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
+    <div></div>
 </div>
+
 <form id='form-table' method='post' action='{{ CRUDBooster::mainpath('action-selected') }}'>
     <input type='hidden' name='button_name' value='' />
     <input type='hidden' name='_token' value='{{ csrf_token() }}' />
@@ -89,7 +107,7 @@
                     if ($col['visible'] === false) {
                         continue;
                     }
-
+                
                     $sort_column = Request::get('filter_column');
                     $colname = $col['label'];
                     $name = $col['name'];
@@ -107,7 +125,7 @@
                                 break;
                             case 'desc':
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
-                                echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname). "&nbsp; <i class='fa fa-sort-asc'></i></a>";
+                                echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort-asc'></i></a>";
                                 break;
                             default:
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
@@ -118,7 +136,7 @@
                         $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
                         echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort'></i></a>";
                     }
-
+                
                     echo '</th>';
                 }
                 ?>
@@ -158,10 +176,10 @@
                         foreach ($row as $key => $val) {
                             $query = str_replace('[' . $key . ']', '"' . $val . '"', $query);
                         }
-
+                        
                         @eval("if($query) {
-                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                                                                                                  }");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }");
                         ?>
                     @endforeach
                     <?php echo "<tr class='$tr_color'>"; ?>
@@ -195,7 +213,7 @@
                     $colname = $col['label'];
                     $width = isset($col['width']) ? $col['width'] : 'auto';
                     $style = isset($col['style']) ? $col['style'] : '';
-                    echo "<th width='$width' $style>" . cbLang($colname) . "</th>";
+                    echo "<th width='$width' $style>" . cbLang($colname) . '</th>';
                 }
                 ?>
 
@@ -430,65 +448,65 @@ $total = $result->total();
                                                 {{ CRUDBooster::getTypeFilter($col['field_with']) == '=' ? 'selected' : '' }}
                                                 value='='>{{ cbLang('filter_equal_to') }}</option>
                                             @if (in_array($col['type_data'], [
-                                                'int',
-                                                'integer',
-                                                'smallint',
-                                                'tinyint',
-                                                'mediumint',
-                                                'bigint',
-                                                'double',
-                                                'float',
-                                                'decimal',
-                                                'time',
-                                            ]))
+                                                    'int',
+                                                    'integer',
+                                                    'smallint',
+                                                    'tinyint',
+                                                    'mediumint',
+                                                    'bigint',
+                                                    'double',
+                                                    'float',
+                                                    'decimal',
+                                                    'time',
+                                                ]))
                                                 <option
                                                     {{ CRUDBooster::getTypeFilter($col['field_with']) == '>=' ? 'selected' : '' }}
                                                     value='>='>{{ cbLang('filter_greater_than_or_equal') }}</option>
                                             @endif
                                             @if (in_array($col['type_data'], [
-                                                'int',
-                                                'integer',
-                                                'smallint',
-                                                'tinyint',
-                                                'mediumint',
-                                                'bigint',
-                                                'double',
-                                                'float',
-                                                'decimal',
-                                                'time',
-                                            ]))
+                                                    'int',
+                                                    'integer',
+                                                    'smallint',
+                                                    'tinyint',
+                                                    'mediumint',
+                                                    'bigint',
+                                                    'double',
+                                                    'float',
+                                                    'decimal',
+                                                    'time',
+                                                ]))
                                                 <option
                                                     {{ CRUDBooster::getTypeFilter($col['field_with']) == '<=' ? 'selected' : '' }}
                                                     value='<='>{{ cbLang('filter_less_than_or_equal') }}</option>
                                             @endif
                                             @if (in_array($col['type_data'], [
-                                                'int',
-                                                'integer',
-                                                'smallint',
-                                                'tinyint',
-                                                'mediumint',
-                                                'bigint',
-                                                'double',
-                                                'float',
-                                                'decimal',
-                                                'time',
-                                            ]))
+                                                    'int',
+                                                    'integer',
+                                                    'smallint',
+                                                    'tinyint',
+                                                    'mediumint',
+                                                    'bigint',
+                                                    'double',
+                                                    'float',
+                                                    'decimal',
+                                                    'time',
+                                                ]))
                                                 <option
                                                     {{ CRUDBooster::getTypeFilter($col['field_with']) == '<' ? 'selected' : '' }}
                                                     value='<'>{{ cbLang('filter_less_than') }}</option>
                                             @endif
                                             @if (in_array($col['type_data'], [
-                                                'int',
-                                                'integer',
-                                                'smallint',
-                                                'tinyint',
-                                                'mediumint',
-                                                'bigint',
-                                                'double',
-                                                'float',
-                                                'decimal',
-                                                'time',
-                                            ]))
+                                                    'int',
+                                                    'integer',
+                                                    'smallint',
+                                                    'tinyint',
+                                                    'mediumint',
+                                                    'bigint',
+                                                    'double',
+                                                    'float',
+                                                    'decimal',
+                                                    'time',
+                                                ]))
                                                 <option
                                                     {{ CRUDBooster::getTypeFilter($col['field_with']) == '>' ? 'selected' : '' }}
                                                     value='>'>{{ cbLang('filter_greater_than') }}</option>
@@ -503,20 +521,20 @@ $total = $result->total();
                                                 {{ CRUDBooster::getTypeFilter($col['field_with']) == 'not in' ? 'selected' : '' }}
                                                 value='not in'>{{ cbLang('filter_not_in') }}</option>
                                             @if (in_array($col['type_data'], [
-                                                'date',
-                                                'time',
-                                                'datetime',
-                                                'int',
-                                                'integer',
-                                                'smallint',
-                                                'tinyint',
-                                                'mediumint',
-                                                'bigint',
-                                                'double',
-                                                'float',
-                                                'decimal',
-                                                'timestamp',
-                                            ]))
+                                                    'date',
+                                                    'time',
+                                                    'datetime',
+                                                    'int',
+                                                    'integer',
+                                                    'smallint',
+                                                    'tinyint',
+                                                    'mediumint',
+                                                    'bigint',
+                                                    'double',
+                                                    'float',
+                                                    'decimal',
+                                                    'timestamp',
+                                                ]))
                                                 <option
                                                     {{ CRUDBooster::getTypeFilter($col['field_with']) == 'between' ? 'selected' : '' }}
                                                     value='between'>{{ cbLang('filter_between') }}</option>
