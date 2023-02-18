@@ -84,4 +84,22 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         $templates = DB::table('cms_email_templates')->get();
         return view('crudbooster::email_builder.templates', compact('templates'));
     }
+
+    public function hook_before_add(&$arr)
+    {
+        if ($arr['template'] == null || $arr['template'] == '')
+            $arr['template'] = '<mjml>
+                                    <mj-body id="irdi">
+                                    </mj-body>
+                                </mjml>';
+    }
+
+    public function hook_before_edit(&$arr, $id)
+    {
+        if ($arr['template'] == null || $arr['template'] == '')
+            $arr['template'] = '<mjml>
+                                    <mj-body id="irdi">
+                                    </mj-body>
+                                </mjml>';
+    }
 }

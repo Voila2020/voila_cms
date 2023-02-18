@@ -48,7 +48,9 @@
 
     <!-- load css -->
     <style type="text/css">
-        @if ($style_css){!! $style_css !!} @endif
+        @if ($style_css)
+            {!! $style_css !!}
+        @endif
     </style>
     @if ($load_css)
         @foreach ($load_css as $css)

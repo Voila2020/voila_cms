@@ -34,8 +34,22 @@
                             <span>{{ cbLang('text_dashboard') }}</span> </a></li>
                 @endif
                 @foreach (CRUDBooster::sidebarMenu() as $menu)
+                    <?php
+                    $isActiveLink = '';
+                    # check if active link is the current link
+                    if (Request::is($menu->url_path)) {
+                        $isActiveLink = 'active';
+                    }
+                    # regular expression to check if the next char is '/' so this route will active the current side bar item menu
+                    $matches = [];
+                    $regex = '#' . preg_quote($menu->url_path) . '(.)(?=\w)#i'; // Modified regular expression with a lookahead assertion and a delimiter
+                    $reg = preg_match($regex, Request::url(), $matches);
+                    if ($matches[1] == '/' || $matches[1] == '?') {
+                        $isActiveLink = 'active';
+                    }
+                    ?>
                     <li data-id='{{ $menu->id }}'
-                        class='{{ !empty($menu->children) ? 'treeview' : '' }} {{ Request::is($menu->url_path) ? 'active' : '' }}'>
+                        class='{{ !empty($menu->children) ? 'treeview' : '' }} {{ $isActiveLink }}'>
                         <a href='{{ $menu->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $menu->url }}'
                             class='{{ $menu->color ? 'text-' . $menu->color : '' }}'>
                             <i class='{{ $menu->icon }} {{ $menu->color ? 'text-' . $menu->color : '' }}'></i>
@@ -51,7 +65,8 @@
                                         class='{{ Request::is($child->url_path .= !Str::endsWith(Request::decodedPath(), $child->url_path) ? '/*' : '') ? 'active' : '' }}'>
                                         <a href='{{ $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url }}'
                                             class='{{ $child->color ? 'text-' . $child->color : '' }}'>
-                                            <i class='{{ $child->icon }}'></i> <span>{{ cbLang($child->name) }}</span>
+                                            <i class='{{ $child->icon }}'></i>
+                                            <span>{{ cbLang($child->name) }}</span>
                                         </a>
                                     </li>
                                 @endforeach

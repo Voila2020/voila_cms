@@ -575,7 +575,15 @@ class CBController extends Controller
                     if ($value == '') {
                         $value = "<a  data-lightbox='roadtrip' rel='group_{{$table}}' title='$label: $title' href='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'><img width='40px' height='40px' src='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'/></a>";
                     } else {
-                        $pic = (strpos($value, 'http://') !== false) ? $value : asset($value);
+                        $matched_upload_word = '';
+                        if (preg_match('/\w+/', config('crudbooster.filemanager_upload_dir'), $matches)) {
+                            $matched_upload_word = $matches[0];
+                        }
+                        if (!empty($matched_upload_word)) {
+                            $new_upload_word = config('crudbooster.filemanager_thumbs_base_path');
+                            $new_value = preg_replace('/\b' . $matched_upload_word . '\b/', $new_upload_word, $value, 1);
+                        }
+                        $pic = (strpos($new_value, 'http://') !== false) ? $new_value : asset($new_value);
                         $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $pic . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
                     }
                 }
@@ -1141,8 +1149,6 @@ class CBController extends Controller
 
     public function getAdd()
     {
-
-        // CRUDBooster::sendEmail(['to' => ["ahmadzazaz98@gmail.com"], 'data' => [], 'template' => 'test1']);
         $this->cbLoader();
         if (!CRUDBooster::isCreate() && $this->global_privilege == false || $this->button_add == false) {
             CRUDBooster::insertLog(cbLang('log_try_add', ['module' => CRUDBooster::getCurrentModule()->name]));

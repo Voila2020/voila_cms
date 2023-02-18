@@ -706,13 +706,16 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $uploadConfig['upload_dir'] = $config['ftp_temp_folder'];
             }
             // print_r($_FILES);die();
+            $path_info = pathinfo($_FILES['files']['name']['0']);
+            if (in_array($path_info, $config['ext_img'])) {
+                $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
+                // $img->resize($img->width(), $img->height(), function ($constraint) {
+                //     $constraint->aspectRatio();
+                //     $constraint->upsize();
+                // });
+                $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
+            }
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
-            $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
-            // $img->resize($img->width(), $img->height(), function ($constraint) {
-            //     $constraint->aspectRatio();
-            //     $constraint->upsize();
-            // });
-            $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
         } catch (Exception $e) {
             $return = array();
             if ($_FILES['files']) {
@@ -852,4 +855,3 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
         return view('crudbooster::filamanager.ajax_calls');
     }
 }
-

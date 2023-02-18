@@ -375,7 +375,7 @@ return [
         'Image_Editor_No_Save' => 'Could not save image',
         'Image_Editor_Exit' => "Exit",
         'Image_Editor_Save' => "Save",
-        'compression_quality' => 'This field specifies the quality of the image after uploading',
+        'def_img_quality' => 'This field specifies the quality of the image after uploading(The image quality will decrease as we decrease the input value and vice versa)',
         'Zip_No_Extract' => 'Could not extract. File might be corrupt.',
         'Zip_Invalid' => 'This extension is not supported. Valid: zip, gz, tar.',
         'Dir_No_Write' => 'The directory you selected is not writable.',
