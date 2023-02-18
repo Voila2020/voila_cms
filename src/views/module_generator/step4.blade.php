@@ -25,7 +25,7 @@
                     <div class="col-sm-12">
                         <div class="form-group">
 
-                            <label>{{ \Session::get('lang') == 'en' ? 'Title Field Candidate' : 'عنوان الحقل المرشح' }}</label>
+                            <label>{{ App::getlocale() == 'en' ? 'Title Field Candidate' : 'عنوان الحقل المرشح' }}</label>
                             <input type="text" name="title_field" value="{{ $cb_title_field }}" class='form-control'>
                         </div>
                     </div>
@@ -200,6 +200,20 @@
                                     <label class='radio-inline'>
                                         <input {{ !$cb_button_detail ? 'checked' : '' }} type='radio'
                                             name='button_detail' value='false' /> FALSE
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>{{ cbLang('PDF Print Direction') }}</label>
+                                    <label class='radio-inline'>
+                                        <input {{ $cb_pdf_direction ? 'checked' : '' }} type='radio'
+                                            name='pdf_direction' value="ltr" /> LTR
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{ !$cb_pdf_direction ? 'checked' : '' }} type='radio'
+                                            name='pdf_direction' value="rtl" /> RTL
                                     </label>
                                 </div>
                             </div>

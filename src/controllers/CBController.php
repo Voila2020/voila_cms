@@ -373,6 +373,7 @@ class CBController extends Controller
                     $columns_table[$index]['field_raw'] = $join_column1;
                 }
             } else {
+
                 if (isset($field_array[1])) {
                     $result->addselect($table . '.' . $field . ' as ' . $table . '_' . $field);
                     $columns_table[$index]['type_data'] = CRUDBooster::getFieldType($table, $field);
@@ -384,6 +385,7 @@ class CBController extends Controller
                     $columns_table[$index]['field'] = $field;
                     $columns_table[$index]['field_raw'] = $field;
                 }
+
                 $columns_table[$index]['field_with'] = $table . '.' . $field;
             }
         }
@@ -573,15 +575,7 @@ class CBController extends Controller
                     if ($value == '') {
                         $value = "<a  data-lightbox='roadtrip' rel='group_{{$table}}' title='$label: $title' href='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'><img width='40px' height='40px' src='" . (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg')) . "'/></a>";
                     } else {
-                        $matched_upload_word = '';
-                        if (preg_match('/\w+/', config('crudbooster.filemanager_upload_dir'), $matches)) {
-                            $matched_upload_word = $matches[0];
-                        }
-                        if (!empty($matched_upload_word)) {
-                            $new_upload_word = config('crudbooster.filemanager_thumbs_base_path');
-                            $new_value = preg_replace('/\b' . $matched_upload_word . '\b/', $new_upload_word, $value, 1);
-                        }
-                        $pic = (strpos($new_value, 'http://') !== false) ? $new_value : asset($new_value);
+                        $pic = (strpos($value, 'http://') !== false) ? $value : asset($value);
                         $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $pic . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
                     }
                 }
@@ -1021,6 +1015,7 @@ class CBController extends Controller
 
         $hide_form = (request('hide_form')) ? unserialize(request('hide_form')) : [];
         foreach ($this->data_inputan as $ro) {
+
             $name = $ro['name'];
 
             if (!$name) {
@@ -1036,14 +1031,11 @@ class CBController extends Controller
             }
 
             if ($hide_form && count($hide_form)) {
+
                 if (in_array($name, $hide_form)) {
                     continue;
                 }
             }
-
-
-
-
 
             if ($ro['type'] == 'checkbox' && $ro['relationship_table']) {
                 continue;
@@ -1054,10 +1046,6 @@ class CBController extends Controller
             }
 
             $inputdata = request($name);
-
-            if ($ro['type'] == 'switch' && !$inputdata) {
-                $this->arr[$name] = 0;
-            }
 
             if ($ro['type'] == 'money') {
                 $inputdata = preg_replace('/[^\d-]+/', '', $inputdata);
@@ -1071,7 +1059,7 @@ class CBController extends Controller
                 if ($inputdata != '') {
                     $this->arr[$name] = $inputdata;
                 } else {
-                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload') {
+                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload' && $ro['type'] != 'switch') {
                         continue;
                     } else {
                         $this->arr[$name] = "";
@@ -1089,7 +1077,6 @@ class CBController extends Controller
             }
 
             if ($ro['type'] == 'checkbox') {
-
                 if (is_array($inputdata)) {
                     if ($ro['datatable'] != '') {
                         $table_checkbox = explode(',', $ro['datatable'])[0];
@@ -1144,6 +1131,10 @@ class CBController extends Controller
             }
 
             if (@$ro['type'] == 'filemanager') {
+            }
+
+            if ($ro['type'] == 'switch' && !$inputdata) {
+                $this->arr[$name] = 0;
             }
         }
     }
@@ -1750,7 +1741,6 @@ class CBController extends Controller
         if (str_contains($button_name, 'active_all') || str_contains($button_name, 'deactive_all')) {
             $table_name = CRUDBooster::getCurrentModule()->table_name;
             if (str_contains($button_name, 'deactive_all')) {
-                // dd($id_selected);
                 $button_name = str_replace('deactive_all-', '', $button_name);
                 DB::table($table_name)->whereIn('id', $id_selected)->update([$button_name => 0]);
             } else {

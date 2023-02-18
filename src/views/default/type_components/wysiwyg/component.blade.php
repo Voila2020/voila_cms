@@ -58,7 +58,7 @@
         <textarea id='textarea_{{ $name }}' {{ $required }} {{ $readonly }} {{ $disabled }}
             name="{{ $form['name'] }}" class='form-control' rows='5'>{{ $value }}</textarea>
         <div class="text-danger">{{ $errors->first($name) }}</div>
-        <p class='help-block'>{{ @$form['help'] }}</p>
+        <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
     </div>
 </div>
 
@@ -280,7 +280,7 @@
             ],
             template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
             template_mdate_format: '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
-            height: 600,
+            height: 400,
             image_caption: true,
             quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
             noneditable_noneditable_class: 'mceNonEditable',
@@ -295,22 +295,5 @@
             inst.setContent(value);
         }
 
-        function getHtmlValue(html, mjml) {
-            var editor = tinymce.get('textarea_content');
-            newHtml = '<div id="e_temp_builder" >' + html + ' </div>';
-            editor.setContent(newHtml);
-            if ($id) {
-                $.ajax({
-                    type: "POST",
-                    url: "{{ CRUDBooster::mainpath('save-template') }}",
-                    data: {
-                        id: $id,
-                        template: mjml
-                    },
-                }).done(function(msg) {});
-            } else {
-                $('input name=["templae"]').val(mjml);
-            }
-        }
     </script>
 @endpush

@@ -35,6 +35,16 @@
             overflow-x: hidden !important;
             overflow-y: scroll !important;
         }
+
+        @if (App::getlocale() == 'en')
+            .help-block {
+                margin-left: 18%;
+            }
+        @else
+            .help-block {
+                margin-right: 18%;
+            }
+        @endif
     </style>
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
     <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/datepicker/bootstrap-datepicker.js') }}"></script>

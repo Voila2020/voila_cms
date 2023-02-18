@@ -80,7 +80,7 @@
                         @endforeach
                     </select>
                     <div class="help-block">
-                        @if (\Session::get('lang') == 'en')
+                        @if (App::getlocale() == 'en')
                             Do not use cms_* as prefix on your tables name
                         @else
                             يرجى عدم استخدام اللاحقة cms_* في اسماء الجداول الخاصة بك
@@ -105,7 +105,7 @@
                     <label for="">{{ cbLang('Module Slug') }}</label>
                     <input type="text" class="form-control" required name="path" value="{{ $row->path }}">
                     <div class="help-block">
-                        @if (\Session::get('lang') == 'en')
+                        @if (App::getlocale() == 'en')
                             Please alpha numeric only, without space instead _ and or special character
                         @else
                             فضلا استخدم فقط المحارف الابجدية بدون فراغات أو محارف مميزة _ and or
@@ -116,9 +116,9 @@
         <div class="box-footer">
 
             <input checked type='checkbox' name='create_menu'
-                value='1' />{{ \Session::get('lang') == 'en' ? 'Also create menu for this module' : 'اضافة قائمة للموديول الحالي أيضا' }}
+                value='1' />{{ App::getlocale() == 'en' ? 'Also create menu for this module' : 'اضافة قائمة للموديول الحالي أيضا' }}
             <a href='#'
-                title='{{ \Session::get('lang') == 'en' ? 'If you check this, we will create the menu for this module' : 'اذا تم الضغط على هذا الخيار فسوف يتم انشاء قائمة للموديول الحالي' }}'>(?)</a>
+                title='{{ App::getlocale() == 'en' ? 'If you check this, we will create the menu for this module' : 'اذا تم الضغط على هذا الخيار فسوف يتم انشاء قائمة للموديول الحالي' }}'>(?)</a>
 
             <div class='pull-right'>
                 <a class='btn btn-default' href='{{ Route('ModulsControllerGetIndex') }}'> {{ cbLang('button_back') }}</a>

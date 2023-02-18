@@ -298,7 +298,7 @@
             <h3 class="box-title">{{ cbLang('Table Display') }}</h3>
         </div>
         <div class="box-body">
-            @if (\Session::get('lang') == 'en')
+            @if (App::getlocale() == 'en')
                 <div class="alert alert-info">
                     <strong>Warning</strong>. Make sure that your column format are normally, unless using this Tool maybe
                     make

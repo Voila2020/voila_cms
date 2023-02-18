@@ -35,7 +35,7 @@
                 @endif
                 @foreach (CRUDBooster::sidebarMenu() as $menu)
                     <li data-id='{{ $menu->id }}'
-                        class='{{ !empty($menu->children) ? 'treeview' : '' }} {{ Request::is($menu->url_path . '*') ? 'active' : '' }}'>
+                        class='{{ !empty($menu->children) ? 'treeview' : '' }} {{ Request::is($menu->url_path) ? 'active' : '' }}'>
                         <a href='{{ $menu->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $menu->url }}'
                             class='{{ $menu->color ? 'text-' . $menu->color : '' }}'>
                             <i class='{{ $menu->icon }} {{ $menu->color ? 'text-' . $menu->color : '' }}'></i>
@@ -116,7 +116,7 @@
                             <li class="<?= $gs == Request::get('group') ? 'active' : '' ?>"><a
                                     href='{{ route('SettingsControllerGetShow') }}?group={{ urlencode($gs) }}&m=0'><i
                                         class='fa fa-wrench'></i>
-                                    <span>{{ $gs }}</span></a></li>
+                                    <span>{{ cbLang($gs) }}</span></a></li>
                             <?php endforeach;?>
                         </ul>
                     </li>

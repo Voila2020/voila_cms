@@ -13,7 +13,7 @@
 </script>
 
 <div class="well" style="background: #FFF">
-    <h1>Translation</h1>
+    <h1>{{ App::getlocale() == 'en' ? 'Translation' : 'الترجمة' }}</h1>
     <br>
 
     <form method="POST" action="{{ route('translations.create') }}">
@@ -21,11 +21,11 @@
         <div class="row">
             <div class="col-md-4">
                 <input type="text" name="key" class="form-control"
-                    placeholder="{{ \Session::get('lang') == 'en' ? 'Enter Key' : 'أدخل المفتاح' }}" required>
+                    placeholder="{{ App::getlocale() == 'en' ? 'Enter Key' : 'أدخل المفتاح' }}" required>
             </div>
             <div class="col-md-4">
                 <input type="text" name="value" class="form-control"
-                    placeholder="{{ \Session::get('lang') == 'en' ? 'Enter Value' : 'أدخل القيمة' }}" required>
+                    placeholder="{{ App::getlocale() == 'en' ? 'Enter Value' : 'أدخل القيمة' }}" required>
             </div>
             <div class="col-md-4">
 
@@ -36,7 +36,7 @@
 
     <hr>
     <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
-        placeholder="{{ \Session::get('lang') == 'en' ? 'Search for names' : 'ابحث عن ترجمة' }}" title="Type in a name">
+        placeholder="{{ App::getlocale() == 'en' ? 'Search for names' : 'ابحث عن ترجمة' }}" title="Type in a name">
     <hr>
     <div class="box-body table-responsive no-padding">
         <table class="table table-hover table-striped table-bordered" id="mytable">
