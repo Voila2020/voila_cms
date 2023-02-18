@@ -161,8 +161,7 @@
                                 },
                             });
                         },
-                        close(props) {
-                        },
+                        close(props) {},
                     },
                 },
                 styleManager: {
@@ -217,6 +216,15 @@
                 },
             }, ]);
 
+            editor.Panels.addButton('options', [{
+                id: 'preview',
+                className: 'fa fa-eye',
+                command: 'preview',
+                attributes: {
+                    title: 'Preview'
+                }
+            }]);
+
         });
 
         function responsive_filemanager_callback(field_id, value) {
@@ -225,7 +233,7 @@
                 selected.setAttributes({
                     'background-url': value,
                     'background-size': 'cover',
-                    'background-repeat' : 'no-repeat',
+                    'background-repeat': 'no-repeat',
                     'padding': '10px'
                 });
             } else {

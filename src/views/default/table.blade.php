@@ -107,7 +107,7 @@
                     if ($col['visible'] === false) {
                         continue;
                     }
-                
+
                     $sort_column = Request::get('filter_column');
                     $colname = $col['label'];
                     $name = $col['name'];
@@ -136,7 +136,7 @@
                         $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'asc');
                         echo "<a href='$url' title='Click to sort ascending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort'></i></a>";
                     }
-                
+
                     echo '</th>';
                 }
                 ?>
@@ -176,14 +176,14 @@
                         foreach ($row as $key => $val) {
                             $query = str_replace('[' . $key . ']', '"' . $val . '"', $query);
                         }
-                        
+
                         @eval("if($query) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }");
                         ?>
                     @endforeach
-                    <?php echo "<tr class='$tr_color'>"; ?>
-                @else
+                    <tr class='{{ $tr_color }}' id='{{ $html_contents['data'][$i]->id }}'>
+                    @else
                     <tr class="tr" id="{{ $html_contents['data'][$i]->id }}">
                 @endif
 
