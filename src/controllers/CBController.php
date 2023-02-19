@@ -148,8 +148,6 @@ class CBController extends Controller
         $this->data['title_field'] = $this->title_field;
         $this->data['appname'] = CRUDBooster::getSetting('appname');
         $this->data['alerts'] = $this->alert;
-        if (CRUDBooster::getCurrentModule()->path == 'logs')
-            $this->index_button[] = ['label' => cbLang('clear_logs'), 'url' => CRUDBooster::adminPath("clear-logs"), "icon" => "fa fa-trash"];
         $this->data['index_button'] = $this->index_button;
         $this->data['show_numbering'] = $this->show_numbering;
         $this->data['button_detail'] = $this->button_detail;

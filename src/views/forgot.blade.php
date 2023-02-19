@@ -41,15 +41,17 @@
             background: rgba(255, 255, 255, 0.9);
             color: {{ CRUDBooster::getSetting('login_font_color') ?: '#666666' }} !important;
         }
+
+        .login-logo {
+            margin-top: 50%;
+        }
     </style>
 </head>
 
 <body class="login-page">
     <div class="login-box">
         <div class="login-logo">
-            <img title='{!! $appname == 'CRUDBooster' ? '<b>CRUD</b>Booster' : $appname !!}'
-                src='{{ CRUDBooster::getSetting('logo') ? asset(CRUDBooster::getSetting('logo')) : asset('vendor/crudbooster/assets/voila_logo.png') }}'
-                style='max-width: 100%;max-height:170px' />
+
         </div><!-- /.login-logo -->
         <div class="login-box-body">
 

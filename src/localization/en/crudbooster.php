@@ -422,6 +422,10 @@ return [
         'TB' => "TB",
         'total size' => "Total size",
 
-        'clear_logs' => 'Clear All Logs',
     ],
+    #
+    'clear_logs' => 'Clear All Logs',
+    'def_img_quality' => 'This field specifies the quality of the image after uploading (The image quality will decrease as we decrease the input value and vice versa)',
+    'notifications_activity' => 'This field determines whether notifications are enabled or not (not enabled by default)',
+    'default_image' => 'This image will appear if the image field is empty'
 ];

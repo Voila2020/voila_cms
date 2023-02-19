@@ -25,7 +25,7 @@ class ModulsStatusController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->button_import = false;
         $this->button_filter = false;
         $this->button_detail = false;
-        $this->button_bulk_action = false;
+        $this->button_bulk_action = true;
         $this->button_table_action = false;
         $this->orderby = ['is_protected' => 'asc', 'name' => 'asc'];
 

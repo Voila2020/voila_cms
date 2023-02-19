@@ -132,6 +132,7 @@
                 keepUnusedStyles: 1,
                 plugins: [
                     'grapesjs-mjml',
+                    'gjs-plugin-ckeditor',
                     "grapesjs-touch",
                     "grapesjs-parser-postcss",
                     "grapesjs-tui-image-editor",
@@ -139,6 +140,41 @@
                 pluginsOpts: {
                     'grapesjs-mjml': {
                         columnsPadding: ''
+                    },
+                    'gjs-plugin-ckeditor': {
+                        position: 'center',
+                        options: {
+                            startupFocus: true,
+                            extraAllowedContent: '*(*);*{*}', // Allows any class and any inline style
+                            allowedContent: true, // Disable auto-formatting, class removing, etc.
+                            enterMode: CKEDITOR.ENTER_BR,
+                            extraPlugins: 'sharedspace,justify,colorbutton,panelbutton,font',
+                            toolbar: [{
+                                    name: 'styles',
+                                    items: ['Font', 'FontSize']
+                                },
+                                ['Bold', 'Italic', 'Underline', 'Strike'],
+                                {
+                                    name: 'paragraph',
+                                    items: ['NumberedList', 'BulletedList']
+                                },
+                                {
+                                    name: 'links',
+                                    items: ['Link', 'Unlink']
+                                },
+                                {
+                                    name: 'colors',
+                                    items: ['TextColor', 'BGColor']
+                                },
+                            ],
+                        }
+                    },
+                },
+                storageManager: {
+                    options: {
+                        local: {
+                            key: 'gjsProjectMjml'
+                        }
                     }
                 },
                 assetManager: {
@@ -169,6 +205,38 @@
                 },
             });
 
+            var mdlClass = 'gjs-mdl-dialog-sm';
+            var pnm = editor.Panels;
+            var cmdm = editor.Commands;
+            var md = editor.Modal;
+
+
+            // Simple warn notifier
+            var origWarn = console.warn;
+            toastr.options = {
+                closeButton: true,
+                preventDuplicates: true,
+                showDuration: 250,
+                hideDuration: 150
+            };
+            console.warn = function(msg) {
+                toastr.warning(msg);
+                origWarn(msg);
+            };
+
+            // Beautify tooltips
+            var titles = document.querySelectorAll('*[title]');
+            for (var i = 0; i < titles.length; i++) {
+                var el = titles[i];
+                var title = el.getAttribute('title');
+                title = title ? title.trim() : '';
+                if (!title)
+                    break;
+                el.setAttribute('data-tooltip', title);
+                el.setAttribute('data-tooltip-pos', 'bottom');
+                el.setAttribute('title', '');
+            }
+
             //-----------------------------------------------//
             editor.on("storage:start:store", function() {
                 $body.addClass("loading");
@@ -188,9 +256,9 @@
                 if (vars.variables) variables = JSON.parse(vars.variables);
             });
             // set component
-            $template = `"{!! $template !!}"`;
+            $template = `{!! $template !!}`;
             if ($template != '""' && typeof $template != 'undefined')
-                editor.setComponents(`"{!! $template !!}"`);
+                editor.setComponents(`{!! $template !!}`);
             //show modal save..
             editor.Panels.addButton("options", [{
                 id: "save",

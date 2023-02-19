@@ -2,14 +2,13 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;
 use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use crocodicstudio\crudbooster\fonts\Fontawesome;
-use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 
 class ModulsController extends CBController
 {
@@ -192,6 +191,11 @@ class ModulsController extends CBController
         ];
 
         $this->index_button[] = ['label' => 'Generate New Module', 'icon' => 'fa fa-plus', 'url' => CRUDBooster::mainpath('step1'), 'color' => 'success'];
+
+
+        $this->style_css = '.table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
+            width: 7%;
+        }';
     }
 
     function hook_query_index(&$query)
