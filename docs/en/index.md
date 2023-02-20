@@ -37,6 +37,7 @@
     - [time](./form-time.md)
     - [upload](./form-upload.md)
     - [wysiwyg](./form-wysiwyg.md)
+    - [filemanager](./form-filemanager.md)
 - [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
 - [How To Implement A Many To Many Relationship To Form (E.g : Film -> R <- Actors)](./how-to-many-to-many.md)
 - [How To Implement An One To Many Relationship To Form (E.g : Product <- Category)](./how-to-one-to-many.md)
