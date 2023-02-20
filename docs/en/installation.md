@@ -1,6 +1,6 @@
-# Welcome To CRUDBooster
+# Welcome To Voila CMS
 
-CRUDBooster is CRUD Generator for laravel, with the most important features web application development. It's easy, flexible, and powerful.
+Voila CMS for laravel based on CRUDBooster CRUD Generator, with the most important features web application development. It's easy, flexible, and powerful.
 
 ## System Requirement and Basic Technical Knowledge
 - Web Server as:
