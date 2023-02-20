@@ -114,8 +114,8 @@
 <body
     class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ $sidebar_mode ?: '' }}">
     <div id='app' class="wrapper">
-        <div class="switch-overlay"></div>
-        <div class="switch-loader">
+        <div class="main-overlay"></div>
+        <div class="spinner-loader">
             <div></div>
             <div></div>
             <div></div>

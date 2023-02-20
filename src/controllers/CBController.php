@@ -168,8 +168,17 @@ class CBController extends Controller
         $this->data['button_action_width'] = $this->button_action_width;
         foreach ($this->col as $col) {
             if (isset($col['switch']) && $col['switch'] == true) {
-                $this->button_selected[] = ['label' => 'Activate Column ' . $col['label'], 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
-                $this->button_selected[] = ['label' => 'Deactivate Column ' . $col['label'], 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
+                $acitvLabel = '';
+                $deactiveLabel = '';
+                if (session()->get('lang') == 'en') {
+                    $acitvLabel = 'Activate Column ' . $col['label'];
+                    $deactiveLabel = 'Deactivate Column ' . $col['label'];
+                } else {
+                    $acitvLabel = 'تفعيل العمود ' . $col['label'];
+                    $deactiveLabel = 'الغاء تفعيل العمود ' . $col['label'];
+                }
+                $this->button_selected[] = ['label' => $acitvLabel, 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
+                $this->button_selected[] = ['label' => $deactiveLabel, 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
             }
         }
         $this->data['button_selected'] = $this->button_selected;

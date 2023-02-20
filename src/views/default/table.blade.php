@@ -54,8 +54,8 @@
                     $(this).val(0);
                 else
                     $(this).val(1);
-                $('.switch-overlay').css('display', 'block');
-                $('.switch-loader').css('display', 'inline-block');
+                $('.main-overlay').css('display', 'block');
+                $('.spinner-loader').css('display', 'inline-block');
                 $.ajax({
                     type: "POST",
                     url: "edit-switch-action",
@@ -66,29 +66,14 @@
                         value: $(this).val(),
                     },
                 }).done(function(msg) {
-                    $('.switch-loader').css('display', 'none');
-                    $('.switch-overlay').css('display', 'none');
+                    $('.spinner-loader').css('display', 'none');
+                    $('.main-overlay').css('display', 'none');
                 });
             });
         });
     </script>
 @endpush
 
-<div class="switch-overlay"></div>
-<div class="switch-loader">
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-    <div></div>
-</div>
 
 <form id='form-table' method='post' action='{{ CRUDBooster::mainpath('action-selected') }}'>
     <input type='hidden' name='button_name' value='' />

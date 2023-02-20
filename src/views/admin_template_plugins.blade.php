@@ -66,11 +66,18 @@
     })
 </script>
 <script src="{{ asset('vendor/crudbooster/assets/js/main.js') . '?r=' . time() }}"></script>
+
 <script>
-    $('.switch-overlay').css('display', 'block');
-    $('.switch-loader').css('display', 'inline-block');
+    $(window).bind('beforeunload', function() {
+        $('.main-overlay').css('display', 'block');
+        $('.spinner-loader').css('display', 'inline-block');
+    });
     $(window).load(function() {
-        $('.switch-loader').css('display', 'none');
-        $('.switch-overlay').css('display', 'none');
+        $('.spinner-loader').css('display', 'none');
+        $('.main-overlay').css('display', 'none');
+    });
+    $(window).bind("pageshow", function(event) {
+        $('.spinner-loader').css('display', 'none');
+        $('.main-overlay').css('display', 'none');
     });
 </script>
