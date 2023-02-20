@@ -1,4 +1,4 @@
-# CRUDBooster Documentation 
+# Voila CMS Documentation 
 ## Table Of Contents
 - [How To Install/Update](./installation.md)
 - [How To Create A Module (CRUD)](./how-to-create-module.md)
