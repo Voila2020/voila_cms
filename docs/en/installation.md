@@ -23,7 +23,7 @@ CRUDBooster is CRUD Generator for laravel, with the most important features web 
 ## Installation
 1. Open the terminal, navigate to your laravel project directory.
 ```php
-$ composer require crocodicstudio/crudbooster=5.5.*
+$ composer require voila_cms/crudbooster
 ```
 
 2. Setting the database configuration, open .env file at project root directory
@@ -42,7 +42,7 @@ $ php artisan crudbooster:install
 ```php
 /admin/login
 ```
-- default email : admin@crudbooster.com
+- default email : superadmin@voila.digital
 - default password : 123456
 
 ## What's Next
