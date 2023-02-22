@@ -1,4 +1,3 @@
-
 ## How To Change The Default Image
 
 1. Go to Settings -> Application Setting
