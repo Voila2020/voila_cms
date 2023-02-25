@@ -1,10 +1,10 @@
 <?php namespace crocodicstudio\crudbooster\controllers;
 
-use File;
+use Illuminate\Support\Facades\File;
 use Image;
-use Request;
-use Response;
-use Storage;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Storage;
 
 class FileController extends Controller
 {
@@ -34,14 +34,14 @@ class FileController extends Controller
         $fullStoragePath = storage_path('app/'.$fullFilePath);
         $lifetime = 31556926; // One year in seconds
 
-        
+
 
         if (! Storage::exists($fullFilePath)) {
             abort(404);
         }
 
         $handler = new \Symfony\Component\HttpFoundation\File\File(storage_path('app/'.$fullFilePath));
-        
+
         $extension = strtolower(File::extension($fullStoragePath));
         $images_ext = config('crudbooster.IMAGE_EXTENSIONS', 'jpg,png,gif,bmp');
         $images_ext = explode(',', $images_ext);

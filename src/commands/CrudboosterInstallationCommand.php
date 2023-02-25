@@ -43,6 +43,9 @@ class CrudboosterInstallationCommand extends Command
 
         if ($this->confirm('Do you have setting the database configuration at .env ?')) {
 
+            if (file_exists(public_path('vendor'))) {
+                File::deleteDirectory(public_path('vendor'));
+            }
             if (!file_exists(public_path('vendor'))) {
                 mkdir(public_path('vendor'), 0777);
                 mkdir(public_path('vendor/filemanager'), 0777);
@@ -54,6 +57,9 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('vendor/filemanager/svg'), 0777);
             }
 
+            if (file_exists(public_path('landing_page_builder'))) {
+                File::deleteDirectory(public_path('landing_page_builder'));
+            }
             if (!file_exists(public_path('landing_page_builder'))) {
                 mkdir(public_path('landing_page_builder'), 0777);
                 mkdir(public_path('landing_page_builder/css'), 0777);
@@ -63,6 +69,9 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('landing_page_builder/plugins'), 0777);
             }
 
+            if (file_exists(public_path('landing_page'))) {
+                File::deleteDirectory(public_path('landing_page'));
+            }
             if (!file_exists(public_path('landing_page'))) {
                 mkdir(public_path('landing_page'), 0777);
                 mkdir(public_path('landing_page/css'), 0777);
@@ -73,6 +82,11 @@ class CrudboosterInstallationCommand extends Command
             if (!file_exists(resource_path('landing_page_builder'))) {
                 mkdir(resource_path('landing_page_builder'), 0777);
             }
+
+            // if (file_exists(resource_path('lang/en/crudbooster.php')))
+            //     File::delete(resource_path('lang/en/crudbooster.php'));
+            // if (file_exists(resource_path('lang/ar/crudbooster.php')))
+            //     File::delete(resource_path('lang/ar/crudbooster.php'));
 
             $path = base_path('routes/web.php');
             File::append($path, "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);");
@@ -102,6 +116,8 @@ class CrudboosterInstallationCommand extends Command
             if (app()->version() < 5.6) {
                 $this->call('optimize');
             }
+
+
 
             $this->info('Installing CRUDBooster Is Completed ! Thank You :)');
         } else {

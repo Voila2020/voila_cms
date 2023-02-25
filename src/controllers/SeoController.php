@@ -2,7 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;

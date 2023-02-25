@@ -1,10 +1,11 @@
+
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddTableCmsNotifications extends Migration
+class AddTableLoginAttempts extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +14,11 @@ class AddTableCmsNotifications extends Migration
      */
     public function up()
     {
-        Schema::create('cms_notifications', function (Blueprint $table) {
+        Schema::create('login_attempts', function (Blueprint $table) {
             $table->increments('id');
-
-            $table->integer('id_cms_users')->nullable();
-            $table->string('content')->nullable();
-            $table->string('url')->nullable();
-            $table->boolean('is_read')->nullable();
-
-            $table->timestamps();
+            $table->string('ip_address');
+            $table->integer('attempts')->nullable();
+            $table->timestamp('blocked_at')->nullable();
         });
     }
 
@@ -32,6 +29,6 @@ class AddTableCmsNotifications extends Migration
      */
     public function down()
     {
-        Schema::drop('cms_notifications');
+        Schema::drop('login_attempts');
     }
 }

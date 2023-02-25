@@ -2,14 +2,13 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;
 use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use crocodicstudio\crudbooster\fonts\Fontawesome;
-use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
 
 
 class ModulsStatusController extends \crocodicstudio\crudbooster\controllers\CBController

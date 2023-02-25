@@ -1,9 +1,10 @@
 <?php namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;
 use Illuminate\Support\Facades\PDF;
+use Illuminate\Support\Facades\Schema;
 
 class NotificationsController extends CBController
 {
@@ -47,7 +48,7 @@ class NotificationsController extends CBController
     {
 
         $rows = DB::table('cms_notifications')->where('id_cms_users', 0)->orWhere('id_cms_users', CRUDBooster::myId())->orderby('id', 'desc')->where('is_read', 0)->take(25);
-        if (\Schema::hasColumn('cms_notifications', 'deleted_at')) {
+        if (Schema::hasColumn('cms_notifications', 'deleted_at')) {
             $rows->whereNull('deleted_at');
         }
 

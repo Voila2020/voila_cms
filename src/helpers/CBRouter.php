@@ -71,7 +71,7 @@ class CBRouter
             Route::post('register', ['uses' => 'AdminController@postRegister', 'as' => 'postRegister']);
             Route::get('register', ['uses' => 'AdminController@getRegister', 'as' => 'getRegister']);
             Route::get('logout', ['uses' => 'AdminController@getLogout', 'as' => 'getLogout']);
-            Route::post('login', ['uses' => 'AdminController@postLogin', 'as' => 'postLogin']);
+            Route::post('login', ['uses' => 'AdminController@postLogin', 'as' => 'postLogin'])->middleware(['\crocodicstudio\crudbooster\middlewares\CBAuthAttempts']);
             Route::get('login', ['uses' => 'AdminController@getLogin', 'as' => 'getLogin']);
         });
     }
@@ -178,10 +178,8 @@ class CBRouter
             'prefix' => config('crudbooster.ADMIN_PATH'),
             'namespace' => static::$cb_namespace,
         ], function () {
-            # Switch button
-            Route::post('/edit-switch-action', [AdminController::class, 'postEditSwitchAction']);
             # Seo
-            Route::post('/sort-table', [AdminController::class, 'postSortTable'])->name('sortTable');
+            Route::post('/sort-table', [CBController::class, 'postSortTable'])->name('sortTable');
             Route::get('/seo-home', [SeoController::class, 'get'])->name('seo-home');
             Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'get'])->name('seo-model');
             Route::post('/seo-store/{model}', [SeoController::class, 'store'])->name('seo-store');
@@ -195,9 +193,9 @@ class CBRouter
             Route::get('/getForms', [CmsFormController::class, 'getForms']);
             Route::get('/getFormCode/{id}', [CmsFormController::class, 'getFormCode']);
             # logs
-            Route::get('/clear-logs', [AdminController::class, 'clearLogs']);
+            Route::get('/clear-logs', [CBController::class, 'clearLogs']);
             # Switch Language
-            Route::get('/switch-language/{locale}', [AdminController::class, 'switchLanguage'])->name('cb.switch_language');
+            Route::get('/switch-language/{locale}', [CBController::class, 'switchLanguage'])->name('cb.switch_language');
             # Email Builder
             Route::get('/email-builder/{id?}', [EmailTemplatesController::class, 'showEmailBuilder'])->name('email_builder.index');
             Route::put('/email_templates/save-template/{id}', [EmailTemplatesController::class, 'saveEmailTemplate'])->name("email_builder.store");

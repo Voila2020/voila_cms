@@ -61,7 +61,7 @@
         @endif
         <div class="panel panel-default">
             <div class="panel-heading">
-                <i class='fa fa-cog'></i> {{ $page_title }}
+                <i class='fa fa-cog'></i> {{ cbLang($page_title) }}
             </div>
             <div class="panel-body">
                 <form method='post' id="form" enctype="multipart/form-data"
@@ -87,7 +87,7 @@
 
                         ?>
                         <div class='form-group'>
-                            <label class='label-setting' title="{{ $s->name }}">{{ $s->label }}
+                            <label class='label-setting' title="{{ $s->name }}">{{ cbLang($s->label) }}
                                 @if (CRUDBooster::isSuperAdmin())
                                     <a style="visibility:hidden" href='{{ CRUDBooster::mainpath("edit/$s->id") }}'
                                         title='Edit This Meta Setting' class='btn btn-box-tool'><i

@@ -3,8 +3,8 @@
 namespace crocodicstudio\crudbooster\middlewares;
 
 use Closure;
-use CRUDBooster;
-use DB;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use Illuminate\Support\Facades\DB;
 
 class CBBackend
 {

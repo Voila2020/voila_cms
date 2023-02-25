@@ -1,8 +1,10 @@
 <?php namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -416,7 +418,7 @@ class ApiController extends Controller
 
                     foreach ($rows as &$row) {
                         foreach ($row as $k => $v) {
-                            $ext = \File::extension($v);
+                            $ext = File::extension($v);
                             if (in_array($ext, $uploads_format_candidate)) {
                                 $row->$k = asset($v);
                             }
@@ -472,7 +474,7 @@ class ApiController extends Controller
                     }
 
                     foreach ($rows as $k => $v) {
-                        $ext = \File::extension($v);
+                        $ext = File::extension($v);
                         if (in_array($ext, $uploads_format_candidate)) {
                             $rows->$k = asset($v);
                         }

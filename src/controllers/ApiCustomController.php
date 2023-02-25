@@ -1,10 +1,11 @@
 <?php namespace crocodicstudio\crudbooster\controllers;
 
-use CRUDbooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;
 use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Route;
 
 class ApiCustomController extends CBController
@@ -107,7 +108,7 @@ class ApiCustomController extends CBController
 
         $json = json_encode($data);
 
-        return \Response::make($json, 200, [
+        return Response::make($json, 200, [
             'Content-Type' => 'application/json',
             'Content-Disposition' => 'attachment; filename='.CRUDBooster::getSetting('appname').' - API For POSTMAN.json',
         ]);

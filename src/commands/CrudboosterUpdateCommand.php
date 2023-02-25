@@ -44,7 +44,6 @@ class CrudboosterUpdateCommand extends Command
         $this->info('Publishing CRUDBooster needs file...');
         $this->call('vendor:publish');
         $this->call('vendor:publish', ['--tag' => 'cb_migration', '--force' => true]);
-        $this->call('vendor:publish', ['--tag' => 'cb_lfm', '--force' => true]);
         $this->call('vendor:publish', ['--tag' => 'cb_localization', '--force' => true]);
 
 

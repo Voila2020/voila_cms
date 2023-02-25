@@ -2,16 +2,18 @@
 
 namespace crocodicstudio\crudbooster\helpers;
 
-use Cache;
-use DB;
-use Illuminate\Support\Facades\DB as FacadesDB;
+use Exception;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Image;
-use Request;
-use Route;
-use Schema;
-use Session;
-use Storage;
-use Validator;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
 
 class CRUDBooster
 {
@@ -155,6 +157,14 @@ class CRUDBooster
         Cache::forever('setting_' . $name, $query->content);
 
         return $query->content;
+    }
+
+    public static function setSetting($name, $value)
+    {
+        if (Cache::has('setting_' . $name)) {
+            $value = $value == 'en' ? 'english' : 'arabic';
+            Cache::forever('setting_' . $name, $value);
+        }
     }
 
     public static function insert($table, $data = [])
@@ -717,11 +727,11 @@ class CRUDBooster
 
     public static function sendEmailQueue($queue)
     {
-        \Config::set('mail.driver', self::getSetting('smtp_driver'));
-        \Config::set('mail.host', self::getSetting('smtp_host'));
-        \Config::set('mail.port', self::getSetting('smtp_port'));
-        \Config::set('mail.username', self::getSetting('smtp_username'));
-        \Config::set('mail.password', self::getSetting('smtp_password'));
+        Config::set('mail.driver', self::getSetting('smtp_driver'));
+        Config::set('mail.host', self::getSetting('smtp_host'));
+        Config::set('mail.port', self::getSetting('smtp_port'));
+        Config::set('mail.username', self::getSetting('smtp_username'));
+        Config::set('mail.password', self::getSetting('smtp_password'));
 
         $html = $queue->email_content;
         $to = $queue->email_recipient;
@@ -731,7 +741,7 @@ class CRUDBooster
         $cc_email = $queue->email_cc_email;
         $attachments = unserialize($queue->email_attachments);
 
-        \Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use (
+        Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use (
             $html,
             $to,
             $subject,
@@ -758,11 +768,11 @@ class CRUDBooster
     public static function sendEmail($config = [])
     {
 
-        \Config::set('mail.driver', self::getSetting('smtp_driver'));
-        \Config::set('mail.host', self::getSetting('smtp_host'));
-        \Config::set('mail.port', self::getSetting('smtp_port'));
-        \Config::set('mail.username', self::getSetting('smtp_username'));
-        \Config::set('mail.password', self::getSetting('smtp_password'));
+        Config::set('mail.driver', self::getSetting('smtp_driver'));
+        Config::set('mail.host', self::getSetting('smtp_host'));
+        Config::set('mail.port', self::getSetting('smtp_port'));
+        Config::set('mail.username', self::getSetting('smtp_username'));
+        Config::set('mail.password', self::getSetting('smtp_password'));
 
         $to = $config['to'];
         $data = $config['data'];
@@ -793,7 +803,7 @@ class CRUDBooster
             return true;
         }
 
-        \Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use ($to, $subject, $template, $attachments) {
+        Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use ($to, $subject, $template, $attachments) {
             $message->priority(1);
             $message->to($to);
 
@@ -842,7 +852,7 @@ class CRUDBooster
                 exit;
             } else {
                 $res = redirect()->back()->with(['message' => implode('<br/>', $message), 'message_type' => 'warning'])->withInput();
-                \Session::driver()->save();
+                Session::driver()->save();
                 $res->send();
                 exit;
             }

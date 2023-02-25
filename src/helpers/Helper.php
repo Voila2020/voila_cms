@@ -10,6 +10,7 @@
 */
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Storage;
 
 if (!function_exists('ends_with')) {
     /**
@@ -33,8 +34,8 @@ if (!function_exists('cbLang')) {
      */
     function cbLang($key, array $replace = [], $locale = null)
     {
-        if (session()->get('locale'))
-            App::setlocale(session()->get('locale'));
+        if (get_setting('default_language'))
+            App::setlocale(get_setting('default_language') == 'english' ? 'en' : 'ar');
         $value = trans('crudbooster.' . $key);
         if ($value != 'crudbooster.' . $key)
             return trans("crudbooster." . $key, $replace, $locale);
@@ -120,6 +121,15 @@ if (!function_exists('get_setting')) {
     {
         $setting = \crocodicstudio\crudbooster\helpers\CB::getSetting($key);
         $setting = ($setting) ?: $default;
+        return $setting;
+    }
+}
+
+if (!function_exists('set_setting')) {
+    function set_setting($key, $value)
+    {
+        $setting = \crocodicstudio\crudbooster\helpers\CB::setSetting($key, $value);
+        // $setting = ($setting) ?: null;
         return $setting;
     }
 }

@@ -2,8 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Excel;

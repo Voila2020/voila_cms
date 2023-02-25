@@ -5,13 +5,15 @@ namespace crocodicstudio\crudbooster\controllers;
 error_reporting(E_ALL ^ E_NOTICE);
 
 
-use CB;
+use crocodicstudio\crudbooster\helpers\CB;
 use crocodicstudio\crudbooster\export\DefaultExportXls;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,7 +21,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
-use Schema;
+use Illuminate\Support\Facades\Schema;
 
 class CBController extends Controller
 {
@@ -168,15 +170,8 @@ class CBController extends Controller
         $this->data['button_action_width'] = $this->button_action_width;
         foreach ($this->col as $col) {
             if (isset($col['switch']) && $col['switch'] == true) {
-                $acitvLabel = '';
-                $deactiveLabel = '';
-                if (session()->get('lang') == 'en') {
-                    $acitvLabel = 'Activate Column ' . $col['label'];
-                    $deactiveLabel = 'Deactivate Column ' . $col['label'];
-                } else {
-                    $acitvLabel = 'تفعيل العمود ' . $col['label'];
-                    $deactiveLabel = 'الغاء تفعيل العمود ' . $col['label'];
-                }
+                $acitvLabel = cbLang('activate_label');
+                $deactiveLabel = cbLang('deactivate_label');
                 $this->button_selected[] = ['label' => $acitvLabel, 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
                 $this->button_selected[] = ['label' => $deactiveLabel, 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
             }
@@ -1850,5 +1845,51 @@ class CBController extends Controller
 
     public function hook_after_delete($id)
     {
+    }
+
+    # voila additional functions
+    public function postEditSwitchAction(Request $request)
+    {
+        DB::table(Request::input('table'))
+            ->where('id', Request::input('id'))
+            ->update([Request::input('feild') => Request::input('value')]);
+        CRUDBooster::insertLog(cbLang('log_switch_value', [
+            'module' => CRUDBooster::getCurrentModule()->name,
+            'name' => Request::input('feild'),
+        ]));
+    }
+
+    public function postSortTable(Request $request)
+    {
+        if (Request::input("data")) {
+            $sortedItems = Request::input('data');
+            $table_name = Request::input("table_name");
+            foreach ($sortedItems as $key => $sortedItem) {
+                DB::table($table_name)->where("id", $sortedItems[$key])->update([
+                    'sorting' => $key + 1,
+                ]);
+            }
+            return response()->json(array("message" => "done", "status" => true));
+        }
+        return response()->json(array("message" => "faild", "status" => false));
+    }
+
+    public function clearLogs()
+    {
+        try {
+            DB::table('cms_logs')->delete();
+        } catch (Exception $ex) {
+            Log::log("error", "Error while delete logs" . $ex->getMessage());
+        }
+        return redirect()->back();
+    }
+
+    public function switchLanguage($locale)
+    {
+        Session::put('lang', $locale);
+        Session::put('locale', $locale);
+        App::setlocale($locale);
+        set_setting('default_language', $locale);
+        return redirect()->back()->withInput();
     }
 }

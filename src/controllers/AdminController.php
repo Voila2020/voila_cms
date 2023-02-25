@@ -3,8 +3,7 @@
 namespace crocodicstudio\crudbooster\controllers;
 
 use Carbon\Carbon;
-use crocodicstudio\crudbooster\helpers\CRUDBooster as HelpersCRUDBooster;
-use CRUDBooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
@@ -44,7 +43,7 @@ class AdminController extends CBController
         $password = request('password');
         $users = DB::table(config('crudbooster.USER_TABLE'))->where('id', $id)->first();
 
-        if (\Hash::check($password, $users->password)) {
+        if (Hash::check($password, $users->password)) {
             Session::put('admin_lock', 0);
 
             return redirect(CRUDBooster::adminPath());
@@ -81,7 +80,7 @@ class AdminController extends CBController
         $password = Request::input("password");
         $users = DB::table(config('crudbooster.USER_TABLE'))->where("email", $email)->first();
 
-        if (\Hash::check($password, $users->password)) {
+        if (Hash::check($password, $users->password)) {
             $priv = DB::table("cms_privileges")->where("id", $users->id_cms_privileges)->first();
 
             $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', $users->id_cms_privileges)->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
@@ -103,7 +102,6 @@ class AdminController extends CBController
 
             $cb_hook_session = new \App\Http\Controllers\CBHook;
             $cb_hook_session->afterLogin();
-            // dd("stop");
             return redirect(CRUDBooster::adminPath());
         } else {
             return redirect()->route('getLogin')->with([
@@ -137,7 +135,7 @@ class AdminController extends CBController
         DB::table(config('crudbooster.USER_TABLE'))->where('email', Request::input('email'))->update(['token' => $token, 'token_created_at' => Carbon::now()]);
         $appname = CRUDBooster::getSetting('appname');
         $user = CRUDBooster::first(config('crudbooster.USER_TABLE'), ['email' => g('email')]);
-        $link = HelpersCRUDBooster::adminPath() . '/password/reset/' . $token;
+        $link = CRUDBooster::adminPath() . '/password/reset/' . $token;
         $user->link = $link;
         //$user->password = $rand_string;
         CRUDBooster::sendEmail(['to' => [$user->email], 'data' => $user, 'template' => 'forgot_password_backend']);
@@ -199,46 +197,4 @@ class AdminController extends CBController
             return view('crudbooster::password-reset')->with(['token' => $token]);
         }
     }
-
-    public function postEditSwitchAction(Request $request)
-    {
-        DB::table(Request::input('table'))
-            ->where('id', Request::input('id'))
-            ->update([Request::input('feild') => Request::input('value')]);
-    }
-
-    public function postSortTable(Request $request)
-    {
-        if (Request::input("data")) {
-            $sortedItems = Request::input('data');
-            $table_name = Request::input("table_name");
-            foreach ($sortedItems as $key => $sortedItem) {
-                DB::table($table_name)->where("id", $sortedItems[$key])->update([
-                    'sorting' => $key + 1,
-                ]);
-            }
-            return response()->json(array("message" => "done", "status" => true));
-        }
-        return response()->json(array("message" => "faild", "status" => false));
-    }
-
-    public function clearLogs()
-    {
-        try {
-            DB::table('cms_logs')->delete();
-        } catch (Exception $ex) {
-            Log::log("error", "Error while delete logs" . $ex->getMessage());
-        }
-        return redirect()->back();
-    }
-
-    public function switchLanguage($locale)
-    {
-        \Session::put('lang', $locale);
-        Session::put('locale', $locale);
-        App::setlocale($locale);
-        return redirect()->back()->withInput();
-    }
-
-
 }
