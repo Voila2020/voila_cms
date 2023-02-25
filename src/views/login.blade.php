@@ -67,7 +67,7 @@
             cursor: pointer;
         }
 
-        .login-logo{
+        .login-logo {
             margin-top: 50%;
         }
     </style>
@@ -79,7 +79,6 @@
         <div class="login-logo">
         </div><!-- /.login-logo -->
         <div class="login-box-body">
-
             @if (Session::get('message') != '')
                 <div class='alert alert-warning'>
                     {{ Session::get('message') }}

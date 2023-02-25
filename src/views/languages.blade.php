@@ -13,19 +13,19 @@
 </script>
 
 <div class="well" style="background: #FFF">
-    <h1>{{ App::getlocale() == 'en' ? 'Translation' : 'الترجمة' }}</h1>
+    <h1>{{ cbLang('Translation') }}</h1>
     <br>
 
     <form method="POST" action="{{ route('translations.create') }}">
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-4">
-                <input type="text" name="key" class="form-control"
-                    placeholder="{{ App::getlocale() == 'en' ? 'Enter Key' : 'أدخل المفتاح' }}" required>
+                <input type="text" name="key" class="form-control" placeholder="{{ cbLang('enter_key') }}"
+                    required>
             </div>
             <div class="col-md-4">
-                <input type="text" name="value" class="form-control"
-                    placeholder="{{ App::getlocale() == 'en' ? 'Enter Value' : 'أدخل القيمة' }}" required>
+                <input type="text" name="value" class="form-control" placeholder="{{ cbLang('enter_value') }}"
+                    required>
             </div>
             <div class="col-md-4">
 
@@ -36,7 +36,7 @@
 
     <hr>
     <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
-        placeholder="{{ App::getlocale() == 'en' ? 'Search for names' : 'ابحث عن ترجمة' }}" title="Type in a name">
+        placeholder="{{ cbLang('search_for_names') }}" title="Type in a name">
     <hr>
     <div class="box-body table-responsive no-padding">
         <table class="table table-hover table-striped table-bordered" id="mytable">
@@ -82,7 +82,6 @@
         var input, filter, table, tr, td, i, txtValue;
         input = document.getElementById("myInput");
         filter = input.value.toUpperCase();
-        console.log("filter==", filter, ' input', input);
         table = document.getElementById("mytable");
         tr = table.getElementsByTagName("tr");
         for (i = 0; i < tr.length; i++) {

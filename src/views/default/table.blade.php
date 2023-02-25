@@ -58,7 +58,7 @@
                 $('.spinner-loader').css('display', 'inline-block');
                 $.ajax({
                     type: "POST",
-                    url: "edit-switch-action",
+                    url: "{{ Crudbooster::mainPath('edit-switch-action') }}",
                     data: {
                         id: $(this).attr("row_id"),
                         table: "{{ $table }}",
@@ -163,8 +163,8 @@
                         }
 
                         @eval("if($query) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }");
                         ?>
                     @endforeach
                     <tr class='{{ $tr_color }}' id='{{ $html_contents['data'][$i]->id }}'>
