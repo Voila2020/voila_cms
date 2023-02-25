@@ -1,6 +1,8 @@
 # How To Make A Custom View Of Index Method
 
-A way to custom the index method is override the existing index method. This is best way if CB can't handle the layout that you want
+There is tow ways : 
+
+1- A way to custom the index method is override the existing index method. This is best way if CB can't handle the layout that you want
 
 ```php
 public function getIndex() {
@@ -57,6 +59,8 @@ Create your own view in `/resources/views/your_custom_view_index.blade.php'
 <p>{!! urldecode(str_replace("/?","?",$result->appends(Request::all())->render())) !!}</p>
 @endsection
 ```
+
+2- You can make your custom simply by make a view in resources/views/modulePath/{your_custom_view} (the name of your custom view must matches the name vendor view)
 
 ## What's Next
 - [How To Make A Custom View Of Add Method](./how-custom-view-add.md)

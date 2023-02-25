@@ -1,6 +1,6 @@
-# Welcome To CRUDBooster
+# Welcome To Voila CMS
 
-CRUDBooster is CRUD Generator for laravel, with the most important features web application development. It's easy, flexible, and powerful.
+Voila CMS for laravel based on CRUDBooster CRUD Generator, with the most important features web application development. It's easy, flexible, and powerful.
 
 ## System Requirement and Basic Technical Knowledge
 - Web Server as:
@@ -23,7 +23,7 @@ CRUDBooster is CRUD Generator for laravel, with the most important features web 
 ## Installation
 1. Open the terminal, navigate to your laravel project directory.
 ```php
-$ composer require crocodicstudio/crudbooster=5.5.*
+$ composer require voila_cms/crudbooster
 ```
 
 2. Setting the database configuration, open .env file at project root directory
@@ -42,7 +42,7 @@ $ php artisan crudbooster:install
 ```php
 /admin/login
 ```
-- default email : admin@crudbooster.com
+- default email : superadmin@voila.digital
 - default password : 123456
 
 ## What's Next

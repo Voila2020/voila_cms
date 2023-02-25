@@ -20,6 +20,8 @@ You might check if you want create the menu also
 | Width | Column width |
 | Image | If this column is image, you might choose Y |
 | Download | IF this column is downloadable, you might choose Y |
+| Switch | IF this column is switchable, you might choose Y |
+| Str Limit | IF this column is text, you can limit the number of characters that will appear in index page |
 
 ## Step 3
 | Field Name      | Description         |
@@ -36,7 +38,10 @@ You might check if you want create the menu also
 | Field Candidate | The field name of title candidate |
 | Limit Data | Amount to limit |
 | Order By | e.g : `fieldName,asc`, `fieldName,desc` |
+| Is Sortable | Check if you want to make index table sortable | 
 | Show Button Table Action | Check if you want to show action button | 
+| Show Bulk Table Action | Check if you want to show bulk button | 
+| PDF Print Direction | To set the direction printed pdf file |
 | Show Button Add | Check if you want to show add button |
 | Show Button Edit | Check if you want to show edit button |
 | Show Button Delete | Check if you want to show delete button |

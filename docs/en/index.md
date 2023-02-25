@@ -1,4 +1,4 @@
-# CRUDBooster Documentation 
+# Voila CMS Documentation 
 ## Table Of Contents
 - [How To Install/Update](./installation.md)
 - [How To Create A Module (CRUD)](./how-to-create-module.md)
@@ -37,6 +37,7 @@
     - [time](./form-time.md)
     - [upload](./form-upload.md)
     - [wysiwyg](./form-wysiwyg.md)
+    - [filemanager](./form-filemanager.md)
 - [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
 - [How To Implement A Many To Many Relationship To Form (E.g : Film -> R <- Actors)](./how-to-many-to-many.md)
 - [How To Implement An One To Many Relationship To Form (E.g : Product <- Category)](./how-to-one-to-many.md)
@@ -45,6 +46,9 @@
 - [How To Put Your Own Javascript](./how-to-put-your-own-javascript.md)
 - [How To Put Your Own CSS Stylesheet](./how-to-put-own-css.md)
 - [How To Change The Application Name](./how-to-change-app-name.md)
+- [How To Change Default Image](./how-to-change-defaualt-image.md)
+- [How To Change Image Compression Value](./how-to-change-image-compression-value.md)
+- [How To Change Notifications Activaty](./how-to-change-notifications-activity.md)
 - [How To Make A Custom View Of Index Method](./how-to-custom-index.md)
 - [How To Make A Custom View Of Add Method](./how-custom-view-add.md)
 - [How To Make A Custom View Of Edit Method](./how-to-custom-edit-view.md)
