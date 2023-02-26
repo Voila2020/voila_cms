@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Session;
 use Request;
 use DB;
-use CRUDbooster;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use crocodicstudio\crudbooster\controllers\CBController;
 
 class AdminCmsUsersController extends CBController
