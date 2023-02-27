@@ -440,4 +440,7 @@ return [
     'search_for_names' => 'Search for names',
     'activate_label' => 'Activate Label',
     'deactivate_label' => 'Deactivate Label',
+    'has_image' => 'Has List Images',
+    'select_module_images' => 'Choose images for this module',
+    'module_images' => 'Module Images',
 ];

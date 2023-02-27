@@ -93,6 +93,14 @@
                 </div>
 
                 <div class="form-group">
+                    <label for="">{{ cbLang('has_image') }}</label>
+                    <select name="hasImage" id="hasImage" required class=" form-control">
+                        <option {{ $row->hasImage == 1 ? 'selected' : '' }} value="1">Yes</option>
+                        <option {{ $row->hasImage == 0 ? 'selected' : '' }} value="0">No</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
                     <label for="">{{ cbLang('Icon') }}</label>
                     <select name="icon" id="icon" required class="select2 form-control">
                         @foreach ($fontawesome as $f)

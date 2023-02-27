@@ -327,6 +327,7 @@ class ModulsController extends CBController
         $table_name = Request::get('table');
         $icon = Request::get('icon');
         $path = Request::get('path');
+        $hasImage = Request::get('hasImage');
 
         if (!Request::get('id')) {
 
@@ -337,7 +338,7 @@ class ModulsController extends CBController
             $created_at = now();
 
             $controller = CRUDBooster::generateController($table_name, $path);
-            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "table_name", "icon", "path", "created_at"));
+            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "hasImage",  "table_name", "icon", "path", "created_at"));
 
             //Insert Menu
             if ($controller && Request::get('create_menu')) {
@@ -376,7 +377,7 @@ class ModulsController extends CBController
             return redirect(Route("ModulsControllerGetStep2") . "/" . $id);
         } else {
             $id = Request::get('id');
-            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "icon", "path"));
+            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "hasImage", "icon", "path"));
 
             $row = DB::table('cms_moduls')->where('id', $id)->first();
 
@@ -501,7 +502,7 @@ class ModulsController extends CBController
         foreach (glob(base_path('vendor/voila_cms/crudbooster/src/views/default/type_components') . '/*', GLOB_ONLYDIR) as $dir) {
             $types[] = basename($dir);
         }
-
+        // dd($column_datas);
         return view('crudbooster::module_generator.step3', compact('columns', 'cb_form', 'types', 'id'));
     }
 

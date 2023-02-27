@@ -1159,6 +1159,7 @@ class CBController extends Controller
 
         $page_title = cbLang("add_data_page_title", ['module' => CRUDBooster::getCurrentModule()->name]);
         $page_menu = Route::getCurrentRoute()->getActionName();
+
         $command = 'add';
         $manualView = null;
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
@@ -1181,6 +1182,8 @@ class CBController extends Controller
         $this->validation();
         $this->input_assignment();
 
+
+
         if (Schema::hasColumn($this->table, 'created_at')) {
             $this->arr['created_at'] = date('Y-m-d H:i:s');
         }
@@ -1196,6 +1199,7 @@ class CBController extends Controller
         }
 
         //Looping Data Input Again After Insert
+
         foreach ($this->data_inputan as $ro) {
             $name = $ro['name'];
             if (!$name) {
@@ -1269,6 +1273,17 @@ class CBController extends Controller
                 $childtable = CRUDBooster::parseSqlTable($ro['table'])['table'];
                 DB::table($childtable)->insert($child_array);
             }
+        }
+
+        # in case module has images
+        if (Request::input('list_images')) {
+            $module_images = json_decode(Request::input('list_images')[0]);
+            foreach ($module_images as $image)
+                DB::table('module_images')->insert([
+                    'module_id' => CRUDBooster::getCurrentModule()->id,
+                    'module_row_id' => $lastInsertId,
+                    'path' => $image
+                ]);
         }
 
         $this->hook_after_add($lastInsertId);
@@ -1433,6 +1448,39 @@ class CBController extends Controller
             'name' => $this->arr[$this->title_field],
             'module' => CRUDBooster::getCurrentModule()->name,
         ]), LogsController::displayDiff($old_values, $this->arr));
+
+        # if module has images
+        if (Request::input('list_images')) {
+            $module_images = json_decode(Request::input('list_images')[0]);
+            # fetch existed from data base
+            $existed_images = DB::table('module_images')->where([
+                'module_id' => CRUDBooster::getCurrentModule()->id,
+                'module_row_id' => $id
+            ])->get();
+            foreach ($existed_images as $existed_image) {
+                $row_id = array_keys(array_filter($module_images, function ($element) use ($existed_image) {
+                    return $element == $existed_image->path;
+                }));
+                # delete after compare
+                if (!$row_id) {
+                    DB::table('module_images')->where([
+                        'module_id' => CRUDBooster::getCurrentModule()->id,
+                        'module_row_id' => $id,
+                        'path' => $existed_image->path
+                    ])->delete();
+                } else {
+                    unset($module_images[$row_id[0]]);
+                }
+            }
+            # insert the new images
+            foreach ($module_images as $new_image) {
+                DB::table('module_images')->insert([
+                    'module_id' => CRUDBooster::getCurrentModule()->id,
+                    'module_row_id' => $id,
+                    'path' => $new_image
+                ]);
+            }
+        }
 
         if ($this->return_url) {
             CRUDBooster::redirect($this->return_url, trans("crudbooster.alert_update_data_success"), 'success');

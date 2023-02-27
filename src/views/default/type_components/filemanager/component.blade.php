@@ -1,3 +1,11 @@
+<?php
+$images = DB::table('module_images')
+    ->where('module_id', CRUDBooster::getCurrentModule()->id)
+    ->where('module_row_id', $row->id)
+    ->get();
+
+?>
+
 <div class='form-group filemanager-form-group_{{ $name }} {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
     id='form-group-{{ $name }}' style='{{ @$form['style'] }}'>
     <label class='control-label col-sm-2'>{{ $form['label'] }}
@@ -115,6 +123,16 @@
         $("#modalInsertPhotosingle_{{ $name }}").modal();
     }
 
+    function openInsertImages() {
+        var name = "list_images";
+        var link =
+            `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=1&field_id=` +
+            name +
+            `" frameborder="0"></iframe>`;
+        $("#modalInsertPhoto .modal-body").html(link);
+        $("#modalInsertPhoto").modal();
+    }
+
     function showDeletePopout(name) {
         swal({
             title: "{{ cbLang('delete_title_confirm') }}",
@@ -129,6 +147,7 @@
             deleteImage(name);
         });
     }
+
 
     function deleteImage(form_name) {
         let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
@@ -174,8 +193,54 @@
                 $("#thumbnail-{{ $name }}").attr("value", '{{ URL::asset('') }}' + check);
             }
         });
+        // Module images
+        $('#modalInsertPhoto').on('hidden.bs.modal', function() {
+            var images_value = $('#list_images').val();
+            if (images_value.indexOf('[') !== -1)
+                var images = JSON.parse(images_value);
+            else {
+                var images = JSON.parse('["' + images_value + '"]')
+            }
+            var child_count = $('#show-images').children().length;
+            // $('#show-images').html('');
+            for (let i in images) {
+                if (images[i].charAt(0) === "/") {
+                    images[i] = images[i].substring(1);
+                }
+                if ($('#show-images').find('.img_box[value="' + images[i] + '"]').length > 0) {
+                    continue;
+                }
+                let img_src = '{{ URL::asset('') }}' + images[i];
+                let id = 'image_' + i;
+                let digit = parseInt(i) + child_count;
+                console.log("digit", digit, typeof i, typeof child_count);
+                $('#show-images').append(`
+                    <div class="img_box img_box_` + (digit) + `" value="` + images[i] + `" >
+                        <a data-lightbox="roadtrip" id="image` + (digit) + `" href="` + img_src + `">
+                            <img style="width:150px;height:150px;" title="Image For Image" src="` + img_src + `">
+                        </a>
+                        <span onclick="deleteImageFromList(` + (digit) + `)" id="image` + (digit) + `" style='color:red;position: relative;cursor:pointer;bottom: 65px; right:18px;'><i class='fa fa-close'></i></span>
+                    </div>
+                `);
+            }
+            var selectedImages = [];
+            $('#show-images').children().each(function() {
+                selectedImages.push(($(this).attr('value')));
+            });
+            $('#list_images').val(JSON.stringify(selectedImages));
+        });
         resizeFilemanagerPopout();
     });
+
+    function deleteImageFromList(id) {
+
+        console.log("id = ", )
+        var images_value = $('#list_images').val();
+        var images = JSON.parse(images_value);
+        $('.img_box_' + id).remove();
+        images.splice(id, 1);
+        $('#list_images').val(JSON.stringify(images));
+    }
 
     function resizeFilemanagerPopout() {
         $('.modal-header .resize').unbind().click(function() {
