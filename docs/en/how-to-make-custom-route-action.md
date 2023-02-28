@@ -16,7 +16,7 @@ postEditStatus(){
 ```
 
 ## What's Next
-- [How To Add More Action Button In Grid Data](./how-add-more-action-button.md)
+- [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
