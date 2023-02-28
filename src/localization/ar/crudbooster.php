@@ -386,7 +386,6 @@ return [
     'search_for_names' => 'ابحث عن اسم',
     'activate_label' => ' تفعيل العمود',
     'deactivate_label' => 'الغاء تفعيل العمود ',
-    'has_image' => 'يحوي صور ؟',
-    'select_module_images' => 'اختر الصور لهذا الموديول',
-    'module_images' => 'صور الموديول',
+    'has_images' => 'يحوي صور ؟',
+    'module_images' => 'الصور',
 ];

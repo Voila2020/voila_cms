@@ -1,10 +1,11 @@
 @php
-    $images = DB::table('module_images')
-        ->where('module_id', CRUDBooster::getCurrentModule()->id)
-        ->where('module_row_id', $row->id)
+    $images = DB::table('model_images')
+        ->where('model_type', $table)
+        ->where('model_id', $row->id)
         ->get();
     $image_paths = '[';
 @endphp
+<div class="module-images-border border"></div>
 <div class='form-group header-group-0' id='form-group-list_images' style="{{ @$form['style'] }}">
     <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
         <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>
@@ -16,10 +17,10 @@
         <div class="input-group">
             <input type="hidden" id="list_images" name="list_images[]">
 
-            <a onclick="openInsertImages()" class="btn btn-primary" value="img_type">
+            <a onclick="openInsertImages()" class="btn btn-primary" value="img_type" style="margin-bottom:10px;">
                 <i class='fa fa-picture-o'></i> {{ cbLang('module_images') }}
             </a>
-            <div id="show-images" class="" style="display:flex; flex-wrap:wrap; padding-top:15px;">
+            <div id="show-images" class="" style="display:flex; flex-wrap:wrap;">
 
                 @foreach ($images as $key => $element)
                     @php
@@ -31,7 +32,8 @@
                             <img style="width:150px;height:150px;" title="Image For Image"
                                 src="{{ url('' . $element->path) }}">
                         </a>
-                        <span onclick="deleteImageFromList({{ $key }})" id="img-{{ $key }}"
+                        <span class="img-del-span" onclick="deleteImageFromList({{ $key }})"
+                            id="img-{{ $key }}"
                             style='color:red;position: relative;cursor:pointer;bottom: 65px; right:18px;'><i
                                 class='fa fa-close'></i>
                         </span>
@@ -51,8 +53,14 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Insert Image</h4>
+                <div class="buttons">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <button type="button" class="resize" title="<?php echo cbLang('filemanager.resize'); ?>"><i class="fa fa-expand"
+                            aria-hidden="true"></i></button>
+                </div>
+                <div class="title-sec">
+                    <h4 class="modal-title">Insert Image</h4>
+                </div>
             </div>
             <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
 

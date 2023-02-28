@@ -1277,11 +1277,11 @@ class CBController extends Controller
 
         # in case module has images
         if (Request::input('list_images')) {
-            $module_images = json_decode(Request::input('list_images')[0]);
-            foreach ($module_images as $image)
-                DB::table('module_images')->insert([
-                    'module_id' => CRUDBooster::getCurrentModule()->id,
-                    'module_row_id' => $lastInsertId,
+            $model_images = json_decode(Request::input('list_images')[0]);
+            foreach ($model_images as $image)
+                DB::table('model_images')->insert([
+                    'model_type' => $this->table,
+                    'model_id' => $lastInsertId,
                     'path' => $image
                 ]);
         }
@@ -1451,32 +1451,32 @@ class CBController extends Controller
 
         # if module has images
         if (Request::input('list_images')) {
-            $module_images = json_decode(Request::input('list_images')[0]);
+            $model_images = json_decode(Request::input('list_images')[0]);
             # fetch existed from data base
-            $existed_images = DB::table('module_images')->where([
-                'module_id' => CRUDBooster::getCurrentModule()->id,
-                'module_row_id' => $id
+            $existed_images = DB::table('model_images')->where([
+                'model_type' => $this->table,
+                'model_id' => $id
             ])->get();
             foreach ($existed_images as $existed_image) {
-                $row_id = array_keys(array_filter($module_images, function ($element) use ($existed_image) {
+                $row_id = array_keys(array_filter($model_images, function ($element) use ($existed_image) {
                     return $element == $existed_image->path;
                 }));
                 # delete after compare
                 if (!$row_id) {
-                    DB::table('module_images')->where([
-                        'module_id' => CRUDBooster::getCurrentModule()->id,
-                        'module_row_id' => $id,
+                    DB::table('model_images')->where([
+                        'model_type' => $this->table,
+                        'model_id' => $id,
                         'path' => $existed_image->path
                     ])->delete();
                 } else {
-                    unset($module_images[$row_id[0]]);
+                    unset($model_images[$row_id[0]]);
                 }
             }
             # insert the new images
-            foreach ($module_images as $new_image) {
-                DB::table('module_images')->insert([
-                    'module_id' => CRUDBooster::getCurrentModule()->id,
-                    'module_row_id' => $id,
+            foreach ($model_images as $new_image) {
+                DB::table('model_images')->insert([
+                    'model_type' => $this->table,
+                    'model_id' => $id,
                     'path' => $new_image
                 ]);
             }

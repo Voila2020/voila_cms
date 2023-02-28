@@ -2,13 +2,10 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use App\Application;
-use App\ApplicationField;
-use App\Form;
+
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBController
 {

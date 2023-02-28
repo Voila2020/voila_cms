@@ -40,7 +40,7 @@
                             @include('crudbooster::default.form_detail')
                         @else
                             @include('crudbooster::default.form_body')
-                            @if (CRUDBooster::getCurrentModule()->hasImage == 1)
+                            @if (CRUDBooster::getCurrentModule()->has_images == 1)
                                 @include('crudbooster::images')
                             @endif
                         @endif

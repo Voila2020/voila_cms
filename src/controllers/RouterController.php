@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
-use PDO;
+
 
 class RouterController extends Controller
 {

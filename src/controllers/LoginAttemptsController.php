@@ -2,11 +2,6 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use Session;
-use Request;
-use DB;
-use CRUDBooster;
-
 class LoginAttemptsController extends \crocodicstudio\crudbooster\controllers\CBController
 {
 

@@ -5,8 +5,6 @@ namespace crocodicstudio\crudbooster\controllers;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Excel;
-use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use crocodicstudio\crudbooster\fonts\Fontawesome;

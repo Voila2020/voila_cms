@@ -2,8 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use Exception;
-use CRUDBooster;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;

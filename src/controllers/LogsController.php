@@ -3,9 +3,7 @@
 namespace crocodicstudio\crudbooster\controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Excel;
-use Illuminate\Support\Facades\PDF;
+
 
 class LogsController extends CBController
 {

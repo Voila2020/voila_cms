@@ -4,14 +4,10 @@ namespace crocodicstudio\crudbooster\controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\App;
-use PharData;
 use stdClass;
 use UploadHandler;
-use ZipArchive;
 use Intervention\Image\ImageManagerStatic as Image;
-use TCPDF;
+
 
 class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBController
 {

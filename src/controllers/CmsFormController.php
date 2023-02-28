@@ -2,11 +2,6 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use App\Application;
-use App\ApplicationField;
-use App\FormField;
-use App\LandingPage;
-use App\Seo;
 use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
@@ -14,8 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Session;
-use Mcamara\LaravelLocalization\Facades\LaravelLocalization;
 
 class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBController
 {

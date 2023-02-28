@@ -1,10 +1,9 @@
-<?php
-$images = DB::table('module_images')
-    ->where('module_id', CRUDBooster::getCurrentModule()->id)
-    ->where('module_row_id', $row->id)
-    ->get();
-
-?>
+@php
+    $images = DB::table('model_images')
+        ->where('model_type', $table)
+        ->where('model_id', $row->id)
+        ->get();
+@endphp
 
 <div class='form-group filemanager-form-group_{{ $name }} {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
     id='form-group-{{ $name }}' style='{{ @$form['style'] }}'>
@@ -193,7 +192,7 @@ $images = DB::table('module_images')
                 $("#thumbnail-{{ $name }}").attr("value", '{{ URL::asset('') }}' + check);
             }
         });
-        // Module images
+        // Module images hide filemanager
         $('#modalInsertPhoto').on('hidden.bs.modal', function() {
             var images_value = $('#list_images').val();
             if (images_value.indexOf('[') !== -1)
@@ -211,15 +210,13 @@ $images = DB::table('module_images')
                     continue;
                 }
                 let img_src = '{{ URL::asset('') }}' + images[i];
-                let id = 'image_' + i;
-                let digit = parseInt(i) + child_count;
-                console.log("digit", digit, typeof i, typeof child_count);
+                let id = parseInt(i) + child_count;
                 $('#show-images').append(`
-                    <div class="img_box img_box_` + (digit) + `" value="` + images[i] + `" >
-                        <a data-lightbox="roadtrip" id="image` + (digit) + `" href="` + img_src + `">
-                            <img style="width:150px;height:150px;" title="Image For Image" src="` + img_src + `">
+                    <div class="img_box img_box_` + (id) + `" value="` + images[i] + `" >
+                        <a data-lightbox="roadtrip" id="image` + (id) + `" href="` + img_src + `">
+                            <img style="width:150px;height:150px;padding-top:10px;" title="Image For Image" src="` + img_src + `">
                         </a>
-                        <span onclick="deleteImageFromList(` + (digit) + `)" id="image` + (digit) + `" style='color:red;position: relative;cursor:pointer;bottom: 65px; right:18px;'><i class='fa fa-close'></i></span>
+                        <span class="img-del-span" onclick="deleteImageFromList(` + (id) + `)" id="image` + (id) + `" style='color:red;position: relative;cursor:pointer;bottom: 55px; right:18px;'><i class='fa fa-close'></i></span>
                     </div>
                 `);
             }
@@ -233,8 +230,6 @@ $images = DB::table('module_images')
     });
 
     function deleteImageFromList(id) {
-
-        console.log("id = ", )
         var images_value = $('#list_images').val();
         var images = JSON.parse(images_value);
         $('.img_box_' + id).remove();
@@ -245,8 +240,8 @@ $images = DB::table('module_images')
     function resizeFilemanagerPopout() {
         $('.modal-header .resize').unbind().click(function() {
             if ($('.modal.in .modal-dialog').width() == 900) {
-                $('.modal.in .modal-dialog').width(1300);
-                $('iframe').height(600);
+                $('.modal.in .modal-dialog').width($(window).width());
+                $('iframe').height($(window).height());
             } else {
                 $('.modal.in .modal-dialog').width(900);
                 $('iframe').height(400);

@@ -21,9 +21,9 @@ class AddTableCmsModuls extends Migration
             $table->string('path')->nullable();
             $table->string('table_name')->nullable();
             $table->string('controller')->nullable();
+            $table->boolean('has_images')->default(0);
             $table->boolean('is_protected')->default(0);
             $table->boolean('is_active')->default(0);
-
             $table->timestamps();
         });
     }

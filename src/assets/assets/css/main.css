@@ -228,7 +228,10 @@
     }
 }
 
-.cms_switch_label{
+.cms_switch_label {
     margin: 0;
 }
 
+#show-images {
+    background: #f3f3f3;
+}

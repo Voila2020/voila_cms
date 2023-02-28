@@ -3,8 +3,6 @@
 namespace crocodicstudio\crudbooster\controllers;
 
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Excel;
-use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use crocodicstudio\crudbooster\fonts\Fontawesome;
@@ -327,7 +325,7 @@ class ModulsController extends CBController
         $table_name = Request::get('table');
         $icon = Request::get('icon');
         $path = Request::get('path');
-        $hasImage = Request::get('hasImage');
+        $has_images = Request::get('has_images');
 
         if (!Request::get('id')) {
 
@@ -338,7 +336,7 @@ class ModulsController extends CBController
             $created_at = now();
 
             $controller = CRUDBooster::generateController($table_name, $path);
-            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "hasImage",  "table_name", "icon", "path", "created_at"));
+            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images",  "table_name", "icon", "path", "created_at"));
 
             //Insert Menu
             if ($controller && Request::get('create_menu')) {
@@ -377,7 +375,7 @@ class ModulsController extends CBController
             return redirect(Route("ModulsControllerGetStep2") . "/" . $id);
         } else {
             $id = Request::get('id');
-            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "hasImage", "icon", "path"));
+            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "has_images", "icon", "path"));
 
             $row = DB::table('cms_moduls')->where('id', $id)->first();
 
