@@ -1,4 +1,8 @@
 <?php
+$images = DB::table('model_images')->where([
+    'model_type' => $table,
+    'model_id' => $id
+])->get();
 //Loading Assets
 $asset_already = [];
 foreach($forms as $form) {
@@ -7,10 +11,10 @@ $type = @$form['type'] ?: 'text';
 if (in_array($type, $asset_already)) continue;
 
 ?>
-@if(file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/'.$type.'/asset.blade.php')))
-    @include('crudbooster::default.type_components.'.$type.'.asset')
-@elseif(file_exists(resource_path('views/vendor/crudbooster/type_components/'.$type.'/asset.blade.php')))
-    @include('vendor.crudbooster.type_components.'.$type.'.asset')
+@if (file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/' . $type . '/asset.blade.php')))
+    @include('crudbooster::default.type_components.' . $type . '.asset')
+@elseif(file_exists(resource_path('views/vendor/crudbooster/type_components/' . $type . '/asset.blade.php')))
+    @include('vendor.crudbooster.type_components.' . $type . '.asset')
 @endif
 <?php
 $asset_already[] = $type;
@@ -76,32 +80,44 @@ $asset_already[] = $type;
 
         ?>
 
-        @if(file_exists($file_location))
-            <?php $containTR = (substr(trim(file_get_contents($file_location)), 0, 4) == '<tr>') ? TRUE : FALSE;?>
-            @if($containTR)
-                @include('crudbooster::default.type_components.'.$type.'.component_detail')
+        @if (file_exists($file_location))
+            <?php $containTR = substr(trim(file_get_contents($file_location)), 0, 4) == '<tr>' ? true : false; ?>
+            @if ($containTR)
+                @include('crudbooster::default.type_components.' . $type . '.component_detail')
             @else
                 <tr>
-                    <td>{{$form['label']}}</td>
-                    <td>@include('crudbooster::default.type_components.'.$type.'.component_detail')</td>
+                    <td>{{ $form['label'] }}</td>
+                    <td>@include('crudbooster::default.type_components.' . $type . '.component_detail')</td>
                 </tr>
             @endif
         @elseif(file_exists($user_location))
-            <?php $containTR = (substr(trim(file_get_contents($user_location)), 0, 4) == '<tr>') ? TRUE : FALSE;?>
-            @if($containTR)
-                @include('vendor.crudbooster.type_components.'.$type.'.component_detail')
+            <?php $containTR = substr(trim(file_get_contents($user_location)), 0, 4) == '<tr>' ? true : false; ?>
+            @if ($containTR)
+                @include('vendor.crudbooster.type_components.' . $type . '.component_detail')
             @else
                 <tr>
-                    <td>{{$form['label']}}</td>
-                    <td>@include('vendor.crudbooster.type_components.'.$type.'.component_detail')</td>
+                    <td>{{ $form['label'] }}</td>
+                    <td>@include('vendor.crudbooster.type_components.' . $type . '.component_detail')</td>
                 </tr>
             @endif
         @else
-        <!-- <tr><td colspan='2'>NO COMPONENT {{$type}}</td></tr> -->
+            <!-- <tr><td colspan='2'>NO COMPONENT {{ $type }}</td></tr> -->
         @endif
 
 
         <?php endforeach;?>
-
+        @if (CRUDBooster::getCurrentModule()->has_images && $images->count())
+            <tr>
+                <td>Images</td>
+                <td class="img_box img_box_{{ $key }}" value="{{ $element->path }}">
+                    @foreach ($images as $key => $element)
+                        <a data-lightbox="roadtrip" id="image{{ $key }}" href="{{ url('' . $element->path) }} ">
+                            <img style="width:150px;height:150px;" title="Image For Image"
+                                src="{{ url('' . $element->path) }}">
+                        </a>
+                    @endforeach
+                </td>
+            </tr>
+        @endif
     </table>
 </div>
