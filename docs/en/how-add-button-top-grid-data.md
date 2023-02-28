@@ -8,7 +8,7 @@ Open the module controller, and find `$this->index_button` .
 $this->index_button[] = ['label'=>'Advanced Print','url'=>CRUDBooster::mainpath("print"),"icon"=>"fa fa-print"];
 ```
 ## What's Next
-- [How To Create A Message Info At Top Of Grid Data (Bootstrap Alert)](./how-create-message-top-grid-data.md)
+- [How To Add More Action Button In Grid Data](./how-add-more-action-button.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
