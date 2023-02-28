@@ -1,11 +1,7 @@
 <?php namespace crocodicstudio\crudbooster\commands;
 
-use App;
-use Cache;
-use CRUDBooster;
-use DB;
+
 use Illuminate\Console\Command;
-use Request;
 use Symfony\Component\Process\Process;
 
 class CrudboosterUpdateCommand extends Command

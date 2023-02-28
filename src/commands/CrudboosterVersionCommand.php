@@ -1,6 +1,6 @@
 <?php namespace crocodicstudio\crudbooster\commands;
 
-use App;
+
 use Illuminate\Console\Command;
 
 class CrudboosterVersionCommand extends Command

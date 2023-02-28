@@ -4,7 +4,7 @@ use Cache;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use DB;
 use Illuminate\Console\Command;
-use Request;
+
 
 class Mailqueues extends Command
 {

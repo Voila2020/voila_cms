@@ -2,13 +2,8 @@
 
 namespace crocodicstudio\crudbooster\commands;
 
-use App;
-use Cache;
-use CRUDBooster;
-use DB;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\File;
-use Request;
 use Symfony\Component\Process\Process;
 
 class CrudboosterInstallationCommand extends Command
@@ -43,9 +38,26 @@ class CrudboosterInstallationCommand extends Command
 
         if ($this->confirm('Do you have setting the database configuration at .env ?')) {
 
+            # delete directories
             if (file_exists(public_path('vendor'))) {
-                File::deleteDirectory(public_path('vendor'));
+                if ($this->confirm('Do you want to replace your files ?')) {
+                    if (file_exists(public_path('vendor')))
+                        File::deleteDirectory(public_path('vendor'));
+
+                    if (file_exists(public_path('landing_page_builder')))
+                        File::deleteDirectory(public_path('landing_page_builder'));
+
+                    if (file_exists(public_path('landing_page')))
+                        File::deleteDirectory(public_path('landing_page'));
+
+                    if (file_exists(resource_path('lang')))
+                        File::delete(resource_path('lang'));
+
+                    if (file_exists(config_path('crudbooster.php')))
+                        File::delete(config_path('crudbooster.php'));
+                }
             }
+
             if (!file_exists(public_path('vendor'))) {
                 mkdir(public_path('vendor'), 0777);
                 mkdir(public_path('vendor/filemanager'), 0777);
@@ -57,36 +69,17 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('vendor/filemanager/svg'), 0777);
             }
 
-            if (file_exists(public_path('landing_page_builder'))) {
-                File::deleteDirectory(public_path('landing_page_builder'));
-            }
             if (!file_exists(public_path('landing_page_builder'))) {
                 mkdir(public_path('landing_page_builder'), 0777);
-                mkdir(public_path('landing_page_builder/css'), 0777);
-                mkdir(public_path('landing_page_builder/js'), 0777);
-                mkdir(public_path('landing_page_builder/less'), 0777);
-                mkdir(public_path('landing_page_builder/blocks'), 0777);
-                mkdir(public_path('landing_page_builder/plugins'), 0777);
             }
 
-            if (file_exists(public_path('landing_page'))) {
-                File::deleteDirectory(public_path('landing_page'));
-            }
             if (!file_exists(public_path('landing_page'))) {
                 mkdir(public_path('landing_page'), 0777);
-                mkdir(public_path('landing_page/css'), 0777);
-                mkdir(public_path('landing_page/js'), 0777);
-                mkdir(public_path('landing_page/vendor1'), 0777);
             }
 
             if (!file_exists(resource_path('landing_page_builder'))) {
                 mkdir(resource_path('landing_page_builder'), 0777);
             }
-
-            // if (file_exists(resource_path('lang/en/crudbooster.php')))
-            //     File::delete(resource_path('lang/en/crudbooster.php'));
-            // if (file_exists(resource_path('lang/ar/crudbooster.php')))
-            //     File::delete(resource_path('lang/ar/crudbooster.php'));
 
             $path = base_path('routes/web.php');
             File::append($path, "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);");

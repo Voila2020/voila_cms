@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-use function PHPSTORM_META\map;
 
 class CBSeeder extends Seeder
 {

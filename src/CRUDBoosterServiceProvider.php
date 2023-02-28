@@ -9,8 +9,6 @@ use Illuminate\Support\ServiceProvider;
 use crocodicstudio\crudbooster\commands\CrudboosterInstallationCommand;
 use crocodicstudio\crudbooster\commands\CrudboosterUpdateCommand;
 use Illuminate\Foundation\AliasLoader;
-use App;
-use Illuminate\Support\Facades\File;
 
 class CRUDBoosterServiceProvider extends ServiceProvider
 {
@@ -41,22 +39,15 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/filemanager/includes/lang' => public_path('vendor/filemanager/lang')], 'filemanager_lang');
             $this->publishes([__DIR__ . '/filemanager/includes/svg' => public_path('vendor/filemanager/svg')], 'filemanager_svg');
             # Landing Page
-            $this->publishes([__DIR__ . '/landing_page/css' => public_path('landing_page/css')], 'landing_page_css');
-            $this->publishes([__DIR__ . '/landing_page/js' => public_path('landing_page/js')], 'landing_page_js');
-            $this->publishes([__DIR__ . '/landing_page/vendor1' => public_path('landing_page/vendor1')], 'landing_page_vendor1');
+            $this->publishes([__DIR__ . '/landing_page' => public_path('landing_page')], 'landing_page_files');
             # Landing Page Builder
             $this->publishes([__DIR__ . '/views/landing_page_builder/thankyou.blade.php' => resource_path('views/landing_page_builder/thankyou.blade.php')], 'landing_page_builder_thankyou_view');
             $this->publishes([__DIR__ . '/views/landing_page_builder/view.blade.php' => resource_path('views/landing_page_builder/view.blade.php')], 'landing_page_builder_view_view');
-            $this->publishes([__DIR__ . '/landing_page_builder/css' => public_path('landing_page_builder/css')], 'landing_page_builder_css');
-            $this->publishes([__DIR__ . '/landing_page_builder/js' => public_path('landing_page_builder/js')], 'landing_page_builder_js');
-            $this->publishes([__DIR__ . '/landing_page_builder/less' => public_path('landing_page_builder/less')], 'landing_page_builder_less');
-            $this->publishes([__DIR__ . '/landing_page_builder/blocks' => public_path('landing_page_builder/blocks')], 'landing_page_builder_blocks');
-            $this->publishes([__DIR__ . '/landing_page_builder/plugins' => public_path('landing_page_builder/plugins')], 'landing_page_builder_plugins');
+            $this->publishes([__DIR__ . '/landing_page_builder' => public_path('landing_page_builder')], 'landing_page_builder_files');
             # controllers
             $this->publishes([__DIR__ . '/userfiles/controllers/LandingPagesController.php' => app_path('Http/Controllers/LandingPagesController.php')], 'landing_page_builder_plugins');
             # lang
-            $this->publishes([__DIR__ . '/localization/en/crudbooster.php' => resource_path('lang/en/crudbooster.php')], 'crudbooster_en_lang');
-            $this->publishes([__DIR__ . '/localization/ar' => resource_path('lang/ar')], 'crudbooster_ar_lang');
+            $this->publishes([__DIR__ . '/localization' => resource_path('lang')], 'crudbooster_lang');
         }
 
         $this->customValidation();

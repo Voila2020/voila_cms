@@ -7,7 +7,6 @@ use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\controllers\CmsFormController;
 use crocodicstudio\crudbooster\controllers\EmailTemplatesController;
 use crocodicstudio\crudbooster\controllers\FileManagerController;
-use crocodicstudio\crudbooster\controllers\PasswordReset;
 use crocodicstudio\crudbooster\controllers\SeoController;
 use crocodicstudio\crudbooster\controllers\TranslationController;
 use crocodicstudio\crudbooster\middlewares\CBAuthAPI;
