@@ -46,7 +46,6 @@
 
         function selectAdditionalData{{$name}}(select_to_json) {
             $.each(select_to_json, function (key, val) {
-                console.log('#' + key + ' = ' + val);
                 if (key == 'datamodal_id') {
                     $('#{{$name}} .input-id').val(val);
                 }

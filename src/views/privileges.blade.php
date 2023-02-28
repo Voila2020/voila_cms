@@ -97,15 +97,11 @@
                                 $(function () {
                                     $("#is_visible").click(function () {
                                         var is_ch = $(this).prop('checked');
-                                        console.log('is checked create ' + is_ch);
                                         $(".is_visible").prop("checked", is_ch);
-                                        console.log('Create all');
                                     })
                                     $("#is_create").click(function () {
                                         var is_ch = $(this).prop('checked');
-                                        console.log('is checked create ' + is_ch);
                                         $(".is_create").prop("checked", is_ch);
-                                        console.log('Create all');
                                     })
                                     $("#is_read").click(function () {
                                         var is_ch = $(this).is(':checked');

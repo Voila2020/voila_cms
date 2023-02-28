@@ -181,9 +181,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->script_js = null;
         $this->script_js = "
             $(function() {
-                console.log('test');
                     $(document).on('click','.selectTemplates',function() {
-                    console.log('test');
                     $('#selectTemplatesModal').show();
                 });
             });

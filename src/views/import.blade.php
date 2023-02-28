@@ -47,7 +47,6 @@
                             var int_prog = setInterval(function () {
 
                                 $.post("{{ CRUDBooster::mainpath('do-import-chunk?file='.Request::get('file')) }}", {resume: 1}, function (resp) {
-                                    console.log(resp.progress);
                                     $('#progress-import').css('width', resp.progress + '%');
                                     $('#status-import').html("<i class='fa fa-spin fa-spinner'></i> Please wait importing... (" + resp.progress + "%)");
                                     $('#progress-import').attr('aria-valuenow', resp.progress);
@@ -67,7 +66,6 @@
                                     $('#status-import').addClass('text-success').html("<i class='fa fa-check-square-o'></i> Import Data Completed !");
                                     clearInterval(int_prog);
                                     $('#upload-footer').show();
-                                    console.log('Import Success');
                                 }
                             })
 

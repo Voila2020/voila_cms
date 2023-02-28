@@ -2,7 +2,6 @@
 
 <script type="text/javascript">
     $(document).ready(function () {
-        console.log(document.getElementById('{{$name}}'));
         // Set an option globally
         JSONEditor.defaults.options.theme = 'bootstrap2';
 

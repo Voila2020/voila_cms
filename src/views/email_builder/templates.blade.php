@@ -100,7 +100,6 @@
                 }, function(isConfirm) {
                     if (isConfirm) {
                         let templateId = $("#list-landing").val();
-                        console.log("templateId", templateId);
                     } else {
                         return false;
                     }

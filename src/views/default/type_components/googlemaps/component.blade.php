@@ -69,7 +69,6 @@
         var address_temp_{{$name}}, latitude_temp_{{$name}}, longitude_temp_{{$name}};
 
         function setIt{{$name}}() {
-            console.log(address_temp_{{$name}});
             $('#{{$name}}').val(address_temp_{{$name}});
             $("#input-latitude-{{$name}}").val(latitude_temp_{{$name}});
             $("#input-longitude-{{$name}}").val(longitude_temp_{{$name}});
@@ -90,7 +89,6 @@
 
         $('#googlemaps-modal-{{$name}}').on('shown.bs.modal', function () {
             if (is_init_map_{{$name}} == false) {
-                console.log('Init Map {{$name}}');
                 initMap{{$index}}();
                 is_init_map_{{$name}} = true;
             }

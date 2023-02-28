@@ -151,7 +151,7 @@
         }
 
         @endif
-        
+
         .connectedSortable {
             position: relative;
         }
@@ -197,13 +197,11 @@
                     forcePlaceholderSize: true,
                     zIndex: 999999,
                     stop: function (event, ui) {
-                        console.log(ui.item.attr('class'));
                         var className = ui.item.attr('class');
                         var idName = ui.item.attr('id');
                         if (className == 'button-widget-area') {
                             var areaname = $('#' + idName).parent('.connectedSortable').attr('id');
                             var component = $('#' + idName + ' > a').data('component');
-                            console.log(areaname);
                             $('#' + idName).remove();
                             addWidget(id_cms_statistics, areaname, component);
                             $('.control-sidebar').html(cloneSidebar);
@@ -247,7 +245,6 @@
                         $.each(response.components, function (i, obj) {
                             $('#' + areaname).append("<div id='area-loading-" + obj.componentID + "' class='area-loading'><i class='fa fa-spin fa-spinner'></i></div>");
                             $.get("{{CRUDBooster::adminpath('statistic_builder/view-component')}}/" + obj.componentID, function (view) {
-                                console.log('View For CID ' + view.componentID);
                                 $('#area-loading-' + obj.componentID).remove();
                                 $('#' + areaname).append(view.layout);
 

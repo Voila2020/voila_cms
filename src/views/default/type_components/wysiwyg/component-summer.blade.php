@@ -59,7 +59,6 @@
 
                             },
                             error: function(data) {
-                                console.log(data);
                             }
                         });
                     }
@@ -149,7 +148,6 @@
                         $('#textarea_{{ $name }}').summernote("insertNode", image[0]);
                     },
                     error: function(data) {
-                        console.log(data);
                     }
                 });
             }

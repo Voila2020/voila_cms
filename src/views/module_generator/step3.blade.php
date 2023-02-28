@@ -441,7 +441,6 @@
                     });
 
                     if (i_required.length > 0) {
-                        console.log(i_required);
                         alert("Some these fields are required : " + i_required.join(", "));
                         return false;
                     }

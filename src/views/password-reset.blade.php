@@ -125,7 +125,6 @@
 
     <script>
         $('#password-confirmation').on('keyup', function() {
-            console.log("key up work");
             var password = $('#reset-password').val();
             var password_confirmation = $('#password-confirmation').val();
             if (password != password_confirmation) {

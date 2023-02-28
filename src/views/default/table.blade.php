@@ -13,10 +13,8 @@
             function checkWidth() {
                 var windowsize = $window.width();
                 if (windowsize > 500) {
-                    console.log(windowsize);
                     $('#box-body-table').removeClass('table-responsive');
                 } else {
-                    console.log(windowsize);
                     $('#box-body-table').addClass('table-responsive');
                 }
             }
@@ -100,7 +98,6 @@
                     $width = isset($col['width']) ? $col['width'] : 'auto';
                     $style = isset($col['style']) ? $col['style'] : '';
                     $mainpath = trim(CRUDBooster::mainpath(), '/') . $build_query;
-                    // dd($col);
                     echo "<th width='$width' $style>";
                     if (isset($sort_column[$field])) {
                         switch ($sort_column[$field]['sorting']) {
@@ -237,7 +234,6 @@ $total = $result->total();
                                 data_list.push($(this).attr('id'));
                             });
                             var table = '{{ $table }}';
-                            console.log("print array => ", data_list, " table=>", table);
                             $('html, body').css("cursor", "wait");
 
                             // POST to server using $.post or $.ajax

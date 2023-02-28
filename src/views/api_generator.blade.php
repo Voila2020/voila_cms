@@ -29,7 +29,6 @@
                         jQuery.fn.selectText = function () {
                             var doc = document;
                             var element = this[0];
-                            console.log(this, element);
                             if (doc.body.createTextRange) {
                                 var range = document.body.createTextRange();
                                 range.moveToElementText(element);
@@ -44,7 +43,6 @@
                         };
 
                         $(document).on("click", ".selected_text", function () {
-                            console.log("clicked");
                             $(this).selectText();
                         });
 
@@ -88,7 +86,6 @@
 
 
                         $(document).on('click', '.tr-response', function () {
-                            console.log('tr response clicked');
                             var is_check = $(this).find('select').val();
                             if (is_check == '1') {
                                 $(this).find('select').val(0);
@@ -290,8 +287,6 @@
                             var required = resp[i].required;
                             var used = resp[i].used;
                             var config = resp[i].config;
-
-                            console.log(field_name + ' - ' + field_type);
 
                             if (tipe_action == 'save_add' && field_name == 'id') {
                                 $(this).remove();
@@ -508,7 +503,6 @@
                     }
 
                     function addResponse() {
-                        console.log('addResponse');
 
                         var val = $('#table-response tfoot tr td:nth-child(2) input').val();
                         var validation = $('#table-response tfoot tr td:nth-child(3) select').val();

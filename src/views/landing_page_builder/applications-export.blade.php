@@ -21,10 +21,9 @@
             @foreach ($applications as $row)
                 <tr>
                     <?php
-                    // dd($row->fields);
                     foreach ($columns as $col) {
                         $value = $row->fields[$col->id];
-                    
+
                         echo '<td>' . $value . '</td>';
                     }
                     ?>

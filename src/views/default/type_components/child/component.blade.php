@@ -475,7 +475,6 @@ $name = str_slug($form['label'], '');
                                                                         $('#btn-upload-{{ $name_column }}').removeClass('disabled');
                                                                         is_uploading = false;
                                                                         // Handle errors here
-                                                                        console.log('ERRORS: ' + textStatus);
                                                                         // STOP LOADING SPINNER
                                                                         $('#loading-{{ $name_column }}').hide();
                                                                     }
@@ -641,7 +640,6 @@ $name = str_slug($form['label'], '');
                                                 currentRow = p;
                                                 let currValue = currentRow.find('input[name="{{ $name }}-id[]"]').val();
                                                 $('.hidden-value').attr("value", currValue);
-                                                console.log("when edit row => currentValue=", currValue);
                                                 p.addClass('warning');
                                                 $('#btn-add-table-{{ $name }}').val('{{ cbLang('save_changes') }}');
                                                 @foreach ($form['columns'] as $c)
@@ -697,7 +695,6 @@ $name = str_slug($form['label'], '');
                                                 let currValue = $('.hidden-value').attr("value")
                                                 $('.hidden-value').attr("value", ''); // to avoid scenario of edit exist child then add new child
                                                 if (typeof currValue == 'undefined') currValue = '';
-                                                console.log("when add to table => currentValue= ", currValue);
                                                 trRow += "<input type='hidden' name='{{ $name }}-id[]' value='" + currValue + "'/>";
                                                 @foreach ($form['columns'] as $c)
                                                     @if ($c['type'] == 'filemanager')
