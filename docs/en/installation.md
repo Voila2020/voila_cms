@@ -12,7 +12,7 @@ Voila CMS for laravel based on CRUDBooster CRUD Generator, with the most importa
   - SQLite
   - SQL Server
 - Composer
-- Laravel 6.* / 7.* / 8.*
+- Laravel 7
 - Php 7.2 or higher and the extensions:
   - Mcrypt
   - OpenSSL
