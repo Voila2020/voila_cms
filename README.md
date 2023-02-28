@@ -12,12 +12,27 @@ Voila CMS is a Laravel CRUD Generator based on CRUDBooster package. With a new c
 ## Important Note To Developer
 Dear Developer, you are not end new user, to use Voila CMS, **Laravel knowledge** is a must!, Voila CMS is just an additional package **Laravel Framework** to help use more efficient in development. If you dont have a laravel knowledge, so nightmare will come to you :D. We can't help you as you want in every issues especially basic issues of web development instead you can find out in internet (stackoverflow or any other)
 
+## Contribution
+
+All ways to contribute are welcome. 
+
+#### Changing the source code
+
+To contribute directly to the source code:
+
+- Fork the repository
+- Clone your forked repo to your machine ```git clone https://github.com/Voila2020/voila_cms.git```
+- Make your changes, corrections, or improvements
+- Make the commits to your local machine
+- Push the commits to your forked repo on github 
+- Create a pull request
+
 #### Attention
 - If you use a third-party code, it must be licensed as open-source.
 - Contributions will only be accepted through a Pull Request.
 - Your contribution can not contain execution errors.
 
 ## Contact Us
-Email : superadmin@voila.digital
+Email : info@voila.digital
 
 
