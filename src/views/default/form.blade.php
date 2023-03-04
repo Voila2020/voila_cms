@@ -41,7 +41,7 @@
                         @else
                             @include('crudbooster::default.form_body')
                             @if (CRUDBooster::getCurrentModule()->has_images == 1)
-                                @include('crudbooster::images')
+                                @include('crudbooster::model_images')
                             @endif
                         @endif
 

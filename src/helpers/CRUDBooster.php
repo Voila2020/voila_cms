@@ -7,18 +7,19 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
-use Image;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
+use Image;
 
 class CRUDBooster
 {
     /**
-     *	Comma-delimited data output from the child table
+     *    Comma-delimited data output from the child table
      */
     public static function echoSelect2Mult($values, $table, $id, $name)
     {
@@ -804,7 +805,7 @@ class CRUDBooster
         }
 
         Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use ($to, $subject, $template, $attachments) {
-            $message->priority(1);
+            $message->priority($template->priority);
             $message->to($to);
 
             if ($template->from_email) {
@@ -984,7 +985,7 @@ class CRUDBooster
         $table = CRUDBooster::parseSqlTable($table);
 
         // if(self::getCache('table_'.$table,'column_'.$field)) {
-        // 	return self::getCache('table_'.$table,'column_'.$field);
+        //     return self::getCache('table_'.$table,'column_'.$field);
         // }
 
         if (Schema::hasColumn($table['table'], $field)) {
@@ -998,13 +999,18 @@ class CRUDBooster
 
     public static function getForeignKey($parent_table, $child_table)
     {
-        $parent_table = CRUDBooster::parseSqlTable($parent_table)['table'];
-        $child_table = CRUDBooster::parseSqlTable($child_table)['table'];
-        if (Schema::hasColumn($child_table, 'id_' . $parent_table)) {
-            return 'id_' . $parent_table;
+        if (substr($parent_table, 0, 4) === "cms_") {
+            $parent_table = CRUDBooster::parseSqlTable($parent_table)['table'];
+            $child_table = CRUDBooster::parseSqlTable($child_table)['table'];
+            if (Schema::hasColumn($child_table, 'id_' . $parent_table)) {
+                return 'id_' . $parent_table;
+            } else {
+                return $parent_table . '_id';
+            }
         } else {
-            return $parent_table . '_id';
+            return Str::singular($parent_table) . '_id';
         }
+
     }
 
     public static function getTableForeignKey($fieldName)
@@ -1173,7 +1179,7 @@ class CRUDBooster
         if (!$accessTokenData) {
             response()->json([
                 'api_status' => 0,
-                'api_message' => 'Forbidden Access!'
+                'api_message' => 'Forbidden Access!',
             ], 403)->send();
             exit;
         }
@@ -1297,7 +1303,8 @@ class CRUDBooster
     public static function generateAPI($controller_name, $table_name, $permalink, $method_type = 'post')
     {
         $php = '
-		<?php namespace App\Http\Controllers;
+		<?php
+        namespace App\Http\Controllers;
 
 		use Session;
 		use Request;
@@ -1387,41 +1394,43 @@ class CRUDBooster
         $global_privilege = 'FALSE';
 
         $php = '
-<?php namespace App\Http\Controllers;
+<?php
+namespace App\Http\Controllers;
 
-	use Session;
-	use Request;
-	use DB;
-	use CRUDBooster;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\DB;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use crocodicstudio\crudbooster\controllers\CBController;
 
-	class Admin' . $controllername . ' extends \crocodicstudio\crudbooster\controllers\CBController {
+class Admin' . $controllername . ' extends CBController {
 
-	    public function cbInit() {
-	    	# START CONFIGURATION DO NOT REMOVE THIS LINE
-			$this->table 			   = "' . $table . '";
-			$this->title_field         = "' . $name_col . '";
-			$this->limit               = 20;
-			$this->orderby             = "' . $pk . ',desc";
-			$this->show_numbering      = FALSE;
-			$this->global_privilege    = ' . $global_privilege . ';
-			$this->button_table_action = ' . $button_table_action . ';
-			$this->button_action_style = "' . $button_action_style . '";
-			$this->button_add          = ' . $button_add . ';
-			$this->button_delete       = ' . $button_delete . ';
-			$this->button_edit         = ' . $button_edit . ';
-			$this->button_detail       = ' . $button_detail . ';
-			$this->button_show         = ' . $button_show . ';
-            $this->button_sortable     = ' . $button_sortable . ';
-            $this->pdf_direction       = "' . $pdf_direction . '";
-			$this->button_filter       = ' . $button_filter . ';
-			$this->button_export       = ' . $button_export . ';
-			$this->button_import       = ' . $button_import . ';
-			$this->button_bulk_action  = ' . $button_bulk_action . ';
-			$this->sidebar_mode		   = "normal"; //normal,mini,collapse,collapse-mini
-			# END CONFIGURATION DO NOT REMOVE THIS LINE
+	public function cbInit() {
+	    # START CONFIGURATION DO NOT REMOVE THIS LINE
+		$this->table 			   = "' . $table . '";
+		$this->title_field         = "' . $name_col . '";
+		$this->limit               = 20;
+		$this->orderby             = "' . $pk . ',desc";
+		$this->show_numbering      = FALSE;
+		$this->global_privilege    = ' . $global_privilege . ';
+		$this->button_table_action = ' . $button_table_action . ';
+		$this->button_action_style = "' . $button_action_style . '";
+		$this->button_add          = ' . $button_add . ';
+		$this->button_delete       = ' . $button_delete . ';
+		$this->button_edit         = ' . $button_edit . ';
+		$this->button_detail       = ' . $button_detail . ';
+		$this->button_show         = ' . $button_show . ';
+        $this->button_sortable     = ' . $button_sortable . ';
+        $this->pdf_direction       = "' . $pdf_direction . '";
+		$this->button_filter       = ' . $button_filter . ';
+		$this->button_export       = ' . $button_export . ';
+		$this->button_import       = ' . $button_import . ';
+		$this->button_bulk_action  = ' . $button_bulk_action . ';
+		$this->sidebar_mode		   = "normal"; //normal,mini,collapse,collapse-mini
+		# END CONFIGURATION DO NOT REMOVE THIS LINE
 
-			# START COLUMNS DO NOT REMOVE THIS LINE
-	        $this->col = [];
+		# START COLUMNS DO NOT REMOVE THIS LINE
+	    $this->col = [];
 	';
         $coloms_col = array_slice($coloms, 0, 8);
         foreach ($coloms_col as $c) {
@@ -1901,7 +1910,7 @@ class CRUDBooster
     | $controller   = controller name
     | $namespace    = namespace of controller (optional)
     |
-    */
+     */
     public static function routeController($prefix, $controller, $namespace = null)
     {
 

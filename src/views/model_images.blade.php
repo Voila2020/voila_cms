@@ -11,7 +11,7 @@
 <div class='form-group header-group-0' id='form-group-list_images' style="{{ @$form['style'] }}">
     <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
         <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>
-            {{ cbLang('module_images') }}
+            {{ cbLang('model_images') }}
         </span>
     </label>
     <div class="{{ $col_width ? $col_width . 'filemanager-col' : 'col-sm-10 filemanager-col' }}"
@@ -20,7 +20,7 @@
             <input type="hidden" id="list_images" name="list_images[]">
 
             <a onclick="openInsertImages()" class="btn btn-primary" value="img_type" style="margin-bottom:10px;">
-                <i class='fa fa-picture-o'></i> {{ cbLang('module_images') }}
+                <i class='fa fa-picture-o'></i> {{ cbLang('model_images') }}
             </a>
             <div id="show-images" class="" style="display:flex; flex-wrap:wrap;">
 

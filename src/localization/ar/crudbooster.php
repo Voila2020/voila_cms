@@ -12,8 +12,8 @@ return [
     'label_button_profile' => "الملف الشخصي",
     'filter_dialog_title' => 'فرز متقدم',
 
-    'Default Language' => 'اللغة الافتراضية',
-    'Activate Tow Languages' => 'تفعيل اللغتين',
+    'Default CMS Language' => 'اللغة الافتراضية',
+    'Activate Tow Languages For' => 'تفعيل اللغتين',
 
     'text_enter_the_password' => 'فضلا ادخل كلمة المرور لاستعادة جلسة العمل',
     'text_or_sign_in' => 'او سجل الدخول بمستخدم مختلف',
@@ -30,7 +30,7 @@ return [
     'text_loading' => 'فضلا الانتظار جاري التحميل ...',
 
     'message_after_logout' => 'شكرا لك ، نراك لاحقا !',
-    'message_forgot_password' => 'تم ارسال كلمة المرور إلى بريدك الإلكتروني !',
+    'message_forgot_password' => 'تم ارسال الطلب إلى بريدك الإلكتروني !',
 
     'page_not_found' => 'عفوا الصفحة غير موجودة',
     'page_not_found_text' => 'لم يتم العثور على الصفحة التي تبحث عنها.',
@@ -376,16 +376,46 @@ return [
     'Edit' => 'تعديل',
     'Delete' => 'حذف',
     'clear_logs' => 'حذف جميع السجلات',
+    'def_img_quality' => 'يحدد هذا الحقل جودة الصورة بعد التحميل (ستنخفض جودة الصورة كلما قللنا من قيمة الإدخال والعكس صحيح)',
     'language_setting' => 'اعدادات اللغة',
     'activate_tow_languages' => 'تفعيل اللغتين العربية والانكليزية في ال CMS',
     'default_language' => 'هذا الحقل يحدد اللغة الافتراضية المعتمدة في التطبيق',
     'block_users_setting' => 'اعدادات الحظر',
-    'block_user_in_hours' => 'هذا الحقل يحدد المدة الزمنية التي سيتم حظر المستخدم بها بعد قيامه بتجاوز عدد محاولات التسجيل الفاشلة مقدرة بالساعات',
+    'block_ip_in_hours' => 'هذا الحقل يحدد المدة الزمنية التي سيتم حظر المستخدم بها بعد قيامه بتجاوز عدد محاولات التسجيل الفاشلة مقدرة بالساعات',
     'max_failed_login_trying' => 'هذا الحقل يحدد العدد الأعظمي لمحاولات تسجيل الدخول الفاشلة',
     'login_block_msg' => 'عذرًا، يبدو أنك تجاوزت الحد الأقصى لمحاولات تسجيل الدخول. لأسباب أمنية، تم حظرك مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا أو الاتصال بفريق الدعم إذا كنت بحاجة إلى مساعدة. شكرًا لك.',
-    'search_for_names' => 'ابحث عن اسم',
+    'search_for_key_values' => 'ابحث عن كلمة أو مفتاح',
     'activate_label' => ' تفعيل العمود',
     'deactivate_label' => 'الغاء تفعيل العمود ',
     'has_images' => 'يحوي صور ؟',
-    'module_images' => 'الصور',
+    'model_images' => 'الصور',
+
+    'file_support_ext' => 'الملف يدعم فقط اللاحقات (jpg,png,gif) وأقصى حجم تحميل 10 MB',
+    'notifications_activity' => 'يحدد هذا الحقل ما إذا كانت الإشعارات مفعلة أم لا (غير مفعلة افتراضيًا)',
+    'enter_lang_values' => 'أدخل القيم',
+    'enter_lang_key' => 'أدخل المفتاح',
+    'Website_Languages' => 'لغات الموقع الالكتروني',
+
+    // setting labels
+    'email_sender' => 'Email Sender',
+    'mail_driver' => 'Mail Driver',
+    'smtp_host' => 'SMTP Host',
+    'smtp_port' => 'SMTP Port',
+    'smtp_username' => 'SMTP Username',
+    'smtp_password' => 'SMTP Password',
+    'application_name' => 'اسم التطبيق',
+    'default_paper_size' => 'حجم طباعة الورق الافتراضي',
+    'uploaded_default_image' => 'الصورة الافتراضية',
+    'image_compression_value' => 'قيمة ضغط الصورة',
+    'favicon' => 'Favicon',
+    'api_debug_mode' => 'API Debug Mode',
+    'google_api_key' => 'Google API Key',
+    'google_fcm_key' => 'Google FCM Key',
+    'activate_notifications' => 'تفعيل الإخطارات',
+    'default_cms_language' => 'لغة CMS الافتراضية',
+    'block_ip_in_hours' => 'Block IP In Hours',
+    'max_failed_login_trying' => 'الحد الأقصى لمحاولة تسجيل الدخول الفاشلة',
+
 ];
+
+

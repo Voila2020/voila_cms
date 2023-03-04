@@ -128,7 +128,6 @@ class CBRouter
                 }
             }
 
-
             CRUDBooster::routeController('api_generator', 'ApiCustomController', static::$cb_namespace);
 
             // Todo: change table
@@ -163,7 +162,7 @@ class CBRouter
         Route::group([
             'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
             'prefix' => "",
-            'namespace' => static::$cb_namespace
+            'namespace' => static::$cb_namespace,
         ], function () {
             # file-manager
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');

@@ -63,7 +63,7 @@
 
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>{{cbLang('Sortable')}}</label>
+                                    <label>{{ cbLang('Sortable') }}</label>
                                     <label class='radio-inline'>
                                         <input type='radio' name='button_sortable'
                                             {{ $cb_button_sortable ? 'checked' : '' }} value='true' /> TRUE

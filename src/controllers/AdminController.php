@@ -6,14 +6,13 @@ use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 
 class AdminController extends CBController
 {
-    function getIndex()
+    public function getIndex()
     {
         $data = [];
         $data['page_title'] = '<strong>Dashboard</strong>';
@@ -104,7 +103,7 @@ class AdminController extends CBController
         } else {
             return redirect()->route('getLogin')->with([
                 'message' => cbLang('alert_password_wrong'),
-                'remember_email' => $email
+                'remember_email' => $email,
             ]);
         }
     }

@@ -24,6 +24,7 @@ class CreateCmsEmailTemplates extends Migration
             $table->string('from_name')->nullable();
             $table->string('from_email')->nullable();
             $table->string('cc_email')->nullable();
+            $table->tinyInteger('priority')->default(0);
             $table->timestamps();
         });
     }

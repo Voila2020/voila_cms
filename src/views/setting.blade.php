@@ -124,11 +124,8 @@
                                     } else {
                                         echo "<input type='file' name='$s->name' class='form-control'/>";
                                     }
-                                    if (App::getlocale() == 'en') {
-                                        echo "<div class='help-block'>File support only jpg,png,gif, Max 10 MB</div>";
-                                    } else {
-                                        echo "<div class='help-block'>الملف يدعم فقط اللاحقات (jpg,png,gif) وأقصى حجم تحميل 10 MB</div>";
-                                    }
+                                    echo "<div class='help-block'>" . cbLang('file_support_ext') . '</div>';
+
                                     break;
                                 case 'upload_file':
                                     if ($value) {

@@ -29,7 +29,6 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         $this->button_import = false;
         $this->button_sortable = false;
 
-
         $this->col = [];
         $this->col[] = ["label" => "Template Name", "name" => "name"];
         $this->col[] = ["label" => "Slug", "name" => "slug"];
@@ -44,12 +43,11 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         // $this->form[] = ["label" => "Template", "name" => "template", "type" => "hidden", "required" => false, "validation" => "", 'placeholder' => '',];
         $this->form[] = ["label" => "Description", "name" => "description", "type" => "text", "required" => true, "validation" => "required|min:3|max:255"];
 
-        $this->form[] = ["label" => "From Name", "name" => "from_name", "type" => "text", "required" => false, "width" => "col-sm-6", 'placeholder' => 'Optional',];
-        $this->form[] = ["label" => "From Email", "name" => "from_email", "type" => "email", "required" => false, "validation" => "email", "width" => "col-sm-6", 'placeholder' => 'Optional',];
+        $this->form[] = ["label" => "From Name", "name" => "from_name", "type" => "text", "required" => false, "width" => "col-sm-6", 'placeholder' => 'Optional'];
+        $this->form[] = ["label" => "From Email", "name" => "from_email", "type" => "email", "required" => false, "validation" => "email", "width" => "col-sm-6", 'placeholder' => 'Optional'];
 
-        $this->form[] = ["label" => "Cc Email", "name" => "cc_email", "type" => "email", "required" => false, "validation" => "email", 'placeholder' => 'Optional',];
-
-
+        $this->form[] = ["label" => "Cc Email", "name" => "cc_email", "type" => "email", "required" => false, "validation" => "email", 'placeholder' => 'Optional'];
+        $this->form[] = ['label' => 'Is Important', 'name' => 'priority', 'type' => 'radio', 'dataenum' => '1|Yes;3|No'];
         # Actions
         $this->addaction = [];
         $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::adminPath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
@@ -73,7 +71,7 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
             ->where('id', $id)
             ->update([
                 'content' => Request::input('content'),
-                'template' => Request::input('template')
+                'template' => Request::input('template'),
             ]);
     }
 
@@ -85,19 +83,23 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
 
     public function hook_before_add(&$arr)
     {
-        if ($arr['template'] == null || $arr['template'] == '')
+        if ($arr['template'] == null || $arr['template'] == '') {
             $arr['template'] = '<mjml>
                                     <mj-body id="irdi">
                                     </mj-body>
                                 </mjml>';
+        }
+
     }
 
     public function hook_before_edit(&$arr, $id)
     {
-        if ($arr['template'] == null || $arr['template'] == '')
+        if ($arr['template'] == null || $arr['template'] == '') {
             $arr['template'] = '<mjml>
                                     <mj-body id="irdi">
                                     </mj-body>
                                 </mjml>';
+        }
+
     }
 }

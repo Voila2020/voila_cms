@@ -6,7 +6,6 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
-
 class CBSeeder extends Seeder
 {
     /**
@@ -51,6 +50,7 @@ class CBSeeder extends Seeder
             'from_name' => 'Voila System',
             'from_email' => 'test@voila.digital',
             'cc_email' => null,
+            'is_important' => 0,
         ]);
         $this->command->info("Create email templates completed");
 
@@ -129,6 +129,16 @@ class CBSeeder extends Seeder
                 'table_name' => 'cms_moduls',
                 'controller' => 'ModulsStatusController',
                 'is_protected' => 1,
+                'is_active' => 1,
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'Website_Languages',
+                'icon' => 'fa fa-database',
+                'path' => 'website_languages',
+                'table_name' => 'cms_moduls',
+                'controller' => 'WebsiteLanguagesController',
+                'is_protected' => 0,
                 'is_active' => 1,
             ],
             [
@@ -224,7 +234,6 @@ class CBSeeder extends Seeder
         $this->command->info("Create default cb modules completed");
         # CB Modules End
 
-
         # CB Setting
         $data = [
 
@@ -264,7 +273,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'email_sender',
-                'label' => 'Email Sender',
+                'label' => 'email_sender',
                 'content' => 'test@voila.digital',
                 'content_input_type' => 'text',
                 'group_setting' => 'email_setting',
@@ -274,7 +283,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'smtp_driver',
-                'label' => 'Mail Driver',
+                'label' => 'mail_driver',
                 'content' => 'smtp',
                 'content_input_type' => 'select',
                 'group_setting' => 'email_setting',
@@ -284,7 +293,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'smtp_host',
-                'label' => 'SMTP Host',
+                'label' => 'smtp_host',
                 'content' => 'mail.voilahost.com',
                 'content_input_type' => 'text',
                 'group_setting' => 'email_setting',
@@ -294,7 +303,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'smtp_port',
-                'label' => 'SMTP Port',
+                'label' => 'smtp_port',
                 'content' => '2525',
                 'content_input_type' => 'text',
                 'group_setting' => 'email_setting',
@@ -304,7 +313,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'smtp_username',
-                'label' => 'SMTP Username',
+                'label' => 'smtp_username',
                 'content' => 'test@voila.digital',
                 'content_input_type' => 'text',
                 'group_setting' => 'email_setting',
@@ -314,7 +323,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'smtp_password',
-                'label' => 'SMTP Password',
+                'label' => 'smtp_password',
                 'content' => 'a84yAe0OL=',
                 'content_input_type' => 'text',
                 'group_setting' => 'email_setting',
@@ -326,7 +335,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'appname',
-                'label' => 'Application Name',
+                'label' => 'application_name',
                 'group_setting' => 'application_setting',
                 'content' => 'Voila CMS',
                 'content_input_type' => 'text',
@@ -336,7 +345,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'default_paper_size',
-                'label' => 'Default Paper Print Size',
+                'label' => 'default_paper_size',
                 'group_setting' => 'application_setting',
                 'content' => 'Legal',
                 'content_input_type' => 'text',
@@ -346,7 +355,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'default_img',
-                'label' => 'Default Image',
+                'label' => 'uploaded_default_image',
                 'content' => '',
                 'content_input_type' => 'upload_image',
                 'group_setting' => 'application_setting',
@@ -356,17 +365,17 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'default_img_compression',
-                'label' => 'Image Compression Value',
+                'label' => 'image_compression_value',
                 'content' => '',
                 'content_input_type' => 'text',
                 'group_setting' => 'application_setting',
                 'dataenum' => null,
-                'helper' => 'This field specifies the quality of the image after uploading(The image quality will decrease as we decrease the input value and vice versa)',
+                'helper' => 'def_img_quality',
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'favicon',
-                'label' => 'Favicon',
+                'label' => 'favicon',
                 'content' => '',
                 'content_input_type' => 'upload_image',
                 'group_setting' => 'application_setting',
@@ -376,7 +385,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'api_debug_mode',
-                'label' => 'API Debug Mode',
+                'label' => 'api_debug_mode',
                 'content' => 'true',
                 'content_input_type' => 'select',
                 'group_setting' => 'application_setting',
@@ -386,7 +395,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'google_api_key',
-                'label' => 'Google API Key',
+                'label' => 'google_api_key',
                 'content' => '',
                 'content_input_type' => 'text',
                 'group_setting' => 'application_setting',
@@ -396,7 +405,7 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'google_fcm_key',
-                'label' => 'Google FCM Key',
+                'label' => 'google_fcm_key',
                 'content' => '',
                 'content_input_type' => 'text',
                 'group_setting' => 'application_setting',
@@ -406,17 +415,17 @@ class CBSeeder extends Seeder
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'activate_notifications',
-                'label' => 'Activate Notifications',
+                'label' => 'activate_notifications',
                 'content' => '',
                 'content_input_type' => 'select',
                 'group_setting' => 'application_setting',
                 'dataenum' => 'true,false',
-                'helper' => 'This field determines whether notifications are enabled or not (not enabled by default)',
+                'helper' => 'notifications_activity',
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'default_language',
-                'label' => 'Default Language',
+                'label' => 'default_cms_language',
                 'content_input_type' => 'select',
                 'group_setting' => 'language_setting',
                 'dataenum' => 'arabic,english',
@@ -435,28 +444,18 @@ class CBSeeder extends Seeder
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'tow_languages_active',
-                'label' => 'Activate Tow Languages',
-                'content' => 'no',
-                'content_input_type' => 'select',
-                'group_setting' => 'language_setting',
-                'dataenum' => 'yes,no',
-                'helper' => 'activate_tow_languages',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'block_user_in_hours',
-                'label' => 'Block User In Hours',
+                'name' => 'block_ip_in_hours',
+                'label' => 'block_ip_in_hours',
                 'content' => "24",
                 'content_input_type' => 'text',
                 'group_setting' => 'block_users_setting',
                 'dataenum' => '',
-                'helper' => 'block_user_in_hours',
+                'helper' => 'block_ip_in_hours',
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'max_failed_login_trying',
-                'label' => 'Maximum Failed Login Trying',
+                'label' => 'max_failed_login_trying',
                 'content' => "5",
                 'content_input_type' => 'text',
                 'group_setting' => 'block_users_setting',
@@ -1331,7 +1330,7 @@ class CBSeeder extends Seeder
                     .foot-lists{
                         display:none;
                     }
-                    }'
+                    }',
             ];
             DB::table('landing_pages')->insert($data);
         }
@@ -1348,7 +1347,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
                 [
                     'name' => 'labels_translation',
@@ -1361,7 +1360,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
                 [
                     'name' => 'pages_and_forms',
@@ -1374,7 +1373,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
                 [
                     'name' => 'Forms',
@@ -1387,7 +1386,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
                 [
                     'name' => 'Pages',
@@ -1400,7 +1399,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
                 [
                     'name' => 'Blocked IPS',
@@ -1413,7 +1412,7 @@ class CBSeeder extends Seeder
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
                     'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now()
+                    'updated_at' => Carbon::now(),
                 ],
 
             ];
@@ -1428,7 +1427,7 @@ class CBSeeder extends Seeder
             if (!$menuPrivilege) {
                 DB::table('cms_menus_privileges')->insert([
                     'id_cms_menus' => $menu->id,
-                    'id_cms_privileges' => 1
+                    'id_cms_privileges' => 1,
                 ]);
             }
         }
@@ -1436,12 +1435,16 @@ class CBSeeder extends Seeder
             $data = [
                 [
                     'name' => 'English',
-                    'code' => 'en'
+                    'code' => 'en',
+                    'active' => 1,
+                    'default' => 1,
                 ],
                 [
                     'name' => 'Arabic',
-                    'code' => 'ar'
-                ]
+                    'code' => 'ar',
+                    'active' => 1,
+                    'default' => null,
+                ],
             ];
             DB::table('languages')->insert($data);
         }
@@ -1450,23 +1453,23 @@ class CBSeeder extends Seeder
             $data = [
                 [
                     'title' => 'text',
-                    'multi' => 0
+                    'multi' => 0,
                 ],
                 [
                     'title' => 'email',
-                    'multi' => 0
+                    'multi' => 0,
                 ],
                 [
                     'title' => 'radio',
-                    'multi' => 1
+                    'multi' => 1,
                 ],
                 [
                     'title' => 'checkbox',
-                    'multi' => 1
+                    'multi' => 1,
                 ],
                 [
                     'title' => 'select',
-                    'multi' => 1
+                    'multi' => 1,
                 ],
             ];
             DB::table('fields')->insert($data);

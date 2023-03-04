@@ -17,6 +17,8 @@ class CreateLanguages extends Migration
             $table->increments('id');
             $table->string('name');
             $table->string('code');
+            $table->tinyInteger('active')->nullable();
+            $table->tinyInteger('default')->nullable();
             $table->timestamps();
         });
     }
