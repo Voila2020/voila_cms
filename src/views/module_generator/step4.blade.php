@@ -25,7 +25,7 @@
                     <div class="col-sm-12">
                         <div class="form-group">
 
-                            <label>{{ App::getlocale() == 'en' ? 'Title Field Candidate' : 'عنوان الحقل المرشح' }}</label>
+                            <label>{{ cbLang('title_field_candidate') }}</label>
                             <input type="text" name="title_field" value="{{ $cb_title_field }}" class='form-control'>
                         </div>
                     </div>

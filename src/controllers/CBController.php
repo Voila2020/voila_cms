@@ -4,9 +4,8 @@ namespace crocodicstudio\crudbooster\controllers;
 
 error_reporting(E_ALL ^ E_NOTICE);
 
-
-use crocodicstudio\crudbooster\helpers\CB;
 use crocodicstudio\crudbooster\export\DefaultExportXls;
+use crocodicstudio\crudbooster\helpers\CB;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
 use Illuminate\Support\Facades\App;
@@ -14,14 +13,13 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\PDF;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
-use Illuminate\Support\Facades\Schema;
 
 class CBController extends Controller
 {
@@ -535,7 +533,7 @@ class CBController extends Controller
                     'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']),
                     'color' => $s['button_color'],
                     'showIf' => $s['showIf'],
-                    'target' => isset($s['target']) ?: '_self'
+                    'target' => isset($s['target']) ?: '_self',
                 ];
             }
         }
@@ -601,12 +599,13 @@ class CBController extends Controller
 
                 if (@$col['switch']) {
                     $checked = '';
-                    if ($value == 1)
+                    if ($value == 1) {
                         $checked = 'checked';
+                    }
+
                     $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked} style='display:none;'/>
                             <label class='cms_switch_label' for='{$col["name"]}_{$row->id}'>Toggle</label>";
                 }
-
 
                 if ($col['nl2br']) {
                     $value = nl2br($value);
@@ -642,7 +641,7 @@ class CBController extends Controller
                 $html_content[] = $value;
             } //end foreach columns_table
 
-            if ($this->button_table_action) :
+            if ($this->button_table_action):
 
                 $button_action_style = $this->button_action_style;
                 $html_content[] = "<div class='button_action' style='text-align:right'>" . view('crudbooster::components.action', compact('addaction', 'row', 'button_action_style', 'parent_field'))->render() . "</div>";
@@ -662,8 +661,10 @@ class CBController extends Controller
         $data['html_contents'] = $html_contents;
 
         $manualView = null;
-        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.index'))
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.index')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.index', $data);
+        }
+
         $view = $manualView ?: view("crudbooster::default.index", $data);
         return $view;
     }
@@ -1100,8 +1101,6 @@ class CBController extends Controller
                 }
             }
 
-
-
             //multitext colomn
             if ($ro['type'] == 'multitext') {
                 $name = $ro['name'];
@@ -1162,8 +1161,10 @@ class CBController extends Controller
 
         $command = 'add';
         $manualView = null;
-        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
-            $manualView =  view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+        }
+
         $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
         return $view;
     }
@@ -1182,12 +1183,9 @@ class CBController extends Controller
         $this->validation();
         $this->input_assignment();
 
-
-
         if (Schema::hasColumn($this->table, 'created_at')) {
             $this->arr['created_at'] = date('Y-m-d H:i:s');
         }
-
 
         $this->hook_before_add($this->arr);
 
@@ -1260,11 +1258,11 @@ class CBController extends Controller
                     foreach ($columns as $col) {
                         $colname = $col['name'];
                         $colvalue = request($name . '-' . $colname)[$i];
-                        if (isset($colvalue) === TRUE) {
+                        if (isset($colvalue) === true) {
                             $column_data[$colname] = $colvalue;
                         }
                     }
-                    if (isset($column_data) === TRUE) {
+                    if (isset($column_data) === true) {
                         $column_data[$fk] = (!empty($id) ? $id : $lastInsertId);
                         $child_array[] = $column_data;
                     }
@@ -1278,12 +1276,15 @@ class CBController extends Controller
         # in case module has images
         if (Request::input('list_images')) {
             $model_images = json_decode(Request::input('list_images')[0]);
-            foreach ($model_images as $image)
-                DB::table('model_images')->insert([
-                    'model_type' => $this->table,
-                    'model_id' => $lastInsertId,
-                    'path' => $image
-                ]);
+            if ($model_images) {
+                foreach ($model_images as $image) {
+                    DB::table('model_images')->insert([
+                        'model_type' => $this->table,
+                        'model_id' => $lastInsertId,
+                        'path' => $image,
+                    ]);
+                }
+            }
         }
 
         $this->hook_after_add($lastInsertId);
@@ -1326,13 +1327,13 @@ class CBController extends Controller
         $command = 'edit';
         Session::put('current_row_id', $id);
         $manualView = null;
-        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        }
+
         $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
         return $view;
     }
-
-
 
     public function postEditSave($id)
     {
@@ -1418,8 +1419,10 @@ class CBController extends Controller
                     $column_data = [];
                     $column_data[$childtablePK] = $lastId;
                     $column_data[$fk] = $id;
-                    if (isset($column_data["sorting"]))
+                    if (isset($column_data["sorting"])) {
                         $column_data["sorting"] = $i + 1;
+                    }
+
                     foreach ($columns as $col) {
                         $colname = $col['name'];
                         $column_data[$colname] = Request::get($name . '-' . $colname)[$i];
@@ -1455,7 +1458,7 @@ class CBController extends Controller
             # fetch existed from data base
             $existed_images = DB::table('model_images')->where([
                 'model_type' => $this->table,
-                'model_id' => $id
+                'model_id' => $id,
             ])->get();
             foreach ($existed_images as $existed_image) {
                 $row_id = array_keys(array_filter($model_images, function ($element) use ($existed_image) {
@@ -1466,7 +1469,7 @@ class CBController extends Controller
                     DB::table('model_images')->where([
                         'model_type' => $this->table,
                         'model_id' => $id,
-                        'path' => $existed_image->path
+                        'path' => $existed_image->path,
                     ])->delete();
                 } else {
                     unset($model_images[$row_id[0]]);
@@ -1477,7 +1480,7 @@ class CBController extends Controller
                 DB::table('model_images')->insert([
                     'model_type' => $this->table,
                     'model_id' => $id,
-                    'path' => $new_image
+                    'path' => $new_image,
                 ]);
             }
         }
@@ -1492,7 +1495,6 @@ class CBController extends Controller
             }
         }
     }
-
 
     public function getDelete($id)
     {
@@ -1546,8 +1548,10 @@ class CBController extends Controller
 
         Session::put('current_row_id', $id);
         $manualView = null;
-        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form'))
-            $manualView =  view(CRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        }
+
         $view = $manualView ?: view('crudbooster::default.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
         return $view;
     }

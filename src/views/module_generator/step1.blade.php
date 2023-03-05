@@ -80,11 +80,7 @@
                         @endforeach
                     </select>
                     <div class="help-block">
-                        @if (App::getlocale() == 'en')
-                            Do not use cms_* as prefix on your tables name
-                        @else
-                            يرجى عدم استخدام اللاحقة cms_* في اسماء الجداول الخاصة بك
-                        @endif
+                        {{ cbLang('no_use_cms_prefix') }}
                     </div>
                 </div>
                 <div class="form-group">
@@ -113,20 +109,14 @@
                     <label for="">{{ cbLang('Module Slug') }}</label>
                     <input type="text" class="form-control" required name="path" value="{{ $row->path }}">
                     <div class="help-block">
-                        @if (App::getlocale() == 'en')
-                            Please alpha numeric only, without space instead _ and or special character
-                        @else
-                            فضلا استخدم فقط المحارف الابجدية بدون فراغات أو محارف مميزة _ and or
-                        @endif
+                        {{ cbLang('module_slug_expression') }}
                     </div>
                 </div>
         </div>
         <div class="box-footer">
 
-            <input checked type='checkbox' name='create_menu'
-                value='1' />{{ App::getlocale() == 'en' ? 'Also create menu for this module' : 'اضافة قائمة للموديول الحالي أيضا' }}
-            <a href='#'
-                title='{{ App::getlocale() == 'en' ? 'If you check this, we will create the menu for this module' : 'اذا تم الضغط على هذا الخيار فسوف يتم انشاء قائمة للموديول الحالي' }}'>(?)</a>
+            <input checked type='checkbox' name='create_menu' value='1' />{{ cbLang('ask_create_modules_menu') }}
+            <a href='#' title='{{ cbLang('create_modules_menu') }}'>(?)</a>
 
             <div class='pull-right'>
                 <a class='btn btn-default' href='{{ Route('ModulsControllerGetIndex') }}'> {{ cbLang('button_back') }}</a>

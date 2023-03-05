@@ -466,5 +466,9 @@ return [
     'default_cms_language' => 'Default CMS Language',
     'block_ip_in_hours' => 'Block User In Hours',
     'max_failed_login_trying' => 'Maximum Failed Login Trying',
-
+    'no_use_cms_prefix' => 'Do not use cms_* as prefix on your tables name',
+    'module_slug_expression' => 'Please alpha numeric only, without space instead _ and or special character',
+    'ask_create_modules_menu' => 'Also create menu for this module',
+    'create_modules_menu' => 'If you check this, we will create the menu for this module',
+    'title_field_candidate' => 'Title Field Candidate',
 ];

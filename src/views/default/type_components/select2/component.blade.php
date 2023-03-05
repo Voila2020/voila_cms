@@ -1,14 +1,4 @@
 @if ($form['datatable'])
-
-    {{-- @if ($form['relationship_table'])
-        @push('bottom')
-            <script type="text/javascript">
-                $(function () {
-                    $('#{{$name}}').select2();
-                })
-            </script>
-        @endpush
-    @else --}}
     @if ($form['datatable_ajax'] == true)
         <?php
         $datatable = @$form['datatable'];
@@ -102,7 +92,6 @@
             </script>
         @endpush
     @endif
-    {{-- @endif --}}
 @else
     @push('bottom')
         <script type="text/javascript">

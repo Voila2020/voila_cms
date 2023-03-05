@@ -415,7 +415,10 @@ return [
     'default_cms_language' => 'لغة CMS الافتراضية',
     'block_ip_in_hours' => 'Block IP In Hours',
     'max_failed_login_trying' => 'الحد الأقصى لمحاولة تسجيل الدخول الفاشلة',
+    'no_use_cms_prefix' => 'يرجى عدم استخدام اللاحقة cms_* في اسماء الجداول الخاصة بك',
+    'module_slug_expression' => 'فضلا استخدم فقط المحارف الابجدية بدون فراغات أو محارف مميزة _ and or',
+    'ask_create_modules_menu' => 'اضافة قائمة للموديول الحالي أيضا',
+    'create_modules_menu' => 'اذا تم الضغط على هذا الخيار فسوف يتم انشاء قائمة للموديول الحالي',
+    'title_field_candidate' => 'عنوان الحقل المرشح',
 
 ];
-
-
