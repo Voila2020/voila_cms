@@ -2,7 +2,6 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
@@ -15,7 +14,7 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
      */
     public function index()
     {
-        $languages = DB::table('languages')->get();
+        $languages = DB::table('languages')->where('active', 1)->get();
         $columns = [];
         $columnsCount = $languages->count();
         if ($languages->count() > 0) {
@@ -37,16 +36,20 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
     {
         $request->validate([
             'key' => 'required',
-            'value' => 'required',
+            // 'value' => 'required',
         ]);
-
-        $data = $this->openJSONFile('en');
-        $data[$request->key] = $request->value;
-        $this->saveJSONFile('en', $data);
+        foreach ($request->all() as $key => $input) {
+            if (str_contains($key, 'val')) {
+                $code = explode('_', $key);
+                $code = $code[1];
+                $data = $this->openJSONFile($code);
+                $data[$request->key] = $input;
+                $this->saveJSONFile($code, $data);
+            }
+        }
 
         return redirect()->route('languages');
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -66,7 +69,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         return response()->json(['success' => $key]);
     }
 
-
     /**
      * Open Translation File
      * @return Response
@@ -81,7 +83,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         return $jsonString;
     }
 
-
     /**
      * Save JSON File
      * @return Response
@@ -93,7 +94,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         file_put_contents(base_path('resources/lang/' . $code . '.json'), stripslashes($jsonData));
     }
 
-
     /**
      * Save JSON File
      * @return Response
@@ -103,11 +103,9 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         $data = $this->openJSONFile($request->code);
         $data[$request->pk] = $request->value;
 
-
         $this->saveJSONFile($request->code, $data);
         return response()->json(['success' => 'Done!']);
     }
-
 
     /**
      * Remove the specified resource from storage.
@@ -116,7 +114,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
     public function transUpdateKey(Request $request)
     {
         $languages = DB::table('languages')->get();
-
 
         if ($languages->count() > 0) {
             foreach ($languages as $language) {
@@ -128,7 +125,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
                 }
             }
         }
-
 
         return response()->json(['success' => 'Done!']);
     }

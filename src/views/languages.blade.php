@@ -20,32 +20,42 @@
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-4">
-                <input type="text" name="key" class="form-control" placeholder="{{ cbLang('enter_key') }}"
-                    required>
+                <fieldset style="margin-bottom:20px;">
+                    <label>{{ cbLang('enter_lang_key') }}</label>
+                    <input type="text" name="key" class="form-control" placeholder="{{ cbLang('enter_key') }}"
+                        required>
+                </fieldset>
             </div>
-            <div class="col-md-4">
-                <input type="text" name="value" class="form-control" placeholder="{{ cbLang('enter_value') }}"
-                    required>
+            <div class="col-md-1"></div>
+            <div class="col-md-7">
+                <label style="margin-left:10px; margin-right:10px;">{{ cbLang('enter_lang_values') }}</label>
+                <fieldset style="display:flex;">
+                    @foreach ($languages as $language)
+                        <input class="form-control" type="text" name="value_{{ $language->code }}"
+                            placeholder="{{ $language->name }}" style="margin-left:10px; margin-right:10px;"><br>
+                    @endforeach
+                </fieldset>
             </div>
+        </div>
+        <div class="row">
             <div class="col-md-4">
 
                 <button type="submit" class="btn btn-success">{{ cbLang('Add') }}</button>
             </div>
         </div>
     </form>
-
     <hr>
     <input type="text" id="myInput" class="form-control" onkeyup="myFunction()"
-        placeholder="{{ cbLang('search_for_names') }}" title="Type in a name">
+        placeholder="{{ cbLang('search_for_key_values') }}" title="Type in a name">
     <hr>
     <div class="box-body table-responsive no-padding">
         <table class="table table-hover table-striped table-bordered" id="mytable">
             <thead>
                 <tr>
-                    <th class="translate_tbl_header" style="width:25%">{{ cbLang('Key') }}</th>
+                    <th class="translate_tbl_header" style="width:auto;">{{ cbLang('Key') }}</th>
                     @if ($languages->count() > 0)
                         @foreach ($languages as $language)
-                            <th class="translate_tbl_header" style="width:25%">
+                            <th class="translate_tbl_header" style="width:auto">
                                 {{ cbLang($language->name) }}({{ cbLang($language->code) }})</th>
                         @endforeach
                     @endif

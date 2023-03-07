@@ -1186,6 +1186,11 @@ class CBController extends Controller
             $this->arr['created_at'] = date('Y-m-d H:i:s');
         }
 
+        if ($this->button_sortable && Schema::hasColumn($this->table, 'sorting')) {
+            $sort = DB::table($this->table)->count() + 1;
+            $this->arr['sorting'] = $sort;
+        }
+
         $this->hook_before_add($this->arr);
         $lastInsertId = $id = DB::table($this->table)->insertGetId($this->arr);
 
