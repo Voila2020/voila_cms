@@ -13,7 +13,7 @@ return [
     'filter_dialog_title' => 'فرز متقدم',
 
     'Default CMS Language' => 'اللغة الافتراضية',
-    'Activate Tow Languages For' => 'تفعيل اللغتين',
+    'Activate Tow Languages' => 'تفعيل اللغتين',
 
     'text_enter_the_password' => 'فضلا ادخل كلمة المرور لاستعادة جلسة العمل',
     'text_or_sign_in' => 'او سجل الدخول بمستخدم مختلف',
@@ -381,8 +381,8 @@ return [
     'activate_tow_languages' => 'تفعيل اللغتين العربية والانكليزية في ال CMS',
     'default_language' => 'هذا الحقل يحدد اللغة الافتراضية المعتمدة في التطبيق',
     'block_users_setting' => 'اعدادات الحظر',
-    'block_ip_in_hours' => 'هذا الحقل يحدد المدة الزمنية التي سيتم حظر المستخدم بها بعد قيامه بتجاوز عدد محاولات التسجيل الفاشلة مقدرة بالساعات',
-    'max_failed_login_trying' => 'هذا الحقل يحدد العدد الأعظمي لمحاولات تسجيل الدخول الفاشلة',
+    'block_ip_in_hours_helper' => 'هذا الحقل يحدد المدة الزمنية التي سيتم حظر ال IP بها بعد قيامه بتجاوز عدد محاولات التسجيل الفاشلة مقدرة بالساعات',
+    'max_failed_login_trying_helper' => 'هذا الحقل يحدد العدد الأعظمي لمحاولات تسجيل الدخول الفاشلة',
     'login_block_msg' => 'عذرًا، يبدو أنك تجاوزت الحد الأقصى لمحاولات تسجيل الدخول. لأسباب أمنية، تم حظرك مؤقتًا. يرجى المحاولة مرة أخرى لاحقًا أو الاتصال بفريق الدعم إذا كنت بحاجة إلى مساعدة. شكرًا لك.',
     'search_for_key_values' => 'ابحث عن كلمة أو مفتاح',
     'activate_label' => ' تفعيل العمود',
@@ -413,12 +413,15 @@ return [
     'google_fcm_key' => 'Google FCM Key',
     'activate_notifications' => 'تفعيل الإخطارات',
     'default_cms_language' => 'لغة CMS الافتراضية',
-    'block_ip_in_hours' => 'Block IP In Hours',
-    'max_failed_login_trying' => 'الحد الأقصى لمحاولة تسجيل الدخول الفاشلة',
+    'block_ip_in_hours' => 'حظر عنوان IP',
+    'max_failed_login_trying' => 'الحد الأقصى',
     'no_use_cms_prefix' => 'يرجى عدم استخدام اللاحقة cms_* في اسماء الجداول الخاصة بك',
     'module_slug_expression' => 'فضلا استخدم فقط المحارف الابجدية بدون فراغات أو محارف مميزة _ and or',
     'ask_create_modules_menu' => 'اضافة قائمة للموديول الحالي أيضا',
     'create_modules_menu' => 'اذا تم الضغط على هذا الخيار فسوف يتم انشاء قائمة للموديول الحالي',
     'title_field_candidate' => 'عنوان الحقل المرشح',
+
+    'successfully_save_settings' => 'تم حفظ الاعدادات الخاصة بك بنجاح !',
+    'Module_Blocked_IPS' => 'قائمة الحظر',
 
 ];

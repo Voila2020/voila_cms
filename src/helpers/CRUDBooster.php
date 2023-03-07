@@ -768,7 +768,6 @@ class CRUDBooster
 
     public static function sendEmail($config = [])
     {
-
         Config::set('mail.driver', self::getSetting('smtp_driver'));
         Config::set('mail.host', self::getSetting('smtp_host'));
         Config::set('mail.port', self::getSetting('smtp_port'));

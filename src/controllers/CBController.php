@@ -168,8 +168,8 @@ class CBController extends Controller
         $this->data['button_action_width'] = $this->button_action_width;
         foreach ($this->col as $col) {
             if (isset($col['switch']) && $col['switch'] == true) {
-                $acitvLabel = cbLang('activate_label');
-                $deactiveLabel = cbLang('deactivate_label');
+                $acitvLabel = cbLang('activate_label') . ' ' . $col['label'];
+                $deactiveLabel = cbLang('deactivate_label') . ' ' . $col['label'];
                 $this->button_selected[] = ['label' => $acitvLabel, 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
                 $this->button_selected[] = ['label' => $deactiveLabel, 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
             }
@@ -1179,7 +1179,6 @@ class CBController extends Controller
             ]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang("denied_access"));
         }
-
         $this->validation();
         $this->input_assignment();
 
@@ -1188,7 +1187,6 @@ class CBController extends Controller
         }
 
         $this->hook_before_add($this->arr);
-
         $lastInsertId = $id = DB::table($this->table)->insertGetId($this->arr);
 
         //fix bug if primary key is uuid
@@ -1313,7 +1311,6 @@ class CBController extends Controller
     {
         $this->cbLoader();
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
-
         if (!CRUDBooster::isRead() && $this->global_privilege == false || $this->button_edit == false) {
             CRUDBooster::insertLog(cbLang("log_try_edit", [
                 'name' => $row->{$this->title_field},
@@ -1476,13 +1473,16 @@ class CBController extends Controller
                 }
             }
             # insert the new images
-            foreach ($model_images as $new_image) {
-                DB::table('model_images')->insert([
-                    'model_type' => $this->table,
-                    'model_id' => $id,
-                    'path' => $new_image,
-                ]);
+            if ($model_images->count) {
+                foreach ($model_images as $new_image) {
+                    DB::table('model_images')->insert([
+                        'model_type' => $this->table,
+                        'model_id' => $id,
+                        'path' => $new_image,
+                    ]);
+                }
             }
+
         }
 
         if ($this->return_url) {

@@ -10,10 +10,11 @@
     </label>
 
     <div class="{{ $col_width ?: 'col-sm-10' }}">
-        <select id='list-icon' class="form-control" name="icon" style="font-family: 'FontAwesome', Helvetica;">
+        <select id='list-icon' class="form-control" name="{{ $name }}"
+            style="font-family: 'FontAwesome', Helvetica;">
             <option value="">** Select an Icon</option>
             @foreach ($fonts as $font)
-                <option value='fa fa-{{ $font }}' {{ $row->icon == "fa fa-$font" ? 'selected' : '' }}
+                <option value='fa fa-{{ $font }}' {{ $value == "fa fa-$font" ? 'selected' : '' }}
                     data-label='{{ $font }}'>{{ $font }}</option>
             @endforeach
         </select>

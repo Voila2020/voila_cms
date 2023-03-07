@@ -14,7 +14,7 @@ class AddTableLoginAttempts extends Migration
      */
     public function up()
     {
-        Schema::create('login_attempts', function (Blueprint $table) {
+        Schema::create('cms_login_attempts', function (Blueprint $table) {
             $table->increments('id');
             $table->string('ip_address');
             $table->integer('attempts')->nullable();
@@ -29,6 +29,6 @@ class AddTableLoginAttempts extends Migration
      */
     public function down()
     {
-        Schema::drop('login_attempts');
+        Schema::drop('cms_login_attempts');
     }
 }

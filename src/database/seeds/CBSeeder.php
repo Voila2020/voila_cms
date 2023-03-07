@@ -50,7 +50,7 @@ class CBSeeder extends Seeder
             'from_name' => 'Voila System',
             'from_email' => 'test@voila.digital',
             'cc_email' => null,
-            'is_important' => 0,
+            'priority' => 3,
         ]);
         $this->command->info("Create email templates completed");
 
@@ -217,7 +217,7 @@ class CBSeeder extends Seeder
                 'name' => 'Blocked IPS',
                 'icon' => 'fa fa-ban',
                 'path' => 'blocked_ips',
-                'table_name' => 'login_attempts',
+                'table_name' => 'cms_login_attempts',
                 'controller' => 'LoginAttemptsController',
                 'is_protected' => 0,
                 'is_active' => 1,
@@ -428,7 +428,7 @@ class CBSeeder extends Seeder
                 'label' => 'default_cms_language',
                 'content_input_type' => 'select',
                 'group_setting' => 'language_setting',
-                'dataenum' => 'arabic,english',
+                'dataenum' => 'العربية,english',
                 'content' => 'english',
                 'helper' => 'default_language',
             ],
@@ -450,7 +450,7 @@ class CBSeeder extends Seeder
                 'content_input_type' => 'text',
                 'group_setting' => 'block_users_setting',
                 'dataenum' => '',
-                'helper' => 'block_ip_in_hours',
+                'helper' => 'block_ip_in_hours_helper',
             ],
             [
                 'created_at' => date('Y-m-d H:i:s'),
@@ -1401,20 +1401,6 @@ class CBSeeder extends Seeder
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),
                 ],
-                [
-                    'name' => 'Blocked IPS',
-                    'type' => 'Module',
-                    'path' => 'blocked_ips',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-file-o',
-                    'parent_id' => 0,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-
             ];
             DB::table('cms_menus')->insert($data);
         }

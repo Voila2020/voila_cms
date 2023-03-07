@@ -166,8 +166,8 @@ class CBRouter
         ], function () {
             # file-manager
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');
-            Route::match(array('GET', 'POST'), '/upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
-            Route::match(array('GET', 'POST'), '/execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
+            Route::match(array('GET', 'POST'), '/filemanager-upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
+            Route::match(array('GET', 'POST'), '/filemanager-execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
             Route::match(array('GET', 'POST'), '/ajax_calls', [FileManagerController::class, 'ajaxCall'])->name("filemanager.ajax_calls");
             Route::post('/download', [FileManagerController::class, 'forceDownload'])->name("filemanager.download");
         });

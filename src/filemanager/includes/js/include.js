@@ -121,7 +121,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                                         var t = jQuery("#chmod_form input[name=apply_recursive]:checked").val();
                                         "" != t && void 0 !== t || (t = "none"), y.ajax({
                                             type: "POST",
-                                            url: "execute?action=chmod",
+                                            url: "filemanager-execute?action=chmod",
                                             data: {
                                                 path: i,
                                                 new_mode: e,
@@ -162,7 +162,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                                     var e = jQuery("#textfile_edit_area").val();
                                     window.editor && "function" == typeof window.editor.getData && (e = window.editor.getData()), y.ajax({
                                         type: "POST",
-                                        url: "execute?action=save_text_file",
+                                        url: "filemanager-execute?action=save_text_file",
                                         data: {
                                             path: t,
                                             new_content: e
@@ -385,7 +385,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
             },
             makeUploader: function () {
                 jQuery("#fileupload").fileupload({
-                    url: "upload",
+                    url: "filemanager-upload",
                     maxChunkSize: 2097152
                 }), jQuery("#fileupload").bind("fileuploaddrop", function (e, a) {
                     jQuery(".uploader").show(200), setTimeout(function () {
@@ -416,7 +416,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                         t = jQuery("#fldr_value").val();
                     show_animation(), y.ajax({
                         type: "POST",
-                        url: "upload",
+                        url: "filemanager-upload",
                         data: {
                             fldr: t,
                             url: a
@@ -482,7 +482,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
             var a;
             1 == e && (a = void 0 !== t ? t.closest("figure").attr("data-path") : jQuery("#sub_folder").val() + jQuery("#fldr_value").val(), y.ajax({
                 type: "POST",
-                url: "execute?action=paste_clipboard",
+                url: "filemanager-execute?action=paste_clipboard",
                 data: {
                     path: a
                 }
@@ -560,7 +560,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
     function g(e, a, t, r, i) {
         null !== t && (t = Q(t), y.ajax({
             type: "POST",
-            url: "execute?action=" + e,
+            url: "filemanager-execute?action=" + e,
             data: {
                 path: a,
                 name: t.replace("/", "")
@@ -684,7 +684,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                             var t = jQuery("#sub_folder").val() + jQuery("#fldr_value").val();
                             y.ajax({
                                 type: "POST",
-                                url: "execute?action=create_file",
+                                url: "filemanager-execute?action=create_file",
                                 data: {
                                     path: t,
                                     name: e,
@@ -710,7 +710,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                     var a = jQuery("#sub_folder").val() + jQuery("#fldr_value").val();
                     y.ajax({
                         type: "POST",
-                        url: "execute?action=create_folder",
+                        url: "filemanager-execute?action=create_folder",
                         data: {
                             path: a,
                             name: e
@@ -778,7 +778,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                         var a = u(!0);
                         r = "delete_files", i = a, o = l = n = "", null !== name && (name = Q(name), y.ajax({
                             type: "POST",
-                            url: "execute?action=" + r,
+                            url: "filemanager-execute?action=" + r,
                             data: {
                                 path: i[0],
                                 paths: i,
@@ -848,7 +848,7 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                         var a;
                         "" != e ? bootbox.alert(e) : (a = void 0 !== r ? r.hasClass("back-directory") ? r.find(".path").val() : r.closest("figure").attr("data-path") : jQuery("#sub_folder").val() + jQuery("#fldr_value").val(), y.ajax({
                             type: "POST",
-                            url: "execute?action=paste_clipboard",
+                            url: "filemanager-execute?action=paste_clipboard",
                             data: {
                                 path: a
                             }

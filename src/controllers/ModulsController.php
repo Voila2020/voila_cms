@@ -2,11 +2,11 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use crocodicstudio\crudbooster\fonts\Fontawesome;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
-use crocodicstudio\crudbooster\fonts\Fontawesome;
-use crocodicstudio\crudbooster\helpers\CRUDBooster;
 
 class ModulsController extends CBController
 {
@@ -190,19 +190,18 @@ class ModulsController extends CBController
 
         $this->index_button[] = ['label' => 'Generate New Module', 'icon' => 'fa fa-plus', 'url' => CRUDBooster::mainpath('step1'), 'color' => 'success'];
 
-
         $this->style_css = '.table>caption+thead>tr:first-child>td, .table>caption+thead>tr:first-child>th, .table>colgroup+thead>tr:first-child>td, .table>colgroup+thead>tr:first-child>th, .table>thead:first-child>tr:first-child>td, .table>thead:first-child>tr:first-child>th {
             width: 7%;
         }';
     }
 
-    function hook_query_index(&$query)
+    public function hook_query_index(&$query)
     {
         $query->where('is_protected', 0);
         $query->whereNotIn('cms_moduls.controller', ['AdminCmsUsersController']);
     }
 
-    function hook_before_delete($id)
+    public function hook_before_delete($id)
     {
         $modul = DB::table('cms_moduls')->where('id', $id)->first();
         $menus = DB::table('cms_menus')->where('path', 'like', '%' . $modul->controller . '%')->delete();
@@ -336,7 +335,7 @@ class ModulsController extends CBController
             $created_at = now();
 
             $controller = CRUDBooster::generateController($table_name, $path);
-            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images",  "table_name", "icon", "path", "created_at"));
+            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images", "table_name", "icon", "path", "created_at"));
 
             //Insert Menu
             if ($controller && Request::get('create_menu')) {
@@ -500,7 +499,6 @@ class ModulsController extends CBController
         foreach (glob(base_path('vendor/voila_cms/crudbooster/src/views/default/type_components') . '/*', GLOB_ONLYDIR) as $dir) {
             $types[] = basename($dir);
         }
-        // dd($column_datas);
         return view('crudbooster::module_generator.step3', compact('columns', 'cb_form', 'types', 'id'));
     }
 
@@ -652,7 +650,7 @@ class ModulsController extends CBController
             }
 
             // if($key == 'orderby') {
-            // 	$value = ;
+            //     $value = ;
             // }
 
             $script_config[$i] = "\t\t\t" . '$this->' . $key . ' = ' . $value . ';';

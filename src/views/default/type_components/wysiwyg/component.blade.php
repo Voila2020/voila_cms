@@ -105,21 +105,6 @@
     </div><!-- /.modal -->
 @endif
 
-<style>
-    #model_scrach .modal-dialog {
-        width: 100%;
-        height: 100%;
-        margin: 0;
-        padding: 0;
-    }
-
-    #model_scrach .modal-content {
-        height: auto;
-        min-height: 100%;
-        border-radius: 0;
-    }
-</style>
-
 <div class="modal fade" id="model_scrach"style="height:100%;width:100%">
     <div class="modal-dialog modal-lg">
         <div class="modal-content" style="height: 100%;">

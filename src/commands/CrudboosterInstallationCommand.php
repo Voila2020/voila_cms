@@ -41,20 +41,26 @@ class CrudboosterInstallationCommand extends Command
             # delete directories
             if (file_exists(public_path('vendor'))) {
                 if ($this->confirm('Do you want to replace your files ?')) {
-                    if (file_exists(public_path('vendor')))
+                    if (file_exists(public_path('vendor'))) {
                         File::deleteDirectory(public_path('vendor'));
+                    }
 
-                    if (file_exists(public_path('landing_page_builder')))
+                    if (file_exists(public_path('landing_page_builder'))) {
                         File::deleteDirectory(public_path('landing_page_builder'));
+                    }
 
-                    if (file_exists(public_path('landing_page')))
+                    if (file_exists(public_path('landing_page'))) {
                         File::deleteDirectory(public_path('landing_page'));
+                    }
 
-                    if (file_exists(resource_path('lang')))
+                    if (file_exists(resource_path('lang'))) {
                         File::deleteDirectory(resource_path('lang'));
+                    }
 
-                    if (file_exists(config_path('crudbooster.php')))
+                    if (file_exists(config_path('crudbooster.php'))) {
                         File::delete(config_path('crudbooster.php'));
+                    }
+
                 }
             }
 
@@ -84,7 +90,6 @@ class CrudboosterInstallationCommand extends Command
             $path = base_path('routes/web.php');
             File::append($path, "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);");
 
-
             $this->info('Publishing crudbooster assets...');
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);
 
@@ -92,8 +97,8 @@ class CrudboosterInstallationCommand extends Command
             $composer = $this->findComposer();
 
             $process = (app()->version() >= 7.0)
-                ? new Process([$composer . ' dumpautoload'])
-                : new Process($composer . ' dumpautoload');
+            ? new Process([$composer . ' dumpautoload'])
+            : new Process($composer . ' dumpautoload');
 
             $process->setWorkingDirectory(base_path())->run();
 
@@ -109,8 +114,6 @@ class CrudboosterInstallationCommand extends Command
             if (app()->version() < 5.6) {
                 $this->call('optimize');
             }
-
-
 
             $this->info('Installing CRUDBooster Is Completed ! Thank You :)');
         } else {

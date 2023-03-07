@@ -120,7 +120,7 @@
             emailBuilderID = "{{ $id }}";
             $template = '';
             $site = "{{ url('/') }}";
-            $adminPath = "{{ crocodicstudio\crudbooster\helpers\Crudbooster::adminPath() }}";
+            $adminPath = "{{ crocodicstudio\crudbooster\helpers\CRUDBooster::adminPath() }}";
             currentHtml = '';
             editor = grapesjs.init({
                 clearOnRender: true,

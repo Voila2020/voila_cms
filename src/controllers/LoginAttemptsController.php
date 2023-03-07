@@ -26,7 +26,7 @@ class LoginAttemptsController extends \crocodicstudio\crudbooster\controllers\CB
         $this->button_filter = true;
         $this->button_import = false;
         $this->button_export = false;
-        $this->table = "login_attempts";
+        $this->table = "cms_login_attempts";
         # END CONFIGURATION DO NOT REMOVE THIS LINE
 
         # START COLUMNS DO NOT REMOVE THIS LINE
