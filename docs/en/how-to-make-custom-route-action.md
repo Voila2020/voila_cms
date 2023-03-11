@@ -16,7 +16,7 @@ postEditStatus(){
 ```
 
 ## What's Next
-- [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
+- [How To Make Email Template](./how-to-make-email-template.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
