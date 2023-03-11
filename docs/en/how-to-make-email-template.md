@@ -14,3 +14,10 @@ Some cases you need to add a your custom email template :
 5- In the email builder you can easly build your own email by drop and drag items from the right list 
 
 6- Click on save button in the header
+
+
+## What's Next
+- [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
+
+## Table Of Contents
+- [Back To Index](./index.md)
