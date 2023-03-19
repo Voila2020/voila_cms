@@ -472,7 +472,7 @@ $get_params = http_build_query($get_params);
     <input type="hidden" id="add_time_to_img" value="<?php echo $config['add_time_to_img']; ?>" />
     <?php if ($config['upload_files']) {
     //  dd("upload files is true");
-     ?>
+    ?>
     <!-- uploader div start -->
     <div class="uploader">
         <div class="flex">
@@ -639,10 +639,15 @@ $get_params = http_build_query($get_params);
                 die();
             }
         } else {
-            if (!File::isDirectory(public_path() . '/' . $config['current_path'])) {
-                File::makeDirectory(public_path() . '/' . $config['current_path'], 0777, true, true);
+            if (env('APP_ENV') === 'local') {
+                $_path = public_path() . '/' . $config['current_path'];
+            } else {
+                $_path = $config['current_path'];
             }
-            $files = scandir(public_path() . '/' . $config['current_path'] . $rfm_subfolder . $subdir);
+            if (!File::isDirectory($_path)) {
+                File::makeDirectory($_path, 0777, true, true);
+            }
+            $files = scandir($_path . $rfm_subfolder . $subdir);
         }
 
         $n_files = count($files);
@@ -802,7 +807,8 @@ $get_params = http_build_query($get_params);
                             <div class="row-fluid">
                                 <div class="span4 half">
                                     <?php if ($config['upload_files']) {?>
-                                    <button class="tip btn upload-btn" title="{{ cbLang('filemanager.Upload_file') }}"><i
+                                    <button class="tip btn upload-btn"
+                                        title="{{ cbLang('filemanager.Upload_file') }}"><i
                                             class="rficon-upload"></i></button>
                                     <?php }?>
                                     <?php if ($config['create_text_files']) {?>
@@ -932,7 +938,7 @@ $get_params = http_build_query($get_params);
                 <li class="pull-left"><a href="<?php echo $link; ?>/"><i class="icon-home"></i></a></li>
                 <li><span class="divider">/</span></li>
                 <?php
-$bc       = explode("/", $subdir);
+$bc = explode("/", $subdir);
 $tmp_path = '';
 if (!empty($bc)) {
     foreach ($bc as $k => $b) {
@@ -1188,15 +1194,15 @@ if (!empty($bc)) {
             //check if file have illegal caracter
 
             if ($file != fix_filename($file, $config)) {
-                $file1      = fix_filename($file, $config);
+                $file1 = fix_filename($file, $config);
                 $file_path1 = ($config['current_path'] . $rfm_subfolder . $subdir . $file1);
                 if (file_exists($file_path1)) {
-                    $i    = 1;
+                    $i = 1;
                     $info = pathinfo($file1);
                     while (file_exists($config['current_path'] . $rfm_subfolder . $subdir . $info['filename'] . ".[" . $i . "]." . $info['extension'])) {
                         $i++;
                     }
-                    $file1      = $info['filename'] . ".[" . $i . "]." . $info['extension'];
+                    $file1 = $info['filename'] . ".[" . $i . "]." . $info['extension'];
                     $file_path1 = ($config['current_path'] . $rfm_subfolder . $subdir . $file1);
                 }
 
@@ -1205,28 +1211,28 @@ if (!empty($bc)) {
                     $filename = $file1;
                 }
                 rename_file($file_path, fix_filename($filename, $config), $ftp, $config);
-                $file                    = $file1;
+                $file = $file1;
                 $file_array['extension'] = fix_filename($file_array['extension'], $config);
-                $file_path               = $file_path1;
+                $file_path = $file_path1;
             }
         } else {
             $file_path = $config['ftp_base_url'] . $config['upload_dir'] . $rfm_subfolder . $subdir . $file;
         }
 
-        $is_img             = false;
-        $is_video           = false;
-        $is_audio           = false;
-        $show_original      = false;
+        $is_img = false;
+        $is_video = false;
+        $is_audio = false;
+        $show_original = false;
         $show_original_mini = false;
-        $mini_src           = "";
-        $src_thumb          = "";
+        $mini_src = "";
+        $src_thumb = "";
         if (in_array($file_array['extension'], $config['ext_img'])) {
-            $src    = $file_path;
+            $src = $file_path;
             $is_img = true;
 
             $img_width = $img_height = "";
             if ($ftp) {
-                $mini_src            = $src_thumb            = $config['ftp_base_url'] . $config['ftp_thumbs_dir'] . $subdir . $file;
+                $mini_src = $src_thumb = $config['ftp_base_url'] . $config['ftp_thumbs_dir'] . $subdir . $file;
                 $creation_thumb_path = "/" . $config['ftp_base_folder'] . $config['ftp_thumbs_dir'] . $subdir . $file;
             } else {
 
@@ -1240,23 +1246,23 @@ if (!empty($bc)) {
                 //check if is smaller than thumb
                 list($img_width, $img_height, $img_type, $attr) = @getimagesize($file_path);
                 if ($img_width < 122 && $img_height < 91) {
-                    $src_thumb     = $file_path;
+                    $src_thumb = $file_path;
                     $show_original = true;
                 }
 
                 if ($img_width < 45 && $img_height < 38) {
-                    $mini_src           = $config['current_path'] . $rfm_subfolder . $subdir . $file;
+                    $mini_src = $config['current_path'] . $rfm_subfolder . $subdir . $file;
                     $show_original_mini = true;
                 }
             }
         }
-        $is_icon_thumb      = false;
+        $is_icon_thumb = false;
         $is_icon_thumb_mini = false;
-        $no_thumb           = false;
+        $no_thumb = false;
         if ($src_thumb == "") {
             $no_thumb = true;
             // if (file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/img/' . $config['icon_theme'] . '/' . $file_array['extension'] . ".jpg")) {
-                if (file_exists('vendor/filemanager/img/' . $config['icon_theme'] . '/' . $file_array['extension'] . ".jpg")) {
+            if (file_exists('vendor/filemanager/img/' . $config['icon_theme'] . '/' . $file_array['extension'] . ".jpg")) {
                 $src_thumb = 'vendor/filemanager/img/' . $config['icon_theme'] . '/' . $file_array['extension'] . ".jpg";
             } else {
                 $src_thumb = "vendor/filemanager/img/" . $config['icon_theme'] . "/default.jpg";
@@ -1271,12 +1277,12 @@ if (!empty($bc)) {
         $class_ext = 0;
         if (in_array($file_array['extension'], $config['ext_video'])) {
             $class_ext = 4;
-            $is_video  = true;
+            $is_video = true;
         } elseif (in_array($file_array['extension'], $config['ext_img'])) {
             $class_ext = 2;
         } elseif (in_array($file_array['extension'], $config['ext_music'])) {
             $class_ext = 5;
-            $is_audio  = true;
+            $is_audio = true;
         } elseif (in_array($file_array['extension'], $config['ext_misc'])) {
             $class_ext = 3;
         } else {
@@ -1459,9 +1465,7 @@ if (!empty($bc)) {
         <div id="loading"
             style="background-color:#000; position:fixed; width:100%; height:100%; top:0px; left:0px;z-index:100000">
         </div>
-        <img id="loading_animation"
-            src="{{asset('vendor/filemanager/img/storing_animation.gif')}}"
-            alt="loading"
+        <img id="loading_animation" src="{{ asset('vendor/filemanager/img/storing_animation.gif') }}" alt="loading"
             style="z-index:10001; margin-left:-32px; margin-top:-32px; position:fixed; left:50%; top:50%">
     </div>
     <!-- loading div end -->
@@ -1518,6 +1522,7 @@ if (!empty($bc)) {
             //cache loaded image
             imageEditor.loadImageFromURL = (function() {
                 var cached_function = imageEditor.loadImageFromURL;
+
                 function waitUntilImageEditorIsUnlocked(imageEditor) {
                     return new Promise((resolve, reject) => {
                         const interval = setInterval(() => {
@@ -1530,7 +1535,7 @@ if (!empty($bc)) {
                 }
                 return function() {
                     // arguments[0] =arguments[0].substring(1);
-                    // arguments[0] = "{{URL::asset('')}}" + arguments[0];
+                    // arguments[0] = "{{ URL::asset('') }}" + arguments[0];
                     return waitUntilImageEditorIsUnlocked(imageEditor).then(() => cached_function.apply(this,
                         arguments));
                 };
@@ -1564,7 +1569,7 @@ if (!empty($bc)) {
                     url: "ajax_calls?action=save_img",
                     data: {
                         url: newURL,
-                        path: '{{URL::asset('')}}' + $('#sub_folder').val() + $('#fldr_value').val(),
+                        path: '{{ URL::asset('') }}' + $('#sub_folder').val() + $('#fldr_value').val(),
                         name: $('#tui-image-editor').attr('data-name')
                     }
                 }).done(function(msg) {

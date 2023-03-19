@@ -4,10 +4,9 @@ namespace crocodicstudio\crudbooster\controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
+use Intervention\Image\ImageManagerStatic as Image;
 use stdClass;
 use UploadHandler;
-use Intervention\Image\ImageManagerStatic as Image;
-
 
 class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -147,17 +146,22 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             deleteDir($path_thumb, $ftp, $config);
                         } else {
                             if (is_dir($path_thumb)) {
-                                deleteDir($path_thumb, NULL, $config);
+                                deleteDir($path_thumb, null, $config);
                             }
 
                             if (is_dir($path)) {
-                                deleteDir($path, NULL, $config);
+                                deleteDir($path, null, $config);
                                 if ($config['fixed_image_creation']) {
                                     foreach ($config['fixed_path_from_filemanager'] as $k => $paths) {
-                                        if ($paths != "" && $paths[strlen($paths) - 1] != "/") $paths .= "/";
+                                        if ($paths != "" && $paths[strlen($paths) - 1] != "/") {
+                                            $paths .= "/";
+                                        }
 
                                         $base_dir = $paths . substr_replace($path, '', 0, strlen($config['current_path']));
-                                        if (is_dir($base_dir)) deleteDir($base_dir, NULL, $config);
+                                        if (is_dir($base_dir)) {
+                                            deleteDir($base_dir, null, $config);
+                                        }
+
                                     }
                                 }
                             }
@@ -353,7 +357,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     $action = $_SESSION['RF']['clipboard_action'];
                     $data = $_SESSION['RF']['clipboard'];
 
-
                     if ($ftp) {
                         if ($_POST['path'] != "") {
                             $path .= DIRECTORY_SEPARATOR;
@@ -431,7 +434,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             rrename($data['path_thumb'], $path_thumb);
 
                             // cleanup
-                            if (is_dir($data['path']) === TRUE) {
+                            if (is_dir($data['path']) === true) {
                                 rrename_after_cleaner($data['path']);
                                 rrename_after_cleaner($data['path_thumb']);
                             }
@@ -535,7 +538,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $config = include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/config/config.php';
             }
 
-
             if ($_SESSION['RF']["verify"] != "RESPONSIVEfilemanager") {
                 response(trans('forbidden') . AddErrorLocation(), 403)->send();
                 exit;
@@ -588,7 +590,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $path = fix_dirname($path) . '/';
             }
 
-            require(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/UploadHandler.php');
+            require base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/UploadHandler.php';
             $messages = null;
             if (trans("Upload_error_messages") !== "Upload_error_messages") {
                 $messages = trans("Upload_error_messages");
@@ -617,7 +619,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                         'name' => array(basename($_POST['url'])),
                         'tmp_name' => array($temp),
                         'size' => array(filesize($temp)),
-                        'type' => null
+                        'type' => null,
                     );
                 } else {
                     throw new Exception('Is not a valid URL.');
@@ -673,7 +675,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 'mkdir_mode' => $config['folderPermission'],
                 'max_file_size' => $config['MaxSizeUpload'] * 1024 * 1024,
                 'correct_image_extensions' => true,
-                'print_response' => false
+                'print_response' => false,
             );
 
             if (!$config['ext_blacklist']) {
@@ -704,12 +706,20 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             // print_r($_FILES);die();
             $path_info = pathinfo($_FILES['files']['name']['0']);
             if (in_array($path_info, $config['ext_img'])) {
-                $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
+                if (env('APP_ENV') === 'local') {
+                    $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
+                } else {
+                    $img = Image::make($source_base . '/' . $_FILES['files']['name']['0']);
+                }
                 // $img->resize($img->width(), $img->height(), function ($constraint) {
                 //     $constraint->aspectRatio();
                 //     $constraint->upsize();
                 // });
-                $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
+                if (env('APP_ENV') === 'local') {
+                    $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
+                } else {
+                    $img->save($source_base . '/' . $_FILES['files']['name']['0'], intval(CRUDBooster::getSetting('default_img_compression')));
+                }
             }
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
         } catch (Exception $e) {
@@ -720,7 +730,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                         'name' => $name,
                         'error' => $e->getMessage(),
                         'size' => $_FILES['files']['size'][$i],
-                        'type' => $_FILES['files']['type'][$i]
+                        'type' => $_FILES['files']['type'][$i],
                     );
                 }
                 echo json_encode(array("files" => $return));
