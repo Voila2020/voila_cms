@@ -262,7 +262,7 @@ class CBSeeder extends Seeder
                 'created_at' => date('Y-m-d H:i:s'),
                 'name' => 'login_background_image',
                 'label' => 'Login Background Image',
-                'content' => asset('vendor/crudbooster/login_default.png'),
+                'content' => null,
                 'content_input_type' => 'upload_image',
                 'group_setting' => 'login_register_style',
                 'dataenum' => null,
