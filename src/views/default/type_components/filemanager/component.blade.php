@@ -1,10 +1,3 @@
-@php
-    $images = DB::table('model_images')
-        ->where('model_type', $table)
-        ->where('model_id', $row->id)
-        ->get();
-@endphp
-
 <div class='form-group filemanager-form-group_{{ $name }} {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
     id='form-group-{{ $name }}' style='{{ @$form['style'] }}'>
     <label class='control-label col-sm-2'>{{ $form['label'] }}
@@ -40,6 +33,8 @@
                 </a>
             </span>
         </div>
+        <div class='help-block'>{{ @$form['help'] }}</div>
+        <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
     </div>
 
     <div class="{{ $col_width ? $col_width . ' filemanager-col_' . $name : 'col-sm-10 filemanager-col_' . $name }}"
@@ -67,10 +62,10 @@
                     {{ cbLang('text_delete') }} </a>
             </p>
         @endif
+        <div class='help-block'>{{ @$form['help'] }}</div>
+        <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
     </div>
 
-    <div class='help-block'>{{ @$form['help'] }}</div>
-    <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
 </div>
 
 <div class="modal fade" id="modalInsertPhotosingle_{{ $name }}">
@@ -93,3 +88,109 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
+
+<script type="text/javascript">
+    var currName = "";
+
+    function OpenInsertImagesingle(name) {
+        currName = name;
+        // reback size of iframe to default
+        $('.modal.in .modal-dialog').width(900);
+        // check file manager type
+        if ($('#_' + name).attr("value") == 'file_type') {
+            var link =
+                `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` +
+                name +
+                `" frameborder="0" ></iframe>`;
+        } else {
+            var link =
+                `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&field_id=` +
+                name +
+                `" frameborder="0"></iframe>`;
+        }
+        $('#img-' + name).prop("src", "");
+        $('#link-' + name).prop("href", "");
+        $('#link-' + name).addClass("hide");
+        // col-sm-10 empty value clear
+        $('#' + name).val("");
+        $('#thumbnail-' + name).prop("src", "").val("");
+        $('#roadtrip-' + name).prop("href", "");
+        $('#holder-' + name).prop("src", "");
+        $("#modalInsertPhotosingle_{{ $name }} .modal-body").html(link);
+        $("#modalInsertPhotosingle_{{ $name }}").modal();
+    }
+
+    function showDeletePopout(name) {
+        swal({
+            title: "{{ cbLang('delete_title_confirm') }}",
+            text: "{{ cbLang('delete_description_confirm') }}",
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#DD6B55",
+            confirmButtonText: "{{ cbLang('confirmation_yes') }}",
+            cancelButtonText: "{{ cbLang('button_cancel') }}",
+            closeOnConfirm: false
+        }, function() {
+            deleteImage(name);
+        });
+    }
+
+    function deleteImage(form_name) {
+        let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
+        let table = @json($table);
+        let id = @json($id);
+        let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
+
+        $.ajax({
+            type: 'GET',
+            url: ajaxUrl,
+            success: function(data) {
+                $('.filemanager-col_' + form_name).hide();
+                $('#img-' + form_name).prop("src", "");
+                $('#link-' + form_name).prop("href", "");
+                $('#link-' + form_name).addClass("hide");
+                // col-sm-10 empty value clear
+                $('#' + form_name).val("");
+                $('#thumbnail-' + form_name).prop("src", "").val("");
+                $('#roadtrip-' + form_name).prop("href", "");
+                $('#holder-' + form_name).prop("src", "");
+                $('.empty-filemanager-col_' + form_name).show();
+                swal.close();
+            },
+            error: function(data) {
+
+            }
+        });
+    }
+
+    var id = '#modalInsertPhotosingle_{{ $name }}';
+    $(function() {
+        $(id).on('hidden.bs.modal', function() {
+            var check = $('#{{ $name }}').val();
+            if (check != "" && "{{ $name }}" === currName) {
+                check = check.substring(1);
+                if ("{{ @$form['filemanager_type'] }}" == 'file')
+                    $("#file-{{ $name }}").html(check);
+                else
+                    $("#img-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
+                $("#link-{{ $name }}").attr("href", '{{ URL::asset('') }}' + check);
+                $("#link-{{ $name }}").removeClass("hide");
+                $("#thumbnail-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
+                $("#thumbnail-{{ $name }}").attr("value", '{{ URL::asset('') }}' + check);
+            }
+        });
+        resizeFilemanagerPopout();
+    });
+
+    function resizeFilemanagerPopout() {
+        $('.modal-header .resize').unbind().click(function() {
+            if ($('.modal.in .modal-dialog').width() == 900) {
+                $('.modal.in .modal-dialog').width(1300);
+                $('iframe').height(600);
+            } else {
+                $('.modal.in .modal-dialog').width(900);
+                $('iframe').height(400);
+            }
+        });
+    }
+</script>
