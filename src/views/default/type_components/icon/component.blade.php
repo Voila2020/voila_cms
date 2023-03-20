@@ -10,7 +10,7 @@
     </label>
 
     <div class="{{ $col_width ?: 'col-sm-10' }}">
-        <select id='list-icon' class="form-control" name="{{ $name }}"
+        <select id='list-icon_{{ $name }}' class="form-control" name="{{ $name }}"
             style="font-family: 'FontAwesome', Helvetica;">
             <option value="">** Select an Icon</option>
             @foreach ($fonts as $font)
@@ -20,3 +20,28 @@
         </select>
     </div>
 </div>
+
+@push('bottom')
+    <script src="{{ asset('vendor/crudbooster/assets/select2/dist/js/select2.full.min.js') }}"></script>
+    <script>
+        $(function() {
+            function format(icon) {
+                debugger
+                var originalOption = icon.element;
+                var label = $(originalOption).text();
+                var val = $(originalOption).val();
+                if (!val) return label;
+                var $resp = $('<span><i style="margin-top:5px" class="pull-right ' + $(originalOption).val() +
+                    '"></i> ' +
+                    $(originalOption).data('label') + '</span>');
+                return $resp;
+            }
+
+            $('#list-icon_{{ $name }}').select2({
+                width: "100%",
+                templateResult: format,
+                templateSelection: format
+            });
+        });
+    </script>
+@endpush
