@@ -68,7 +68,7 @@
 
 </div>
 
-<div class="modal fade" id="modalInsertPhotosingle_{{ $name }}">
+<div class="modal main-modal fade" id="modalInsertPhotosingle_{{ $name }}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -89,82 +89,82 @@
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
 
-<script type="text/javascript">
-    var currName = "";
+@push('bottom')
+    <script type="text/javascript">
+        var currName = "";
 
-    function OpenInsertImagesingle(name) {
-        currName = name;
-        // reback size of iframe to default
-        $('.modal.in .modal-dialog').width(900);
-        // check file manager type
-        if ($('#_' + name).attr("value") == 'file_type') {
-            var link =
-                `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` +
-                name +
-                `" frameborder="0" ></iframe>`;
-        } else {
-            var link =
-                `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&field_id=` +
-                name +
-                `" frameborder="0"></iframe>`;
-        }
-        $('#img-' + name).prop("src", "");
-        $('#link-' + name).prop("href", "");
-        $('#link-' + name).addClass("hide");
-        // col-sm-10 empty value clear
-        $('#' + name).val("");
-        $('#thumbnail-' + name).prop("src", "").val("");
-        $('#roadtrip-' + name).prop("href", "");
-        $('#holder-' + name).prop("src", "");
-        $("#modalInsertPhotosingle_{{ $name }} .modal-body").html(link);
-        $("#modalInsertPhotosingle_{{ $name }}").modal();
-    }
-
-    function showDeletePopout(name) {
-        swal({
-            title: "{{ cbLang('delete_title_confirm') }}",
-            text: "{{ cbLang('delete_description_confirm') }}",
-            type: "warning",
-            showCancelButton: true,
-            confirmButtonColor: "#DD6B55",
-            confirmButtonText: "{{ cbLang('confirmation_yes') }}",
-            cancelButtonText: "{{ cbLang('button_cancel') }}",
-            closeOnConfirm: false
-        }, function() {
-            deleteImage(name);
-        });
-    }
-
-    function deleteImage(form_name) {
-        let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
-        let table = @json($table);
-        let id = @json($id);
-        let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
-
-        $.ajax({
-            type: 'GET',
-            url: ajaxUrl,
-            success: function(data) {
-                $('.filemanager-col_' + form_name).hide();
-                $('#img-' + form_name).prop("src", "");
-                $('#link-' + form_name).prop("href", "");
-                $('#link-' + form_name).addClass("hide");
-                // col-sm-10 empty value clear
-                $('#' + form_name).val("");
-                $('#thumbnail-' + form_name).prop("src", "").val("");
-                $('#roadtrip-' + form_name).prop("href", "");
-                $('#holder-' + form_name).prop("src", "");
-                $('.empty-filemanager-col_' + form_name).show();
-                swal.close();
-            },
-            error: function(data) {
-
+        function OpenInsertImagesingle(name) {
+            currName = name;
+            // reback size of iframe to default
+            $('.modal.in .modal-dialog').width(900);
+            // check file manager type
+            if ($('#_' + name).attr("value") == 'file_type') {
+                var link =
+                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` +
+                    name +
+                    `" frameborder="0" ></iframe>`;
+            } else {
+                var link =
+                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&field_id=` +
+                    name +
+                    `" frameborder="0"></iframe>`;
             }
-        });
-    }
+            $('#img-' + name).prop("src", "");
+            $('#link-' + name).prop("href", "");
+            $('#link-' + name).addClass("hide");
+            // col-sm-10 empty value clear
+            $('#' + name).val("");
+            $('#thumbnail-' + name).prop("src", "").val("");
+            $('#roadtrip-' + name).prop("href", "");
+            $('#holder-' + name).prop("src", "");
+            $("#modalInsertPhotosingle_{{ $name }} .modal-body").html(link);
+            $("#modalInsertPhotosingle_{{ $name }}").modal();
+        }
 
-    var id = '#modalInsertPhotosingle_{{ $name }}';
-    $(function() {
+        function showDeletePopout(name) {
+            swal({
+                title: "{{ cbLang('delete_title_confirm') }}",
+                text: "{{ cbLang('delete_description_confirm') }}",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "{{ cbLang('confirmation_yes') }}",
+                cancelButtonText: "{{ cbLang('button_cancel') }}",
+                closeOnConfirm: false
+            }, function() {
+                deleteImage(name);
+            });
+        }
+
+        function deleteImage(form_name) {
+            let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
+            let table = @json($table);
+            let id = @json($id);
+            let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
+
+            $.ajax({
+                type: 'GET',
+                url: ajaxUrl,
+                success: function(data) {
+                    $('.filemanager-col_' + form_name).hide();
+                    $('#img-' + form_name).prop("src", "");
+                    $('#link-' + form_name).prop("href", "");
+                    $('#link-' + form_name).addClass("hide");
+                    // col-sm-10 empty value clear
+                    $('#' + form_name).val("");
+                    $('#thumbnail-' + form_name).prop("src", "").val("");
+                    $('#roadtrip-' + form_name).prop("href", "");
+                    $('#holder-' + form_name).prop("src", "");
+                    $('.empty-filemanager-col_' + form_name).show();
+                    swal.close();
+                },
+                error: function(data) {
+
+                }
+            });
+        }
+
+        var id = '#modalInsertPhotosingle_{{ $name }}';
         $(id).on('hidden.bs.modal', function() {
             var check = $('#{{ $name }}').val();
             if (check != "" && "{{ $name }}" === currName) {
@@ -180,17 +180,17 @@
             }
         });
         resizeFilemanagerPopout();
-    });
 
-    function resizeFilemanagerPopout() {
-        $('.modal-header .resize').unbind().click(function() {
-            if ($('.modal.in .modal-dialog').width() == 900) {
-                $('.modal.in .modal-dialog').width(1300);
-                $('iframe').height(600);
-            } else {
-                $('.modal.in .modal-dialog').width(900);
-                $('iframe').height(400);
-            }
-        });
-    }
-</script>
+        function resizeFilemanagerPopout() {
+            $('.modal-header .resize').unbind().click(function() {
+                if ($('.modal.in .modal-dialog').width() == 900) {
+                    $('.modal.in .modal-dialog').width(1300);
+                    $('iframe').height(600);
+                } else {
+                    $('.modal.in .modal-dialog').width(900);
+                    $('iframe').height(400);
+                }
+            });
+        }
+    </script>
+@endpush
