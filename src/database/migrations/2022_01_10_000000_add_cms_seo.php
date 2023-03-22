@@ -26,6 +26,7 @@ class AddCmsSeo extends Migration
             $table->string('model')->nullable();
             $table->integer('model_id')->nullable();
             $table->string('image')->nullable();
+            $table->string('language')->nullable();
             $table->integer('active');
             $table->integer('sorting')->nullable();
             $table->timestamps();

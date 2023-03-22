@@ -2,70 +2,71 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Carbon\Carbon;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
 {
-    public function get($model = "home", $model_id = null)
+    public function index($model = "home", $model_id = null)
     {
-
         $conditions = array();
-
+        $languages = DB::table('languages')->get();
         if ($model_id != null) {
-
             array_push($conditions, ['model', '=', $model]);
             array_push($conditions, ['model_id', '=', $model_id]);
-            $data = DB::table('cms_seo')->where($conditions)->first();
+            $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         } else {
 
             array_push($conditions, ['model', '=', $model]);
             array_push($conditions, ['model_id', '=', null]);
 
-            $data = DB::table('cms_seo')->where($conditions)->first();
+            $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         }
-
-        return view('crudbooster::seo', array('data' => $data, 'type' => $model, 'id' => $model_id));
+        $keys = array_keys($data);
+        foreach ($keys as $key) {
+            $newKey = $data[$key]->language;
+            $data[$newKey] = $data[$key];
+            unset($data[$key]);
+        }
+        return view('crudbooster::seo', array('data' => $data, 'type' => $model, 'id' => $model_id, 'languages' => $languages));
     }
 
     public function store($model, Request $request)
     {
-        if ($request->isMethod('post')) {
+        $data = $request->all();
+        $conditions = array();
+        $languages = DB::table('languages')->get();
 
-            $conditions = array();
-
-            if ($request->model_id == null) {
-
-                array_push($conditions, ['model', '=', $model]);
-                array_push($conditions, ['model_id', '=', null]);
-                $seoOld = DB::table('cms_seo')->where($conditions)->delete();
+        foreach ($languages as $lang) {
+            array_push($conditions, ['model', '=', $model]);
+            array_push($conditions, ['model_id', '=', $request->model_id ?: null]);
+            array_push($conditions, ['language', '=', $lang->code]);
+            $oldSEO = DB::table('cms_seo')->where($conditions)->first();
+            if ($oldSEO) {
+                DB::table('cms_seo')->where($conditions)->update([
+                    'title' => $data['title_' . $lang->code],
+                    'description' => $data['description_' . $lang->code],
+                    'keywords' => $data['keywords_' . $lang->code],
+                    'author' => $data['author_' . $lang->code],
+                ]);
             } else {
-
-                array_push($conditions, ['model', '=', $model]);
-                array_push($conditions, ['model_id', '=', $request->model_id]);
-
-                $seoOld = DB::table('cms_seo')->where($conditions)->delete();
+                DB::table('cms_seo')->insert([
+                    'title' => $data['title_' . $lang->code],
+                    'description' => $data['description_' . $lang->code],
+                    'keywords' => $data['keywords_' . $lang->code],
+                    'author' => $data['author_' . $lang->code],
+                    'model_id' => ($request->model_id) ? $request->model_id : null,
+                    'model' => $model,
+                    'language' => $lang->code,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                    'active' => 1,
+                ]);
             }
-
-            DB::table('cms_seo')->insert([
-                'title_ar' => ($request->title_ar) ? $request->title_ar : null,
-                'title_en' => ($request->title_en) ? $request->title_en : null,
-                'description_ar' => ($request->description_ar) ? $request->description_ar : null,
-                'description_en' => ($request->description_en) ? $request->description_en : null,
-                'keywords_ar' => ($request->keywords_ar) ? $request->keywords_ar : null,
-                'keywords_en' => ($request->keywords_en) ? $request->keywords_en : null,
-                'author_ar' => ($request->author_ar) ? $request->author_ar : null,
-                'author_en' => ($request->author_en) ? $request->author_en : null,
-                'model_id' => ($request->model_id) ? $request->model_id : null,
-                'model' => $model,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-                'active' => 1
-            ]);
-
-            return CRUDBooster::redirectBack(cbLang("alert_update_data_success"), 'success');
         }
+
+        return CRUDBooster::redirectBack(cbLang("alert_update_data_success"), 'success');
     }
 }
