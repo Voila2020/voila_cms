@@ -9,18 +9,18 @@ use Illuminate\Support\Facades\DB;
 
 class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
 {
-    public function index($model = "home", $model_id = null)
+    public function index($page = "home", $page_id = null)
     {
         $conditions = array();
         $languages = DB::table('languages')->get();
-        if ($model_id != null) {
-            array_push($conditions, ['model', '=', $model]);
-            array_push($conditions, ['model_id', '=', $model_id]);
+        if ($page_id != null) {
+            array_push($conditions, ['page', '=', $page]);
+            array_push($conditions, ['page_id', '=', $page_id]);
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         } else {
 
-            array_push($conditions, ['model', '=', $model]);
-            array_push($conditions, ['model_id', '=', null]);
+            array_push($conditions, ['page', '=', $page]);
+            array_push($conditions, ['page_id', '=', null]);
 
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         }
@@ -30,18 +30,18 @@ class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
             $data[$newKey] = $data[$key];
             unset($data[$key]);
         }
-        return view('crudbooster::seo', array('data' => $data, 'type' => $model, 'id' => $model_id, 'languages' => $languages));
+        return view('crudbooster::seo', array('data' => $data, 'type' => $page, 'id' => $page_id, 'languages' => $languages));
     }
 
-    public function store($model, Request $request)
+    public function store($page, Request $request)
     {
         $data = $request->all();
         $conditions = array();
         $languages = DB::table('languages')->get();
 
         foreach ($languages as $lang) {
-            array_push($conditions, ['model', '=', $model]);
-            array_push($conditions, ['model_id', '=', $request->model_id ?: null]);
+            array_push($conditions, ['page', '=', $page]);
+            array_push($conditions, ['page_id', '=', $request->page_id ?: null]);
             array_push($conditions, ['language', '=', $lang->code]);
             $oldSEO = DB::table('cms_seo')->where($conditions)->first();
             if ($oldSEO) {
@@ -57,8 +57,8 @@ class SeoController extends \crocodicstudio\crudbooster\controllers\CBController
                     'description' => $data['description_' . $lang->code],
                     'keywords' => $data['keywords_' . $lang->code],
                     'author' => $data['author_' . $lang->code],
-                    'model_id' => ($request->model_id) ? $request->model_id : null,
-                    'model' => $model,
+                    'page_id' => ($request->page_id) ? $request->page_id : null,
+                    'page' => $page,
                     'language' => $lang->code,
                     'created_at' => Carbon::now(),
                     'updated_at' => Carbon::now(),

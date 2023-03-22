@@ -299,8 +299,6 @@ class WebsiteLanguagesController extends CBController
     public function hook_before_delete($id)
     {
         //Your code here
-        $lang = DB::table('languages')->where('id', $id)->first();
-        $pagesSEO = DB::table('cms_seo')->where('language', $lang->code)->delete();
     }
 
     /*

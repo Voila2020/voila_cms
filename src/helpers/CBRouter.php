@@ -179,8 +179,8 @@ class CBRouter
             # Seo
             Route::post('/sort-table', [CBController::class, 'postSortTable'])->name('sortTable');
             Route::get('/seo-home', [SeoController::class, 'index'])->name('seo-home');
-            Route::get('/seo/{model}/{model_id?}', [SeoController::class, 'index'])->name('seo-model');
-            Route::post('/seo-store/{model}', [SeoController::class, 'store'])->name('seo-store');
+            Route::get('/seo/{page}/{page_id?}', [SeoController::class, 'index'])->name('seo-model');
+            Route::post('/seo-store/{page}', [SeoController::class, 'store'])->name('seo-store');
             # Translate
             Route::get('/languages', [TranslationController::class, 'index'])->name('languages');
             Route::post('translations/update', [TranslationController::class, 'transUpdate'])->name('translation.update.json');
