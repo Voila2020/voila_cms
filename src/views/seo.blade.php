@@ -19,7 +19,7 @@
                 <form enctype="multipart/form-data" action="{{ url(CRUDBooster::adminPath() . '/seo-store/' . $type) }}"
                     class="form-horizontal" method="post">
                     {{ csrf_field() }}
-                    <input type="hidden" name="model_id" value="{{ $id }}">
+                    <input type="hidden" name="page_id" value="{{ $id }}">
                     <input type="hidden" name="back_url" value="{{ url()->previous() }}">
                     @foreach ($languages ?? [] as $key => $lang)
                         <div class="form-group">
