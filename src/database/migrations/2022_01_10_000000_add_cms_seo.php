@@ -15,17 +15,14 @@ class AddCmsSeo extends Migration
     {
         Schema::create('cms_seo', function (Blueprint $table) {
             $table->increments('id');
-            $table->string('title_en')->nullable();
-            $table->string('title_ar')->nullable();
-            $table->longText('description_en')->nullable();
-            $table->longText('description_ar')->nullable();
-            $table->longText('keywords_en')->nullable();
-            $table->longText('keywords_ar')->nullable();
-            $table->string('author_en')->nullable();
-            $table->string('author_ar')->nullable();
+            $table->string('title')->nullable();
+            $table->longText('description')->nullable();
+            $table->longText('keywords')->nullable();
+            $table->string('author')->nullable();
             $table->string('model')->nullable();
             $table->integer('model_id')->nullable();
             $table->string('image')->nullable();
+            $table->string('language')->nullable();
             $table->integer('active');
             $table->integer('sorting')->nullable();
             $table->timestamps();

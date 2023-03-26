@@ -64,6 +64,10 @@ class CrudboosterInstallationCommand extends Command
                 }
             }
 
+            if (file_exists(app_path('Http/Controllers/AdminCmsUsersController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminCmsUsersController.php'));
+            }
+
             if (!file_exists(public_path('vendor'))) {
                 mkdir(public_path('vendor'), 0777);
                 mkdir(public_path('vendor/filemanager'), 0777);
@@ -88,7 +92,11 @@ class CrudboosterInstallationCommand extends Command
             }
 
             $path = base_path('routes/web.php');
-            File::append($path, "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);");
+            $fileContents = file_get_contents($path);
+            $appendRoute = "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);";
+            if (!strpos($fileContents, $appendRoute)) {
+                File::append($path, $appendRoute);
+            }
 
             $this->info('Publishing crudbooster assets...');
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);

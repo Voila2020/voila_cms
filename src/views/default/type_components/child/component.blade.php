@@ -28,7 +28,7 @@ $name = str_slug($form['label'], '');
                                     {{ cbLang('text_form') }}</div>
                                 <div class="panel-body child-form-area">
                                     <div class="hidden-value hide"></div>
-                                    @foreach ($form['columns'] as $col)
+                                    @foreach ($form['columns'] as $col_key => $col)
                                         <?php $name_column = $name . $col['name']; ?>
                                         <div class='form-group'>
                                             @if ($col['type'] != 'hidden')
@@ -62,13 +62,13 @@ $name = str_slug($form['label'], '');
                                                         <span class="input-group-btn">
                                                             @if ($col['filemanager_type'] == 'file')
                                                                 <a id="_{{ $col['name'] }}"
-                                                                    onclick="OpenInsertImagesingle('{{ $col['name'] }}')"
+                                                                    onclick="OpenInsertChildImagesingle('{{ $col['name'] }}')"
                                                                     class="btn btn-primary" value="file_type">
                                                                     <i class="fa fa-file-o"></i>
                                                                     {{ cbLang('chose_an_file') }}
                                                                 @else
                                                                     <a id="_{{ $col['name'] }}"
-                                                                        onclick="OpenInsertImagesingle('{{ $col['name'] }}')"
+                                                                        onclick="OpenInsertChildImagesingle('{{ $col['name'] }}')"
                                                                         class="btn btn-primary" value="img_type">
                                                                         <i class='fa fa-picture-o'></i>
                                                                         {{ cbLang('chose_an_image') }}
@@ -113,7 +113,7 @@ $name = str_slug($form['label'], '');
                                                     @endif
                                                 </div>
                                                 <div class="modal fade"
-                                                    id="modalInsertPhotosingle_{{ $col['name'] }}">
+                                                    id="modalInsertChildPhotosingle_{{ $col['name'] }}">
                                                     <div class="modal-dialog modal-lg">
                                                         <div class="modal-content">
                                                             <div class="modal-header">
@@ -139,7 +139,7 @@ $name = str_slug($form['label'], '');
                                                 </div><!-- /.modal -->
                                                 @push('bottom')
                                                     <script type="text/javascript">
-                                                        function OpenInsertImagesingle(name) {
+                                                        function OpenInsertChildImagesingle(name) {
                                                             // reback size of iframe to default
                                                             $('.modal.in .modal-dialog').width(900);
                                                             // check file manager type
@@ -162,8 +162,8 @@ $name = str_slug($form['label'], '');
                                                             $('#thumbnail-' + name).prop("src", "").val("");
                                                             $('#roadtrip-' + name).prop("href", "");
                                                             $('#holder-' + name).prop("src", "");
-                                                            $("#modalInsertPhotosingle_{{ $col['name'] }} .modal-body").html(link);
-                                                            $("#modalInsertPhotosingle_{{ $col['name'] }}").modal();
+                                                            $("#modalInsertChildPhotosingle_{{ $col['name'] }} .modal-body").html(link);
+                                                            $("#modalInsertChildPhotosingle_{{ $col['name'] }}").modal();
                                                         }
 
                                                         function showDeletePopout(name) {
@@ -209,7 +209,7 @@ $name = str_slug($form['label'], '');
                                                             });
                                                         }
 
-                                                        var id = '#modalInsertPhotosingle_{{ $col['name'] }}';
+                                                        var id = '#modalInsertChildPhotosingle_{{ $col['name'] }}';
                                                         $(function() {
                                                             $(id).on('hidden.bs.modal', function() {
                                                                 var check = $('#{{ $col['name'] }}').val();
@@ -249,6 +249,97 @@ $name = str_slug($form['label'], '');
                                                         name='child-{{ $col['name'] }}'
                                                         class='form-control {{ $col['required'] ? 'required' : '' }}'
                                                         {{ $col['readonly'] === true ? 'readonly' : '' }} />
+                                                @elseif($col['type'] == 'switch')
+                                                    <div class='form-group {{ $header_group_class }} {{ $errors->first($col['name']) ? 'has-error' : '' }}'
+                                                        id='form-group' style="{{ @$form['style'] }}">
+                                                        <div class="{{ $col_width ?: 'col-sm-10' }}">
+                                                            <input class='form-control cms_switch_input'
+                                                                type='checkbox' title="{{ $form['label'] }}"
+                                                                {{ $readonly }} {!! $placeholder !!}
+                                                                {{ $disabled }}
+                                                                name="child_switch{{ $col['name'] }}"
+                                                                id="child_switch{{ $col['name'] }}"
+                                                                value="{{ $value ? $value : ($form['default_value'] && $command != 'edit' ? $form['default_value'] : 0) }}"
+                                                                {{ $value == 1 ? 'checked' : ($form['default_value'] == 1 && $command != 'edit' ? 'checked' : '') }} />
+                                                            <label class='cms_switch_label'
+                                                                for='child_switch{{ $col['name'] }}'>Toggle</label>
+                                                            <div class="text-danger">{!! $errors->first($col['name']) ? "<i class='fa fa-info-circle'></i> " . $errors->first($col['name']) : '' !!}</div>
+                                                            <p class='help-block'>{{ @$form['help'] }}</p>
+
+                                                        </div>
+                                                    </div>
+                                                    @push('head')
+                                                        <style>
+                                                            .switch-button-input-group {
+                                                                display: flex;
+                                                                flex-direction: column;
+                                                                justify-content: center;
+                                                                margin-top: 5px;
+                                                            }
+                                                        </style>
+                                                    @endpush
+
+                                                    @push('bottom')
+                                                        <script>
+                                                            $('input[name="{{ $col['name'] }}"]').on('click', function() {
+                                                                if ($(this).val() == 0) {
+                                                                    $(this).val(1);
+                                                                } else {
+                                                                    $(this).val(0);
+                                                                }
+                                                            });
+                                                        </script>
+                                                    @endpush
+                                                @elseif($col['type'] == 'icon')
+                                                    @php
+                                                        $fonts = crocodicstudio\crudbooster\fonts\Fontawesome::getIcons();
+                                                    @endphp
+                                                    <div class='form-group {{ $header_group_class }} {{ $errors->first($col['name']) ? 'has-error' : '' }}'
+                                                        id='form-group' style="{{ @$form['style'] }}">
+                                                        <div class="{{ $col_width ?: 'col-sm-10' }}">
+                                                            <select id='list-icon_{{ $col['name'] }}'
+                                                                class="form-control"
+                                                                name="child_icon_{{ $col['name'] }}"
+                                                                style="font-family: 'FontAwesome', Helvetica;">
+                                                                <option value="">** Select an Icon</option>
+                                                                @foreach ($fonts as $font)
+                                                                    <option value='fa fa-{{ $font }}'
+                                                                        {{ $value == "fa fa-$font" ? 'selected' : '' }}
+                                                                        data-label='{{ $font }}'>
+                                                                        {{ $font }}</option>
+                                                                @endforeach
+                                                            </select>
+                                                        </div>
+                                                    </div>
+                                                    @push('head')
+                                                        <link
+                                                            href="{{ asset('vendor/crudbooster/assets/select2/dist/css/select2.min.css') }}"
+                                                            rel="stylesheet" type="text/css" />
+                                                    @endpush
+
+                                                    @push('bottom')
+                                                        <script src="{{ asset('vendor/crudbooster/assets/select2/dist/js/select2.full.min.js') }}"></script>
+                                                        <script>
+                                                            $(function() {
+                                                                function format(icon) {
+                                                                    var originalOption = icon.element;
+                                                                    var label = $(originalOption).text();
+                                                                    var val = $(originalOption).val();
+                                                                    if (!val) return label;
+                                                                    var $resp = $('<span><i style="margin-top:5px" class="pull-right ' + $(originalOption).val() +
+                                                                        '"></i> ' +
+                                                                        $(originalOption).data('label') + '</span>');
+                                                                    return $resp;
+                                                                }
+
+                                                                $('#list-icon_{{ $col['name'] }}').select2({
+                                                                    width: "100%",
+                                                                    templateResult: format,
+                                                                    templateSelection: format
+                                                                });
+                                                            });
+                                                        </script>
+                                                    @endpush
                                                 @elseif($col['type'] == 'radio')
                                                     <?php
                                                     if($col['dataenum']):
@@ -576,9 +667,15 @@ $name = str_slug($form['label'], '');
                                                 @endif
 
                                                 @if ($col['help'])
-                                                    <div class='help-block'>
-                                                        {{ $col['help'] }}
-                                                    </div>
+                                                    @if ($col['type'] == 'filemanager')
+                                                        <div class='help-block' style="width:54%;text-align:center;">
+                                                            {{ $col['help'] }}
+                                                        </div>
+                                                    @else
+                                                        <div class='help-block'>
+                                                            {{ $col['help'] }}
+                                                        </div>
+                                                    @endif
                                                 @endif
                                             </div>
                                         </div>
@@ -591,10 +688,10 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            $('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                $formula_function_name();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            $('#$name$c[name]').change(function() {
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                $formula_function_name();
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            });
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            ";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -621,6 +718,9 @@ $name = str_slug($form['label'], '');
                                             function resetForm{{ $name }}() {
                                                 $('#panel-form-{{ $name }}').find("input[type=text],input[type=number],select,textarea").val('');
                                                 $('#panel-form-{{ $name }}').find(".select2").val('').trigger('change');
+                                                $('#panel-form-{{ $name }}').find("input[type=checkbox]").val(0);
+                                                $('#panel-form-{{ $name }}').find("input[type=checkbox]").prop('checked', false);
+
                                             }
 
                                             function deleteRow{{ $name }}(t) {
@@ -647,6 +747,18 @@ $name = str_slug($form['label'], '');
                                                         $('#link-{{ $c['name'] }}').removeClass('hide');
                                                         $('#link-{{ $c['name'] }}').attr('href', p.find($('.tb_img-{{ $c['name'] }}')).attr("src"));
                                                         $('#img-{{ $c['name'] }}').attr('src', p.find($('.tb_img-{{ $c['name'] }}')).attr("src"));
+                                                    @elseif ($c['type'] == 'switch')
+                                                        var s_val = p.find($('.{{ $c['name'] }} input[type=hidden]')).attr('value');
+                                                        if (s_val == "1") {
+                                                            $('#child_switch{{ $c['name'] }}').val(1);
+                                                            $('#child_switch{{ $c['name'] }}').prop('checked', true);
+                                                        } else {
+                                                            $('#child_switch{{ $c['name'] }}').val(0);
+                                                            $('#child_switch{{ $c['name'] }}').prop('checked', false);
+                                                        }
+                                                    @elseif ($c['type'] == 'icon')
+                                                        var icon_value = p.find($('.{{ $c['name'] }} input[type=hidden]')).val();
+                                                        $('#list-icon_{{ $c['name'] }}').val(icon_value).trigger('change');
                                                     @elseif ($c['type'] == 'select')
                                                         $('#{{ $name . $c['name'] }}').val(p.find(".{{ $c['name'] }} input").val()).trigger("change");
                                                     @elseif ($c['type'] == 'radio')
@@ -710,6 +822,21 @@ $name = str_slug($form['label'], '');
                                                         $('#link-{{ $c['name'] }}').addClass('hide');
                                                         $('#link-{{ $c['name'] }}').attr("href", "");
                                                         $('#img-{{ $c['name'] }}').attr("src", "");
+                                                    @elseif ($c['type'] == 'switch')
+                                                        trRow += "<td class='{{ $c['name'] }}' value='" +
+                                                            $('#child_switch{{ $c['name'] }}').val() + "'>" + $('#child_switch{{ $c['name'] }} ')
+                                                            .val() +
+                                                            "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" +
+                                                            $('#child_switch{{ $c['name'] }}').val() + "'/>" +
+                                                            "</td>";
+                                                    @elseif ($c['type'] == 'icon')
+                                                        trRow += "<td class='{{ $c['name'] }}' value='" +
+                                                            $('select[name=child_icon_{{ $c['name'] }}]').val() + "'>" +
+                                                            $('select[name=child_icon_{{ $c['name'] }}]').val() +
+                                                            "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" +
+                                                            $('select[name=child_icon_{{ $c['name'] }}]').val() + "'/>" +
+                                                            "</td>";
+                                                        $('#list-icon_{{ $c['name'] }}').val('').trigger("change");
                                                     @elseif ($c['type'] == 'select')
                                                         trRow += "<td class='{{ $c['name'] }}'>" + $('#{{ $name . $c['name'] }} option:selected')
                                                             .text() +
@@ -793,7 +920,7 @@ $name = str_slug($form['label'], '');
                             <table id='table-{{ $name }}' class='table table-striped table-bordered'>
                                 <thead>
                                     <tr>
-                                        @foreach ($form['columns'] as $col)
+                                        @foreach ($form['columns'] as $col_key => $col)
                                             <th>{{ $col['label'] }}</th>
                                         @endforeach
                                         <th width="90px">{{ cbLang('action_label') }}</th>
@@ -902,8 +1029,6 @@ $name = str_slug($form['label'], '');
                 </div>
                 <!-- /.box-body -->
             </div>
-
-
         </div>
     @else
         <div style="border:1px dashed #c41300;padding:20px;margin:20px">

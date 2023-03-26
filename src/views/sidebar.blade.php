@@ -156,6 +156,11 @@
                         <a href='{{ Route('ModulsStatusControllerGetIndex') }}'><i class='fa fa-bars'></i>
                             <span>{{ cbLang('Module_Status') }}</span></a>
                     </li>
+                    <li
+                        class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/website_languages') ? 'active' : '' }}">
+                        <a href='{{ Route('WebsiteLanguagesControllerGetIndex') }}'><i class='fa fa-language'></i>
+                            <span>{{ cbLang('Website_Languages') }}</span></a>
+                    </li>
                     <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/blocked_ips') ? 'active' : '' }}">
                         <a href='{{ Route('LoginAttemptsControllerGetIndex') }}'><i class='fa fa-ban'></i>
                             <span>{{ cbLang('Module_Blocked_IPS') }}</span></a>
