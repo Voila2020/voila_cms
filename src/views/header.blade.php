@@ -1,6 +1,5 @@
 <!-- Main Header -->
 <header class="main-header">
-
     <!-- Logo -->
     <a href="{{ url(config('crudbooster.ADMIN_PATH')) }}" title='{{ Session::get('appname') }}'
         class="logo">{{ CRUDBooster::getSetting('appname') }}</a>
@@ -55,14 +54,16 @@
                     <!-- Menu Toggle Button -->
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                         <!-- The user image in the navbar-->
-                        <img src="{{ CRUDBooster::myPhoto() }}" class="user-image" alt="User Image" />
+                        <img src="{{ CRUDBooster::myPhoto() ?: asset('vendor/crudbooster/avatar.jpg') }}"
+                            class="user-image" alt="User Image" />
                         <!-- hidden-xs hides the username on small devices so only the image appears. -->
                         <span class="hidden-xs">{{ CRUDBooster::myName() }}</span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- The user image in the menu -->
                         <li class="user-header">
-                            <img src="{{ CRUDBooster::myPhoto() }}" class="img-circle" alt="User Image" />
+                            <img src="{{ CRUDBooster::myPhoto() ?: asset('vendor/crudbooster/avatar.jpg') }}"
+                                class="img-circle" alt="User Image" />
                             <p>
                                 {{ CRUDBooster::myName() }}
                                 <small>{{ CRUDBooster::myPrivilegeName() }}</small>

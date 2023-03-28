@@ -1931,7 +1931,7 @@ class CBController extends Controller
         return response()->json(array("message" => "faild", "status" => false));
     }
 
-    public function clearLogs()
+    public function getClearLogs()
     {
         try {
             DB::table('cms_logs')->delete();
@@ -1941,7 +1941,7 @@ class CBController extends Controller
         return redirect()->back();
     }
 
-    public function switchLanguage($locale)
+    public function getSwitchLanguage($locale)
     {
         Session::put('lang', $locale);
         Session::put('locale', $locale);

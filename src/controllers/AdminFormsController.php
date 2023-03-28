@@ -2,7 +2,6 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -381,11 +380,10 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
             return redirect(config('crudbooster.ADMIN_PATH') . '/login');
         }
 
-
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . 'submit-form/' . $form->id . "' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . url('/') . '/submit-form/' . $form->id . "' class=' well' style='background:#FFF' >";
             $fields = DB::table('form_field')->select(
                 'form_field.*',
                 'fields.title',

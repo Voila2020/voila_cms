@@ -87,7 +87,6 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
 
         $validations = [];
 
-
         foreach ($fields as $item) {
             $valid = ($item->required_filed == 'Yes') ? 'required' : null;
             if ($valid) {
@@ -112,19 +111,21 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
                 if ($landingPage->is_rtl) {
                     App::setlocale("ar");
                 }
-                return redirect()->back()->with("error", $field->label_filed . " " . __("already_exists"));;
+                return redirect()->back()->with("error", $field->label_filed . " " . __("already_exists"));
             }
         }
 
         //--------------------------------------//
 
-        $application = DB::table('applications')->insert([
+        $applicationId = DB::table('applications')->insertGetId([
             'form_id' => $form->id,
             'ip' => request()->ip(),
             'landing_page_id' => $request->landing_page_id,
             'active' => 1,
-            'updated_at' => Carbon::now()
+            'updated_at' => Carbon::now(),
         ]);
+
+        $application = DB::table('applications')->where('id', $applicationId)->first();
 
         $submit = "<table class='table'><thead><tr>";
         foreach ($fields as $item) {
@@ -142,20 +143,18 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
                 $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
             }
 
-
             $applicationField = DB::table('applications_fields')->insert([
                 'application_id' => $application->id,
                 'form_id' => $item->form_id,
                 'field_id' => $item->id,
                 'landing_page_id' => $request->landing_page_id,
-                'value' => $request->input($this->stripSpace($item->label_filed))
+                'value' => $request->input($this->stripSpace($item->label_filed)),
             ]);
         }
 
         $submit .= "</tr></tbody></table>";
-
         DB::table('applications')->where('id', $application->id)->update([
-            'response' => $submit
+            'response' => $submit,
         ]);
 
         if ($request->landing_page_id) {

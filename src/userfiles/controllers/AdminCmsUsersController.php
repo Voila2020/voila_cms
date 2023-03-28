@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
 class AdminCmsUsersController extends CBController
@@ -54,17 +53,12 @@ class AdminCmsUsersController extends CBController
 
         $data['page_title'] = cbLang("label_button_profile");
         $data['row'] = CRUDBooster::first('cms_users', CRUDBooster::myId());
-
+        Session::put('admin_photo', ($data['row']->photo ? asset($data['row']->photo) : null));
         return $this->view('crudbooster::default.form', $data);
     }
     public function hook_before_edit(&$postdata, $id)
     {
         unset($postdata['password_confirmation']);
-    }
-    public function hook_after_edit($id)
-    {
-        $user = DB::table('cms_users')->where('id', $id)->first();
-        Session::put('admin_photo', asset($user->photo));
     }
     public function hook_before_add(&$postdata)
     {

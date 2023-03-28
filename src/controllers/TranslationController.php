@@ -2,17 +2,35 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
 class TranslationController extends \crocodicstudio\crudbooster\controllers\CBController
 {
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function index()
+
+    public function cbInit()
+    {
+        # START CONFIGURATION DO NOT REMOVE THIS LINE
+        $this->title_field = "name";
+        $this->limit = "20";
+        $this->orderby = "sorting,asc";
+        $this->global_privilege = true;
+        $this->button_table_action = true;
+        $this->button_bulk_action = true;
+        $this->button_action_style = "button_dropdown";
+        $this->button_add = true;
+        $this->button_edit = true;
+        $this->button_delete = true;
+        $this->button_detail = true;
+        $this->button_show = true;
+        $this->button_filter = true;
+        $this->button_import = false;
+        $this->button_export = false;
+    }
+
+    public function getIndex()
     {
         $languages = DB::table('languages')->where('active', 1)->get();
         $columns = [];
@@ -28,11 +46,8 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
 
         return view('crudbooster::languages', compact('languages', 'columns', 'columnsCount'));
     }
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function store(Request $request)
+
+    public function postStore(Request $request)
     {
         $request->validate([
             'key' => 'required',
@@ -47,15 +62,20 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $this->saveJSONFile($code, $data);
             }
         }
-
-        return redirect()->route('languages');
+        $return_url = CRUDBooster::adminPath('languages');
+        return redirect($return_url);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function destroy($key)
+    public function postTransUpdate(Request $request)
+    {
+        $data = $this->openJSONFile($request->code);
+        $data[$request->pk] = $request->value;
+
+        $this->saveJSONFile($request->code, $data);
+        return response()->json(['success' => 'Done!']);
+    }
+
+    public function postDestroy($key)
     {
         $languages = DB::table('languages')->get();
 
@@ -69,10 +89,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         return response()->json(['success' => $key]);
     }
 
-    /**
-     * Open Translation File
-     * @return Response
-     */
     private function openJSONFile($code)
     {
         $jsonString = [];
@@ -83,10 +99,6 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         return $jsonString;
     }
 
-    /**
-     * Save JSON File
-     * @return Response
-     */
     private function saveJSONFile($code, $data)
     {
         ksort($data);
@@ -94,24 +106,7 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         file_put_contents(base_path('resources/lang/' . $code . '.json'), stripslashes($jsonData));
     }
 
-    /**
-     * Save JSON File
-     * @return Response
-     */
-    public function transUpdate(Request $request)
-    {
-        $data = $this->openJSONFile($request->code);
-        $data[$request->pk] = $request->value;
-
-        $this->saveJSONFile($request->code, $data);
-        return response()->json(['success' => 'Done!']);
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     * @return Response
-     */
-    public function transUpdateKey(Request $request)
+    public function postTransUpdateKey(Request $request)
     {
         $languages = DB::table('languages')->get();
 

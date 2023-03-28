@@ -15,10 +15,11 @@
                 @foreach ($errors->all() as $error)
                     <li style="text-align: center" class="alert alert-danger">{{ $error }}</li>
                 @endforeach
-
-                <form enctype="multipart/form-data" action="{{ url(CRUDBooster::adminPath() . '/seo-store/' . $type) }}"
-                    class="form-horizontal" method="post">
+                <form enctype="multipart/form-data"
+                    action='{{ CRUDBooster::mainPath('seo-store') . '?page=' . request()->input('page') . '?page_id=' . request()->input('page_id') }}'
+                    class="form-horizontal" method="POST">
                     {{ csrf_field() }}
+                    <input type="hidden" name="page" value="{{ $type }}">
                     <input type="hidden" name="page_id" value="{{ $id }}">
                     <input type="hidden" name="back_url" value="{{ url()->previous() }}">
                     @foreach ($languages ?? [] as $key => $lang)

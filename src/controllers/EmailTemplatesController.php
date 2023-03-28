@@ -50,11 +50,11 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         $this->form[] = ['label' => 'Is Important', 'name' => 'priority', 'type' => 'radio', 'dataenum' => '1|Yes;3|No'];
         # Actions
         $this->addaction = [];
-        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::adminPath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
+        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
     }
     //By the way, you can still create your own method in here... :)
 
-    public function showEmailBuilder($id = null)
+    public function getEmailBuilder($id = null)
     {
         if ($id) {
             $template = DB::table('cms_email_templates')
@@ -65,7 +65,7 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         return view('crudbooster::email_builder.templates_builder');
     }
 
-    public function saveEmailTemplate(Request $request, $id)
+    public function getSaveTemplate(Request $request, $id)
     {
         DB::table('cms_email_templates')
             ->where('id', $id)
@@ -73,12 +73,6 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 'content' => Request::input('content'),
                 'template' => Request::input('template'),
             ]);
-    }
-
-    public function showEmailBuilderTemplates()
-    {
-        $templates = DB::table('cms_email_templates')->get();
-        return view('crudbooster::email_builder.templates', compact('templates'));
     }
 
     public function hook_before_add(&$arr)
