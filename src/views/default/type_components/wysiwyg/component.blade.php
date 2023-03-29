@@ -188,17 +188,6 @@
                         $("#modalInsertPhotoEditor").modal();
                     }
                 });
-                if ("{{ Crudbooster::getCurrentModule()->path == 'email_templates' }}") {
-                    editor.ui.registry.addButton('EmailBuilder', {
-                        text: 'Email Builder',
-                        onAction: function(_) {
-                            $("#modalInsertEmailTemplate .modal-body").html(
-                                `<iframe width="100%" height="600px" src="{{ Route('email_builder.index', ['id' => $id]) }}" frameborder="0" style="overflow: scroll; overflow-x: scroll; overflow-y: scroll; "></iframe>`
-                            );
-                            $("#modalInsertEmailTemplate").modal();
-                        }
-                    });
-                }
 
                 //////********************************************
                 editor.ui.registry.addButton('mymodalbutton', {
@@ -279,6 +268,5 @@
             let value = $('<div />').text(`"{{ $value }}"`).html();
             inst.setContent(value);
         }
-
     </script>
 @endpush
