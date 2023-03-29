@@ -1,3 +1,10 @@
+@php
+    $images = DB::table('model_images')
+        ->where('model_type', $table)
+        ->where('model_id', $row->id)
+        ->get();
+@endphp
+
 <div class='form-group filemanager-form-group_{{ $name }} {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
     id='form-group-{{ $name }}' style='{{ @$form['style'] }}'>
     <label class='control-label col-sm-2'>{{ $form['label'] }}
@@ -22,11 +29,11 @@
 
             <span class="input-group-btn">
                 @if (@$form['filemanager_type'] == 'file')
-                    <a id="_{{ $name }}" onclick="OpenInsertImagesingle('{{ $name }}')"
+                    <a id="_{{ $name }}" onclick='OpenInsertImagesingle("{{ $name }}")'
                         class="btn btn-primary" value="file_type">
                         <i class="fa fa-file-o"></i> {{ cbLang('chose_an_file') }}
                     @else
-                        <a id="_{{ $name }}" onclick="OpenInsertImagesingle('{{ $name }}')"
+                        <a id="_{{ $name }}" onclick='OpenInsertImagesingle("{{ $name }}")'
                             class="btn btn-primary" value="img_type">
                             <i class='fa fa-picture-o'></i> {{ cbLang('chose_an_image') }}
                 @endif
@@ -62,13 +69,12 @@
                     {{ cbLang('text_delete') }} </a>
             </p>
         @endif
-        <div class='help-block'>{{ @$form['help'] }}</div>
-        <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
     </div>
+
 
 </div>
 
-<div class="modal main-modal fade" id="modalInsertPhotosingle_{{ $name }}">
+<div class="modal fade" id="modalInsertPhotosingle_{{ $name }}">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
@@ -88,13 +94,12 @@
         </div><!-- /.modal-content -->
     </div><!-- /.modal-dialog -->
 </div><!-- /.modal -->
-
 @push('bottom')
     <script type="text/javascript">
-        var currName = "";
+        var Name;
 
         function OpenInsertImagesingle(name) {
-            currName = name;
+            Name = name;
             // reback size of iframe to default
             $('.modal.in .modal-dialog').width(900);
             // check file manager type
@@ -136,6 +141,7 @@
             });
         }
 
+
         function deleteImage(form_name) {
             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
             let table = @json($table);
@@ -164,28 +170,32 @@
             });
         }
 
-        var id = '#modalInsertPhotosingle_{{ $name }}';
-        $(id).on('hidden.bs.modal', function() {
-            var check = $('#{{ $name }}').val();
-            if (check != "" && "{{ $name }}" === currName) {
-                check = check.substring(1);
-                if ("{{ @$form['filemanager_type'] }}" == 'file')
-                    $("#file-{{ $name }}").html(check);
-                else
-                    $("#img-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
-                $("#link-{{ $name }}").attr("href", '{{ URL::asset('') }}' + check);
-                $("#link-{{ $name }}").removeClass("hide");
-                $("#thumbnail-{{ $name }}").attr("src", '{{ URL::asset('') }}' + check);
-                $("#thumbnail-{{ $name }}").attr("value", '{{ URL::asset('') }}' + check);
-            }
+        $(function() {
+            var id = '#modalInsertPhotosingle_{{ $name }}';
+            console.log("id =>", id, " name=>", Name);
+            $(id).on('hidden.bs.modal', function() {
+                console.log("closed the main filemanager", " {{ $name }} ", Name)
+                var check = $('#' + Name).val();
+                if (check != "") {
+                    check = check.substring(1);
+                    if ("{{ @$form['filemanager_type'] }}" == 'file')
+                        $("#file-" + Name).html(check);
+                    else
+                        $("#img-" + Name).attr("src", '{{ URL::asset('') }}' + check);
+                    $("#link-" + Name).attr("href", '{{ URL::asset('') }}' + check);
+                    $("#link-" + Name).removeClass("hide");
+                    $("#thumbnail-" + Name).attr("src", '{{ URL::asset('') }}' + check);
+                    $("#thumbnail-" + Name).attr("value", '{{ URL::asset('') }}' + check);
+                }
+            });
+            resizeFilemanagerPopout();
         });
-        resizeFilemanagerPopout();
 
         function resizeFilemanagerPopout() {
             $('.modal-header .resize').unbind().click(function() {
                 if ($('.modal.in .modal-dialog').width() == 900) {
-                    $('.modal.in .modal-dialog').width(1300);
-                    $('iframe').height(600);
+                    $('.modal.in .modal-dialog').width($(window).width());
+                    $('iframe').height($(window).height());
                 } else {
                     $('.modal.in .modal-dialog').width(900);
                     $('iframe').height(400);
