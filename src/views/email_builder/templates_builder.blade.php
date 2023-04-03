@@ -120,7 +120,7 @@
             emailBuilderID = "{{ $id }}";
             $template = '';
             $site = "{{ url('/') }}";
-            $adminPath = "{{ crocodicstudio\crudbooster\helpers\CRUDBooster::adminPath() }}";
+            $mainPath = "{{ crocodicstudio\crudbooster\helpers\CRUDBooster::mainPath() }}";
             currentHtml = '';
             editor = grapesjs.init({
                 clearOnRender: true,
@@ -269,8 +269,8 @@
                     currentHtml = editor.runCommand('mjml-get-code').html;
                     var mjmlTemplate = editor.getHtml();
                     $.ajax({
-                        type: "PUT",
-                        url: `${$adminPath}/email_templates/save-template/${emailBuilderID}`,
+                        type: "GET",
+                        url: `${$mainPath}/save-template/${emailBuilderID}`,
                         data: {
                             content: currentHtml,
                             template: mjmlTemplate

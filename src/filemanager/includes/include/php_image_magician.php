@@ -159,6 +159,7 @@
 #
 # ========================================================================#
 
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 
 class imageLib {
 
@@ -2826,7 +2827,7 @@ class imageLib {
 				$this->checkInterlaceImage($this->isInterlace);
 				if (imagetypes() & IMG_JPG)
 				{
-					imagejpeg($this->imageResized, $savePath, $imageQuality);
+					imagejpeg($this->imageResized, $savePath, CRUDBooster::getSetting('default_img_compression'));
 				}
 				else
 				{
@@ -2916,7 +2917,7 @@ class imageLib {
 			case 'jpg':
 			case 'jpeg':
 				header('Content-type: image/jpeg');
-				imagejpeg($this->imageResized, '', $imageQuality);
+				imagejpeg($this->imageResized, '', CRUDBooster::getSetting('default_img_compression'));
 				break;
 			case 'gif':
 				header('Content-type: image/gif');

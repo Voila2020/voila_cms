@@ -2,9 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
-use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
-use Intervention\Image\ImageManagerStatic as Image;
 use stdClass;
 use UploadHandler;
 
@@ -704,23 +702,6 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $uploadConfig['upload_dir'] = $config['ftp_temp_folder'];
             }
             // print_r($_FILES);die();
-            $path_info = pathinfo($_FILES['files']['name']['0']);
-            if (in_array($path_info, $config['ext_img'])) {
-                if (env('APP_ENV') === 'local') {
-                    $img = Image::make(public_path($source_base . '/' . $_FILES['files']['name']['0']));
-                } else {
-                    $img = Image::make($source_base . '/' . $_FILES['files']['name']['0']);
-                }
-                // $img->resize($img->width(), $img->height(), function ($constraint) {
-                //     $constraint->aspectRatio();
-                //     $constraint->upsize();
-                // });
-                if (env('APP_ENV') === 'local') {
-                    $img->save(public_path($source_base . '/' . $_FILES['files']['name']['0']), intval(CRUDBooster::getSetting('default_img_compression')));
-                } else {
-                    $img->save($source_base . '/' . $_FILES['files']['name']['0'], intval(CRUDBooster::getSetting('default_img_compression')));
-                }
-            }
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
         } catch (Exception $e) {
             $return = array();

@@ -426,7 +426,7 @@ return [
     ],
     #
     'clear_logs' => 'Clear All Logs',
-    'def_img_quality' => 'This field specifies the quality of the image after uploading (The image quality will decrease as we decrease the input value and vice versa)',
+    'def_img_quality' => 'This field specifies the quality of the image after uploading, image quality will decrease as we decrease the input value and vice versa. (value: from 0 to 100)',
     'notifications_activity' => 'This field determines whether notifications are enabled or not (not enabled by default)',
     'default_image' => 'This image will appear if the image field is empty',
     'language_setting' => 'CMS Language Setting',

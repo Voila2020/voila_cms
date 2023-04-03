@@ -91,13 +91,6 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(resource_path('landing_page_builder'), 0777);
             }
 
-            $path = base_path('routes/web.php');
-            $fileContents = file_get_contents($path);
-            $appendRoute = "Route::get('{url}', [App\Http\Controllers\LandingPagesController::class, 'catchView']);";
-            if (!strpos($fileContents, $appendRoute)) {
-                File::append($path, $appendRoute);
-            }
-
             $this->info('Publishing crudbooster assets...');
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);
 
