@@ -42,7 +42,7 @@ Then, create your own `detail view`
 ```
 
 ## What's Next
-- [Helpers](./helpers.md)
+- [How To Make Email Template](./how-to-make-email-template.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
