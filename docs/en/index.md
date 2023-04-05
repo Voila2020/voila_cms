@@ -24,6 +24,7 @@
     - [date](./form-date.md)
     - [datetime](./form-datetime.md)
     - [email](./form-email.md)
+    - [filemanager](./form-filemanager.md)
     - [googlemaps](./form-googlemaps.md)
     - [hidden](./form-hidden.md)
     - [money](./form-money.md)
