@@ -17,7 +17,7 @@ Some cases you need to add a your custom email template :
 
 
 ## What's Next
-- [How To Make A Graded Module (Parent Module -> Sub Module -> Sub Module)](./how-to-make-graded-module.md)
+- [Helper](./helper.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
