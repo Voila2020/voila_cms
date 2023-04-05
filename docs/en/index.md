@@ -53,5 +53,6 @@
 - [How To Make A Custom View Of Add Method](./how-custom-view-add.md)
 - [How To Make A Custom View Of Edit Method](./how-to-custom-edit-view.md)
 - [How To Make A Custom View Of Detail Method](./how-to-custom-detail-view.md)
+- [How To Make Email Template](./how-to-make-email-template.md)
 - [Helpers](./helpers.md)
 - [Secure Your Root Directory](./index.md)
