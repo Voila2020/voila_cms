@@ -24,7 +24,7 @@
     <h1>{{ cbLang('Translation') }}</h1>
     <br>
 
-    <form method="POST" action="{{ route('translations.create') }}">
+    <form method="POST" action="{{ CRUDBooster::mainPath('store') }}">
         {{ csrf_field() }}
         <div class="row">
             <div class="col-md-4">
@@ -77,15 +77,17 @@
                         <tr>
                             <td><a style="color:#000;" data-title="Enter Key" data-type="text"
                                     data-pk="{{ $columnKey }}"
-                                    data-url="{{ route('translation.update.json.key') }}">{{ $columnKey }}</a></td>
+                                    data-url="{{ CRUDBooster::mainPath('trans-update-key') }}">{{ $columnKey }}</a>
+                            </td>
                             @for ($i = 1; $i <= $columnsCount; ++$i)
                                 <td><a href="#" data-title="Enter Translate" class="translate"
                                         data-code="{{ $columns[$i]['lang'] }}" data-type="textarea"
                                         data-pk="{{ $columnKey }}"
-                                        data-url="{{ route('translation.update.json') }}">{{ isset($columns[$i]['data'][$columnKey]) ? $columns[$i]['data'][$columnKey] : '' }}</a>
+                                        data-url="{{ CRUDBooster::mainPath('trans-update') }}">{{ isset($columns[$i]['data'][$columnKey]) ? $columns[$i]['data'][$columnKey] : '' }}</a>
                                 </td>
                             @endfor
-                            <td><button data-action="{{ route('translations.destroy', $columnKey) }}"
+                            <td><button data-action='{{ CRUDBooster::mainPath('destroy') . '/' . $columnKey }}'
+                                    {{-- <td><button data-action="{{ route('translations.destroy', $columnKey) }}" --}}
                                     class="btn btn-danger btn-xs remove-key">{{ cbLang('Delete') }}</button></td>
                         </tr>
                     @endforeach
@@ -146,7 +148,7 @@
         if (confirm("Are you sure want to remove this item?")) {
             $x.ajax({
                 url: cObj.data('action'),
-                method: 'DELETE',
+                method: 'POST',
                 success: function(data) {
                     cObj.parents("tr").remove();
                     alert("Your imaginary file has been deleted.");
