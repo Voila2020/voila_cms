@@ -5,10 +5,6 @@
         <div class="box-header">
             <div class="pull-{{ cbLang('left') }}">
                 <div class="selected-action" style="display:inline-block;position:relative;">
-                    {{-- <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown"
-                        aria-expanded="false"><i class='fa fa-check-square-o'></i>
-                        {{ cbLang('button_selected_action') }}
-                        <span class="fa fa-caret-down"></span></button> --}}
                     <ul class="dropdown-menu">
                         <li><a href="javascript:void(0)" data-name='delete' title='{{ cbLang('action_delete_selected') }}'><i
                                     class="fa fa-trash"></i>
@@ -97,8 +93,6 @@
 @push('bottom')
     <script type="text/javascript">
         $('.content-header h1').append(`
-            <i class="fa fa-database"></i>
-            Backup &nbsp;&nbsp;
             <a  id="btn_backup" class="btn btn-sm btn-primary" onclick="makeBackup()" title="Make Backup">
                 <i class="fa fa-database"></i>
                 {{ cbLang('make_backup') }}

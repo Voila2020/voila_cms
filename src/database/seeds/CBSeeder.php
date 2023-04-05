@@ -222,6 +222,36 @@ class CBSeeder extends Seeder
                 'is_protected' => 0,
                 'is_active' => 1,
             ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'Backup_Restore_DB',
+                'icon' => 'fa fa-database',
+                'path' => 'backup',
+                'table_name' => null,
+                'controller' => 'BackupRestoreDB',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'SEO',
+                'icon' => 'fa fa-language',
+                'path' => 'seo',
+                'table_name' => null,
+                'controller' => 'AdminSeoController',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'Labels Translation',
+                'icon' => 'fa fa-language',
+                'path' => 'languages',
+                'table_name' => null,
+                'controller' => 'TranslationController',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ],
         ];
 
         foreach ($data as $k => $d) {
@@ -1338,8 +1368,8 @@ class CBSeeder extends Seeder
             $data = [
                 [
                     'name' => 'SEO',
-                    'type' => 'Route',
-                    'path' => 'seo-home',
+                    'type' => 'Module',
+                    'path' => 'seo',
                     'color' => 'normal',
                     'icon' => 'fa fa-language',
                     'parent_id' => 0,
@@ -1351,7 +1381,7 @@ class CBSeeder extends Seeder
                 ],
                 [
                     'name' => 'labels_translation',
-                    'type' => 'Route',
+                    'type' => 'Module',
                     'path' => 'languages',
                     'color' => 'normal',
                     'icon' => 'fa fa-language',

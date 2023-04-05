@@ -15,24 +15,75 @@ class UpdateCmsSeo extends Migration
     {
         Schema::table('cms_seo', function (Blueprint $table) {
             # drop
-            $table->dropColumn('title_en')->nullable();
-            $table->dropColumn('title_ar')->nullable();
-            $table->dropColumn('description_en')->nullable();
-            $table->dropColumn('description_ar')->nullable();
-            $table->dropColumn('keywords_en')->nullable();
-            $table->dropColumn('keywords_ar')->nullable();
-            $table->dropColumn('author_en')->nullable();
-            $table->dropColumn('author_ar')->nullable();
-            $table->dropColumn('model_id')->nullable();
-            $table->dropColumn('model')->nullable();
+            if (Schema::hasColumn('cms_seo', 'title_en')) {
+                $table->dropColumn('title_en')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'title_ar')) {
+                $table->dropColumn('title_ar')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'description_en')) {
+                $table->dropColumn('description_en')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'description_ar')) {
+                $table->dropColumn('description_ar')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'keywords_en')) {
+                $table->dropColumn('keywords_en')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'keywords_ar')) {
+                $table->dropColumn('keywords_ar')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'author_en')) {
+                $table->dropColumn('author_en')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'author_ar')) {
+                $table->dropColumn('author_ar')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'model_id')) {
+                $table->dropColumn('model_id')->nullable();
+            }
+
+            if (Schema::hasColumn('cms_seo', 'model')) {
+                $table->dropColumn('model')->nullable();
+            }
+
             # add
-            $table->string('title')->nullable();
-            $table->longText('description')->nullable();
-            $table->longText('keywords')->nullable();
-            $table->string('author')->nullable();
-            $table->string('language')->nullable();
-            $table->string('page')->nullable();
-            $table->integer('page_id')->nullable();
+            if (!Schema::hasColumn('cms_seo', 'title')) {
+                $table->string('title')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'description')) {
+                $table->longText('description')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'keywords')) {
+                $table->longText('keywords')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'author')) {
+                $table->string('author')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'language')) {
+                $table->string('language')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'page')) {
+                $table->string('page')->nullable();
+            }
+
+            if (!Schema::hasColumn('cms_seo', 'page_id')) {
+                $table->integer('page_id')->nullable();
+            }
+
         });
     }
 }
