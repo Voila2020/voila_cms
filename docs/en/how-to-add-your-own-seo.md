@@ -9,7 +9,7 @@
 ![image](https://raw.githubusercontent.com/Voila2020/voila_cms/master/docs/en/MicrosoftTeams-image%20(5).png)
 
 ## What's Next
-- [Helper](./helper.md)
+- [How To Make Email Template](./how-to-make-email-template.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
