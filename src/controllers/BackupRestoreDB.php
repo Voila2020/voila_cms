@@ -8,13 +8,13 @@ use Illuminate\Support\Facades\File;
 
 class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBController
 {
-    public function index()
+    public function getIndex()
     {
         $admin_path = config('crudbooster.ADMIN_PATH');
         return view('crudbooster::backup_restore_db', compact('admin_path'));
     }
 
-    public function makeBackup()
+    public function getMakeBackup()
     {
         try {
             $host = config('database.connections.mysql.host');
@@ -267,7 +267,7 @@ class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBControll
         return $sql;
     }
 
-    public function restoreDB($fileName)
+    public function getRestoreBackup($fileName)
     {
         try {
             $backupPath = storage_path('app/backups/' . $fileName);
@@ -285,7 +285,7 @@ class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBControll
         return $sql;
     }
 
-    public function deleteDB($fileName)
+    public function getDeleteBackup($fileName)
     {
         try {
             $backupPath = storage_path('app/backups/' . $fileName);

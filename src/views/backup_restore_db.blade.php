@@ -105,25 +105,28 @@
         });
 
         function makeBackup() {
+            let createBackupUrl = @json(CRUDBooster::mainPath('make-backup'));
             $.ajax({
                 type: "GET",
-                url: "make-backup",
+                url: createBackupUrl,
                 beforeSend: function() {
-                    // $('.spinner-loader').css('display', 'block');
-                    // $('.main-overlay').css('display', 'block');
+                    $('.spinner-loader').css('display', 'block');
+                    $('.main-overlay').css('display', 'block');
                 },
                 success: function(data) {},
                 error: function(data) {},
             }).done(function(msg) {
-                // $('.spinner-loader').css('display', 'none');
-                // $('.main-overlay').css('display', 'none');
+                $('.spinner-loader').css('display', 'none');
+                $('.main-overlay').css('display', 'none');
             });
         }
 
         function restoreDB(fileName) {
+            let restoreUrl = @json(CRUDBooster::mainPath('restore-backup/')) + fileName;
+            console.log("restore url => ", restoreUrl);
             $.ajax({
                 type: "GET",
-                url: "restore-backup/" + fileName,
+                url: restoreUrl,
                 beforeSend: function() {
                     $('.spinner-loader').css('display', 'block');
                     $('.main-overlay').css('display', 'block');
@@ -137,9 +140,10 @@
         }
 
         function deleteDB(fileName) {
+            let deleteUrl = @json(CRUDBooster::mainPath('delete-backup/')) + fileName;
             $.ajax({
                 type: 'GET',
-                url: 'delete-backup/' + fileName,
+                url: deleteUrl,
                 beforeSend: function() {
                     $('.spinner-loader').css('display', 'block');
                     $('.main-overlay').css('display', 'block');

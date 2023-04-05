@@ -166,17 +166,6 @@ class CBRouter
             Route::match(array('GET', 'POST'), '/ajax_calls', [FileManagerController::class, 'ajaxCall'])->name("filemanager.ajax_calls");
             Route::post('/download', [FileManagerController::class, 'forceDownload'])->name("filemanager.download");
         });
-        Route::group([
-            'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
-            'prefix' => config('crudbooster.ADMIN_PATH'),
-            'namespace' => static::$cb_namespace,
-        ], function () {
-            # Backup & Restore Database
-            Route::get('/backup', [BackupRestoreDB::class, 'index'])->name('backup');
-            Route::get('/make-backup', [BackupRestoreDB::class, 'makeBackup']);
-            Route::get('/restore-backup/{backup_name}', [BackupRestoreDB::class, 'restoreDB'])->name('restore_db');
-            Route::get('/delete-backup/{backup_name}', [BackupRestoreDB::class, 'deleteDB'])->name('delete_db');
-        });
     }
 
     public static function route()
