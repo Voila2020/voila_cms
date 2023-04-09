@@ -42,7 +42,7 @@ Then, create your own `detail view`
 ```
 
 ## What's Next
-- [Helpers](./helpers.md)
+- [How To Make Your Custom SEO Route](./how-to-add-your-own-seo.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)

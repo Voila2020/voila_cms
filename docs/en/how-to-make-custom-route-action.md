@@ -16,7 +16,7 @@ postEditStatus(){
 ```
 
 ## What's Next
-- [How To Make Email Template](./how-to-make-email-template.md)
+- [Helper](./helper.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
