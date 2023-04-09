@@ -1391,6 +1391,8 @@ class CRUDBooster
         $button_import = 'FALSE';
         $button_bulk_action = 'TRUE';
         $global_privilege = 'FALSE';
+        $page_seo = false;
+        $page_record = false;
 
         $php = '
 <?php
@@ -1421,6 +1423,8 @@ class Admin' . $controllername . ' extends CBController {
 		$this->button_show         = ' . $button_show . ';
         $this->button_sortable     = ' . $button_sortable . ';
         $this->pdf_direction       = "' . $pdf_direction . '";
+        $this->page_seo            = "' . $page_seo . '";
+        $this->page_record            = "' . $page_record . '";
 		$this->button_filter       = ' . $button_filter . ';
 		$this->button_export       = ' . $button_export . ';
 		$this->button_import       = ' . $button_import . ';

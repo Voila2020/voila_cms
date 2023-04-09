@@ -26,6 +26,12 @@
         <link href="{{ asset('vendor/crudbooster/assets/rtl.css') }}" rel="stylesheet" type="text/css" />
     @endif
 
+    <!-- recaptcha -->
+    @if (CRUDBooster::getSetting('recaptcha_site_key'))
+        <script src='https://www.google.com/recaptcha/api.js?render={{ CRUDBooster::getSetting('recaptcha_site_key') }}'>
+        </script>
+    @endif
+
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
     <!--[if lt IE 9]>
@@ -86,7 +92,7 @@
             @endif
 
             <p class='login-box-msg'>{{ cbLang('login_message') }}</p>
-            <form autocomplete='off' action="{{ route('postLogin') }}" method="post">
+            <form id="login-form" autocomplete='off' action="{{ route('postLogin') }}" method="post">
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
                 @if (!empty(config('services.google')))
@@ -117,7 +123,8 @@
                 </div>
                 <div style="margin-bottom:10px" class='row'>
                     <div class='col-xs-12'>
-                        <button type="submit" class="btn btn-primary btn-block btn-flat"><i class='fa fa-lock'></i>
+                        <button type="submit" id="login-button" class="btn btn-primary btn-block btn-flat"><i
+                                class='fa fa-lock'></i>
                             {{ cbLang('button_sign_in') }}</button>
                     </div>
                 </div>
@@ -128,6 +135,10 @@
                                 href='{{ route('getForgot') }}'>{{ cbLang('click_here') }}</a></p>
                     </div>
                 </div>
+                @if (CRUDBooster::getSetting('recaptcha_secret_key'))
+                    <div class="g-recaptcha" data-sitekey="{{ CRUDBooster::getSetting('recaptcha_secret_key') }}">
+                    </div>
+                @endif
             </form>
 
 
@@ -160,6 +171,24 @@
 
             // toggle the eye slash icon
 
+        });
+        const loginButton = document.getElementById('login-button');
+        loginButton.addEventListener('click', function(event) {
+            event.preventDefault();
+            $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
+            grecaptcha.ready(function() {
+                grecaptcha.execute($site_key, {
+                    action: 'login'
+                }).then(function(token) {
+                    const loginForm = document.getElementById('login-form');
+                    const recaptchaInput = document.createElement('input');
+                    recaptchaInput.setAttribute('type', 'hidden');
+                    recaptchaInput.setAttribute('name', 'recaptcha_token');
+                    recaptchaInput.setAttribute('value', token);
+                    loginForm.appendChild(recaptchaInput);
+                    loginForm.submit();
+                });
+            });
         });
     </script>
 </body>

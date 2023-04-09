@@ -60,7 +60,6 @@
                 <div class="row">
                     <div class="col-sm-4">
                         <div class="row">
-
                             <div class="col-sm-12">
                                 <div class="form-group">
                                     <label>{{ cbLang('Sortable') }}</label>
@@ -140,6 +139,19 @@
                                 </div>
                             </div>
 
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>{{ cbLang('Record SEO') }}</label>
+                                    <label class='radio-inline'>
+                                        <input {{ $cb_record_seo ? 'checked' : '' }} type='radio' name='record_seo'
+                                            value="true" /> TRUE
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{ !$cb_record_seo ? 'checked' : '' }} type='radio' name='record_seo'
+                                            value="false" /> FALSE
+                                    </label>
+                                </div>
+                            </div>
 
                         </div>
                     </div>
@@ -279,6 +291,19 @@
                                     <label class='radio-inline'>
                                         <input {{ !$cb_button_export ? 'checked' : '' }} type='radio'
                                             name='button_export' value='false' /> FALSE
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>{{ cbLang('Page SEO') }}</label>
+                                    <label class='radio-inline'>
+                                        <input {{ $cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
+                                            value="true" /> TRUE
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{ !$cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
+                                            value="false" /> FALSE
                                     </label>
                                 </div>
                             </div>

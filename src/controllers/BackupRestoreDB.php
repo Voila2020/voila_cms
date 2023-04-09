@@ -88,10 +88,11 @@ class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBControll
 
             # close the database connection
             mysqli_close($connection);
-
-            return response()->json(['message' => cbLang('success_add_backup')]);
+            session()->flash('message', cbLang('success_add_backup'));
+            session()->flash('message_type', 'success');
+            return response()->json(['message' => cbLang('success_add_backup'), 'message_type' => 'success']);
         } catch (Exception $ex) {
-            return response()->json(['message' => $ex->getMessage()]);
+            return response()->json(['message' => cbLang('error_add_backup')]);
         }
     }
 
@@ -277,6 +278,8 @@ class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBControll
                 DB::unprepared($sql);
                 DB::commit();
             }
+            session()->flash('message', cbLang('success_restore_backup'));
+            session()->flash('message_type', 'success');
             return response()->json(['message' => 'done']);
         } catch (Exception $ex) {
             return response()->json(['message' => $ex->getMessage()]);

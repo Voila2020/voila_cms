@@ -73,6 +73,10 @@ class CBController extends Controller
 
     public $pdf_direction = 'ltr';
 
+    public $page_seo = false;
+
+    public $record_seo = true;
+
     public $button_addmore = true;
 
     public $button_table_action = true;
@@ -166,6 +170,9 @@ class CBController extends Controller
         $this->data['button_bulk_action'] = $this->button_bulk_action;
         $this->data['button_import'] = $this->button_import;
         $this->data['button_action_width'] = $this->button_action_width;
+        $this->data['page_seo'] = $this->page_seo;
+        $this->data['record_seo'] = $this->record_seo;
+
         foreach ($this->col as $col) {
             if (isset($col['switch']) && $col['switch'] == true) {
                 $acitvLabel = cbLang('activate_label') . ' ' . $col['label'];
@@ -523,6 +530,10 @@ class CBController extends Controller
 
         //LISTING INDEX HTML
         $addaction = $this->data['addaction'];
+
+        if ($this->record_seo) {
+            $addaction[] = ['label' => cbLang('action_set_seo'), 'url' => CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path . '/[id]', 'icon' => 'fa fa-globe', 'color' => 'success'];
+        }
 
         if ($this->sub_module) {
             foreach ($this->sub_module as $s) {

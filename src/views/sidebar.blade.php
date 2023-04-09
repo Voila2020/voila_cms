@@ -158,7 +158,7 @@
                     </li>
                     <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/backup') ? 'active' : '' }}">
                         <a href='{{ CRUDBooster::adminPath('backup') }}'><i class='fa fa-database'></i>
-                            <span>{{ cbLang('restore_backup_module') }}</span></a>
+                            <span>{{ cbLang('Backup_Restore_DB') }}</span></a>
                     </li>
                     <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/blocked_ips') ? 'active' : '' }}">
                         <a href='{{ Route('LoginAttemptsControllerGetIndex') }}'><i class='fa fa-ban'></i>

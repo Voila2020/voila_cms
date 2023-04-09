@@ -426,7 +426,7 @@ return [
     ],
     #
     'clear_logs' => 'Clear All Logs',
-    'def_img_quality' => 'This field specifies the quality of the image after uploading, image quality will decrease as we decrease the input value and vice versa. (value: from 0 to 100)',
+    'def_img_quality' => 'This field specifies the quality of the image after uploading (The image quality will decrease as we decrease the input value and vice versa)',
     'notifications_activity' => 'This field determines whether notifications are enabled or not (not enabled by default)',
     'default_image' => 'This image will appear if the image field is empty',
     'language_setting' => 'CMS Language Setting',
@@ -474,4 +474,14 @@ return [
 
     'successfully_save_settings' => 'Your setting has been saved !',
     'Module_Blocked_IPS' => 'Block List',
+
+    'Backup_Restore_DB' => 'Backup & Restore DB',
+    'restore_db' => 'Restore',
+    'delete_db' => 'Delete',
+    'make_backup' => 'Create a new Backup',
+    'recaptcha_site_key' => 'reCAPTCHA site key',
+    'recaptcha_secret_key' => 'reCAPTCHA secret key',
+    'success_add_backup' => 'The backup has been added successfully',
+    'error_add_backup' => 'Some thing went wrong while adding backup !',
+    'action_set_seo' => 'Set SEO',
 ];

@@ -164,6 +164,14 @@
                                     <i class="fa fa-plus-circle"></i> {{ cbLang('action_add_data') }}
                                 </a>
                             @endif
+
+                            @if ($page_seo)
+                                <a href="{{ CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path }}"
+                                    id="btn_set_page_seo" class="btn btn-sm btn-success"
+                                    title="{{ cbLang('action_set_seo') }}">
+                                    <i class="fa fa-globe"></i> {{ cbLang('action_set_seo') }}
+                                </a>
+                            @endif
                         @endif
 
 

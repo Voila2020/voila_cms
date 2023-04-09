@@ -113,12 +113,13 @@
                     $('.spinner-loader').css('display', 'block');
                     $('.main-overlay').css('display', 'block');
                 },
-                success: function(data) {},
+                success: function(data) {
+                    $('.spinner-loader').css('display', 'none');
+                    $('.main-overlay').css('display', 'none');
+                    location.reload();
+                },
                 error: function(data) {},
-            }).done(function(msg) {
-                $('.spinner-loader').css('display', 'none');
-                $('.main-overlay').css('display', 'none');
-            });
+            }).done(function(msg) {});
         }
 
         function restoreDB(fileName) {
@@ -131,11 +132,14 @@
                     $('.spinner-loader').css('display', 'block');
                     $('.main-overlay').css('display', 'block');
                 },
-                success: function(data) {},
+                success: function(data) {
+                    $('.spinner-loader').css('display', 'none');
+                    $('.main-overlay').css('display', 'none');
+                    location.reload();
+                },
                 error: function(data) {},
             }).done(function(msg) {
-                $('.spinner-loader').css('display', 'none');
-                $('.main-overlay').css('display', 'none');
+
             });
         }
 

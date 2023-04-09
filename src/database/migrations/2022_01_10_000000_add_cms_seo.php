@@ -19,8 +19,8 @@ class AddCmsSeo extends Migration
             $table->longText('description')->nullable();
             $table->longText('keywords')->nullable();
             $table->string('author')->nullable();
-            $table->string('model')->nullable();
-            $table->integer('model_id')->nullable();
+            $table->string('page')->nullable();
+            $table->integer('page_id')->nullable();
             $table->string('image')->nullable();
             $table->string('language')->nullable();
             $table->integer('active');
