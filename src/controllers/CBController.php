@@ -69,7 +69,7 @@ class CBController extends Controller
 
     public $button_show = true;
 
-    public $button_sortable = true;
+    public $sortable_table = true;
 
     public $pdf_direction = 'ltr';
 
@@ -157,7 +157,7 @@ class CBController extends Controller
         $this->data['button_detail'] = $this->button_detail;
         $this->data['button_edit'] = $this->button_edit;
         $this->data['button_show'] = $this->button_show;
-        $this->data['button_sortable'] = $this->button_sortable;
+        $this->data['sortable_table'] = $this->sortable_table;
         $this->data['pdf_direction'] = $this->pdf_direction;
         $this->data['button_add'] = $this->button_add;
         $this->data['button_delete'] = $this->button_delete;
@@ -1197,7 +1197,7 @@ class CBController extends Controller
             $this->arr['created_at'] = date('Y-m-d H:i:s');
         }
 
-        if ($this->button_sortable && Schema::hasColumn($this->table, 'sorting')) {
+        if ($this->sortable_table && Schema::hasColumn($this->table, 'sorting')) {
             $sort = DB::table($this->table)->count() + 1;
             $this->arr['sorting'] = $sort;
         }
