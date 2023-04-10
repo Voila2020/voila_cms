@@ -21,7 +21,7 @@ class PrivilegesController extends CBController
         $this->button_action_style = 'button_icon';
         $this->button_detail = false;
         $this->button_bulk_action = false;
-        $this->button_sortable = false;
+        $this->sortable_table = false;
 
         $this->col = [];
         $this->col[] = ["label" => "ID", "name" => "id"];

@@ -16,7 +16,7 @@ class WebsiteLanguagesController extends CBController
         $this->title_field = "name";
         $this->limit = "20";
         $this->orderby = "id,desc";
-        $this->button_sortable = true;
+        $this->sortable_table = true;
         $this->global_privilege = false;
         $this->button_table_action = true;
         $this->button_bulk_action = true;

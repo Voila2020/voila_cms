@@ -1377,7 +1377,7 @@ class CRUDBooster
         $name_col = CRUDBooster::getNameTable($coloms);
         $pk = CB::pk($table);
 
-        $button_sortable = 'TRUE';
+        $sortable_table = 'TRUE';
         $pdf_direction = 'ltr';
         $button_table_action = 'TRUE';
         $button_action_style = "button_icon";
@@ -1421,7 +1421,7 @@ class Admin' . $controllername . ' extends CBController {
 		$this->button_edit         = ' . $button_edit . ';
 		$this->button_detail       = ' . $button_detail . ';
 		$this->button_show         = ' . $button_show . ';
-        $this->button_sortable     = ' . $button_sortable . ';
+        $this->sortable_table     = ' . $sortable_table . ';
         $this->pdf_direction       = "' . $pdf_direction . '";
         $this->page_seo            = "' . $page_seo . '";
         $this->page_record            = "' . $page_record . '";

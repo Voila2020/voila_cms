@@ -51,7 +51,8 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $columns[] = ['label' => 'label', 'name' => 'label_filed', 'type' => 'text', 'formula' => "[label_filed]", 'required' => true];
         $columns[] = ['label' => 'required', 'name' => 'required_filed', "type" => "radio", 'formula' => "[required_filed]", 'dataenum' => 'Yes;No', 'required' => true];
         $columns[] = ['label' => 'Unique', 'name' => 'unique_field', "type" => "radio", 'dataenum' => '1|Yes;0|No', 'required' => true];
-        $columns[] = ['label' => 'values', 'name' => 'values', 'formula' => "[values]", "type" => "text"];
+        // $columns[] = ['label' => 'values', 'name' => 'values', 'formula' => "[values]", "type" => "text"];
+        $columns[] = ['label' => 'values', 'name' => 'values', "type" => "multitext"];
         $this->form[] = ['label' => 'Fileds', 'name' => 'form_field', 'type' => 'child', 'columns' => $columns, 'table' => 'form_field', 'foreign_key' => 'form_id'];
         $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'radio', 'width' => 'col-sm-9', 'dataenum' => '1|Yes;0|No'];
 
@@ -163,42 +164,7 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         | $this->script_js = "function() { ... }";
         |
          */
-        $this->script_js = "
-
-				$(document).ready(function(){
-					$('.child-form-area').append(`
-					<div class='form-group'>
-					<div class='col-lg-2'>
-
-					</div>
-					<div class='col-lg-10'>
-					<a class='btn btn-info add-key' ><span class='fa fa-plus'></span></a><input type='text' id='text-key' style='padding: 5px;margin-left: 16px;'>
-					</div>
-					</div>
-					`);
-				})
-
-
-				$('body').on('click','.add-key',function(){
-
-
-					var oldVal=$('#fieldsvalues').val();
-					var newVal=$('#text-key').val();
-					if(oldVal==='')
-					{
-					$('#fieldsvalues').val(newVal);
-					}
-					else{
-						$('#fieldsvalues').val(oldVal +' , '+newVal);
-					}
-					$('#text-key').val('');
-
-
-
-					});
-
-
-			";
+        $this->script_js = "";
 
         /*
         | ----------------------------------------------------------------------

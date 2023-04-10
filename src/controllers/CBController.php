@@ -532,7 +532,7 @@ class CBController extends Controller
         $addaction = $this->data['addaction'];
 
         if ($this->record_seo) {
-            $addaction[] = ['label' => cbLang('action_set_seo'), 'url' => CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path . '/[id]', 'icon' => 'fa fa-globe', 'color' => 'success'];
+            $addaction[] = ['label' => cbLang('action_set_seo'), 'url' => CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path . '&page_id=[id]', 'icon' => 'fa fa-globe', 'color' => 'success'];
         }
 
         if ($this->sub_module) {

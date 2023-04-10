@@ -258,7 +258,12 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             }
         }
 
-        return CRUDBooster::redirectBack(cbLang("alert_update_data_success"), 'success');
+        $module = DB::table('cms_moduls')->where('path', Request::input('page'))->first();
+        if ($module) {
+            return redirect(CRUDBooster::adminPath(Request::input('page')))->with(['message' => cbLang("alert_update_seo_success"), 'message_type' => 'success']);
+        }
+
+        return CRUDBooster::redirectBack(cbLang("alert_update_seo_success"), 'success');
 
     }
 }

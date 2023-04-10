@@ -47,7 +47,7 @@
                             <label class="col-sm-2 control-label">{{ 'Keywords ' . $lang->code }}</label>
                             <div class="col-sm-10">
                                 <input type="text" id="keywords_{{ $lang->code }}"
-                                    name="{{ 'keywords_' . $lang->code }}" title="{{ 'keyworkds ' . $lang->code }}"
+                                    name="{{ 'keywords_' . $lang->code }}" title="{{ 'keywords ' . $lang->code }}"
                                     value="{{ $data[$lang->code]->keywords }}" class="form-control">
                                 <a class="btn btn-info add-key-{{ 'keywords_' . $lang->code }}"><span
                                         class="fa fa-plus"></span></a><input type="text"
@@ -90,8 +90,10 @@
             $(".add-key-keywords_" + langs_arr[key].code).click(function() {
                 var oldVal = $("#keywords_" + langs_arr[key].code).val();
                 var newVal = $("#text-key-keywords_" + langs_arr[key].code).val();
-                $("#keywords_" + langs_arr[key].code).val(oldVal + " , " + newVal);
-                $("#text-key-keywords_" + langs_arr[key].code).val("");
+                if (newVal.length) {
+                    $("#keywords_" + langs_arr[key].code).val(oldVal + " , " + newVal);
+                    $("#text-key-keywords_" + langs_arr[key].code).val("");
+                }
             });
         });
 

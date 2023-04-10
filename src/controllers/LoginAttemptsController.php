@@ -12,7 +12,7 @@ class LoginAttemptsController extends \crocodicstudio\crudbooster\controllers\CB
         $this->title_field = "id";
         $this->limit = "20";
         $this->orderby = "id,desc";
-        $this->button_sortable = false;
+        $this->sortable_table = false;
         $this->global_privilege = false;
         $this->button_table_action = true;
         $this->button_bulk_action = true;

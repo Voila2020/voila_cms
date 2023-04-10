@@ -64,12 +64,12 @@
                                 <div class="form-group">
                                     <label>{{ cbLang('Sortable') }}</label>
                                     <label class='radio-inline'>
-                                        <input type='radio' name='button_sortable'
-                                            {{ $cb_button_sortable ? 'checked' : '' }} value='true' /> TRUE
+                                        <input type='radio' name='sortable_table'
+                                            {{ $cb_sortable_table ? 'checked' : '' }} value='true' /> TRUE
                                     </label>
                                     <label class='radio-inline'>
-                                        <input {{ !$cb_button_sortable ? 'checked' : '' }} type='radio'
-                                            name='button_sortable' value='false' /> FALSE
+                                        <input {{ !$cb_sortable_table ? 'checked' : '' }} type='radio'
+                                            name='sortable_table' value='false' /> FALSE
                                     </label>
                                 </div>
                             </div>

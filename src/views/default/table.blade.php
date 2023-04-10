@@ -225,7 +225,7 @@ $total = $result->total();
     @push('bottom')
         <script>
             $(function() {
-                if ("{{ $button_sortable }}" == 1) {
+                if ("{{ $sortable_table }}" == 1) {
                     $('#table_dashboard tbody').sortable({
                         axis: 'y',
                         update: function(event, ui) {

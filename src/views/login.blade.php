@@ -140,11 +140,8 @@
                     </div>
                 @endif
             </form>
-
-
             <br />
             <!--a href="#">I forgot my password</a-->
-
         </div><!-- /.login-box-body -->
 
     </div><!-- /.login-box -->
@@ -168,28 +165,30 @@
                 togglePassword.querySelector('.glyphicon').classList.add('glyphicon-eye-open');
                 togglePassword.querySelector('.glyphicon').classList.remove('glyphicon-eye-close');
             }
-
             // toggle the eye slash icon
-
         });
         const loginButton = document.getElementById('login-button');
-        loginButton.addEventListener('click', function(event) {
-            event.preventDefault();
-            $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
-            grecaptcha.ready(function() {
-                grecaptcha.execute($site_key, {
-                    action: 'login'
-                }).then(function(token) {
-                    const loginForm = document.getElementById('login-form');
-                    const recaptchaInput = document.createElement('input');
-                    recaptchaInput.setAttribute('type', 'hidden');
-                    recaptchaInput.setAttribute('name', 'recaptcha_token');
-                    recaptchaInput.setAttribute('value', token);
-                    loginForm.appendChild(recaptchaInput);
-                    loginForm.submit();
+        var $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
+        var $secret_key = @json(CRUDBooster::getSetting('recaptcha_secret_key'));
+        var keysValidity = false;
+        if ($site_key && $secret_key) {
+            loginButton.addEventListener('click', function(event) {
+                event.preventDefault();
+                grecaptcha.ready(function() {
+                    grecaptcha.execute($site_key, {
+                        action: 'login'
+                    }).then(function(token) {
+                        const loginForm = document.getElementById('login-form');
+                        const recaptchaInput = document.createElement('input');
+                        recaptchaInput.setAttribute('type', 'hidden');
+                        recaptchaInput.setAttribute('name', 'recaptcha_token');
+                        recaptchaInput.setAttribute('value', token);
+                        loginForm.appendChild(recaptchaInput);
+                        loginForm.submit();
+                    });
                 });
             });
-        });
+        }
     </script>
 </body>
 
