@@ -492,6 +492,22 @@ class CBSeeder extends Seeder
                 'dataenum' => '',
                 'helper' => 'max_failed_login_trying',
             ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'recaptcha_site_key',
+                'label' => 'recaptcha_site_key',
+                'content' => '',
+                'content_input_type' => 'text',
+                'group_setting' => 'reCAPTCHA_setting',
+            ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'recaptcha_secret_key',
+                'label' => 'recaptcha_secret_key',
+                'content' => '',
+                'content_input_type' => 'text',
+                'group_setting' => 'reCAPTCHA_setting',
+            ],
         ];
 
         foreach ($data as $row) {
