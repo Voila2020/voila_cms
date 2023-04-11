@@ -485,4 +485,5 @@ return [
     'success_add_backup' => 'The backup has been added successfully',
     'error_add_backup' => 'Some thing went wrong while adding backup !',
     'action_set_seo' => 'Set SEO',
+    'backup_file_size' => 'Size',
 ];

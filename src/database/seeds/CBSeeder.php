@@ -228,7 +228,7 @@ class CBSeeder extends Seeder
                 'icon' => 'fa fa-database',
                 'path' => 'backup',
                 'table_name' => null,
-                'controller' => 'BackupRestoreDB',
+                'controller' => 'BackupRestoreDatabaseController',
                 'is_protected' => 0,
                 'is_active' => 1,
             ],

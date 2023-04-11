@@ -6,7 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
-class BackupRestoreDB extends \crocodicstudio\crudbooster\controllers\CBController
+class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\controllers\CBController
 {
     public function getIndex()
     {

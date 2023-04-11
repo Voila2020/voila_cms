@@ -434,4 +434,6 @@ return [
     'success_add_backup' => 'تم اضافة النسخ الاحتياطي بنجاح',
     'error_add_backup' => 'حدث خطأ ما أثناء اضافة النسخ الاحتياطي !',
     'action_set_seo' => 'اضافة SEO',
+    'backup_file_size' => 'الحجم',
+
 ];

@@ -7,7 +7,7 @@
 | Homepage : http://crudbooster.com
 | ---------------------------------------------------------------------------------------------------------------
 |
-*/
+ */
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Storage;
@@ -34,11 +34,15 @@ if (!function_exists('cbLang')) {
      */
     function cbLang($key, array $replace = [], $locale = null)
     {
-        if (get_setting('default_language'))
+        if (get_setting('default_language')) {
             App::setlocale(get_setting('default_language') == 'english' ? 'en' : 'ar');
+        }
+
         $value = trans('crudbooster.' . $key);
-        if ($value != 'crudbooster.' . $key)
+        if ($value != 'crudbooster.' . $key) {
             return trans("crudbooster." . $key, $replace, $locale);
+        }
+
         return $key;
     }
 }
@@ -82,7 +86,7 @@ if (!function_exists('extract_unit')) {
     /*
     Credits: Bit Repository
     URL: http://www.bitrepository.com/extract-content-between-two-delimiters-with-php.html
-    */
+     */
     function extract_unit($string, $start, $end)
     {
         $pos = stripos($string, $start);
@@ -94,7 +98,6 @@ if (!function_exists('extract_unit')) {
         return $unit;
     }
 }
-
 
 if (!function_exists('now')) {
     function now()
@@ -109,7 +112,7 @@ if (!function_exists('now')) {
 | --------------------------------------------------------------------------------------------------------------
 | $name = name of input
 |
-*/
+ */
 
 if (!function_exists('get_setting')) {
     /**
@@ -165,31 +168,49 @@ if (!function_exists('min_var_export')) {
     {
         if (is_array($input)) {
             $buffer = [];
-            foreach ($input as $key => $value)
+            foreach ($input as $key => $value) {
                 $buffer[] = var_export($key, true) . "=>" . min_var_export($value);
+            }
+
             return "[" . implode(",", $buffer) . "]";
-        } else
+        } else {
             return var_export($input, true);
+        }
+
     }
 }
 
 if (!function_exists('rrmdir')) {
     /*
-    * http://stackoverflow.com/questions/3338123/how-do-i-recursively-delete-a-directory-and-its-entire-contents-files-sub-dir
-    */
+     * http://stackoverflow.com/questions/3338123/how-do-i-recursively-delete-a-directory-and-its-entire-contents-files-sub-dir
+     */
     function rrmdir($dir)
     {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
                 if ($object != "." && $object != "..") {
-                    if (is_dir($dir . "/" . $object))
+                    if (is_dir($dir . "/" . $object)) {
                         rrmdir($dir . "/" . $object);
-                    else
+                    } else {
                         unlink($dir . "/" . $object);
+                    }
+
                 }
             }
             rmdir($dir);
         }
+    }
+}
+
+if (!function_exists('formatBytes')) {
+    function formatBytes($bytes, $precision = 2)
+    {
+        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= pow(1024, $pow);
+        return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }

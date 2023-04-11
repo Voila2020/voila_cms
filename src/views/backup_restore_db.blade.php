@@ -22,6 +22,7 @@
                 $directory = storage_path('app\backups');
                 if (File::exists($directory)) {
                     $files = File::files($directory);
+                    $files = array_reverse($files);
                 }
             @endphp
             <form id='form-table' method='post' action=''>
@@ -35,6 +36,11 @@
                                     {{ cbLang('backup') }}
                                 </span>
                             </th>
+                            <th width="20%">
+                                <span class="tbl-head">
+                                    {{ cbLang('backup_file_size') }}
+                                </span>
+                            </th>
                             <th width="auto">
                                 <span class="tbl-head">
                                     {{ cbLang('action') }}
@@ -45,8 +51,13 @@
                     <tbody>
                         @if ($files)
                             @foreach ($files as $key => $file)
+                                @php
+                                    $filesize = $file->getSize();
+                                    $humanSize = formatBytes($filesize);
+                                @endphp
                                 <tr>
                                     <td id="backup_name">{{ $file->getFilename() }}</td>
+                                    <td id="backup_fileSize">{{ $humanSize }}</td>
                                     <td id="backup_action">
                                         <div class="button_action">
                                             <a class="btn btn-xs btn-success" title="Restore Database"
