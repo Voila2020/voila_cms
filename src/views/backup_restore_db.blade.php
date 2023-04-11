@@ -31,12 +31,12 @@
                 <table id='table_dashboard' class="table table-hover table-striped table-bordered">
                     <thead class="table-head">
                         <tr class="active">
-                            <th width="20%">
+                            <th width="7%">
                                 <span class="tbl-head">
                                     {{ cbLang('backup') }}
                                 </span>
                             </th>
-                            <th width="20%">
+                            <th width="auto">
                                 <span class="tbl-head">
                                     {{ cbLang('backup_file_size') }}
                                 </span>

@@ -372,17 +372,17 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
                     if ($item->title == 'email' || $item->title == 'text') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'radio') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'select') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         $element_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
 
                         foreach ($array_values as $filed) {
@@ -456,17 +456,17 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
                     if ($item->title == 'email' || $item->title == 'text') {
                         $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
                             $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'radio') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
                             $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'select') {
-                        $array_values = explode(',', $item->values);
+                        $array_values = explode('|', $item->values);
                         $elemnt_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
 
                         foreach ($array_values as $filed) {
