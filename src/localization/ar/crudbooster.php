@@ -61,6 +61,7 @@ return [
     'alert_add_data_success' => 'تم اضافة البيانات !',
     'alert_add_data_failed' => 'فشل حفظ البيانات !',
     'alert_update_data_success' => 'تم تحديث البيانات !',
+    'alert_update_seo_success' => 'تم تحديث بيانات ال SEO',
     'alert_update_data_failed' => 'فشل تحديث البيانات',
     'alert_delete_data_success' => 'تم حذف البيانات !',
     'alert_want_to_logout' => 'هل أنت متأكد من تسجيل الخروج ?',

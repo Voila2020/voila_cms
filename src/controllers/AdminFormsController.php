@@ -2,9 +2,13 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
+use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBController
 {
@@ -349,7 +353,8 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . url('/') . '/submit-form/' . $form->id . "' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit-form/' . $form->id) . "' class=' well' style='background:#FFF' >";
+            $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
                 'fields.title',
@@ -431,8 +436,8 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $form = DB::table('forms')->find($id);
         $elemnt_form = "";
         if ($form) {
-            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::adminPath('request/form') . '/' . $form->id . "' class=' well' style='background:#FFF' >";
-            $elemnt_form .= `{{ csrf_token() }}`;
+            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit-form') . '/' . $form->id . "' class=' well' style='background:#FFF' >";
+            $elemnt_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
                 'fields.title',
@@ -481,5 +486,124 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
             }
             return view('crudbooster::form_builder.form', array('data' => $elemnt_form));
         }
+    }
+
+    public function postSubmitForm(Request $request, $id)
+    {
+        $form = DB::table('forms')->find($id);
+        $fields = DB::table('form_field')->select(
+            'form_field.*',
+            'fields.title',
+            'fields.id as field_id'
+        )
+            ->join('fields', 'form_field.field_id', '=', 'fields.id')
+            ->join('forms', 'form_field.form_id', '=', 'forms.id')
+            ->where('form_field.form_id', $form->id)->orderBy('form_field.sorting', 'asc')->get();
+
+        $validations = [];
+
+        foreach ($fields as $item) {
+            $valid = ($item->required_filed == 'Yes') ? 'required' : null;
+            if ($valid) {
+                $validations[$this->stripSpace($item->label_filed)] = $valid;
+            }
+        }
+        $request->validate($validations);
+
+        //--------------------------------------//
+
+        $uniqueFields = DB::table('form_field')->where('form_id', $id)->where('unique_field', 1)->get();
+        foreach ($uniqueFields as $field) {
+
+            $applicationField = DB::table('applications_fields')
+                ->where("form_id", $id)
+                ->where("field_id", $field->id)
+                ->where("landing_page_id", $request->landing_page_id)
+                ->where("value", $request->input($this->stripSpace($field->label_filed)))
+                ->get()
+                ->count();
+            if ($applicationField) {
+                $landingPage = DB::table('landing_pages')
+                    ->where('id', $request->landing_page_id)->first();
+                if ($landingPage->is_rtl) {
+                    App::setlocale("ar");
+                }
+                return redirect()->back()->with("error", $field->label_filed . " " . __("already_exists"));
+            }
+        }
+
+        //--------------------------------------//
+
+        $applicationID = DB::table('applications')->insertGetId([
+            'form_id' => $form->id,
+            'ip' => request()->ip(),
+            'landing_page_id' => $request->landing_page_id,
+            'active' => 1,
+            'updated_at' => Carbon::now(),
+        ]);
+
+        $submit = "<table class='table'><thead><tr>";
+        foreach ($fields as $item) {
+            $submit .= "<th>" . $item->label_filed . "</th>";
+        }
+        $submit .= "</tr></thead><body><tr>";
+        foreach ($fields as $item) {
+            if (is_array($request->input($this->stripSpace($item->label_filed)))) {
+                $submit .= "<td>";
+                foreach ($request->input($this->stripSpace($item->label_filed)) as $val) {
+                    $submit .= $val . ",";
+                }
+                $submit .= "</td>";
+            } else {
+                $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
+            }
+
+            $applicationField = DB::table('applications_fields')->insert([
+                'application_id' => $applicationID,
+                'form_id' => $item->form_id,
+                'field_id' => $item->id,
+                'landing_page_id' => $request->landing_page_id,
+                'value' => $request->input($this->stripSpace($item->label_filed)),
+            ]);
+        }
+
+        $submit .= "</tr></tbody></table>";
+
+        DB::table('applications')->where('id', $applicationID)->update([
+            'response' => $submit,
+        ]);
+
+        if ($request->landing_page_id) {
+            $landingPage = DB::table('landing_pages')->find($request->landing_page_id);
+            try {
+                CRUDBooster::sendEmail([
+                    'to' => $landingPage->send_email_to,
+                    'data' => [
+                        'response' => $submit,
+                    ],
+                    'template' => 'admin-landing-page',
+                    'attachments' => [],
+                ]);
+            } catch (Exception $e) {
+                Log::log("error", "Log error $e");
+            }
+
+            try {
+                CRUDBooster::sendEmail([
+                    'to' => $request->email,
+                    'data' => [
+                        'response' => $landingPage->response,
+                    ],
+                    'template' => 'customer-landing-page',
+                    'attachments' => [],
+                ]);
+            } catch (Exception $e) {
+                Log::log("error", "Log error $e");
+            }
+
+            return redirect()->to("thankyou/" . $request->landing_page_id);
+        }
+
+        return back()->with('success', $form->response);
     }
 }

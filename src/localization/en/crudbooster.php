@@ -66,6 +66,7 @@ return [
     'alert_add_data_success' => 'The data has been added !',
     'alert_add_data_failed' => 'Failed to save the data !',
     'alert_update_data_success' => 'The data has been updated !',
+    'alert_update_seo_success' => 'The SEO has been updated !',
     'alert_update_data_failed' => 'Failed to update the data',
     'alert_delete_data_success' => 'Delete the data success !',
     'alert_want_to_logout' => 'Do you want to logout ?',
