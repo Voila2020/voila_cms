@@ -50,15 +50,15 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $this->form[] = ['label' => 'Send To', 'name' => 'send_to', 'type' => 'email', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
         $this->form[] = ['label' => 'Row Type', 'name' => 'row_type', 'type' => 'select', 'width' => 'col-sm-10', 'dataenum' => 'col-lg-12|col 1 ;col-lg-6|col 2;col-lg-9|col 3'];
         $this->form[] = ['label' => 'Response', 'name' => 'response', 'type' => 'textarea', 'validation' => 'required|string|min:5|max:5000', 'width' => 'col-sm-10'];
+        $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'switch', 'width' => 'col-sm-9'];
 
-        $columns[] = ['label' => 'Fileds', 'name' => 'field_id', 'type' => 'datamodal', 'datamodal_table' => 'fields', 'datamodal_columns' => 'title', 'datamodal_select_to' => 'title'];
+        $columns[] = ['label' => 'Fileds', 'name' => 'field_id', 'type' => 'select', 'datatable' => 'fields,title'];
         $columns[] = ['label' => 'label', 'name' => 'label_filed', 'type' => 'text', 'formula' => "[label_filed]", 'required' => true];
-        $columns[] = ['label' => 'required', 'name' => 'required_filed', "type" => "radio", 'formula' => "[required_filed]", 'dataenum' => 'Yes;No', 'required' => true];
-        $columns[] = ['label' => 'Unique', 'name' => 'unique_field', "type" => "radio", 'dataenum' => '1|Yes;0|No', 'required' => true];
+        $columns[] = ['label' => 'required', 'name' => 'required_filed', "type" => "switch", 'required' => true];
+        $columns[] = ['label' => 'Unique', 'name' => 'unique_field', "type" => "switch", 'required' => true];
         // $columns[] = ['label' => 'values', 'name' => 'values', 'formula' => "[values]", "type" => "text"];
         $columns[] = ['label' => 'values', 'name' => 'values', "type" => "multitext"];
         $this->form[] = ['label' => 'Fileds', 'name' => 'form_field', 'type' => 'child', 'columns' => $columns, 'table' => 'form_field', 'foreign_key' => 'form_id'];
-        $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'radio', 'width' => 'col-sm-9', 'dataenum' => '1|Yes;0|No'];
 
         # END FORM DO NOT REMOVE THIS LINE
 

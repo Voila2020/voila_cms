@@ -5,9 +5,9 @@
     <div class="container">
             @foreach($data as $item)
                <div class="well">
-                    <strong>Date: </strong> {{$item->created_at}}<strong style="margin-left: 20px">IP: </strong> {{$item->ip}}
+                    <strong>Date: </strong> {{$item->updated_at}}<strong style="margin-left: 20px">IP: </strong> {{$item->ip}}
                     {!! $item->response !!}
-    
+
                </div>
             @endforeach
     </div>
