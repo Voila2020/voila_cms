@@ -16,8 +16,9 @@
     <div class="{{ $col_width ? $col_width . ' empty-filemanager-col_' . $name : 'col-sm-10 filemanager-col_' . $name }}"
         style="{{ $value ? 'display: none' : '' }}">
         <div class="input-group">
-            <input id="{{ $name }}" class="form-control hide" type="text" value='{{ $value }}'
-                name="{{ $name }}">
+            <input id="{{ $name }}"
+                filemanager_type="{{ @$form['filemanager_type'] == 'file' ? 'file' : 'image' }}"
+                class="form-control hide" type="text" value='{{ $value }}' name="{{ $name }}">
 
             <a data-lightbox="roadtrip" class="hide" id="link-{{ $name }}" href=""
                 style="{{ @$form['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
@@ -172,15 +173,13 @@
 
         $(function() {
             var id = '#modalInsertPhotosingle_{{ $name }}';
-            console.log("id =>", id, " name=>", Name);
             $(id).on('hidden.bs.modal', function() {
-                console.log("closed the main filemanager", " {{ $name }} ", Name)
                 var check = $('#' + Name).val();
                 if (check != "") {
                     check = check.substring(1);
-                    if ("{{ @$form['filemanager_type'] }}" == 'file')
+                    if ($('#_' + Name).attr("value") == 'file_type') {
                         $("#file-" + Name).html(check);
-                    else
+                    } else
                         $("#img-" + Name).attr("src", '{{ URL::asset('') }}' + check);
                     $("#link-" + Name).attr("href", '{{ URL::asset('') }}' + check);
                     $("#link-" + Name).removeClass("hide");
