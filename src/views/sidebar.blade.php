@@ -156,6 +156,11 @@
                         <a href='{{ Route('ModulsStatusControllerGetIndex') }}'><i class='fa fa-bars'></i>
                             <span>{{ cbLang('Module_Status') }}</span></a>
                     </li>
+                    <li
+                        class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/website_languages') ? 'active' : '' }}">
+                        <a href='{{ CRUDBooster::adminPath('website_languages') }}'><i class='fa fa-language'></i>
+                            <span>{{ cbLang('website_languages') }}</span></a>
+                    </li>
                     <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/backup') ? 'active' : '' }}">
                         <a href='{{ CRUDBooster::adminPath('backup') }}'><i class='fa fa-database'></i>
                             <span>{{ cbLang('Backup_Restore_DB') }}</span></a>

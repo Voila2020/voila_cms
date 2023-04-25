@@ -160,8 +160,8 @@
                         }
 
                         @eval("if($query) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  }");
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }");
                         ?>
                     @endforeach
                     <tr class='{{ $tr_color }}' id='{{ $html_contents['data'][$i]->id }}'>
@@ -243,7 +243,7 @@ $total = $result->total();
                                     table_name: table
                                 },
                                 type: 'POST',
-                                url: 'sort-table',
+                                url: "{{ Crudbooster::mainPath('sort-table') }}",
                                 success: function(data) {
                                     $('html, body').css("cursor", "auto");
                                 },

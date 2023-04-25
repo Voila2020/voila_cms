@@ -82,7 +82,11 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             //             /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;";
 
             # save the backup to a file
+
             $filename = 'Backup-' . date('Y-m-d-H-i-s') . '.sql';
+            if (!File::isDirectory(storage_path('app/backups'))) {
+                File::makeDirectory(storage_path('app/backups'), 0755, true);
+            }
             $path = storage_path('app/backups/' . $filename);
             file_put_contents($path, $sql);
 

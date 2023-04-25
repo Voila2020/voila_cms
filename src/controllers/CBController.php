@@ -1489,7 +1489,7 @@ class CBController extends Controller
                 }
             }
             # insert the new images
-            if ($model_images->count) {
+            if (count($model_images)) {
                 foreach ($model_images as $new_image) {
                     DB::table('model_images')->insert([
                         'model_type' => $this->table,
