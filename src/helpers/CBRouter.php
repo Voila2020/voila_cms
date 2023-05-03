@@ -117,13 +117,11 @@ class CBRouter
         ], function () {
 
             // Todo: change table
-            if (request()->is(config('crudbooster.ADMIN_PATH'))) {
-                $menus = db('cms_menus')->where('is_dashboard', 1)->first();
-                if ($menus) {
-                    Route::get('/', 'StatisticBuilderController@getDashboard');
-                } else {
-                    CRUDBooster::routeController('/', 'AdminController', static::$cb_namespace);
-                }
+            $menus = db('cms_menus')->where('is_dashboard', 1)->first();
+            if ($menus) {
+                Route::get('/', 'StatisticBuilderController@getDashboard');
+            } else {
+                CRUDBooster::routeController('/', 'AdminController', static::$cb_namespace);
             }
 
             CRUDBooster::routeController('api_generator', 'ApiCustomController', static::$cb_namespace);

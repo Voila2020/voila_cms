@@ -184,7 +184,7 @@
                     $("#link-" + Name).attr("href", '{{ URL::asset('') }}' + check);
                     $("#link-" + Name).removeClass("hide");
                     $("#thumbnail-" + Name).attr("src", '{{ URL::asset('') }}' + check);
-                    $("#thumbnail-" + Name).attr("value", '{{ URL::asset('') }}' + check);
+                    $("#thumbnail-" + Name).attr("value", check);
                 }
             });
             resizeFilemanagerPopout();

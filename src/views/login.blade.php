@@ -168,23 +168,29 @@
             // toggle the eye slash icon
         });
         const loginButton = document.getElementById('login-button');
+        const loginForm = document.getElementById('login-form');
         var $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
         var $secret_key = @json(CRUDBooster::getSetting('recaptcha_secret_key'));
         var keysValidity = false;
         if ($site_key && $secret_key) {
-            loginButton.addEventListener('click', function(event) {
+            loginForm.addEventListener('submit', function(event) {
                 event.preventDefault();
                 grecaptcha.ready(function() {
                     grecaptcha.execute($site_key, {
                         action: 'login'
                     }).then(function(token) {
-                        const loginForm = document.getElementById('login-form');
                         const recaptchaInput = document.createElement('input');
                         recaptchaInput.setAttribute('type', 'hidden');
                         recaptchaInput.setAttribute('name', 'recaptcha_token');
                         recaptchaInput.setAttribute('value', token);
                         loginForm.appendChild(recaptchaInput);
-                        loginForm.submit();
+                        var formData = new FormData(document.getElementById("login-form"));
+                        fetch('{{ route('postLogin') }}', {
+                            method: 'POST',
+                            body: formData
+                        }).then(function(response) {
+                            location.reload();
+                        });
                     });
                 });
             });

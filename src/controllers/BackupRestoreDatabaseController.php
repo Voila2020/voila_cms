@@ -24,6 +24,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             $tables = "*";
             #Connect to the database
             $connection = mysqli_connect($host, $username, $password, $database);
+            mysqli_set_charset($connection, "utf8");
 
             /********************* Tables *********************/
             if ($tables == '*') {
@@ -106,12 +107,14 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
         foreach ($tables as $table => $type) {
             $num_rows_query = 100;
             # query to get all records in table
+            mysqli_query($connection, 'SET NAMES utf8');
             $result = mysqli_query($connection, 'SELECT * FROM ' . $table);
             $num_fields = (($___mysqli_tmp = mysqli_num_fields($result)) ? $___mysqli_tmp : false);
 
             if ($type == "Table") {
                 # query to get structre of table (structure fileds)
                 $sql .= 'DROP TABLE IF EXISTS `' . $table . '`;';
+                mysqli_query($connection, 'SET NAMES utf8');
                 $row2 = mysqli_fetch_row(mysqli_query($connection, 'SHOW CREATE TABLE `' . $table . '`'));
 
                 $sql .= "\n\n" . $row2[1] . ";\n\n";
@@ -143,7 +146,6 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
                     $sql .= $temp_insert;
                     $sql .= ";\n";
                     $temp_insert = "";
-
                 }
                 $sql .= "\n\n\n";
             }
