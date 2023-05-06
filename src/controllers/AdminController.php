@@ -65,9 +65,14 @@ class AdminController extends CBController
         $validator = Validator::make(Request::all(), [
             'email' => 'required|email|exists:' . config('crudbooster.USER_TABLE'),
             'password' => 'required',
-            'g-recaptcha-response' => ['required', new ReCaptcha],
         ]);
-        
+
+        if (CRUDBooster::getSetting('recaptcha_site_key') && CRUDBooster::getSetting('recaptcha_secret_key')) {
+            $validator->sometimes('g-recaptcha-response', ['required', new ReCaptcha], function ($input) {
+                return true;
+            });
+        }
+
         if ($validator->fails()) {
             $message = $validator->errors()->all();
             return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
