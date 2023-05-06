@@ -53,8 +53,20 @@ class CrudboosterInstallationCommand extends Command
                         File::deleteDirectory(public_path('landing_page'));
                     }
 
-                    if (file_exists(resource_path('lang'))) {
-                        File::deleteDirectory(resource_path('lang'));
+                    $langDirectories = [
+                        resource_path('lang/ar'),
+                        resource_path('lang/en'),
+                        resource_path('lang/es'),
+                        resource_path('lang/id'),
+                        resource_path('lang/pt_br'),
+                        resource_path('lang/ru'),
+                        resource_path('lang/tr'),
+                        resource_path('lang/zh-CN'),
+                    ];
+                    foreach ($langDirectories as $langDirectory) {
+                        if (file_exists($langDirectory)) {
+                            File::deleteDirectory($langDirectory);
+                        }
                     }
 
                     if (file_exists(config_path('crudbooster.php'))) {

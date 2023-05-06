@@ -2,13 +2,13 @@
 
 namespace crocodicstudio\crudbooster;
 
-use crocodicstudio\crudbooster\commands\CrudboosterVersionCommand;
-use crocodicstudio\crudbooster\commands\Mailqueues;
-use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\ServiceProvider;
 use crocodicstudio\crudbooster\commands\CrudboosterInstallationCommand;
 use crocodicstudio\crudbooster\commands\CrudboosterUpdateCommand;
+use crocodicstudio\crudbooster\commands\CrudboosterVersionCommand;
+use crocodicstudio\crudbooster\commands\Mailqueues;
 use Illuminate\Foundation\AliasLoader;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\ServiceProvider;
 
 class CRUDBoosterServiceProvider extends ServiceProvider
 {
