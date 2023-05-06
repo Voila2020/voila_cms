@@ -159,7 +159,7 @@
                     <li
                         class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/website_languages') ? 'active' : '' }}">
                         <a href='{{ CRUDBooster::adminPath('website_languages') }}'><i class='fa fa-language'></i>
-                            <span>{{ cbLang('website_languages') }}</span></a>
+                            <span>{{ cbLang('Website_Languages') }}</span></a>
                     </li>
                     <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/backup') ? 'active' : '' }}">
                         <a href='{{ CRUDBooster::adminPath('backup') }}'><i class='fa fa-database'></i>
