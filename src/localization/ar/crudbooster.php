@@ -435,6 +435,7 @@ return [
     'error_add_backup' => 'حدث خطأ ما أثناء اضافة النسخ الاحتياطي !',
     'action_set_seo' => 'اضافة SEO',
     'backup_file_size' => 'الحجم',
+    'reCAPTCHA_setting' => 'reCaptcha اعدادات',
 
     'alert_recaptcha' => 'حدث خطأ في reCAPTCHA. الرجاء معاودة المحاولة في وقت لاحق',
 

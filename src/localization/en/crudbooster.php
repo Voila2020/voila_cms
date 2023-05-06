@@ -486,6 +486,7 @@ return [
     'error_add_backup' => 'Some thing went wrong while adding backup !',
     'action_set_seo' => 'Set SEO',
     'backup_file_size' => 'Size',
+    'reCAPTCHA_setting' => 'reCaptcha Settings',
 
     'alert_recaptcha' => 'There was an error with the reCAPTCHA. Please try again later',
 ];
