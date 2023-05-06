@@ -436,4 +436,6 @@ return [
     'action_set_seo' => 'اضافة SEO',
     'backup_file_size' => 'الحجم',
 
+    'alert_recaptcha' => 'حدث خطأ في reCAPTCHA. الرجاء معاودة المحاولة في وقت لاحق',
+
 ];

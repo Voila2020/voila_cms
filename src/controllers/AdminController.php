@@ -2,6 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use App\Rules\ReCaptcha;
 use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
@@ -61,15 +62,14 @@ class AdminController extends CBController
 
     public function postLogin()
     {
-
         $validator = Validator::make(Request::all(), [
             'email' => 'required|email|exists:' . config('crudbooster.USER_TABLE'),
             'password' => 'required',
+            'g-recaptcha-response' => ['required', new ReCaptcha],
         ]);
-
+        
         if ($validator->fails()) {
             $message = $validator->errors()->all();
-
             return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
         }
 

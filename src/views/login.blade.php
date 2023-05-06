@@ -92,7 +92,7 @@
             @endif
 
             <p class='login-box-msg'>{{ cbLang('login_message') }}</p>
-            <form id="login-form" autocomplete='off' action="{{ route('postLogin') }}" method="post">
+            <form id="login-form" action="{{ route('postLogin') }}" method="POST" autocomplete='off'>
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
                 @if (!empty(config('services.google')))
@@ -136,8 +136,8 @@
                     </div>
                 </div>
                 @if (CRUDBooster::getSetting('recaptcha_secret_key'))
-                    <div class="g-recaptcha" data-sitekey="{{ CRUDBooster::getSetting('recaptcha_secret_key') }}">
-                    </div>
+                    <input id="g-recaptcha-response" type="hidden" name="g-recaptcha-response"
+                        data-sitekey="{{ CRUDBooster::getSetting('recaptcha_secret_key') }}" />
                 @endif
             </form>
             <br />
@@ -173,25 +173,11 @@
         var $secret_key = @json(CRUDBooster::getSetting('recaptcha_secret_key'));
         var keysValidity = false;
         if ($site_key && $secret_key) {
-            loginForm.addEventListener('submit', function(event) {
-                event.preventDefault();
-                grecaptcha.ready(function() {
-                    grecaptcha.execute($site_key, {
-                        action: 'login'
-                    }).then(function(token) {
-                        const recaptchaInput = document.createElement('input');
-                        recaptchaInput.setAttribute('type', 'hidden');
-                        recaptchaInput.setAttribute('name', 'recaptcha_token');
-                        recaptchaInput.setAttribute('value', token);
-                        loginForm.appendChild(recaptchaInput);
-                        var formData = new FormData(document.getElementById("login-form"));
-                        fetch('{{ route('postLogin') }}', {
-                            method: 'POST',
-                            body: formData
-                        }).then(function(response) {
-                            location.reload();
-                        });
-                    });
+            grecaptcha.ready(function() {
+                grecaptcha.execute($site_key, {
+                    action: '{{ config('crudbooster.ADMIN_PATH') }}/login'
+                }).then(function(token) {
+                    document.getElementById('g-recaptcha-response').value = token;
                 });
             });
         }

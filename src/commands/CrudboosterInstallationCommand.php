@@ -91,6 +91,10 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(resource_path('landing_page_builder'), 0777);
             }
 
+            if (!file_exists(app_path('Rules'))) {
+                mkdir(app_path('Rules'), 0777);
+            }
+
             $this->info('Publishing crudbooster assets...');
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);
 
