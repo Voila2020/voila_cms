@@ -227,14 +227,15 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
     public function postSeoStore(Request $request)
     {
         $data = Request::all();
-        $conditions = array();
         $languages = DB::table('languages')->get();
 
         foreach ($languages as $lang) {
+            $conditions = array();
             array_push($conditions, ['page', '=', Request::input('page')]);
             array_push($conditions, ['page_id', '=', Request::input('page_id') ?: null]);
             array_push($conditions, ['language', '=', $lang->code]);
             $oldSEO = DB::table('cms_seo')->where($conditions)->first();
+
             if ($oldSEO) {
                 DB::table('cms_seo')->where($conditions)->update([
                     'title' => $data['title_' . $lang->code],
