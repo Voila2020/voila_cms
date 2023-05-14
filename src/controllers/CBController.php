@@ -593,9 +593,10 @@ class CBController extends Controller
                         if (!empty($matched_upload_word)) {
                             $new_upload_word = config('crudbooster.filemanager_thumbs_base_path');
                             $new_value = preg_replace('/\b' . $matched_upload_word . '\b/', $new_upload_word, $value, 1);
+                            $img_value = preg_replace('/\b' . $matched_upload_word . '\b/', config('crudbooster.filemanager_upload_dir'), $value, 1);
                         }
                         $pic = (strpos($new_value, 'http://') !== false) ? $new_value : asset($new_value);
-                        $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $pic . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
+                        $value = "<a data-lightbox='roadtrip'  rel='group_{{$table}}' title='$label: $title' href='" . $img_value . "'><img width='40px' height='40px' src='" . $pic . "'/></a>";
                     }
                 }
 

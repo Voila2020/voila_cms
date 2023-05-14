@@ -144,15 +144,22 @@
     });
 
     $x('body').on('click', '.remove-key', function() {
+
         var cObj = $x(this);
         if (confirm("Are you sure want to remove this item?")) {
             $x.ajax({
                 url: cObj.data('action'),
                 method: 'POST',
+                beforeSend: function() {
+                    $('.main-overlay').css('display', 'block');
+                    $('.spinner-loader').css('display', 'block');
+                },
                 success: function(data) {
                     cObj.parents("tr").remove();
-                    alert("Your imaginary file has been deleted.");
-                }
+                },
+            }).done(function(data) {
+                $('.main-overlay').css('display', 'none');
+                $('.spinner-loader').css('display', 'none');
             });
         }
     });

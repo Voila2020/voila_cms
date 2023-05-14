@@ -2,6 +2,7 @@
 
 namespace crocodicstudio\crudbooster\controllers;
 
+use App\Rules\ReCaptcha;
 use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
@@ -9,13 +10,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBController
 {
 
     public function cbInit()
     {
-
         # START CONFIGURATION DO NOT REMOVE THIS LINE
         $this->title_field = "name";
         $this->limit = "20";
@@ -353,7 +354,7 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit-form/' . $form->id) . "' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit/' . $form->id) . "' class=' well' style='background:#FFF' >";
             $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
@@ -393,8 +394,14 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
 
                     $element_form .= "</div>";
                 }
-                $element_form .= "<div class='form-group'>";
+                $recaptcha_secret_key = CRUDBooster::getSetting('recaptcha_secret_key');
 
+                if ($recaptcha_secret_key) {
+                    $element_form .= "
+                <input id='g-recaptcha-response' type='hidden' name='g-recaptcha-response'
+                    data-sitekey='{{ $recaptcha_secret_key }}' />";
+                }
+                $element_form .= "<div class='form-group'>";
                 $element_form .= "<input type='hidden' name='landing_page_id' value='" . optional($request)->landing_page_id . "' />";
                 $element_form .= "<input type='submit' class='btn btn-primary' value='SEND' />";
                 $element_form .= "</div>";
@@ -429,6 +436,7 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
 
     public function getShowForm($id, Request $request)
     {
+
         if (!CRUDBooster::myId()) {
             return redirect(config('crudbooster.ADMIN_PATH') . '/login');
         }
@@ -436,7 +444,7 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         $form = DB::table('forms')->find($id);
         $elemnt_form = "";
         if ($form) {
-            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit-form') . '/' . $form->id . "' class=' well' style='background:#FFF' >";
+            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit') . '/' . $form->id . "' class=' well' style='background:#FFF' >";
             $elemnt_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
@@ -477,6 +485,13 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
 
                     $elemnt_form .= "</div>";
                 }
+                $recaptcha_secret_key = CRUDBooster::getSetting('recaptcha_secret_key');
+                if ($recaptcha_secret_key) {
+                    $elemnt_form .= "
+                <input id='g-recaptcha-response' type='hidden' name='g-recaptcha-response'
+                    data-sitekey='{{ $recaptcha_secret_key }}' />";
+                }
+
                 $elemnt_form .= "<div class='form-group'>";
 
                 $elemnt_form .= "<input type='submit' class='btn btn-primary' value='SEND' />";
@@ -488,7 +503,7 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
         }
     }
 
-    public function postSubmitForm(Request $request, $id)
+    public function postSubmit(Request $request, $id)
     {
         $form = DB::table('forms')->find($id);
         $fields = DB::table('form_field')->select(
@@ -499,6 +514,15 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
             ->join('fields', 'form_field.field_id', '=', 'fields.id')
             ->join('forms', 'form_field.form_id', '=', 'forms.id')
             ->where('form_field.form_id', $form->id)->orderBy('form_field.sorting', 'asc')->get();
+
+        $validator = Validator::make($request->all(), [
+            "g-recaptcha-response" => ['required', new ReCaptcha],
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->all();
+            return redirect()->back()->with(['message' => implode(', ', $message), 'message_type' => 'danger']);
+        }
 
         $validations = [];
 
@@ -606,4 +630,5 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
 
         return back()->with('success', $form->response);
     }
+
 }
