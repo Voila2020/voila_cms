@@ -11,7 +11,7 @@ $this->script_js = "
 ```
 
 ## What's Next
-- [How To Put Your Own CSS Stylesheet](./how-to-put-own-css.md)
+- [How To Send E-mail](./how-to-send-Email.md)
 
 ## Table Of Contents
 - [Back To Index](./index.md)
