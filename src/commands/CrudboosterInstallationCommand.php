@@ -64,8 +64,8 @@ class CrudboosterInstallationCommand extends Command
                         resource_path('lang/zh-CN'),
                     ];
                     foreach ($langDirectories as $langDirectory) {
-                        if (file_exists($langDirectory)) {
-                            File::deleteDirectory($langDirectory);
+                        if (file_exists($langDirectory . '/crudbooster.php')) {
+                            unlink($langDirectory . '/crudbooster.php');
                         }
                     }
 

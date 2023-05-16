@@ -75,7 +75,7 @@ class CBController extends Controller
 
     public $page_seo = false;
 
-    public $record_seo = true;
+    public $record_seo = false;
 
     public $button_addmore = true;
 
