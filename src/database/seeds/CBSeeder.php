@@ -40,19 +40,22 @@ class CBSeeder extends Seeder
         # User End
 
         # Email Templates
-        DB::table('cms_email_templates')->insert([
-            'created_at' => date('Y-m-d H:i:s'),
-            'name' => 'Email Template Forgot Password Backend',
-            'slug' => 'forgot_password_backend',
-            'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
-            'template' => '<mjml><mj-body id="irdi"></mj-body></mjml>',
-            'description' => 'Forgot Password',
-            'from_name' => 'Voila System',
-            'from_email' => 'test@voila.digital',
-            'cc_email' => null,
-            'priority' => 3,
-        ]);
-        $this->command->info("Create email templates completed");
+        $pass_temp_email = DB::table('cms_email_templates')->where('slug', 'forgot_password_backend')->get();
+        if (!count($pass_temp_email)) {
+            DB::table('cms_email_templates')->insert([
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'Email Template Forgot Password Backend',
+                'slug' => 'forgot_password_backend',
+                'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
+                'template' => '<mjml><mj-body id="irdi"></mj-body></mjml>',
+                'description' => 'Forgot Password',
+                'from_name' => 'Voila System',
+                'from_email' => 'test@voila.digital',
+                'cc_email' => null,
+                'priority' => 3,
+            ]);
+            $this->command->info("Create email templates completed");
+        }
 
         # CB Modules
         $data = [
