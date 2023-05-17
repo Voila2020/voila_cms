@@ -4,6 +4,7 @@ namespace crocodicstudio\crudbooster\middlewares;
 
 use Carbon\Carbon;
 use Closure;
+use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Request;
@@ -18,7 +19,7 @@ class CBAuthAttempts
         # if matches password
         $cms_login_attempts = DB::table('cms_login_attempts')->where('ip_address', $ip_address)->first();
         if (Hash::check($request->input('password'), $user->password)) {
-            if (($cms_login_attempts && $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString()) > intval(get_setting('block_user_in_hours')))
+            if (($cms_login_attempts && $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString()) > intval(get_setting('block_ip_in_hours')))
                 || !$cms_login_attempts->blocked_at
             ) {
                 DB::table('cms_login_attempts')->where('ip_address', $ip_address)
@@ -43,7 +44,7 @@ class CBAuthAttempts
         if ($cms_login_attempts->blocked_at) {
             $diffInHours = $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString());
             # Still expired
-            if ($diffInHours < intval(get_setting('block_user_in_hours'))) {
+            if ($diffInHours < intval(get_setting('block_ip_in_hours'))) {
                 return redirect()->back()->with([
                     'message' => $block_msg,
                     'message_type' => 'danger',
