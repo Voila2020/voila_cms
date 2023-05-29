@@ -13,14 +13,40 @@ class CreateLanguages extends Migration
      */
     public function up()
     {
-        Schema::create('languages', function (Blueprint $table) {
-            $table->increments('id');
-            $table->string('name');
-            $table->string('code');
-            $table->tinyInteger('active')->nullable();
-            $table->tinyInteger('default')->nullable();
-            $table->timestamps();
-        });
+        // Check if the table already exists
+        if (!Schema::hasTable('languages')) {
+            Schema::create('languages', function (Blueprint $table) {
+                $table->increments('id');
+                $table->string('name');
+                $table->string('code');
+                $table->tinyInteger('active')->nullable();
+                $table->tinyInteger('default')->nullable();
+                $table->timestamps();
+            });
+        } else {
+            // Check if each column exists, and create it if not
+            if (!Schema::hasColumn('languages', 'name')) {
+                Schema::table('languages', function (Blueprint $table) {
+                    $table->string('name');
+                });
+            }
+            if (!Schema::hasColumn('languages', 'code')) {
+                Schema::table('languages', function (Blueprint $table) {
+                    $table->string('code');
+                });
+            }
+            if (!Schema::hasColumn('languages', 'active')) {
+                Schema::table('languages', function (Blueprint $table) {
+                    $table->tinyInteger('active')->nullable();
+                });
+            }
+            if (!Schema::hasColumn('languages', 'default')) {
+                Schema::table('languages', function (Blueprint $table) {
+                    $table->tinyInteger('default')->nullable();
+                });
+            }
+            // You can add more checks for additional columns if needed
+        }
     }
 
     /**
