@@ -167,8 +167,6 @@
             }
             // toggle the eye slash icon
         });
-        const loginButton = document.getElementById('login-button');
-        const loginForm = document.getElementById('login-form');
         var $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
         var $secret_key = @json(CRUDBooster::getSetting('recaptcha_secret_key'));
         var keysValidity = false;

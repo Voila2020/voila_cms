@@ -135,7 +135,6 @@
 
         function restoreDB(fileName) {
             let restoreUrl = @json(CRUDBooster::mainPath('restore-backup/')) + fileName;
-            console.log("restore url => ", restoreUrl);
             $.ajax({
                 type: "GET",
                 url: restoreUrl,

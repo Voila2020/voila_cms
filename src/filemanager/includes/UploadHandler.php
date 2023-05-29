@@ -811,6 +811,9 @@ class UploadHandler
                 $write_func = 'imagepng';
                 $image_quality = intval(CRUDBooster::getSetting('default_img_compression')) ?
                 intval(CRUDBooster::getSetting('default_img_compression')) / 10 : 9;
+                if ($image_quality > 9) {
+                    $image_quality = 9;
+                }
                 break;
             default:
                 return false;
