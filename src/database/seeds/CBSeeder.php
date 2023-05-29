@@ -255,16 +255,6 @@ class CBSeeder extends Seeder
                 'is_protected' => 0,
                 'is_active' => 1,
             ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'SEO',
-                'icon' => 'fa fa-language',
-                'path' => 'seo',
-                'table_name' => null,
-                'controller' => 'AdminSeoController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
         ];
 
         foreach ($data as $k => $d) {
@@ -1393,89 +1383,81 @@ class CBSeeder extends Seeder
             ];
             DB::table('landing_pages')->insert($data);
         }
-        if (DB::table('cms_menus')->count() == 0) {
-            $data = [
-                [
-                    'name' => 'SEO',
-                    'type' => 'Module',
-                    'path' => 'seo',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-language',
-                    'parent_id' => 0,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => 'labels_translation',
-                    'type' => 'Module',
-                    'path' => 'languages',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-language',
-                    'parent_id' => 0,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => 'pages_and_forms',
-                    'type' => 'URL',
-                    'path' => '#',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-th-list',
-                    'parent_id' => 0,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => 'Forms',
-                    'type' => 'Module',
-                    'path' => 'forms',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-list-alt',
-                    'parent_id' => 3,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => 'Pages',
-                    'type' => 'Module',
-                    'path' => 'landing-pages',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-file-o',
-                    'parent_id' => 3,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-                [
-                    'name' => 'SEO',
-                    'type' => 'Module',
-                    'path' => 'seo',
-                    'color' => 'normal',
-                    'icon' => 'fa fa-language',
-                    'parent_id' => 0,
-                    'is_active' => 1,
-                    'is_dashboard' => 0,
-                    'id_cms_privileges' => 1,
-                    'created_at' => Carbon::now(),
-                    'updated_at' => Carbon::now(),
-                ],
-            ];
-            DB::table('cms_menus')->insert($data);
+
+        $data = [
+            [
+                'name' => 'SEO',
+                'type' => 'Module',
+                'path' => 'seo',
+                'color' => 'normal',
+                'icon' => 'fa fa-language',
+                'parent_id' => 0,
+                'is_active' => 1,
+                'is_dashboard' => 0,
+                'id_cms_privileges' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'labels_translation',
+                'type' => 'Module',
+                'path' => 'languages',
+                'color' => 'normal',
+                'icon' => 'fa fa-language',
+                'parent_id' => 0,
+                'is_active' => 1,
+                'is_dashboard' => 0,
+                'id_cms_privileges' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'pages_and_forms',
+                'type' => 'URL',
+                'path' => '#',
+                'color' => 'normal',
+                'icon' => 'fa fa-th-list',
+                'parent_id' => 0,
+                'is_active' => 1,
+                'is_dashboard' => 0,
+                'id_cms_privileges' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Forms',
+                'type' => 'Module',
+                'path' => 'forms',
+                'color' => 'normal',
+                'icon' => 'fa fa-list-alt',
+                'parent_id' => 3,
+                'is_active' => 1,
+                'is_dashboard' => 0,
+                'id_cms_privileges' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+            [
+                'name' => 'Pages',
+                'type' => 'Module',
+                'path' => 'landing-pages',
+                'color' => 'normal',
+                'icon' => 'fa fa-file-o',
+                'parent_id' => 3,
+                'is_active' => 1,
+                'is_dashboard' => 0,
+                'id_cms_privileges' => 1,
+                'created_at' => Carbon::now(),
+                'updated_at' => Carbon::now(),
+            ],
+        ];
+        foreach ($data as $k => $d) {
+            if (DB::table('cms_menus')->where('name', $d['name'])->where('path', $d['path'])->count()) {
+                unset($data[$k]);
+            }
         }
+        DB::table('cms_menus')->insert($data);
+
         $menus = DB::table('cms_menus')->get();
         foreach ($menus as $menu) {
             $menuPrivilege = DB::table('cms_menus_privileges')
