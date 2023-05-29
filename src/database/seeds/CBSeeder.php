@@ -255,6 +255,16 @@ class CBSeeder extends Seeder
                 'is_protected' => 0,
                 'is_active' => 1,
             ],
+            [
+                'created_at' => date('Y-m-d H:i:s'),
+                'name' => 'SEO',
+                'icon' => 'fa fa-language',
+                'path' => 'seo',
+                'table_name' => null,
+                'controller' => 'AdminSeoController',
+                'is_protected' => 0,
+                'is_active' => 1,
+            ],
         ];
 
         foreach ($data as $k => $d) {
@@ -1444,6 +1454,19 @@ class CBSeeder extends Seeder
                     'color' => 'normal',
                     'icon' => 'fa fa-file-o',
                     'parent_id' => 3,
+                    'is_active' => 1,
+                    'is_dashboard' => 0,
+                    'id_cms_privileges' => 1,
+                    'created_at' => Carbon::now(),
+                    'updated_at' => Carbon::now(),
+                ],
+                [
+                    'name' => 'SEO',
+                    'type' => 'Module',
+                    'path' => 'seo',
+                    'color' => 'normal',
+                    'icon' => 'fa fa-language',
+                    'parent_id' => 0,
                     'is_active' => 1,
                     'is_dashboard' => 0,
                     'id_cms_privileges' => 1,
