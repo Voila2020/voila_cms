@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $landingPageSeo->title_en }}</title>
+    <title>{{ $landingPageSeo->title }}</title>
 
     <meta property="og:image" content="{{ $landingPageSeo->image }}" />
     <meta property="og:image:secure_url" content="{{ $landingPageSeo->image }}" />
-    <meta property="og:title" content="{{ $landingPageSeo->title_en }}" />
+    <meta property="og:title" content="{{ $landingPageSeo->title }}" />
     <meta property="og:site_name" content="Voila" />
     <meta property="og:url" content="{{ request()->url() }}" />
     <meta property="og:description" content="{{ $landingPageSeo->description }}" />
     <meta property="og:type" content="article" />
     <meta name="twitter:site" content="@Voila">
     <meta name="twitter:url" content="{{ request()->url() }}">
-    <meta name="twitter:title" content="{{ $landingPageSeo->title_en }}">
+    <meta name="twitter:title" content="{{ $landingPageSeo->title }}">
     <meta name="twitter:description" content="{{ $landingPageSeo->description }}">
     <meta name="twitter:image" content="{{ $landingPageSeo->image }}">
     <title>{{ $landingPageSeo->title_en }}</title>
@@ -63,10 +63,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/7.0.6/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
     <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
-    @if (CRUDBooster::getSetting('recaptcha_site_key'))
-        <script src='https://www.google.com/recaptcha/api.js?render={{ CRUDBooster::getSetting('recaptcha_site_key') }}'>
-        </script>
-    @endif
+
 </head>
 <style>
     {!! $landingPage->css !!}
@@ -75,7 +72,12 @@
 <body class="innerBody">
     {!! $landingPage->html !!}
     <script>
+        let old = @json(old());
         $(function() {
+            for (const key in old) {
+                if (key != "_token" && key != "landing_page_id")
+                    $('[name="' + key + '"]').val(old[key]);
+            }
             toastr.options = {
                 "closeButton": true,
                 "debug": false,
@@ -97,29 +99,9 @@
                 let message = "{{ session('error') }}";
                 toastr.error(message);
             @endif
-            @if (session()->has('message'))
-                let message = "{{ session('message') }}";
-                if ("{{ session('message_type') }}" == "success")
-                    toastr.success(message);
-                else
-                    toastr.error(message);
-            @endif
             variables = JSON.parse(@json($landingPage->variables));
             less.modifyVars(variables);
-        });
-        var $site_key = <?php echo json_encode(CRUDBooster::getSetting('recaptcha_site_key'), 15, 512); ?>;
-        var $secret_key = <?php echo json_encode(CRUDBooster::getSetting('recaptcha_secret_key'), 15, 512); ?>;
-        if ($site_key && $secret_key) {
-            grecaptcha.ready(function() {
-                grecaptcha.execute($site_key, {
-                    action: '{{ config('crudbooster.ADMIN_PATH') }}/forms/submit/'
-                }).then(function(token) {
-                    document.getElementById('g-recaptcha-response').value = token;
-                }).catch(function(error) {
-                    console.error("reCAPTCHA error:", error);
-                });
-            });
-        }
+        })
     </script>
 </body>
 
