@@ -75,7 +75,12 @@
 <body class="innerBody">
     {!! $landingPage->html !!}
     <script>
+        let old = @json(old());
         $(function() {
+            for (const key in old) {
+                if (key != "_token" && key != "landing_page_id")
+                    $('[name="' + key + '"]').val(old[key]);
+            }
             toastr.options = {
                 "closeButton": true,
                 "debug": false,
