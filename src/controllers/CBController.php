@@ -907,10 +907,6 @@ class CBController extends Controller
             $ai = [];
             $name = $di['name'];
 
-            if (!isset($request_all[$name])) {
-                continue;
-            }
-
             if ($di['type'] != 'upload') {
                 if (@$di['required']) {
                     $ai[] = 'required';
@@ -1149,9 +1145,6 @@ class CBController extends Controller
                 if (!$this->arr[$name]) {
                     $this->arr[$name] = request('_' . $name);
                 }
-            }
-
-            if (@$ro['type'] == 'filemanager') {
             }
 
             if ($ro['type'] == 'switch' && !$inputdata) {
