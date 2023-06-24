@@ -88,7 +88,7 @@ class CBSeeder extends Seeder
                 'icon' => 'fa fa-cog',
                 'path' => 'privileges_roles',
                 'table_name' => 'cms_privileges_roles',
-                'controller' => 'PrivilegesRolesController',
+                'controller' => 'PrivilegesController',
                 'is_protected' => 1,
                 'is_active' => 1,
             ],
