@@ -60,40 +60,41 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
             $template = DB::table('cms_email_templates')
                 ->where('id', $id)
                 ->first()->template;
+
+
             return view('crudbooster::email_builder.templates_builder', compact('template', 'id'));
         }
         return view('crudbooster::email_builder.templates_builder');
     }
 
-    public function getSaveTemplate(Request $request, $id)
+
+    public function postSaveTemplate(Request $request, $id)
     {
         DB::table('cms_email_templates')
             ->where('id', $id)
             ->update([
-                'content' => Request::input('content'),
-                'template' => Request::input('template'),
+                'content' => Request::input('html'),
+                'template' => Request::input('components'),
+
             ]);
     }
+    // public function hook_before_add(&$arr)
+    // {
+    //     if ($arr['template'] == null || $arr['template'] == '') {
+    //         $arr['template'] = '<mjml>
+    //                                 <mj-body id="irdi">
+    //                                 </mj-body>
+    //                             </mjml>';
+    //     }
+    // }
 
-    public function hook_before_add(&$arr)
-    {
-        if ($arr['template'] == null || $arr['template'] == '') {
-            $arr['template'] = '<mjml>
-                                    <mj-body id="irdi">
-                                    </mj-body>
-                                </mjml>';
-        }
-
-    }
-
-    public function hook_before_edit(&$arr, $id)
-    {
-        if ($arr['template'] == null || $arr['template'] == '') {
-            $arr['template'] = '<mjml>
-                                    <mj-body id="irdi">
-                                    </mj-body>
-                                </mjml>';
-        }
-
-    }
+    // public function hook_before_edit(&$arr, $id)
+    // {
+    //     if ($arr['template'] == null || $arr['template'] == '') {
+    //         $arr['template'] = '<mjml>
+    //                                 <mj-body id="irdi">
+    //                                 </mj-body>
+    //                             </mjml>';
+    //     }
+    // }
 }
