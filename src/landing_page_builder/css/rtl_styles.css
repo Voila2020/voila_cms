@@ -1,3 +1,8 @@
 html {
-    direction: rtl!important;
+    direction: rtl !important;
+}
+
+
+div {
+    text-align: right;
 }

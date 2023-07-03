@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Landing Page Builder</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" />
@@ -77,7 +76,7 @@
                     <a class="btn btn-primary" id="edit-go" style="color: rgb(255, 255, 255); display: block;"
                         type="button" onclick="selectTemplate()">go to Page</a>
                         <br>
-
+                    
                     <a class="btn btn-secondary" id="go-back" style="color: rgb(255, 255, 255); display: block;" href="{{ CRUDBooster::adminPath('landing-pages') }}">go back</a>
                     <hr>
                 </div>
@@ -90,7 +89,7 @@
                     text: "Changing template will delete the old one, sure to continue?",
                     type: "warning",
                     showCancelButton: true,
-                    confirmButtonColor: "#eb7623",
+                    confirmButtonColor: "#ec1e24",
                     confirmButtonText: "Continue",
                     cancelButtonText: "Back",
                     closeOnConfirm: true,
@@ -99,7 +98,7 @@
                     if (isConfirm) {
                         let templateId = $("#list-landing").val();
                         $.post("{{ CRUDBooster::adminPath('landing-pages/set-template') }}","_token={{csrf_token()}}&landingPageId={{$landingPage->id}}&templateId="+templateId, function(data) {
-                            chooseTemplate(data);
+                            chooseTemplate(data); 
                         });
                     } else {
                         return false;
@@ -107,7 +106,7 @@
                 });
             }
         function chooseTemplate(id) {
-            window.location.href = "{{ CRUDBooster::mainpath('builder').'/'.$landingPage->id }}";
+            window.location.href = "{{ CRUDBooster::mainpath('page-builder').'/'.$landingPage->id }}";
         }
         </script>
 </body>

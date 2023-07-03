@@ -638,6 +638,7 @@
     .foot-form-cont {
         width: 400px;
     }
+
     .foot-form-title {
         width: autopx;
     }
@@ -663,7 +664,7 @@
 
 .gjs-pn-panel#gjs-pn-views-container,
 .gjs-pn-panel.gjs-pn-views-container {
-    height: calc(100% - 10px)!important;
+    height: calc(100% - 10px) !important;
 }
 
 
@@ -860,7 +861,7 @@ div.save-form-ss {
 }
 
 #gjs-sm-general {
-    display: none!important;
+    display: none !important;
 }
 
 #gjs-sm-float,
@@ -939,14 +940,14 @@ body.loading .modal {
     width: 100% !important
 }
 
-.gjs-dashed span[icon_type] {
+/* .gjs-dashed span[icon_type] {
     min-height: 1.5rem !important;
     min-width: 1.5rem !important;
     display: block;
-}
+} */
 
 .gjs-clm-tags {
-    display: none!important;
+    display: none !important;
 }
 
 
@@ -955,7 +956,7 @@ body.loading .modal {
 } */
 
 .gjs-pn-options {
-    right: 20%!important;
+    right: 20% !important;
 }
 
 .gjs-block {
@@ -968,15 +969,22 @@ body.loading .modal {
 [data-id="Voila"] .gjs-block,
 [data-id="Navigation"] .gjs-block,
 [data-id="Headings"] .gjs-block {
-    width: 100%!important;
+    width: 100% !important;
 }
 
+
+
 .gjs-pn-commands {
-    width: 75%!important;
+    width: 75% !important;
+}
+
+.gjs-traits-label {
+    display: none;
+    visibility: hidden;
 }
 
 .gjs-pn-options {
-    right: 25%!important;
+    right: 25% !important;
 }
 
 .gjs-cv-canvas {
@@ -997,6 +1005,7 @@ body.loading .modal {
     font-weight: 700;
     font-size: 15px;
 }
+
 
 #less-modal {
     background-color: transparent;
@@ -1020,3 +1029,14 @@ body.loading .modal {
 .gjs-block-label {
     position: relative;
 }
+
+/* Layout */
+ .container,
+ .container-fluid,
+ .row,
+.col,
+div[class^="col-"] {
+    min-height: 1.5rem ;
+}
+
+

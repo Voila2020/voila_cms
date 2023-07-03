@@ -5,18 +5,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>{{ $landingPageSeo->title_en }}</title>
+    <title>{{ $landingPageSeo->title }}</title>
 
     <meta property="og:image" content="{{ $landingPageSeo->image }}" />
     <meta property="og:image:secure_url" content="{{ $landingPageSeo->image }}" />
-    <meta property="og:title" content="{{ $landingPageSeo->title_en }}" />
+    <meta property="og:title" content="{{ $landingPageSeo->title }}" />
     <meta property="og:site_name" content="Voila" />
     <meta property="og:url" content="{{ request()->url() }}" />
     <meta property="og:description" content="{{ $landingPageSeo->description }}" />
     <meta property="og:type" content="article" />
     <meta name="twitter:site" content="@Voila">
     <meta name="twitter:url" content="{{ request()->url() }}">
-    <meta name="twitter:title" content="{{ $landingPageSeo->title_en }}">
+    <meta name="twitter:title" content="{{ $landingPageSeo->title }}">
     <meta name="twitter:description" content="{{ $landingPageSeo->description }}">
     <meta name="twitter:image" content="{{ $landingPageSeo->image }}">
     <title>{{ $landingPageSeo->title_en }}</title>
@@ -34,12 +34,10 @@
     <meta name="DC.Coverage" content="{{ date('Y') }}">
     <link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon">
     <link rel="icon" href="../../favicon.ico" type="image/x-icon">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-    <link rel="stylesheet" href="https://unpkg.com/boxicons@2.0.9/css/boxicons.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/glightbox/dist/css/glightbox.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Swiper/7.0.6/swiper-bundle.css">
     <link rel="stylesheet" type='text/css'
         href="https://fonts.googleapis.com/css?family=Lobster|Tajawal|Vollkorn|Open+Sans|Cairo|Almarai|Changa|Lareza|Noto+Sans+Arabic|IBM+Plex+Sans+Arabic|Lato">
 
@@ -49,24 +47,24 @@
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     @if ($landingPage->is_rtl)
         <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/css/rtl_styles.css') }}" />
+    @else
+        <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/css/ltr_styles.css') }}" />
     @endif
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
-    <script src="https://cdn.ckeditor.com/4.14.1/standard-all/ckeditor.js"></script>
+      
+    <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+      
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/css/toastr.css" rel="stylesheet"/>
+      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/2.0.1/js/toastr.js"></script>
+      
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous">
+    </script>
 
     <script src="{{ url('landing_page_builder/js/font-awesome.js') }}"></script>
 
     <script src="https://cdn.jsdelivr.net/npm/less@4.1.1"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.min.js" type="text/javascript"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Swiper/7.0.6/swiper-bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/glightbox/dist/js/glightbox.min.js"></script>
-    <script src="https://unpkg.com/isotope-layout@3/dist/isotope.pkgd.min.js"></script>
-    @if (CRUDBooster::getSetting('recaptcha_site_key'))
-        <script src='https://www.google.com/recaptcha/api.js?render={{ CRUDBooster::getSetting('recaptcha_site_key') }}'>
-        </script>
-    @endif
+
 </head>
 <style>
     {!! $landingPage->css !!}
@@ -102,29 +100,9 @@
                 let message = "{{ session('error') }}";
                 toastr.error(message);
             @endif
-            @if (session()->has('message'))
-                let message = "{{ session('message') }}";
-                if ("{{ session('message_type') }}" == "success")
-                    toastr.success(message);
-                else
-                    toastr.error(message);
-            @endif
             variables = JSON.parse(@json($landingPage->variables));
             less.modifyVars(variables);
-        });
-        var $site_key = <?php echo json_encode(CRUDBooster::getSetting('recaptcha_site_key'), 15, 512); ?>;
-        var $secret_key = <?php echo json_encode(CRUDBooster::getSetting('recaptcha_secret_key'), 15, 512); ?>;
-        if ($site_key && $secret_key) {
-            grecaptcha.ready(function() {
-                grecaptcha.execute($site_key, {
-                    action: '{{ config('crudbooster.ADMIN_PATH') }}/forms/submit/'
-                }).then(function(token) {
-                    document.getElementById('g-recaptcha-response').value = token;
-                }).catch(function(error) {
-                    console.error("reCAPTCHA error:", error);
-                });
-            });
-        }
+        })
     </script>
 </body>
 
