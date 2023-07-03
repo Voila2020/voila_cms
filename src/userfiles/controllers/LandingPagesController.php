@@ -14,7 +14,6 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
 {
     public function cbInit()
     {
-
         # START CONFIGURATION DO NOT REMOVE THIS LINE
         $this->title_field = "name";
         $this->limit = "20";
@@ -51,12 +50,12 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->form[] = ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'validation' => 'required|string|min:3|max:300', 'width' => 'col-sm-10'];
         $this->form[] = ['label' => 'Title', 'name' => 'title', 'type' => 'text', 'width' => 'col-sm-10', 'placeholder' => 'You can only enter the letter only'];
         $this->form[] = ['label' => 'Description', 'name' => 'description', 'type' => 'text', 'width' => 'col-sm-10'];
-        $this->form[] = ['label' => 'Is Template', 'name' => 'is_template', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Yes;0|No'];
+        $this->form[] = ['label' => 'Is Template', 'name' => 'is_template', 'type' => 'switch', 'width' => 'col-sm-10', 'dataenum' => '1|Yes;0|No'];
         $this->form[] = ['label' => 'Url', 'name' => 'url', 'type' => 'text', 'width' => 'col-sm-10'];
         $this->form[] = ['label' => 'Send Email To', 'name' => 'send_email_to', 'type' => 'text', 'width' => 'col-sm-10', 'placeholder' => 'Please enter a valid URL'];
         $this->form[] = ['label' => 'Response Message', 'name' => 'response_message', 'type' => 'wysiwyg', 'width' => 'col-sm-10'];
-        $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'radio', 'width' => 'col-sm-10', 'dataenum' => '1|Yes;0|No'];
-        $this->form[] = ['label' => 'Is Rtl', 'name' => 'is_rtl', 'type' => 'radio', 'width' => 'col-sm-9', 'dataenum' => '1|Yes;0|No'];
+        $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'switch', 'width' => 'col-sm-10', 'dataenum' => '1|Yes;0|No'];
+        $this->form[] = ['label' => 'Is Rtl', 'name' => 'is_rtl', 'type' => 'switch', 'width' => 'col-sm-9', 'dataenum' => '1|Yes;0|No'];
         # END FORM DO NOT REMOVE THIS LINE
 
         # OLD START FORM
@@ -97,15 +96,17 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         |
          */
         $this->addaction = array();
-        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('builder') . '/[id]', 'icon' => 'fa fa-wrench'];
+        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' =>  CRUDBooster::mainpath('page-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
+
+
         $templates = DB::table('landing_pages')->where("is_template", 1)->get()->count();
         if ($templates > 0) {
             $this->addaction[] = ['label' => 'Build from Template', 'target' => '_blank', "color" => "primary", 'title' => 'Build from Template', "url" => CRUDBooster::mainpath('builder-template') . '/[id]', 'icon' => 'fa fa-wrench'];
         }
-
         $this->addaction[] = ['label' => 'Applications', 'title' => 'Applications', 'url' => CRUDBooster::mainpath('applications') . '/[id]', "color" => "info"];
-        $this->addaction[] = ['label' => '', 'title' => 'Go TO', 'target' => '_blank', 'url' => CRUDBooster::mainpath('show-form/[url]'), 'icon' => 'fa fa-search', "color" => "success"];
-        $this->addaction[] = ['label' => '', 'title' => 'SEO', 'url' => CRUDBooster::adminPath('seo/pages/[id]'), 'icon' => 'fa fa-globe', 'color' => 'warning', 'showIf' => "true"];
+        $this->addaction[] = ['label' => '', 'title' => 'Go TO', 'target' => '_blank', 'url' => url('/') . '/[url]', 'icon' => 'fa fa-search', "color" => "primary"];
+
+        $this->addaction[] = ['label' => '', 'title' => 'SEO', 'url' => CRUDBooster::adminPath('seo?page=pages&page_id=[id]'), 'icon' => 'fa fa-globe', 'color' => 'warning', 'showIf' => "true"];
         $this->addaction[] = ['label' => 'Export Applications', 'target' => '_blank', 'title' => 'Export Applications', 'url' => CRUDBooster::mainpath('export-excel/[id]'), 'icon' => 'fa fa-excel', 'color' => 'success', 'showIf' => "true"];
 
         /*
@@ -182,7 +183,9 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->script_js = null;
         $this->script_js = "
             $(function() {
+                console.log('test');
                     $(document).on('click','.selectTemplates',function() {
+                    console.log('test');
                     $('#selectTemplatesModal').show();
                 });
             });
@@ -276,7 +279,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function actionButtonSelected($id_selected, $button_name)
-{
+    {
         //Your code here
 
     }
@@ -289,7 +292,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_query_index(&$query)
-{
+    {
         //Your code here
 
     }
@@ -301,7 +304,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_row_index($column_index, &$column_value)
-{
+    {
         //Your code here
     }
 
@@ -313,7 +316,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_before_add(&$postdata)
-{
+    {
         //Your code here
 
     }
@@ -326,7 +329,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_after_add($id)
-{
+    {
         //Your code here
 
     }
@@ -340,7 +343,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_before_edit(&$postdata, $id)
-{
+    {
         //Your code here
 
     }
@@ -353,7 +356,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_after_edit($id)
-{
+    {
         //Your code here
 
     }
@@ -366,7 +369,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_before_delete($id)
-{
+    {
         //Your code here
 
     }
@@ -379,74 +382,74 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     |
      */
     public function hook_after_delete($id)
-{
+    {
         //Your code here
 
     }
 
-    //By the way, you can still create your own method in here... :)
-
-    public function getBuilder($landingPageId)
-{
-        $landingPage = DB::table('landing_pages')->find($landingPageId);
-        return view('crudbooster::landing_page_builder.index', compact("landingPageId", "landingPage"));
-    }
-
     public function getBuilderTemplate($landingPageId)
-{
+    {
         $landingPage = DB::table('landing_pages')->find($landingPageId);
         $templates = DB::table('landing_pages')->where("is_template", 1)->get();
         return view("crudbooster::landing_page_builder.templates", compact("landingPageId", "landingPage", "templates"));
     }
 
-    public function postLandingPage(Request $request)
-{
+
+    public function getApplications($landingPageId)
+    {
+        $applications = DB::table('applications')->where('landing_page_id', $landingPageId)->get();
+        return view('crudbooster::form_builder.submits', array('data' => $applications));
+    }
+
+    public function getPageBuilder($landingPageId)
+    {
+        $landingPage = DB::table('landing_pages')->where('id', $landingPageId)->first();
+        return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage"));
+    }
+
+    public function getPageBuilderContent($id)
+    {
+        $landingPage = DB::table('landing_pages')->find($id);
+        if (!$landingPage->html && $id) {
+            $landingPage = DB::table('landing_pages')->find($id);
+            return response()->json([
+                "gjs-html" => $landingPage->html,
+                "gjs-styles" => $landingPage->css,
+                "gjs-components" => $landingPage->components == null ? "[]" : $landingPage->components,
+                "variables" => $landingPage->variables,
+
+            ]);
+        }
+
+        return response()->json([
+            "gjs-html" => $landingPage->html,
+            "gjs-styles" => $landingPage->css,
+            "gjs-components" => $landingPage->components == null ? "[]" : $landingPage->components,
+            "variables" => $landingPage->variables,
+        ]);
+    }
+
+
+    public function postPageBuilder(Request $request)
+    {
+
         if (!$request->id) {
             return response()->json(["message" => "Error No Landing Page"], 500);
         }
 
         $landingPage = DB::table('landing_pages')->where('id', $request->id)
             ->update([
-                'html' => $request["gjs-html"],
-                'css' => $request["gjs-css"],
-                'js' => $request["gjs-js"],
-                'components' => $request["gjs-components"],
+                'html' => $request["html"],
+                'css' => $request["css"],
+                'components' => $request["components"],
                 'variables' => $request["variables"],
             ]);
 
         return response()->json();
     }
 
-    public function getLandingPage(Request $request)
-{
-        $landingPage = DB::table('landing_pages')->find($request->id);
-        if (!$landingPage->html && $request->template_id) {
-            $landingPage = DB::table('landing_pages')->find($request->template_id);
-            return response()->json([
-                "gjs-html" => $landingPage->html,
-                "gjs-css" => $landingPage->css,
-                "gjs-js" => $landingPage->js,
-                "gjs-components" => $landingPage->components,
-                "variables" => $landingPage->variables,
-            ]);
-        }
-        return response()->json([
-            "gjs-html" => $landingPage->html,
-            "gjs-css" => $landingPage->css,
-            "gjs-js" => $landingPage->js,
-            "gjs-components" => $landingPage->components,
-            "variables" => $landingPage->variables,
-        ]);
-    }
-
-    public function getApplications($landingPageId)
-{
-        $applications = DB::table('applications')->where('landing_page_id', $landingPageId)->get();
-        return view('crudbooster::form_builder.submits', array('data' => $applications));
-    }
-
     public function getExportExcel($id)
-{
+    {
         $landingPage = DB::table('landing_pages')->where('id', $id)->first();
         $applications = DB::table('applications')->where('landing_page_id', $id)->get();
         $columns = [];
@@ -461,33 +464,30 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     }
 
     public function postSetTemplate(Request $request)
-{
+    {
         $templateLandingPage = DB::table('landing_pages')->find($request->templateId);
         $landingPage = DB::table('landing_pages')->find($request->landingPageId);
         if (!$templateLandingPage || !$landingPage) {
             return response()->json([], 500);
         }
 
-        //--- HTML
-        $html = $templateLandingPage->html;
-        $html = str_replace('name="landing_page_id" value="' . $request->templateId . '"', 'name="landing_page_id" value="' . $request->landingPageId . '"', $html);
-        //--------------------------------//
-        $landingPage = DB::table('landing_pages')->where('id', $request->templateId)->update([
-            'html' => $html,
+        $landingPage = DB::table('landing_pages')->where('id', $request->landingPageId)->update([
+            'html' => $templateLandingPage->html,
             'css' => $templateLandingPage->css,
-            'js' => $templateLandingPage->js,
             'variables' => $templateLandingPage->variables,
             'components' => $templateLandingPage->components,
             'is_rtl' => $templateLandingPage->is_rtl,
         ]);
+
         return response()->json([], 200);
     }
 
-    public function getShowForm($url)
-{
+
+    public function catchView($url)
+    {
         $landingPage = DB::table('landing_pages')->where("url", $url)->first();
         if ($landingPage) {
-            $landingPageSeo = DB::table('cms_seo')->where("page", "pages")->where("page_id", $landingPage->id)->first();
+            $landingPageSeo = DB::table('cms_seo')->where("page", "landing-pages")->where("page_id", $landingPage->id)->first();
             if (!$landingPageSeo) {
                 $landingPageSeo = DB::table('cms_seo')->where("page", "home")->first();
             }
