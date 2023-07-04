@@ -1,7 +1,7 @@
-var editor = grapesjs.init({
+editor = grapesjs.init({
 
     height: '100%',
-    container: '#gjs',
+    container: '#email_gjs',
 
     storageManager: {
         type: 'remote',
@@ -11,8 +11,9 @@ var editor = grapesjs.init({
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                urlLoad: $_SITE + "/admin/email_templates/email-builder/" + $id,
+                urlLoad: $_SITE + "/admin/email_templates/email-builder-content/" + $id,
                 urlStore: $_SITE + "/admin/email_templates/save-template/" + $id,
+
 
                 onStore: data => ({
                     id: $id,
@@ -20,14 +21,32 @@ var editor = grapesjs.init({
                     css: editor.getCss(),
                     components: editor.getComponents(),
                 }),
-
                 onLoad: result => result.data,
             }
         },
     },
-    clearOnRender: true,
-    fromElement: true,
+    assetManager: {
+        custom: {
+            open(props) {
+                let imageId = props.options.target.ccid;
+                let iframeUrl = `${$_SITE}/filemanager-dialog?type=1&multiple=0&crossdomain=0&popup=0&field_id=${imageId}`;
+                let fancybox = $.fancybox.open({
+                    width: 900,
+                    height: 600,
+                    type: "iframe",
+                    src: iframeUrl,
+                    autoScale: false,
+                    autoDimensions: false,
+                    fitToView: false,
+                    autoSize: false,
+                });
+            },
+            close(props) { },
+        },
+    },
+
     plugins: ['grapesjs-preset-newsletter', 'grapesjs-plugin-ckeditor'],
+
 });
 
 
@@ -44,11 +63,6 @@ editor.Panels.addButton("options", [{
     },
 },]);
 
-
-$template = JSON.parse(JSON.stringify($template));
-if ($template != '""' && typeof $template != 'undefined') {
-    editor.setComponents(`{!!$template!!}`);
-}
 
 
 //remove the import button.
@@ -163,7 +177,21 @@ cmdm.add('canvas-clear', function () {
     }
 });
 
+//on editor load.
 editor.on('load', function () {
     // Show borders by default
     pnm.getButton('options', 'sw-visibility').set('active', 1);
 });
+
+//link the file manger to voila file manager.
+function responsive_filemanager_callback(field_id, value) {
+    $("#" + field_id, $(".gjs-frame").contents()).prop("src", value);
+    if (editor.getSelected().attributes.tagName == "div")
+        editor
+            .getSelected()
+            .addStyle({
+                "background-image": `url("${$_SITE + value}")`
+            });
+    else editor.getSelected().set("src", $_SITE + value);
+    editor.stopCommand("open-assets");
+}
