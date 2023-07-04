@@ -9,6 +9,7 @@ use crocodicstudio\crudbooster\commands\Mailqueues;
 use Illuminate\Foundation\AliasLoader;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Schema;
 
 class CRUDBoosterServiceProvider extends ServiceProvider
 {
@@ -24,7 +25,10 @@ class CRUDBoosterServiceProvider extends ServiceProvider
         $this->loadViewsFrom(__DIR__ . '/views', 'crudbooster');
         $this->loadMigrationsFrom(__DIR__ . '/database/migrations');
         $this->loadTranslationsFrom(__DIR__ . '/localization', 'crudbooster');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        if (Schema::hasTable('cms_menus')) {
+            $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        }
+
 
         if ($this->app->runningInConsole()) {
             $this->publishes([__DIR__ . '/configs/crudbooster.php' => config_path('crudbooster.php')], 'cb_config');
