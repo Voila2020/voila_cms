@@ -51,8 +51,14 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/views/landing_page_builder/thankyou.blade.php' => resource_path('views/landing_page_builder/thankyou.blade.php')], 'landing_page_builder_thankyou_view');
             $this->publishes([__DIR__ . '/views/landing_page_builder/view.blade.php' => resource_path('views/landing_page_builder/view.blade.php')], 'landing_page_builder_view_view');
             $this->publishes([__DIR__ . '/landing_page_builder' => public_path('landing_page_builder')], 'landing_page_builder_files');
+            # Email Builder
+            $this->publishes([__DIR__ . '/views/email_builder/templates_builder.blade.php' => resource_path('views/email_builder/templates_builder.blade.php')], 'email_builder_view');
+            $this->publishes([__DIR__ . '/email_builder' => public_path('email_builder')], 'email_builder_files');
+
             # controllers
             $this->publishes([__DIR__ . '/userfiles/controllers/LandingPagesController.php' => app_path('Http/Controllers/LandingPagesController.php')], 'landing_page_builder_plugins');
+            $this->publishes([__DIR__ . '/controllers/EmailTemplatesController.php' => app_path('Http/Controllers/EmailTemplatesController.php')], 'email_builder_plugins');
+
             # lang
             $this->publishes([__DIR__ . '/localization' => resource_path('lang')], 'crudbooster_lang');
         }
