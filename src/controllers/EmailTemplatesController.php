@@ -1,14 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace crocodicstudio\crudbooster\controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
-use crocodicstudio\crudbooster\controllers\CBController;
 
-
-class EmailTemplatesController extends CBController
+class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\CBController
 {
     public function cbInit()
     {
