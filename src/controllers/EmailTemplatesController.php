@@ -1,12 +1,14 @@
 <?php
 
-namespace crocodicstudio\crudbooster\controllers;
+namespace App\Http\Controllers;
 
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
+use crocodicstudio\crudbooster\controllers\CBController;
 
-class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\CBController
+
+class EmailTemplatesController extends CBController
 {
     public function cbInit()
     {
@@ -47,7 +49,7 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         $this->form[] = ["label" => "From Email", "name" => "from_email", "type" => "email", "required" => false, "validation" => "email", "width" => "col-sm-6", 'placeholder' => 'Optional'];
 
         $this->form[] = ["label" => "Cc Email", "name" => "cc_email", "type" => "email", "required" => false, "validation" => "email", 'placeholder' => 'Optional'];
-        $this->form[] = ['label' => 'Is Important', 'name' => 'priority', 'type' => 'radio', 'dataenum' => '1|Yes;3|No'];
+        $this->form[] = ['label' => 'Is Important', 'name' => 'priority', 'type' => 'radio', "required" => true, 'dataenum' => '1|Yes;3|No'];
         # Actions
         $this->addaction = [];
         $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];

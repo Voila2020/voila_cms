@@ -139,6 +139,7 @@
         $id = "{{ $landingPageId }}";
         $is_rtl = "{{ $landingPage->is_rtl }}";
         $template = "";
+        $_token = $('meta[name="csrf-token"]').attr("content");
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.0.0/jquery.form.min.js" crossorigin="anonymous">
     </script>

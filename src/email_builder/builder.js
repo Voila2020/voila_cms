@@ -16,6 +16,7 @@ editor = grapesjs.init({
 
 
                 onStore: data => ({
+                    _token: $_token,
                     id: $id,
                     html: editor.getHtml(),
                     css: editor.getCss(),

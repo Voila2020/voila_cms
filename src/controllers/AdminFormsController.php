@@ -1,18 +1,20 @@
 <?php
 
-namespace crocodicstudio\crudbooster\controllers;
+namespace App\Http\Controllers;
 
 use App\Rules\ReCaptcha;
 use Carbon\Carbon;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
+use crocodicstudio\crudbooster\controllers\CBController;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBController
+class AdminFormsController extends CBController
 {
 
     public function cbInit()
@@ -630,5 +632,4 @@ class AdminFormsController extends \crocodicstudio\crudbooster\controllers\CBCon
 
         return back()->with('success', $form->response);
     }
-
 }

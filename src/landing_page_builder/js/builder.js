@@ -20,6 +20,7 @@ editor = grapesjs.init({
                 urlStore: $_SITE + "/admin/landing-pages/page-builder/" + $id,
 
                 onStore: data => ({
+                    _token: $_token,
                     id: $id,
                     html: editor.getHtml(),
                     css: editor.getCss(),
