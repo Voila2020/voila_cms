@@ -40,7 +40,7 @@
         $_SITE = "{{ url('/') }}";
         $id = "{{ $id }}";
         $_token = $('meta[name="csrf-token"]').attr("content");
-       
+        $route = "{{ Route::current()->getName() }}";
     </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.21.2/grapes.min.js"></script>
@@ -48,7 +48,9 @@
     <script src=" https://cdn.jsdelivr.net/npm/grapesjs-plugin-ckeditor@1.0.1/dist/index.min.js "></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
+
     <script src="{{ asset('email_builder/builder.js') }}"></script>
+
 </body>
 
 </html>

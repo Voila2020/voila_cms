@@ -11,9 +11,9 @@ editor = grapesjs.init({
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                urlLoad: $_SITE + "/admin/email_templates/email-builder-content/" + $id,
-                urlStore: $_SITE + "/admin/email_templates/save-template/" + $id,
 
+                urlLoad: ($route == 'getEmailBuilder') ? $_SITE + "/admin/email_templates/email-builder-content/" + $id : $_SITE + "/admin/email_templates/email-builder-content-arabic/" + $id,
+                urlStore: ($route == 'getEmailBuilder') ? $_SITE + "/admin/email_templates/save-template/" + $id : $_SITE + "/admin/email_templates/save-template-arabic/" + $id,
 
                 onStore: data => ({
                     _token: $_token,

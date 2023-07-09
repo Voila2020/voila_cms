@@ -51,10 +51,20 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         # Actions
         $this->addaction = [];
         $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
+        $this->addaction[] = ['label' => 'Build Arabic', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder-arabic') . '/[id]', 'icon' => 'fa fa-wrench'];
+
     }
     //By the way, you can still create your own method in here... :)
 
     public function getEmailBuilder($id)
+    {
+        $email_template = DB::table('cms_email_templates')->where('id', $id)->first();
+        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template"));
+    }
+
+
+    
+    public function getEmailBuilderArabic($id)
     {
         $email_template = DB::table('cms_email_templates')->where('id', $id)->first();
         return view('crudbooster::email_builder.templates_builder', compact("id", "email_template"));
@@ -83,6 +93,29 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         ]);
     }
 
+    
+    public function getEmailBuilderContentArabic($id)
+    {
+        $email_template = DB::table('cms_email_templates')->find($id);
+        if (!$email_template->content_arabic && $id) {
+            $email_template = DB::table('cms_email_templates')->find($id);
+
+            return response()->json([
+                "gjs-html" => ($email_template->content_arabic === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_arabic,
+                "gjs-styles" => ($email_template->css_arabic === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_arabic,
+                "gjs-components" => ($email_template->template_arabic === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_arabic,
+
+            ]);
+        }
+
+        return response()->json([
+            "gjs-html" => ($email_template->content_arabic === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_arabic,
+            "gjs-styles" => ($email_template->css_arabic === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_arabic,
+            "gjs-components" => ($email_template->template_arabic === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_arabic,
+
+        ]);
+    }
+
 
     public function postSaveTemplate(Request $request, $id)
     {
@@ -92,6 +125,17 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 'content' => Request::input('html'),
                 'template' => Request::input('components'),
                 'css' => Request::input('css'),
+            ]);
+    }
+
+    public function postSaveTemplateArabic(Request $request, $id)
+    {
+        DB::table('cms_email_templates')
+            ->where('id', $id)
+            ->update([
+                'content_arabic' => Request::input('html'),
+                'template_arabic' => Request::input('components'),
+                'css_arabic' => Request::input('css'),
             ]);
     }
 }
