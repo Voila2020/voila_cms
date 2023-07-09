@@ -12,8 +12,8 @@ editor = grapesjs.init({
                     'Content-Type': 'application/json'
                 },
 
-                urlLoad: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/email-builder-content/" + $id : $_SITE + "/admin/email_templates/email-builder-content-arabic/" + $id,
-                urlStore: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/save-template/" + $id : $_SITE + "/admin/email_templates/save-template-arabic/" + $id,
+                urlLoad: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/email-builder-content/" + $id : ($route == 'EmailTemplatesControllerGetEmailBuilderArabic') ? $_SITE + "/admin/email_templates/email-builder-content-arabic/" + $id : false,
+                urlStore: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/save-template/" + $id : ($route == 'EmailTemplatesControllerGetEmailBuilderArabic') ? $_SITE + "/admin/email_templates/save-template-arabic/" + $id : false,
 
                 onStore: data => ({
                     _token: $_token,
