@@ -22,6 +22,7 @@ editor = grapesjs.init({
                     html: editor.getHtml(),
                     css: editor.getCss(),
                     components: editor.getComponents(),
+
                 }),
                 onLoad: result => result.data,
             }
@@ -41,9 +42,14 @@ editor = grapesjs.init({
                     autoDimensions: false,
                     fitToView: false,
                     autoSize: false,
+                    afterClose: function () {
+                        editor.stopCommand("open-assets");
+                    },
                 });
             },
-            close(props) { },
+            close(props) {
+                editor.stopCommand("open-assets");
+            },
         },
     },
 
