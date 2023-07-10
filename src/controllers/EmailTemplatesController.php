@@ -94,17 +94,17 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 $email_template = DB::table('cms_email_templates')->find($id);
 
                 return response()->json([
-                    "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_arabic,
-                    "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_arabic,
-                    "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_arabic,
+                    "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_ar,
+                    "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_ar,
+                    "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_ar,
 
                 ]);
             }
 
             return response()->json([
-                "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_arabic,
-                "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_arabic,
-                "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_arabic,
+                "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_ar,
+                "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_ar,
+                "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_ar,
 
             ]);
         }
