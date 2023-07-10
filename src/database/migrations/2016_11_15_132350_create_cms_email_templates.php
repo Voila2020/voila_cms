@@ -21,9 +21,6 @@ class CreateCmsEmailTemplates extends Migration
             $table->longtext('content')->nullable();
             $table->longText('template')->nullable();
             $table->longText('css')->nullable();
-            $table->longtext('content_arabic')->nullable();
-            $table->longText('template_arabic')->nullable();
-            $table->longText('css_arabic')->nullable();
             $table->string('description')->nullable();
             $table->string('from_name')->nullable();
             $table->string('from_email')->nullable();
