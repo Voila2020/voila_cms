@@ -281,7 +281,7 @@ class CRUDBooster
             $resp = response()->json(['message' => $message, 'message_type' => $type, 'redirect_url' => $_SERVER['HTTP_REFERER']])->send();
             exit;
         } else {
-            $resp = redirect()->back()->with(['message' => $message, 'message_type' => $type]);
+            $resp = redirect()->back()->withInput()->with(['message' => $message, 'message_type' => $type]);
             Session::driver()->save();
             $resp->send();
             exit;
