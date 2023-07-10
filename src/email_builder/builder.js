@@ -12,10 +12,11 @@ editor = grapesjs.init({
                     'Content-Type': 'application/json'
                 },
 
-                urlLoad: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/email-builder-content/" + $id : ($route == 'EmailTemplatesControllerGetEmailBuilderArabic') ? $_SITE + "/admin/email_templates/email-builder-content-arabic/" + $id : false,
-                urlStore: ($route == 'EmailTemplatesControllerGetEmailBuilder') ? $_SITE + "/admin/email_templates/save-template/" + $id : ($route == 'EmailTemplatesControllerGetEmailBuilderArabic') ? $_SITE + "/admin/email_templates/save-template-arabic/" + $id : false,
+                urlLoad: $_SITE + "/admin/email_templates/email-builder-content/" + $id + "?lang=" + $lang,
+                urlStore: $_SITE + "/admin/email_templates/save-template/" + $id + "?lang=" + $lang,
 
                 onStore: data => ({
+                    lang: $lang,
                     _token: $_token,
                     id: $id,
                     html: editor.getHtml(),
