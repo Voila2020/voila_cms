@@ -4,7 +4,7 @@ Voila CMS for laravel based on CRUDBooster CRUD Generator, with the most importa
 
 ## System Requirement and Basic Technical Knowledge
 - Web Server as:
-  - Apache 2.4.x or higher with rewrite engine on (mod_rewrite)  
+  - Apache 2.4.x or higher with rewrite engine on (mod_rewrite)
   - Nginx 1.11.x or higher
 - Database that laravel supports, actually can be:
   - MySQL
@@ -14,23 +14,22 @@ Voila CMS for laravel based on CRUDBooster CRUD Generator, with the most importa
 - Composer
 - Laravel 7
 - Php 7.2 or higher and the extensions:
-  - Mcrypt
   - OpenSSL
   - Mbstring
   - Tokenizer
   - FileInfo
 
 ## Installation
-1. Open the terminal, navigate to your laravel project directory.
-```php
-$ composer require voila_cms/crudbooster
-```
-
-2. Setting the database configuration, open .env file at project root directory
+1. Setting the database configuration, open .env file at project root directory
 ```
 DB_DATABASE=**your_db_name**
 DB_USERNAME=**your_db_user**
 DB_PASSWORD=**password**
+```
+
+2. Open the terminal, navigate to your laravel project directory.
+```php
+$ composer require voila_cms/crudbooster
 ```
 
 3. Run the following command at the terminal
