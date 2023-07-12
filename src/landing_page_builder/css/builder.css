@@ -1,14 +1,20 @@
-
 /* Layout */
 .gjs-dashed .container,
 .gjs-dashed .container-fluid,
 .gjs-dashed .row,
 .gjs-dashed .col,
 .gjs-dashed [class^="col-"] {
-    min-height: 1.5rem !important;
+    min-height: 3.5rem !important;
 }
 
+.outlines {
+    outline: 1px dashed rgba(170, 170, 170, 0.7);
+    outline-offset: -2px;
+}
 
+.custom-padding {
+    padding: 30px 30px 30px 30px;
+}
 
 .gjs-dashed .w-100 {
     min-height: .25rem !important;

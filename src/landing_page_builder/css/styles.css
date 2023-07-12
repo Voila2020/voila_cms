@@ -968,6 +968,7 @@ body.loading .modal {
 [data-id="Footers"] .gjs-block,
 [data-id="Voila"] .gjs-block,
 [data-id="Navigation"] .gjs-block,
+[data-id="Structure"] .gjs-block,
 [data-id="Headings"] .gjs-block {
     width: 100% !important;
 }
