@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CustomBlock;
+
 use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\export\LandingPageExport;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
@@ -425,12 +425,8 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     public function postPageBuilder(Request $request)
     {
         if ($request->custom_block_data) {
-            $custom_block =   CustomBlock::create([
-                'custom_block_data' => $request->custom_block_data,
-                'blockID' => $request->blockId,
-                'block_name' => $request->name,
-            ]);
-
+            DB::insert('insert into custom_blocks (custom_block_data,blockID,block_name) values (?, ?,?)', [$request->custom_block_data,  $request->blockId, $request->name]);
+            
             return response()->json(array("message" => "done", "status" => true));
         }
 
