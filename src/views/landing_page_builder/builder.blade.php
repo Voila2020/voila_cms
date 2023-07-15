@@ -33,7 +33,32 @@
 </head>
 
 <body>
+
     <div id="gjs">
+    </div>
+
+    <div class="modal fade" id="staticBackdrop1" tabindex="-1" aria-labelledby="exampleModalLabel1"
+        data-backdrop="false" aria-hidden="true">
+        <div class="modal-dialog ">
+            <div class="modal-content ">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel1">Are you sure you want to save this block?!</h5>
+
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body ">
+
+                    <form id="custom-block-form">
+                        <div class="form-outline mb-4">
+                            <label class="form-label" for="block_name">Block Name *</label>
+                            <input type="text" id="block_name" class="form-control" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-block">Save</button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="modal fade" id="less-modal" tabindex="-1" aria-labelledby="exampleModalLabel" data-backdrop="false"
@@ -140,6 +165,7 @@
         $is_rtl = "{{ $landingPage->is_rtl }}";
         $template = "";
         $_token = $('meta[name="csrf-token"]').attr("content");
+        var blocks = @json($blocks);
     </script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.0.0/jquery.form.min.js" crossorigin="anonymous">
     </script>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CustomBlock;
 use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\export\LandingPageExport;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
@@ -393,8 +394,9 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
 
     public function getPageBuilder($landingPageId)
     {
+        $blocks =  DB::table('custom_blocks')->get();
         $landingPage = DB::table('landing_pages')->where('id', $landingPageId)->first();
-        return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage"));
+        return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage", "blocks"));
     }
 
     public function getPageBuilderContent($id)
@@ -422,20 +424,29 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
 
     public function postPageBuilder(Request $request)
     {
-
-        if (!$request->id) {
-            return response()->json(["message" => "Error No Landing Page"], 500);
-        }
-
-        $landingPage = DB::table('landing_pages')->where('id', $request->id)
-            ->update([
-                'html' => $request["html"],
-                'css' => $request["css"],
-                'components' => $request["components"],
-                'variables' => $request["variables"],
+        if ($request->custom_block_data) {
+            $custom_block =   CustomBlock::create([
+                'custom_block_data' => $request->custom_block_data,
+                'blockID' => $request->blockId,
+                'block_name' => $request->name,
             ]);
 
-        return response()->json();
+            return response()->json(array("message" => "done", "status" => true));
+        }
+
+        if ($request->id) {
+            $landingPage = DB::table('landing_pages')->where('id', $request->id)
+                ->update([
+                    'html' => $request["html"],
+                    'css' => $request["css"],
+                    'components' => $request["components"],
+                    'variables' => $request["variables"],
+                ]);
+
+            return response()->json(array("message" => "done", "status" => true));
+        }
+
+        return response()->json(array("message" => "faild", "status" => false));
     }
 
     public function getExportExcel($id)

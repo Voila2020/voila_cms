@@ -107,6 +107,132 @@ editor.on("storage:end:load", (vars) => {
 });
 
 
+//put a plus button on selected element to add new block.
+editor.on('component:selected', (editor) => {
+
+    if (!editor) {
+        editor = editor
+    }
+
+    const selectedComponent = this.editor.getSelected();
+    if (selectedComponent && selectedComponent.attributes) {
+        const commandBlockTemplateIcon = 'fa fa-plus fa-2xs'
+        const commandBlockTemplate = () => {
+            $('#staticBackdrop1').modal('show');
+        }
+        const defaultToolbar = selectedComponent.get('toolbar');
+        const commandExists = defaultToolbar.some((item) => item.command.name === 'commandBlockTemplate');
+        if (!commandExists) {
+            selectedComponent.set({
+                toolbar: [...defaultToolbar, { attributes: { class: commandBlockTemplateIcon }, command: commandBlockTemplate }]
+            });
+        }
+    }
+});
+
+
+$('#custom-block-form').submit(function (evt) {
+    evt.preventDefault();
+    const selected = editor.getSelected();
+    var name = $("#block_name").val();
+    let blockId = 'customBlockTemplate_' + name.split(' ').join('_')
+    let name_blockId = {
+        'name': name,
+        'blockId': blockId
+    }
+    createBlockTemplate(editor, selected, name_blockId);
+    $('#staticBackdrop1').modal('hide');
+
+});
+
+
+const getCss = (editor, id) => {
+    const style = editor.CssComposer.getRule(`#${id}`);
+    const hoverStyle = editor.CssComposer.getRule(`#${id}:hover`);
+    if (style) {
+        if (hoverStyle) {
+            return style.toCSS() + ' ' + hoverStyle.toCSS()
+        }
+        return style.toCSS()
+    }
+    else {
+        return ''
+    }
+}
+
+const findComponentStyles = (editor, selected) => {
+    let css = ''
+    if (selected) {
+        const childModel = selected.components().models
+        if (childModel) {
+            for (const model of childModel) {
+                css = css + findComponentStyles(editor, model)
+            }
+            return css + getCss(editor, selected.getId());
+        }
+        else {
+            return getCss(editor, selected.getId());
+        }
+    }
+}
+
+$.ajaxSetup({
+    headers: {
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+});
+
+const createBlockTemplate = (editor, selected, name_blockId) => {
+    const bm = editor.BlockManager
+    const blockId = name_blockId.blockId;
+    const name = name_blockId.name;
+
+    let elementHTML = selected.getEl().outerHTML;
+    let first_partHtml = elementHTML.substring(0, elementHTML.indexOf(' '));
+    let second_partHtml = elementHTML.substring(elementHTML.indexOf(' ') + 1);
+    first_partHtml += ` custom_block_template=true block_id="${blockId}" `
+    let finalHtml = first_partHtml + second_partHtml
+    const blockCss = findComponentStyles(editor, selected)
+    const css = `<style>${blockCss}</style>`
+    const elementHtmlCss = finalHtml + css
+
+    bm.add(`${blockId}`, {
+        category: 'Custom Blocks',
+        attributes: { custom_block_template: true },
+        label: `${name}`,
+        media: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M16.725 19.5q-.3-.125-.563-.263t-.537-.337l-1.075.325q-.175.05-.325-.013t-.25-.212l-.6-1q-.1-.15-.05-.325t.175-.3l.825-.725q-.05-.3-.05-.65t.05-.65l-.825-.725q-.125-.125-.175-.3t.05-.325l.6-1q.1-.15.25-.212t.325-.013l1.075.325q.275-.2.537-.337t.563-.263l.225-1.1q.05-.175.163-.288t.312-.112h1.2q.2 0 .313.113t.162.287l.225 1.1q.3.125.563.263t.537.337l1.075-.325q.175-.05.325.013t.25.212l.6 1q.1.15.05.325t-.175.3l-.825.725q.05.3.05.65t-.05.65l.825.725q.125.125.175.3t-.05.325l-.6 1q-.1.15-.25.213t-.325.012l-1.075-.325q-.275.2-.537.338t-.563.262l-.225 1.1q-.05.175-.163.288t-.312.112h-1.2q-.2 0-.313-.113t-.162-.287l-.225-1.1Zm1.3-1.5q.825 0 1.413-.588T20.025 16q0-.825-.587-1.413T18.025 14q-.825 0-1.412.588T16.024 16q0 .825.588 1.413t1.412.587ZM5 20q-.825 0-1.412-.588T3 18V4q0-.825.588-1.413T5 2h14q.825 0 1.413.588T21 4v5.65q-.475-.225-.975-.363T19 9.075V4H5v9h3.55q.3 0 .525.138t.35.362q.35.575.775.9t.925.475q-.225 1.35.063 2.675T12.275 20H5Z"/></svg>',
+        content: elementHtmlCss,
+    })
+
+    $.ajax({
+        data: {
+            custom_block_data: elementHtmlCss,
+            name: name,
+            blockId: blockId,
+        },
+        type: 'POST',
+        success: function (data) {
+            $('html, body').css("cursor", "auto");
+        },
+        error: function (data) {
+            $('html, body').css("cursor", "auto");
+        }
+    });
+}
+
+if (blocks) {
+    blocks.forEach(element => {
+        editor.BlockManager.add(`${element.blockID}`, {
+            category: 'Custom Blocks',
+            attributes: {
+                custom_block_template: true
+            },
+            label: `${element.block_name}`,
+            media: '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M16.725 19.5q-.3-.125-.563-.263t-.537-.337l-1.075.325q-.175.05-.325-.013t-.25-.212l-.6-1q-.1-.15-.05-.325t.175-.3l.825-.725q-.05-.3-.05-.65t.05-.65l-.825-.725q-.125-.125-.175-.3t.05-.325l.6-1q.1-.15.25-.212t.325-.013l1.075.325q.275-.2.537-.337t.563-.263l.225-1.1q.05-.175.163-.288t.312-.112h1.2q.2 0 .313.113t.162.287l.225 1.1q.3.125.563.263t.537.337l1.075-.325q.175-.05.325.013t.25.212l.6 1q.1.15.05.325t-.175.3l-.825.725q.05.3.05.65t-.05.65l.825.725q.125.125.175.3t-.05.325l-.6 1q-.1.15-.25.213t-.325.012l-1.075-.325q-.275.2-.537.338t-.563.262l-.225 1.1q-.05.175-.163.288t-.312.112h-1.2q-.2 0-.313-.113t-.162-.287l-.225-1.1Zm1.3-1.5q.825 0 1.413-.588T20.025 16q0-.825-.587-1.413T18.025 14q-.825 0-1.412.588T16.024 16q0 .825.588 1.413t1.412.587ZM5 20q-.825 0-1.412-.588T3 18V4q0-.825.588-1.413T5 2h14q.825 0 1.413.588T21 4v5.65q-.475-.225-.975-.363T19 9.075V4H5v9h3.55q.3 0 .525.138t.35.362q.35.575.775.9t.925.475q-.225 1.35.063 2.675T12.275 20H5Z"/></svg>',
+            content: element.custom_block_data,
+        });
+    });
+}
 
 
 //Make the dotted boxes always visible
@@ -129,6 +255,7 @@ editor.Panels.addButton("options", [{
     attributes: {
         title: "Save Landing Page"
     },
+
 },]);
 
 //color theme button
@@ -273,6 +400,10 @@ editor.on('load', function () {
         $(category.view.el).attr("data-id", category.id);
         category.set("open", false);
     });
+
+
+
+
 });
 
 //link the version 2 builder with the voila file manager.
