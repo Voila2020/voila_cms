@@ -1,5 +1,5 @@
 <?php
-namespace Database\Seeders; 
+namespace database\seeds; 
 
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
