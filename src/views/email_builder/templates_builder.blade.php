@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html>
 
 <head>
     <meta charset="utf-8">
@@ -40,7 +40,7 @@
         $_SITE = "{{ url('/') }}";
         $id = "{{ $id }}";
         $_token = $('meta[name="csrf-token"]').attr("content");
-        $lang = "{{ $lang }}";
+        $lang = "{{ $button_lang }}";
     </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js" type="text/javascript"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.21.2/grapes.min.js"></script>

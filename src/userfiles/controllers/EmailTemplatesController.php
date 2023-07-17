@@ -59,8 +59,8 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
     public function getEmailBuilder(Request $request, $id)
     {
         $email_template = DB::table('cms_email_templates')->where('id', $id)->first();
-        $lang = Request::input('lang');
-        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template", 'lang'));
+        $button_lang = Request::input('lang');
+        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template", "button_lang"));
     }
 
 
