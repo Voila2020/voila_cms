@@ -41,8 +41,8 @@
                 </a>
             </span>
         </div>
-        <div class='help-block'>{{ @$form['help'] }}</div>
         <div class="text-danger">{!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}</div>
+        <div class='help-block'>{{ @$form['help'] }}</div>
     </div>
 
     <div class="{{ $col_width ? $col_width . ' filemanager-col_' . $name : 'col-sm-10 filemanager-col_' . $name }}"
@@ -70,6 +70,7 @@
                     {{ cbLang('text_delete') }} </a>
             </p>
         @endif
+        <div class='help-block'>{{ @$form['help'] }}</div>
     </div>
 
 
