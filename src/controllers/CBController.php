@@ -907,6 +907,10 @@ class CBController extends Controller
             $ai = [];
             $name = $di['name'];
 
+            if (!isset($request_all[$name])) {
+                continue;
+            }
+
             if ($di['type'] != 'upload') {
                 if (@$di['required']) {
                     $ai[] = 'required';
@@ -1004,7 +1008,6 @@ class CBController extends Controller
                 $array_input[$name] = implode('|', $ai);
             }
         }
-
         $validator = Validator::make($request_all, $array_input);
 
         if ($validator->fails()) {
