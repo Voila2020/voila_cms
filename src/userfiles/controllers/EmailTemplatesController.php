@@ -52,15 +52,15 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         # Actions
         $this->addaction = [];
         $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]?lang=en', 'icon' => 'fa fa-wrench'];
-        $this->addaction[] = ['label' => 'Build Arabic', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]?lang=ar', 'icon' => 'fa fa-wrench'];
+        // $this->addaction[] = ['label' => 'Build Arabic', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]?lang=ar', 'icon' => 'fa fa-wrench'];
     }
     //By the way, you can still create your own method in here... :)
 
     public function getEmailBuilder(Request $request, $id)
     {
         $email_template = DB::table('cms_email_templates')->where('id', $id)->first();
-        $lang = Request::input('lang');
-        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template", 'lang'));
+        $button_lang = Request::input('lang');
+        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template", "button_lang"));
     }
 
 
@@ -119,7 +119,8 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
             DB::table('cms_email_templates')
                 ->where('id', $id)
                 ->update([
-                    'content' => Request::input('html'),
+                    'content' => Request::input('content'),
+                    'html' => Request::input('html'),
                     'template' => Request::input('components'),
                     'css' => Request::input('css'),
                 ]);
@@ -129,7 +130,8 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
             DB::table('cms_email_templates')
                 ->where('id', $id)
                 ->update([
-                    'content_ar' => Request::input('html'),
+                    'html_ar' => Request::input('html'),
+                    'content_ar' => Request::input('content'),
                     'template_ar' => Request::input('components'),
                     'css_ar' => Request::input('css'),
                 ]);
