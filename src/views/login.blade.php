@@ -168,9 +168,8 @@
             // toggle the eye slash icon
         });
         var $site_key = @json(CRUDBooster::getSetting('recaptcha_site_key'));
-        var $secret_key = @json(CRUDBooster::getSetting('recaptcha_secret_key'));
         var keysValidity = false;
-        if ($site_key && $secret_key) {
+        if ($site_key) {
             grecaptcha.ready(function() {
                 grecaptcha.execute($site_key, {
                     action: '{{ config('crudbooster.ADMIN_PATH') }}/login'
