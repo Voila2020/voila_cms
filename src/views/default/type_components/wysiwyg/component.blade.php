@@ -56,7 +56,7 @@
         <input type="hidden" id="input_{{ $name }}">
         <!-- <a class="btn btn-primary" data-toggle="modal" onclick="openIfram('{{ $name }}','{{ CRUDBooster::getCurrentModule()->table_name }}','{{ CRUDbooster::getCurrentId() }}')" data-target="#model_scrach">edit from scratch</a> -->
         <textarea id='textarea_{{ $name }}' {{ $required }} {{ $readonly }} {{ $disabled }}
-            name="{{ $form['name'] }}" class='form-control' rows='5'>{{ $value }}</textarea>
+            name="{{ $form['name'] }}" class='form-control' rows='5'>{!! $value !!}</textarea>
         <div class="text-danger">{{ $errors->first($name) }}</div>
         <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
     </div>
@@ -265,8 +265,6 @@
 
         function insert_contents(inst) {
 
-            let value = $('<div />').text(`"{{ $value }}"`).html();
-            inst.setContent(value);
         }
     </script>
 @endpush
