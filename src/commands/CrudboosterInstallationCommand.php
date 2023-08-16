@@ -107,7 +107,7 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('landing_page_builder'), 0777);
             }
 
-            if (!file_exists(public_path('landing_page_builder'))) {
+            if (file_exists(public_path('landing_page_builder'))) {
                 File::deleteDirectory(public_path('landing_page_builder'));
             }
 
@@ -115,7 +115,7 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('email_builder'), 0777);
             }
 
-            if (!file_exists(public_path('email_builder'))) {
+            if (file_exists(public_path('email_builder'))) {
                 File::deleteDirectory(public_path('email_builder'));
             }
 
