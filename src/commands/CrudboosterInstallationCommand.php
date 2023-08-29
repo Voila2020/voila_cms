@@ -72,12 +72,24 @@ class CrudboosterInstallationCommand extends Command
                     if (file_exists(config_path('crudbooster.php'))) {
                         File::delete(config_path('crudbooster.php'));
                     }
-
                 }
             }
 
             if (file_exists(app_path('Http/Controllers/AdminCmsUsersController.php'))) {
                 File::delete(app_path('Http/Controllers/AdminCmsUsersController.php'));
+            }
+
+            if (file_exists(app_path('Http/Controllers/EmailTemplatesController.php'))) {
+                File::delete(app_path('Http/Controllers/EmailTemplatesController.php'));
+            }
+
+            if (file_exists(app_path('Http/Controllers/LandingPagesController.php'))) {
+                File::delete(app_path('Http/Controllers/LandingPagesController.php'));
+            }
+
+
+            if (file_exists(app_path('Http/Controllers/AdminFormsController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminFormsController.php'));
             }
 
             if (!file_exists(public_path('vendor'))) {
@@ -95,13 +107,34 @@ class CrudboosterInstallationCommand extends Command
                 mkdir(public_path('landing_page_builder'), 0777);
             }
 
-            if (!file_exists(public_path('landing_page'))) {
-                mkdir(public_path('landing_page'), 0777);
+            if (file_exists(public_path('landing_page_builder'))) {
+                File::deleteDirectory(public_path('landing_page_builder'));
             }
 
-            if (!file_exists(resource_path('landing_page_builder'))) {
-                mkdir(resource_path('landing_page_builder'), 0777);
+            if (!file_exists(public_path('email_builder'))) {
+                mkdir(public_path('email_builder'), 0777);
             }
+
+            if (file_exists(public_path('email_builder'))) {
+                File::deleteDirectory(public_path('email_builder'));
+            }
+
+            if (!file_exists(resource_path('views/landing_page_builder'))) {
+                mkdir(resource_path('views/landing_page_builder'), 0777);
+            }
+
+            if (file_exists(resource_path('views/landing_page_builder'))) {
+                File::deleteDirectory(resource_path('views/landing_page_builder'));
+            }
+
+            if (!file_exists(resource_path('views/email_builder'))) {
+                mkdir(resource_path('views/email_builder'), 0777);
+            }
+
+            if (file_exists(resource_path('views/email_builder'))) {
+                File::deleteDirectory(resource_path('views/email_builder'));
+            }
+            
 
             if (!file_exists(app_path('Rules'))) {
                 mkdir(app_path('Rules'), 0777);
@@ -114,8 +147,8 @@ class CrudboosterInstallationCommand extends Command
             $composer = $this->findComposer();
 
             $process = (app()->version() >= 7.0)
-            ? new Process([$composer . ' dumpautoload'])
-            : new Process($composer . ' dumpautoload');
+                ? new Process([$composer . ' dumpautoload'])
+                : new Process($composer . ' dumpautoload');
 
             $process->setWorkingDirectory(base_path())->run();
 
