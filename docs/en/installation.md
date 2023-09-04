@@ -34,12 +34,12 @@ in register function:
 Schema::defaultStringLength(191);
 ```
 
-2. Open the terminal, navigate to your laravel project directory.
+3. Open the terminal, navigate to your laravel project directory.
 ```php
 $ composer require voila_cms/crudbooster
 ```
 
-3. Run the following command at the terminal
+4. Run the following command at the terminal
 ```php
 $ php artisan crudbooster:install
 ```
