@@ -27,6 +27,13 @@ DB_USERNAME=**your_db_user**
 DB_PASSWORD=**password**
 ```
 
+2. Change Schema default string length, Add this in Providers/AppServiceProvider.php
+```
+use Illuminate\Support\Facades\Schema;
+in register function:
+Schema::defaultStringLength(191);
+```
+
 2. Open the terminal, navigate to your laravel project directory.
 ```php
 $ composer require voila_cms/crudbooster
