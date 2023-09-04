@@ -55,7 +55,7 @@ class CrudboosterUpdateCommand extends Command
         if (! class_exists('CBSeeder')) {
             require_once __DIR__.'/../database/seeds/CBSeeder.php';
         }
-        $this->call('db:seed', ['--class' => 'CBSeeder']);
+        $this->call('db:seed', ['--class' => 'crocodicstudio\crudbooster\database\seeds\CBSeeder']);
 
         $this->info('Clearing Cache...');
         Cache::flush();

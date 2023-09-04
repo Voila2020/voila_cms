@@ -134,7 +134,7 @@ class CrudboosterInstallationCommand extends Command
             if (file_exists(resource_path('views/email_builder'))) {
                 File::deleteDirectory(resource_path('views/email_builder'));
             }
-            
+
 
             if (!file_exists(app_path('Rules'))) {
                 mkdir(app_path('Rules'), 0777);
@@ -159,7 +159,7 @@ class CrudboosterInstallationCommand extends Command
             }
 
             $this->call('migrate');
-            $this->call('db:seed', ['--class' => 'CBSeeder']);
+            $this->call('db:seed', ['--class' => 'crocodicstudio\crudbooster\database\seeds\CBSeeder']);
             $this->call('config:clear');
             if (app()->version() < 5.6) {
                 $this->call('optimize');
