@@ -924,31 +924,31 @@ class CRUDBooster
         return self::findPrimaryKey($table);
     }
 
-    //     public static function findPrimaryKey($table)
-    //     {
-    //         if (! $table) {
-    //             return 'id';
-    //         }
-
-    //         if (self::getCache('table_'.$table, 'primary_key')) {
-    //             return self::getCache('table_'.$table, 'primary_key');
-    //         }
-    //         $table = CRUDBooster::parseSqlTable($table);
-
-    //         if (! $table['table']) {
-    //             throw new \Exception("parseSqlTable can't determine the table");
-    //         }
-    //         $query = config('database.connections.'.config('database.default').'.driver') == 'pgsql' ? "select * from information_schema.key_column_usage WHERE TABLE_NAME = '$table[table]'" : "select * from information_schema.COLUMNS where TABLE_SCHEMA = '$table[database]' and TABLE_NAME = '$table[table]' and COLUMN_KEY = 'PRI'";
-    //         $keys = DB::select($query);
-    //         $primary_key = $keys[0]->COLUMN_NAME;
-    //         if ($primary_key) {
-    //             self::putCache('table_'.$table, 'primary_key', $primary_key);
-
-    //             return $primary_key;
-    //         } else {
-    //             return 'id';
-    //         }
+    // public static function findPrimaryKey($table)
+    // {
+    //     if (! $table) {
+    //         return 'id';
     //     }
+
+    //     if (self::getCache('table_'.$table, 'primary_key')) {
+    //         return self::getCache('table_'.$table, 'primary_key');
+    //     }
+    //     $table = CRUDBooster::parseSqlTable($table);
+
+    //     if (! $table['table']) {
+    //         throw new \Exception("parseSqlTable can't determine the table");
+    //     }
+    //     $query = config('database.connections.'.config('database.default').'.driver') == 'pgsql' ? "select * from information_schema.key_column_usage WHERE TABLE_NAME = '$table[table]'" : "select * from information_schema.COLUMNS where TABLE_SCHEMA = '$table[database]' and TABLE_NAME = '$table[table]' and COLUMN_KEY = 'PRI'";
+    //     $keys = DB::select($query);
+    //     $primary_key = $keys[0]->COLUMN_NAME;
+    //     if ($primary_key) {
+    //         self::putCache('table_'.$table, 'primary_key', $primary_key);
+
+    //         return $primary_key;
+    //     } else {
+    //         return 'id';
+    //     }
+    // }
 
     public static function findPrimaryKey($table)
     {
@@ -956,10 +956,15 @@ class CRUDBooster
             return 'id';
         }
 
+        if (self::getCache('table_' . $table, 'primary_key')) {
+            return self::getCache('table_' . $table, 'primary_key');
+        }
+
         $pk = DB::getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
         if (!$pk) {
             return null;
         }
+        self::putCache('table_' . $table, 'primary_key', $pk->getColumns()[0]);
         return $pk->getColumns()[0];
     }
 
@@ -1009,7 +1014,6 @@ class CRUDBooster
         } else {
             return Str::singular($parent_table) . '_id';
         }
-
     }
 
     public static function getTableForeignKey($fieldName)
