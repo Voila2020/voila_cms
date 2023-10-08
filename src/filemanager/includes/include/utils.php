@@ -403,13 +403,43 @@ function create_img($imgfile, $imgthumb, $newwidth, $newheight = null, $option =
      if (file_exists($imgfile) || strpos($imgfile, 'http') === 0) {
           if (strpos($imgfile, 'http') === 0 || image_check_memory_usage($imgfile, $newwidth, $newheight)) {
                require_once('php_image_magician.php');
-               try {
-                    $magicianObj = new imageLib($imgfile);
-                    $magicianObj->resizeImage($newwidth, $newheight, $option);
-                    $magicianObj->saveImage($imgthumb, 80);
-               } catch (Exception $e) {
-                    return $e->getMessage();
+               // die("imgfile: $imgfile,  strpos: ".strpos($imgfile, ".webp"));
+               if (strpos($imgfile, ".webp")) {
+                    try {
+                         $originalImage = imagecreatefromwebp($imgfile);
+                         // $croppedImage = imagecreatetruecolor($newwidth, $newheight);
+                         // Perform the crop
+                         // imagecopy($croppedImage, $originalImage, 0, 0, 0, 0, $newwidth, $newheight);
+                         // // Save the cropped image as a WebP file
+                         // imagewebp($croppedImage, $imgthumb);
+                         // // Free up memory by destroying the images
+                         // imagedestroy($originalImage);
+                         // imagedestroy($croppedImage);
+
+                         // Create a new image with the desired dimensions for the resize
+                         $resizedImage = imagescale($originalImage, $newwidth, $newheight);
+
+                         // Save the resized image as a WebP file
+                         imagewebp($resizedImage, $imgthumb);
+
+                         // Free up memory by destroying the images
+                         imagedestroy($originalImage);
+                         imagedestroy($resizedImage);
+
+                    } catch (Exception $e) {
+                         return $e->getMessage();
+                    }
+               } else {
+                    try {
+
+                         $magicianObj = new imageLib($imgfile);
+                         $magicianObj->resizeImage($newwidth, $newheight, $option);
+                         $magicianObj->saveImage($imgthumb, 80);
+                    } catch (Exception $e) {
+                         return $e->getMessage();
+                    }
                }
+
                $result = true;
           }
      }
