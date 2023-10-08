@@ -814,6 +814,8 @@ class UploadHandler
                 if ($image_quality > 9) {
                     $image_quality = 9;
                 }
+                // LAMA
+                $image_quality = 0;
                 break;
             default:
                 return false;
@@ -847,9 +849,9 @@ class UploadHandler
             $max_height / $img_height
         );
         if ($scale >= 1) {
-            if ($image_oriented) {
-                return $write_func($src_img, $new_file_path, $image_quality);
-            }
+            // if ($image_oriented) {
+                // return $write_func($src_img, $new_file_path, $image_quality);
+            // }
             if ($file_path !== $new_file_path) {
                 return copy($file_path, $new_file_path);
             }
@@ -877,12 +879,24 @@ class UploadHandler
         switch ($type) {
             case 'gif':
             case 'png':
-                imagecolortransparent($new_img, imagecolorallocate($new_img, 0, 0, 0));
+                // imagecolortransparent($new_img, imagecolorallocate($new_img, 0, 0, 0));
             case 'png':
-                imagealphablending($new_img, false);
-                imagesavealpha($new_img, true);
+                // imagealphablending($new_img, false);
+                // imagesavealpha($new_img, true);
                 break;
         }
+        // $success = imagecopyresampled(
+        //     $new_img,
+        //     $src_img,
+        //     $dst_x,
+        //     $dst_y,
+        //     0,
+        //     0,
+        //     $new_width,
+        //     $new_height,
+        //     $img_width,
+        //     $img_height
+        // ) && $write_func($new_img, $new_file_path, $image_quality);
         $success = imagecopyresampled(
             $new_img,
             $src_img,
@@ -894,7 +908,7 @@ class UploadHandler
             $new_height,
             $img_width,
             $img_height
-        ) && $write_func($new_img, $new_file_path, $image_quality);
+        );
         $this->gd_set_image_object($file_path, $new_img);
         return $success;
     }
@@ -1111,7 +1125,7 @@ class UploadHandler
                     }
                     return false;
                 } catch (\Exception $e) {
-                    error_log($e->getMessage());
+                    error_log($e);
                 }
             }
             if ($this->options['image_library'] === 2) {
@@ -1145,7 +1159,7 @@ class UploadHandler
             }
             return $this->gd_create_scaled_image($file_name, $version, $options);
         } catch (\Exception $e) {
-            error_log($e->getMessage());
+            error_log($e);
             return false;
         }
     }
@@ -1174,12 +1188,15 @@ class UploadHandler
         if (bin2hex(@$data[0]) . substr($data, 1, 4) === '89PNG') {
             return self::IMAGETYPE_PNG;
         }
+        if (bin2hex(substr($data, 0, 12)) === '52494646') {
+            return 4;
+        }
         return false;
     }
 
     protected function is_valid_image_file($file_path)
     {
-        if (!preg_match('/\.(gif|jpe?g|png)$/i', $file_path)) {
+        if (!preg_match('/\.(gif|jpe?g|png|webp)$/i', $file_path)) {
             return false;
         }
         return !!$this->imagetype($file_path);
@@ -1204,7 +1221,7 @@ class UploadHandler
         }
         if (count($failed_versions)) {
             $file->error = $this->get_error_message('image_resize')
-                . ' (' . implode($failed_versions, ', ') . ')';
+                . ' (' . implode( ', ',$failed_versions) . ')';
         }
         // Free memory:
         $this->destroy_image_object($file_path);
@@ -1262,7 +1279,7 @@ class UploadHandler
             $file_size = $this->get_file_size($file_path, $append_file);
             if ($file_size === $file->size) {
                 $file->url = $this->get_download_url($file->name);
-                if ($this->is_valid_image_file($file_path)) {
+                if ($this->is_valid_image_file($file_path) && $this->imagetype($file_path) != 4) {
                     $this->handle_image_file($file_path, $file);
                 }
             } else {
@@ -1519,7 +1536,7 @@ class UploadHandler
         $files = array();
         if ($upload) {
             if (is_array($upload['tmp_name'])) {
-                // param_name is an array identifier like "files[]",
+            // param_name is an array identifier like "files[]",
                 // $upload is a multi-dimensional array:
                 foreach ($upload['tmp_name'] as $index => $value) {
                     $files[] = $this->handle_file_upload(
@@ -1561,6 +1578,7 @@ class UploadHandler
                 $this->head();
                 $this->body(json_encode($res));
             }
+
         } else {
             $this->head();
             $this->body(json_encode($res));
@@ -1588,13 +1606,11 @@ class UploadHandler
             $targetFile = $this->options['config']['ftp_temp_folder'] . $res['files'][0]->name;
             $targetFileThumb = $this->options['config']['ftp_temp_folder'] . "thumbs/" . $res['files'][0]->name;
         }
-
         //check if image (and supported)
         $is_img = false;
         if ($this->is_valid_image_file($targetFile)) {
             $is_img = true;
         }
-
         if ($is_img) {
             if (isset($this->options['config']['image_watermark']) && $this->options['config']['image_watermark']) {
                 require_once base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/include/php_image_magician.php';
@@ -1605,7 +1621,6 @@ class UploadHandler
             }
 
             $thumbResult = create_img($targetFile, $targetFileThumb, 122, 91);
-
             if ($thumbResult !== true) {
                 if ($thumbResult === false) {
                     $res['files'][0]->error = trans("Not enough Memory");
