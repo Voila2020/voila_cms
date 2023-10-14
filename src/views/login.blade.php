@@ -96,7 +96,7 @@
                 <input type="hidden" name="_token" value="{{ csrf_token() }}" />
 
                 @if (!empty(config('services.google')))
-                    <div style="margin-bottom:10px" class='row'>
+                    {{-- <div style="margin-bottom:10px" class='row'>
                         <div class='col-xs-12'>
 
                             <a href='{{ route('redirect', 'google') }}' class="btn btn-primary btn-block btn-flat"><i
@@ -105,7 +105,7 @@
 
                             <hr>
                         </div>
-                    </div>
+                    </div> --}}
                 @endif
 
                 <div class="form-group has-feedback">
