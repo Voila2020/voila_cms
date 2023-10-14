@@ -1924,11 +1924,15 @@ class Admin' . $controllername . ' extends CBController {
         $prefix = trim($prefix, '/') . '/';
 
         $namespace = ($namespace) ?: 'App\Http\Controllers';
-
         try {
             Route::get($prefix, ['uses' => $controller . '@getIndex', 'as' => $controller . 'GetIndex']);
 
-            $controller_class = new \ReflectionClass($namespace . '\\' . $controller);
+            try {
+                $controller_class = new \ReflectionClass($namespace . '\\' . $controller);
+            } catch (\Exception $e) {
+                $controller_class = new \ReflectionClass('crocodicstudio\crudbooster\controllers\\' . $controller);
+            }
+
             $controller_methods = $controller_class->getMethods(\ReflectionMethod::IS_PUBLIC);
             $wildcards = '/{one?}/{two?}/{three?}/{four?}/{five?}';
             foreach ($controller_methods as $method) {
@@ -1951,6 +1955,7 @@ class Admin' . $controllername . ' extends CBController {
                 }
             }
         } catch (\Exception $e) {
+            Log::error("Path = " . $prefix . "\nController = " . $controller . "\nError = " . $e->getMessage());
         }
     }
 }
