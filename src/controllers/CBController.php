@@ -31,6 +31,10 @@ class CBController extends Controller
 
     public $table;
 
+    public $translation_table;
+
+    public $translation_main_column;
+
     public $title_field;
 
     public $primary_key = 'id';
@@ -135,15 +139,33 @@ class CBController extends Controller
 
     public $sidebar_mode = 'normal';
 
+    public $websiteLanguages = [];
+
     public function cbLoader()
     {
         $this->cbInit();
 
         $this->checkHideForm();
 
+        //-------------------------------------------//
+        if ($this->translation_table) {
+            $tempColumns = Schema::getColumnListing($this->translation_table);
+            $matchingColumn = "";
+            foreach ($tempColumns as $column) {
+                if (str_ends_with($column, '_id')) {
+                    $matchingColumn = $column;
+                    break;
+                }
+            }
+            $this->translation_main_column = $matchingColumn;
+        }
+        //-------------------------------------------//
+
         $this->primary_key = CB::pk($this->table);
+        $this->translation_table = $this->translation_table;
         $this->columns_table = $this->col;
         $this->data_inputan = $this->form;
+        $this->websiteLanguages = DB::table("languages")->where("active",1)->orderby("active","desc")->get();
         $this->data['pk'] = $this->primary_key;
         $this->data['forms'] = $this->data_inputan;
         $this->data['hide_form'] = $this->hide_form;
@@ -257,7 +279,6 @@ class CBController extends Controller
                 }
             }
         }
-
         $data['table'] = $this->table;
         $data['table_pk'] = CB::pk($this->table);
         $data['page_title'] = $module->name;
@@ -267,6 +288,7 @@ class CBController extends Controller
 
         $tablePK = $data['table_pk'];
         $table_columns = CB::getTableColumns($this->table);
+        $translationColumns = CB::getTableColumns($this->translation_table);
         $result = DB::table($this->table)->select(DB::raw($this->table . "." . $this->primary_key));
 
         if (request('parent_id')) {
@@ -286,12 +308,23 @@ class CBController extends Controller
         $join_table_temp = [];
         $table = $this->table;
         $columns_table = $this->columns_table;
+        $translationTableJoined = false;
         foreach ($columns_table as $index => $coltab) {
 
             $join = @$coltab['join'];
             $join_where = @$coltab['join_where'];
             $join_id = @$coltab['join_id'];
             $field = @$coltab['name'];
+            if ($coltab["translation"]) {
+                $field = $this->translation_table . "." . $field;
+                if (!$translationTableJoined) {
+                    $result->leftJoin($this->translation_table, function ($join) {
+                        $join->on($this->table . '.id', '=', $this->translation_table . '.' . $this->translation_main_column);
+                    })
+                    ->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
+                }
+                $translationTableJoined = true;
+            }
             $join_table_temp[] = $table;
 
             if (!$field) {
@@ -326,7 +359,6 @@ class CBController extends Controller
             }
 
             if ($join) {
-
                 $join_exp = explode(',', $join);
 
                 $join_table = $join_exp[0];
@@ -339,7 +371,6 @@ class CBController extends Controller
                     $join_alias = $join_table . $join_alias_count;
                 }
                 $join_table_temp[] = $join_table;
-
                 $result->leftjoin($join_table . ' as ' . $join_alias, $join_alias . (($join_id) ? '.' . $join_id : '.' . $joinTablePK), '=', DB::raw($table . '.' . $field . (($join_where) ? ' AND ' . $join_where . ' ' : '')));
                 $result->addselect($join_alias . '.' . $join_column . ' as ' . $join_alias . '_' . $join_column);
 
@@ -361,7 +392,6 @@ class CBController extends Controller
                 @$joinTable1PK = CB::pk($join_table1);
                 @$join_column1 = $join_exp[3];
                 @$join_alias1 = $join_table1;
-
                 if ($join_table1 && $join_column1) {
 
                     if (in_array($join_table1, $join_table_temp)) {
@@ -396,7 +426,6 @@ class CBController extends Controller
                 $columns_table[$index]['field_with'] = $table . '.' . $field;
             }
         }
-
         if (request('q')) {
             $result->where(function ($w) use ($columns_table) {
                 foreach ($columns_table as $col) {
@@ -653,7 +682,7 @@ class CBController extends Controller
                 $html_content[] = $value;
             } //end foreach columns_table
 
-            if ($this->button_table_action):
+            if ($this->button_table_action) :
 
                 $button_action_style = $this->button_action_style;
                 $html_content[] = "<div class='button_action' style='text-align:right'>" . view('crudbooster::components.action', compact('addaction', 'row', 'button_action_style', 'parent_field'))->render() . "</div>";
@@ -898,12 +927,13 @@ class CBController extends Controller
         return response()->json($result);
     }
 
-    public function validation($id = null)
+    public function validation($formArrToValidate, $id = null)
     {
 
         $request_all = Request::all();
         $array_input = [];
-        foreach ($this->data_inputan as $di) {
+        // foreach ($this->data_inputan as $di) {
+        foreach ($formArrToValidate as $di) {
             $ai = [];
             $name = $di['name'];
 
@@ -1032,14 +1062,14 @@ class CBController extends Controller
         }
     }
 
-    public function input_assignment($id = null)
+    public function input_assignment($id = null, $translationLocale = false)
     {
 
         $hide_form = (request('hide_form')) ? unserialize(request('hide_form')) : [];
         foreach ($this->data_inputan as $ro) {
-
+            if (($ro["translation"] == "TRUE" && !$translationLocale) || $ro["translation"] != "TRUE" && $translationLocale)
+                continue;
             $name = $ro['name'];
-
             if (!$name) {
                 continue;
             }
@@ -1068,6 +1098,8 @@ class CBController extends Controller
             }
 
             $inputdata = request($name);
+            if ($translationLocale)
+                $inputdata = request($name . "_$translationLocale");
 
             if ($ro['type'] == 'money') {
                 $inputdata = preg_replace('/[^\d-]+/', '', $inputdata);
@@ -1187,9 +1219,20 @@ class CBController extends Controller
             ]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang("denied_access"));
         }
-        $this->validation();
+        $formArrToValidate = [];
+        foreach ($this->data_inputan as $field) {
+            if ($field["translation"] == "FALSE") {
+                $formArrToValidate[] = $field;
+                continue;
+            }
+            foreach ($this->websiteLanguages as $lang) {
+                $temp = $field;
+                $temp["name"] = $field["name"] . "_" . $lang->code;
+                $formArrToValidate[] = $temp;
+            }
+        }
+        $this->validation($formArrToValidate);
         $this->input_assignment();
-
         if (Schema::hasColumn($this->table, 'created_at')) {
             $this->arr['created_at'] = date('Y-m-d H:i:s');
         }
@@ -1202,13 +1245,13 @@ class CBController extends Controller
         $this->hook_before_add($this->arr);
         $lastInsertId = $id = DB::table($this->table)->insertGetId($this->arr);
 
+
         //fix bug if primary key is uuid
         if (isset($this->arr[$this->primary_key]) && $this->arr[$this->primary_key] != $id) {
             $id = $this->arr[$this->primary_key];
         }
 
         //Looping Data Input Again After Insert
-
         foreach ($this->data_inputan as $ro) {
             $name = $ro['name'];
             if (!$name) {
@@ -1298,6 +1341,20 @@ class CBController extends Controller
             }
         }
 
+        //--- Check if translation table
+        if ($this->translation_table) {
+            foreach ($this->websiteLanguages as $lang) {
+                $this->arr = [];
+                $this->input_assignment("", $lang->code);
+                //--- Get main column name
+                $this->arr["locale"] = $lang->code;
+                $this->arr[$this->translation_main_column] = $lastInsertId;
+                //------------------------------//
+                DB::table($this->translation_table)->insert($this->arr);
+            }
+        }
+        //----------------------------------------------------//
+
         $this->hook_after_add($lastInsertId);
 
         $this->return_url = ($this->return_url) ? $this->return_url : request('return_url');
@@ -1324,6 +1381,16 @@ class CBController extends Controller
     {
         $this->cbLoader();
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
+        if ($this->translation_table) {
+            $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
+            foreach ($translationData as $item) {
+                foreach ($this->form as $column) {
+                    if ($column["translation"] == 'TRUE') {
+                        $row->{$column["name"] . "_" . $item->locale} = $item->{$column["name"]};
+                    }
+                }
+            }
+        }
         if (!CRUDBooster::isRead() && $this->global_privilege == false || $this->button_edit == false) {
             CRUDBooster::insertLog(cbLang("log_try_edit", [
                 'name' => $row->{$this->title_field},
@@ -1355,7 +1422,19 @@ class CBController extends Controller
             CRUDBooster::redirect(CRUDBooster::adminPath(), trans('crudbooster.denied_access'));
         }
 
-        $this->validation($id);
+        $formArrToValidate = [];
+        foreach ($this->data_inputan as $field) {
+            if ($field["translation"] == "FALSE") {
+                $formArrToValidate[] = $field;
+                continue;
+            }
+            foreach ($this->websiteLanguages as $lang) {
+                $temp = $field;
+                $temp["name"] = $field["name"] . "_" . $lang->code;
+                $formArrToValidate[] = $temp;
+            }
+        }
+        $this->validation($formArrToValidate, $id);
         $this->input_assignment($id);
 
         if (Schema::hasColumn($this->table, 'updated_at')) {
@@ -1451,6 +1530,21 @@ class CBController extends Controller
             }
         }
 
+        //--- Check if translation table
+        if ($this->translation_table) {
+            DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+            foreach ($this->websiteLanguages as $lang) {
+                $this->arr = [];
+                $this->input_assignment("", $lang->code);
+                //--- Get main column name
+                $this->arr["locale"] = $lang->code;
+                $this->arr[$this->translation_main_column] = $id;
+                //------------------------------//
+                DB::table($this->translation_table)->insert($this->arr);
+            }
+        }
+        //----------------------------------------------------//
+
         $this->hook_after_edit($id);
 
         $this->return_url = ($this->return_url) ? $this->return_url : Request::get('return_url');
@@ -1495,7 +1589,6 @@ class CBController extends Controller
                     ]);
                 }
             }
-
         }
 
         if ($this->return_url) {
@@ -1526,6 +1619,9 @@ class CBController extends Controller
         CRUDBooster::insertLog(cbLang("log_delete", ['name' => $row->{$this->title_field}, 'module' => CRUDBooster::getCurrentModule()->name]));
 
         $this->hook_before_delete($id);
+        if ($this->translation_table) {
+            DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+        }
 
         if (CRUDBooster::isColumnExists($this->table, 'deleted_at')) {
             DB::table($this->table)->where($this->primary_key, $id)->update(['deleted_at' => date('Y-m-d H:i:s')]);
@@ -1544,6 +1640,16 @@ class CBController extends Controller
     {
         $this->cbLoader();
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
+        if ($this->translation_table) {
+            $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
+            foreach ($translationData as $item) {
+                foreach ($this->form as $column) {
+                    if ($column["translation"] == 'TRUE') {
+                        $row->{$column["name"] . "_" . $item->locale} = $item->{$column["name"]};
+                    }
+                }
+            }
+        }
 
         if (!CRUDBooster::isRead() && $this->global_privilege == false || $this->button_detail == false) {
             CRUDBooster::insertLog(cbLang("log_try_view", [
@@ -1783,7 +1889,9 @@ class CBController extends Controller
                 CRUDBooster::insertLog(cbLang("log_try_delete_selected", ['module' => CRUDBooster::getCurrentModule()->name]));
                 CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
             }
-
+            if ($this->translation_table) {
+                DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+            }
             $this->hook_before_delete($id_selected);
             $tablePK = CB::pk($this->table);
             if (CRUDBooster::isColumnExists($this->table, 'deleted_at')) {

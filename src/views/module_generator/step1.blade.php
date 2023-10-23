@@ -84,6 +84,21 @@
                     </div>
                 </div>
                 <div class="form-group">
+                    <label for="">{{ cbLang('Translation Table') }}</label>
+                    <p>Select this field only if the table has translation table and following this <a target="_blank" href="https://docs.astrotomic.info/laravel-translatable/">package instruct</a></p>
+                    <select name="translation_table" id="translation_table" class="select2 form-control"
+                        value="{{ $row->translation_table_name }}">
+                        <option value="">{{ cbLang('text_prefix_option') }} Translation Table</option>
+                        @foreach ($tables_list as $table)
+                            <option {{ $table == $row->translation_table_name ? 'selected' : '' }} value="{{ $table }}">
+                                {{ $table }}</option>
+                        @endforeach
+                    </select>
+                    <div class="help-block">
+                        {{ cbLang('no_use_cms_prefix') }}
+                    </div>
+                </div>
+                <div class="form-group">
                     <label for="">{{ cbLang('Module Name') }}</label>
                     <input type="text" class="form-control" required name="name" value="{{ $row->name }}">
                 </div>

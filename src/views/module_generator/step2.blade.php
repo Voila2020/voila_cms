@@ -69,6 +69,7 @@
     @push('bottom')
         <script>
             var columns = {!! json_encode($columns) !!};
+            var translation_columns = {!! json_encode($translation_columns) !!};
             var tables = {!! json_encode($table_list) !!};
 
             function ucwords(str) {
@@ -85,6 +86,9 @@
                 $.each(columns, function(i, obj) {
                     list += "<li>" + obj + "</li>";
                 });
+                $.each(translation_columns, function(i, obj) {
+                    list += "<li class='tranlation'>" + obj + "</li>";
+                });
 
                 t.after("<ul class='sub'>" + list + "</ul>");
             }
@@ -97,6 +101,12 @@
                 if (!v) return false;
 
                 var list = '';
+
+                $.each(translation_columns, function(i, obj) {
+                    if (obj.includes(v.toLowerCase())) {
+                        list += "<li class='translation'>" + obj + "</li>";
+                    }
+                });
                 $.each(columns, function(i, obj) {
                     if (obj.includes(v.toLowerCase())) {
                         list += "<li>" + obj + "</li>";
@@ -111,6 +121,11 @@
                 t.next("ul").remove();
 
                 var list = '';
+                $.each(translation_columns, function(i, obj) {
+                    obj = obj.replace('id_', '');
+                    obj = ucwords(obj.replace('_', ' '));
+                    list += "<li class='translation'>" + obj + "</li>";
+                });
                 $.each(columns, function(i, obj) {
                     obj = obj.replace('id_', '');
                     obj = ucwords(obj.replace('_', ' '));
@@ -128,6 +143,15 @@
                 if (!v) return false;
 
                 var list = '';
+                $.each(translation_columns, function(i, obj) {
+
+                    if (obj.includes(v.toLowerCase())) {
+                        obj = obj.replace('id_', '');
+                        obj = ucwords(obj.replace('_', ' '));
+
+                        list += "<li class='translation'>" + obj + "</li>";
+                    }
+                });
                 $.each(columns, function(i, obj) {
 
                     if (obj.includes(v.toLowerCase())) {
@@ -269,6 +293,7 @@
                     if ($(this).val() == 1) {
                         tr.find('.is_download').val(0);
                         tr.find('.is_switch').val(0);
+                        tr.find('.is_translation').val(0);
                     }
                 })
 
@@ -277,10 +302,11 @@
                     if ($(this).val() == 1) {
                         tr.find('.is_image').val(0);
                         tr.find('.is_switch').val(0);
+                        tr.find('.is_translation').val(0);
                     }
                 })
 
-                $(document).on('change', '.is_switch', function() {
+                $(document).on('change', '.is_switch,.is_translation', function() {
                     var tr = $(this).parent().parent();
                     if ($(this).val() == 1) {
                         tr.find('.is_image').val(0);
@@ -322,6 +348,7 @@
                             <th width='75px'>{{ cbLang('Image') }}</th>
                             <th width='75px'>{{ cbLang('Download') }}</th>
                             <th width='75px'>{{ cbLang('Switch') }}</th>
+                            <th width='75px'>{{ cbLang('Translation') }}</th>
                             <th width='85px'>{{ cbLang('Str Limit') }}</th>
                             <th width="180px">{{ cbLang('Action') }}</th>
                         </tr>
@@ -353,20 +380,26 @@
                                             class='form-control' /></td>
                                     <td>
                                         <select class='form-control is_image' name='is_image[]'>
-                                            <option {{ !$c['image'] ? 'selected' : '' }} value='0'>N</option>
-                                            <option {{ $c['image'] ? 'selected' : '' }} value='1'>Y</option>
+                                            <option {{ !$c['image'] ? 'selected' : '' }} value='0'>No</option>
+                                            <option {{ $c['image'] ? 'selected' : '' }} value='1'>Yes</option>
                                         </select>
                                     </td>
                                     <td>
                                         <select class='form-control is_download' name='is_download[]'>
-                                            <option {{ !$c['download'] ? 'selected' : '' }} value='0'>N</option>
-                                            <option {{ $c['download'] ? 'selected' : '' }} value='1'>Y</option>
+                                            <option {{ !$c['download'] ? 'selected' : '' }} value='0'>No</option>
+                                            <option {{ $c['download'] ? 'selected' : '' }} value='1'>Yes</option>
                                         </select>
                                     </td>
                                     <td>
                                         <select class='form-control is_switch' name='is_switch[]'>
-                                            <option {{ !$c['switch'] ? 'selected' : '' }} value='0'>N</option>
-                                            <option {{ $c['switch'] ? 'selected' : '' }} value='1'>Y</option>
+                                            <option {{ !$c['switch'] ? 'selected' : '' }} value='0'>No</option>
+                                            <option {{ $c['switch'] ? 'selected' : '' }} value='1'>Yes</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <select class='form-control is_translation' name='is_translation[]'>
+                                            <option {{ !$c['translation'] ? 'selected' : '' }} value='0'>No</option>
+                                            <option {{ $c['translation'] ? 'selected' : '' }} value='1'>Yes</option>
                                         </select>
                                     </td>
                                     <td>
@@ -405,20 +438,26 @@
                             <td><input type='number' name='width[]' value='0' class='form-control' /></td>
                             <td>
                                 <select class='form-control is_image' name='is_image[]'>
-                                    <option value='0'>N</option>
-                                    <option value='1'>Y</option>
+                                    <option value='0'>No</option>
+                                    <option value='1'>Yes</option>
                                 </select>
                             </td>
                             <td>
                                 <select class='form-control is_download' name='is_download[]'>
-                                    <option value='0'>N</option>
-                                    <option value='1'>Y</option>
+                                    <option value='0'>No</option>
+                                    <option value='1'>Yes</option>
                                 </select>
                             </td>
                             <td>
                                 <select class='form-control is_switch' name='is_switch[]'>
-                                    <option value='0'>N</option>
-                                    <option value='1'>Y</option>
+                                    <option value='0'>No</option>
+                                    <option value='1'>Yes</option>
+                                </select>
+                            </td>
+                            <td>
+                                <select class='form-control is_translation' name='is_translation[]'>
+                                    <option value='0'>No</option>
+                                    <option value='1'>Yes</option>
                                 </select>
                             </td>
                             <td><input type='number' name='str_limit[]' class='form-control str-limit notfocus'

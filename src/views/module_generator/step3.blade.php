@@ -514,6 +514,7 @@
                             <th>{{ cbLang('Name') }}</th>
                             <th>{{ cbLang('Type') }}</th>
                             <th>{{ cbLang('Validation') }}</th>
+                            <th>{{ cbLang('Translation') }}</th>
                             <th width="90px">{{ cbLang('Width') }}</th>
                             <th width="100px">{{ cbLang('Options') }}</th>
                             <th width="180px">{{ cbLang('Action') }}</th>
@@ -532,9 +533,16 @@
                                 <td><input type='text' value='{{ $form['type'] ?: 'text' }}'
                                         placeholder="Input field type" onclick='showTypeSuggest(this)'
                                         onkeyup="showTypeSuggestLike(this)" class='form-control type' name='type[]' /></td>
-                                <td><input type='text' value='{{ $form['validation'] }}' class='form-control validation'
+                                <td>
+                                    <input type='text' value='{{ $form['validation'] }}' class='form-control validation'
                                         onclick="showValidationSuggest(this)" onkeyup="showValidationSuggestLike(this)"
                                         name='validation[]' value='required' placeholder='Enter Laravel Validation' />
+                                </td>
+                                <td>
+                                    <select class='form-control width' name='translation[]'>
+                                        <option {{ !$form['translation'] ? 'selected' : '' }} value='FALSE'>No</option>
+                                        <option {{ $form['translation'] ? 'selected' : '' }} value='TRUE'>Yes</option>
+                                    </select>
                                 </td>
                                 <td>
                                     <select class='form-control width' name='width[]'>
@@ -591,7 +599,8 @@
 
                                         <div class="form-group">
                                             <label>{{ $key }}</label>
-                                            <input type="text" name="option[{{ $index }}][{{ $key }}]"
+                                            <input type="text"
+                                                name="option[{{ $index }}][{{ $key }}]"
                                                 placeholder="{{ $val->placeholder }}" value="{{ $value }}"
                                                 class="form-control">
                                         </div>
@@ -697,6 +706,12 @@
                             <td><input type='text' class='form-control validation'
                                     onclick="showValidationSuggest(this)" onkeyup="showValidationSuggestLike(this)"
                                     name='validation[]' value='required' placeholder='Enter Laravel Validation' /></td>
+                            <td>
+                                <select class='form-control translation' name='translation[]'>
+                                    <option value='FALSE'>No</option>
+                                    <option value='TRUE'>Yes</option>
+                                </select>
+                            </td>
                             <td>
                                 <select class='form-control width' name='width[]'>
                                     @for ($i = 10; $i >= 1; $i--)

@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Log;
 use Image;
 
 class CRUDBooster
@@ -1263,7 +1264,29 @@ class CRUDBooster
         foreach ($result as $ro) {
             $new_result[] = $ro['COLUMN_NAME'];
         }
+        return $new_result;
+    }
 
+    public static function getTranslationTableColumns($translation_table)
+    {
+        $table = CRUDBooster::parseSqlTable($translation_table);
+        $cols = collect(DB::select('SELECT * FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = :database AND TABLE_NAME = :table', [
+            'database' => $table['database'],
+            'table' => $table['table'],
+        ]))->map(function ($x) {
+            return (array) $x;
+        })->toArray();
+
+        $result = [];
+        $result = $cols;
+
+        foreach ($result as $ro) {
+            if (!in_array($ro['COLUMN_NAME'], ["id", "locale", "created_at", "updated_at", "deleted_at"])) {
+                if (substr($ro['COLUMN_NAME'], -3) === "_id")
+                    continue;
+                $new_result[] = $ro['COLUMN_NAME'];
+            }
+        }
         return $new_result;
     }
 
@@ -1350,10 +1373,10 @@ class CRUDBooster
         file_put_contents($path . 'Api' . $controller_name . 'Controller.php', $php);
     }
 
-    public static function generateController($table, $name = null)
+    public static function generateController($table, $name = null, $translation_table = "")
     {
 
-        $exception = ['id', 'created_at', 'updated_at', 'deleted_at'];
+        $exception = ['id', 'locale', 'created_at', 'updated_at', 'deleted_at'];
         $image_candidate = explode(',', config('crudbooster.IMAGE_FIELDS_CANDIDATE'));
         $password_candidate = explode(',', config('crudbooster.PASSWORD_FIELDS_CANDIDATE'));
         $phone_candidate = explode(',', config('crudbooster.PHONE_FIELDS_CANDIDATE'));
@@ -1378,6 +1401,7 @@ class CRUDBooster
         }
 
         $coloms = CRUDBooster::getTableColumns($table);
+        $translationColumns = CRUDBooster::getTableColumns($translation_table);
         $name_col = CRUDBooster::getNameTable($coloms);
         $pk = CB::pk($table);
 
@@ -1395,8 +1419,8 @@ class CRUDBooster
         $button_import = 'FALSE';
         $button_bulk_action = 'TRUE';
         $global_privilege = 'FALSE';
-        $page_seo = false;
-        $page_record = false;
+        $page_seo = 'FALSE';
+        $record_seo = 'FALSE';
 
         $php = '
 <?php
@@ -1413,6 +1437,7 @@ class Admin' . $controllername . ' extends CBController {
 	public function cbInit() {
 	    # START CONFIGURATION DO NOT REMOVE THIS LINE
 		$this->table 			   = "' . $table . '";
+		$this->translation_table   = "' . $translation_table . '";
 		$this->title_field         = "' . $name_col . '";
 		$this->limit               = 20;
 		$this->orderby             = "' . $pk . ',desc";
@@ -1427,8 +1452,8 @@ class Admin' . $controllername . ' extends CBController {
 		$this->button_show         = ' . $button_show . ';
         $this->sortable_table     = ' . $sortable_table . ';
         $this->pdf_direction       = "' . $pdf_direction . '";
-        $this->page_seo            = "' . $page_seo . '";
-        $this->page_record            = "' . $page_record . '";
+        $this->page_seo            = ' . $page_seo . ';
+        $this->record_seo            = ' . $record_seo . ';
 		$this->button_filter       = ' . $button_filter . ';
 		$this->button_export       = ' . $button_export . ';
 		$this->button_import       = ' . $button_import . ';
@@ -1439,184 +1464,16 @@ class Admin' . $controllername . ' extends CBController {
 		# START COLUMNS DO NOT REMOVE THIS LINE
 	    $this->col = [];
 	';
-        $coloms_col = array_slice($coloms, 0, 8);
-        foreach ($coloms_col as $c) {
-            $label = str_replace("id_", "", $c);
-            $label = ucwords(str_replace("_", " ", $label));
-            $label = str_replace('Cms ', '', $label);
-            $field = $c;
-
-            if (in_array($field, $exception)) {
-                continue;
-            }
-
-            if (array_search($field, $password_candidate) !== false) {
-                continue;
-            }
-
-            if (substr($field, 0, 3) == 'id_') {
-                $jointable = str_replace('id_', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '");' . "\n";
-            } elseif (substr($field, -3) == '_id') {
-                $jointable = substr($field, 0, (strlen($field) - 3));
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '");' . "\n";
-            } else {
-                $image = '';
-                if (in_array($field, $image_candidate)) {
-                    $image = ',"image"=>true';
-                }
-                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '" ' . $image . ');' . "\n";
-            }
-        }
+        $php .= self::generateControllerFileColumns($coloms, $exception, $password_candidate, $image_candidate);
+        $php .= self::generateControllerFileColumns($translationColumns, $exception, $password_candidate, $image_candidate, true);
 
         $php .= "\n\t\t\t# END COLUMNS DO NOT REMOVE THIS LINE";
 
         $php .= "\n\t\t\t# START FORM DO NOT REMOVE THIS LINE";
         $php .= "\n\t\t" . '$this->form = [];' . "\n";
 
-        foreach ($coloms as $c) {
-            $attribute = [];
-            $validation = [];
-            $validation[] = 'required';
-            $placeholder = '';
-            $help = '';
-
-            $label = str_replace("id_", "", $c);
-            $label = ucwords(str_replace("_", " ", $label));
-            $field = $c;
-
-            if (in_array($field, $exception)) {
-                continue;
-            }
-
-            $typedata = CRUDBooster::getFieldType($table, $field);
-
-            switch ($typedata) {
-                default:
-                case 'varchar':
-                case 'char':
-                    $type = "text";
-                    $validation[] = "min:1|max:255";
-                    break;
-                case 'text':
-                case 'longtext':
-                    $type = 'textarea';
-                    $validation[] = "string|min:5|max:5000";
-                    break;
-                case 'date':
-                    $type = 'date';
-                    $validation[] = "date";
-                    break;
-                case 'datetime':
-                case 'timestamp':
-                    $type = 'datetime';
-                    $validation[] = "date_format:Y-m-d H:i:s";
-                    break;
-                case 'time':
-                    $type = 'time';
-                    $validation[] = 'date_format:H:i:s';
-                    break;
-                case 'double':
-                    $type = 'money';
-                    $validation[] = "integer|min:0";
-                    break;
-                case 'int':
-                case 'integer':
-                    $type = 'number';
-                    $validation[] = 'integer|min:0';
-                    break;
-            }
-
-            if (substr($field, 0, 3) == 'id_') {
-                $jointable = str_replace('id_', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $attribute['datatable'] = $jointable . ',' . $joinname;
-                $type = 'select2';
-            }
-
-            if (substr($field, -3) == '_id') {
-                $jointable = str_replace('_id', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $attribute['datatable'] = $jointable . ',' . $joinname;
-                $type = 'select2';
-            }
-
-            if (substr($field, 0, 3) == 'is_') {
-                $type = 'radio';
-                $label_field = ucwords(substr($field, 3));
-                $validation = ['required|integer'];
-                $attribute['dataenum'] = ['1|' . $label_field, '0|Un-' . $label_field];
-            }
-
-            if (in_array($field, $password_candidate)) {
-                $type = 'password';
-                $validation = ['min:3', 'max:32'];
-                $attribute['help'] = cbLang("text_default_help_password");
-            }
-
-            if (in_array($field, $image_candidate)) {
-                $type = 'upload';
-                $attribute['help'] = cbLang('text_default_help_upload');
-                $validation = ['required|image|max:3000'];
-            }
-
-            if ($field == 'latitude') {
-                $type = 'hidden';
-            }
-            if ($field == 'longitude') {
-                $type = 'hidden';
-            }
-
-            if (in_array($field, $phone_candidate)) {
-                $type = 'number';
-                $validation = ['required', 'numeric'];
-                $attribute['placeholder'] = cbLang('text_default_help_number');
-            }
-
-            if (in_array($field, $email_candidate)) {
-                $type = 'email';
-                $validation[] = 'email|unique:' . $table;
-                $attribute['placeholder'] = cbLang('text_default_help_email');
-            }
-
-            if ($type == 'text' && in_array($field, $name_candidate)) {
-                $attribute['placeholder'] = cbLang('text_default_help_text');
-                $validation = ['required', 'string', 'min:3', 'max:70'];
-            }
-
-            if ($type == 'text' && in_array($field, $url_candidate)) {
-                $validation = ['required', 'url'];
-                $attribute['placeholder'] = cbLang('text_default_help_url');
-            }
-
-            $validation = implode('|', $validation);
-
-            $php .= "\t\t";
-            $php .= '$this->form[] = ["label"=>"' . $label . '","name"=>"' . $field . '","type"=>"' . $type . '","required"=>TRUE';
-
-            if ($validation) {
-                $php .= ',"validation"=>"' . $validation . '"';
-            }
-
-            if ($attribute) {
-                foreach ($attribute as $key => $val) {
-                    if (is_bool($val)) {
-                        $val = ($val) ? "TRUE" : "FALSE";
-                    } else {
-                        $val = '"' . $val . '"';
-                    }
-                    $php .= ',"' . $key . '"=>' . $val;
-                }
-            }
-
-            $php .= "];\n";
-        }
+        $php .= self::generateControllerFileForm($table, $coloms, $exception, $password_candidate, $image_candidate, $phone_candidate, $name_candidate, $email_candidate, $url_candidate);
+        $php .= self::generateControllerFileForm($translation_table, $translationColumns, $exception, $password_candidate, $image_candidate, $phone_candidate, $name_candidate, $email_candidate, $url_candidate, true);
 
         $php .= "\n\t\t\t# END FORM DO NOT REMOVE THIS LINE";
 
@@ -1957,5 +1814,197 @@ class Admin' . $controllername . ' extends CBController {
         } catch (\Exception $e) {
             Log::error("Path = " . $prefix . "\nController = " . $controller . "\nError = " . $e->getMessage());
         }
+    }
+
+    public static function generateControllerFileColumns($coloms, $exception, $password_candidate, $image_candidate, $translationTable = false)
+    {
+        $php = "";
+        $coloms_col = array_slice($coloms, 0, 8);
+        foreach ($coloms_col as $c) {
+            $label = str_replace("id_", "", $c);
+            $label = ucwords(str_replace("_", " ", $label));
+            $label = str_replace('Cms ', '', $label);
+            $field = $c;
+
+            if (in_array($field, $exception)) {
+                continue;
+            }
+
+            if (array_search($field, $password_candidate) !== false) {
+                continue;
+            }
+
+            if (substr($field, 0, 3) == 'id_') {
+                $jointable = str_replace('id_', '', $field);
+                $joincols = CRUDBooster::getTableColumns($jointable);
+                $joinname = CRUDBooster::getNameTable($joincols);
+                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
+            } elseif (substr($field, -3) == '_id') {
+                if ($translationTable)
+                    continue;
+                $jointable = substr($field, 0, (strlen($field) - 3));
+                $joincols = CRUDBooster::getTableColumns($jointable);
+                $joinname = CRUDBooster::getNameTable($joincols);
+                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
+            } else {
+                $image = '';
+                if (in_array($field, $image_candidate)) {
+                    $image = ',"image"=>true';
+                }
+                $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '" ' . $image . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
+            }
+        }
+
+        return $php;
+    }
+
+    public static function generateControllerFileForm($table, $coloms, $exception, $password_candidate, $image_candidate, $phone_candidate, $name_candidate, $email_candidate, $url_candidate, $translationTable = false)
+    {
+        $php = "";
+        foreach ($coloms as $c) {
+            $attribute = [];
+            $validation = [];
+            $validation[] = 'required';
+            $placeholder = '';
+            $help = '';
+
+            $label = str_replace("id_", "", $c);
+            $label = ucwords(str_replace("_", " ", $label));
+            $field = $c;
+
+            if (in_array($field, $exception)) {
+                continue;
+            }
+
+            $typedata = CRUDBooster::getFieldType($table, $field);
+
+            switch ($typedata) {
+                default:
+                case 'varchar':
+                case 'char':
+                    $type = "text";
+                    $validation[] = "min:1|max:255";
+                    break;
+                case 'text':
+                case 'longtext':
+                    $type = 'textarea';
+                    $validation[] = "string|min:5|max:5000";
+                    break;
+                case 'date':
+                    $type = 'date';
+                    $validation[] = "date";
+                    break;
+                case 'datetime':
+                case 'timestamp':
+                    $type = 'datetime';
+                    $validation[] = "date_format:Y-m-d H:i:s";
+                    break;
+                case 'time':
+                    $type = 'time';
+                    $validation[] = 'date_format:H:i:s';
+                    break;
+                case 'double':
+                    $type = 'money';
+                    $validation[] = "integer|min:0";
+                    break;
+                case 'int':
+                case 'integer':
+                    $type = 'number';
+                    $validation[] = 'integer|min:0';
+                    break;
+            }
+
+            if (substr($field, 0, 3) == 'id_') {
+                $jointable = str_replace('id_', '', $field);
+                $joincols = CRUDBooster::getTableColumns($jointable);
+                $joinname = CRUDBooster::getNameTable($joincols);
+                $attribute['datatable'] = $jointable . ',' . $joinname;
+                $type = 'select2';
+            }
+
+            if (substr($field, -3) == '_id') {
+                if ($translationTable)
+                    continue;
+                $jointable = str_replace('_id', '', $field);
+                $joincols = CRUDBooster::getTableColumns($jointable);
+                $joinname = CRUDBooster::getNameTable($joincols);
+                $attribute['datatable'] = $jointable . ',' . $joinname;
+                $type = 'select2';
+            }
+
+            if (substr($field, 0, 3) == 'is_') {
+                $type = 'radio';
+                $label_field = ucwords(substr($field, 3));
+                $validation = ['required|integer'];
+                $attribute['dataenum'] = ['1|' . $label_field, '0|Un-' . $label_field];
+            }
+
+            if (in_array($field, $password_candidate)) {
+                $type = 'password';
+                $validation = ['min:3', 'max:32'];
+                $attribute['help'] = cbLang("text_default_help_password");
+            }
+
+            if (in_array($field, $image_candidate)) {
+                $type = 'upload';
+                $attribute['help'] = cbLang('text_default_help_upload');
+                $validation = ['required|image|max:3000'];
+            }
+
+            if ($field == 'latitude') {
+                $type = 'hidden';
+            }
+            if ($field == 'longitude') {
+                $type = 'hidden';
+            }
+
+            if (in_array($field, $phone_candidate)) {
+                $type = 'number';
+                $validation = ['required', 'numeric'];
+                $attribute['placeholder'] = cbLang('text_default_help_number');
+            }
+
+            if (in_array($field, $email_candidate)) {
+                $type = 'email';
+                $validation[] = 'email|unique:' . $table;
+                $attribute['placeholder'] = cbLang('text_default_help_email');
+            }
+
+            if ($type == 'text' && in_array($field, $name_candidate)) {
+                $attribute['placeholder'] = cbLang('text_default_help_text');
+                $validation = ['required', 'string', 'min:3', 'max:70'];
+            }
+
+            if ($type == 'text' && in_array($field, $url_candidate)) {
+                $validation = ['required', 'url'];
+                $attribute['placeholder'] = cbLang('text_default_help_url');
+            }
+
+            $validation = implode('|', $validation);
+
+            $php .= "\t\t";
+            $php .= '$this->form[] = ["label"=>"' . $label . '","name"=>"' . $field . '","type"=>"' . $type . '","required"=>TRUE';
+
+            if ($validation) {
+                $php .= ',"validation"=>"' . $validation . '"';
+            }
+            if ($translationTable) {
+                $php .= ',"translation"=>"TRUE"';
+            }
+
+            if ($attribute) {
+                foreach ($attribute as $key => $val) {
+                    if (is_bool($val)) {
+                        $val = ($val) ? "TRUE" : "FALSE";
+                    } else {
+                        $val = '"' . $val . '"';
+                    }
+                    $php .= ',"' . $key . '"=>' . $val;
+                }
+            }
+
+            $php .= "];\n";
+        }
+        return $php;
     }
 }

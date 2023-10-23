@@ -49,18 +49,39 @@
         });
     </script>
 @endpush
-<div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
-    <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}</label>
+@if (@$form['translation'] != 'TRUE')
+    <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
+        <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}</label>
 
-    <div class="{{ $col_width ?: 'col-sm-10' }}">
-        <input type="hidden" id="input_{{ $name }}">
-        <!-- <a class="btn btn-primary" data-toggle="modal" onclick="openIfram('{{ $name }}','{{ CRUDBooster::getCurrentModule()->table_name }}','{{ CRUDbooster::getCurrentId() }}')" data-target="#model_scrach">edit from scratch</a> -->
-        <textarea id='textarea_{{ $name }}' {{ $required }} {{ $readonly }} {{ $disabled }}
-            name="{{ $form['name'] }}" class='form-control' rows='5'>{!! $value !!}</textarea>
-        <div class="text-danger">{{ $errors->first($name) }}</div>
-        <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
+        <div class="{{ $col_width ?: 'col-sm-10' }}">
+            <input type="hidden" id="input_{{ $name }}">
+            <textarea id='textarea_{{ $name }}' {{ $required }} {{ $readonly }} {{ $disabled }}
+                name="{{ $form['name'] }}" class='form-control' rows='5'>{!! $value !!}</textarea>
+            <div class="text-danger">{{ $errors->first($name) }}</div>
+            <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
+        </div>
     </div>
-</div>
+@else
+    @foreach ($websiteLanguages as $lang)
+        @php
+            @$value = isset($form['value']) ? $form['value'] : '';
+            @$value = isset($row->{$name. '_' . $lang->code}) ? $row->{$name. '_' . $lang->code} : $value;
+            $old = old($name . '_' . $lang->code);
+            $value = !empty($old) ? $old : $value;
+        @endphp
+        <div class='form-group' id='form-group-{{ $name . '_' . $lang->code }}' style="{{ @$form['style'] }}">
+            <label class='control-label col-sm-2'>{{ cbLang($form['label']) . ' - ' . $lang->label }}</label>
+
+            <div class="{{ $col_width ?: 'col-sm-10' }}">
+                <input type="hidden" id="input_{{ $name . '_' . $lang->code }}">
+                <textarea id='textarea_{{ $name . '_' . $lang->code }}' {{ $required }} {{ $readonly }} {{ $disabled }}
+                    name="{{ $name . '_' . $lang->code }}" class='form-control' rows='5'>{!! $value !!}</textarea>
+                <div class="text-danger">{{ $errors->first($name . '_' . $lang->code) }}</div>
+                <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
+            </div>
+        </div>
+    @endforeach
+@endif
 
 
 <div class="modal fade" id="modalInsertPhotoEditor">
@@ -78,77 +99,6 @@
             </div>
             <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
 
-            </div>
-
-        </div><!-- /.modal-content -->
-    </div><!-- /.modal-dialog -->
-</div><!-- /.modal -->
-
-@if (Crudbooster::getCurrentModule()->path == 'email_templates')
-    <div class="modal fade" id="modalInsertEmailTemplate">
-        <div class="modal-dialog modal-lg" style="width: 1200px;">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <div class="buttons">
-                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    </div>
-                    <div class="title-sec">
-                        <h4 class="modal-title">Email Template Builder</h4>
-                    </div>
-                </div>
-                <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
-
-                </div>
-
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-@endif
-
-<div class="modal fade" id="model_scrach"style="height:100%;width:100%">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content" style="height: 100%;">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Insert Image</h4>
-            </div>
-            <div class="modal-body" style="display: contents">
-                <iframe id="full-screen-me" src="" style="overflow:hidden;height:100%;width:100%" height="100%"
-                    width="100%" frameborder="0" wmode="transparent"></iframe>
-
-            </div>
-
-        </div><!-- /.modal-content -->
-    </div>
-    <!-- /.
-        modal-dialog -->
-</div><!-- /.modal -->
-
-
-
-<div class="modal fade" id="modelForms">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title">Select Form</h4>
-            </div>
-            <div class="modal-body" style="padding:0px; margin:0px; width: 100%;">
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>
-                                id
-                            </th>
-                            <th>
-                                title
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody id="tbody-forms">
-
-                    </tbody>
-                </table>
             </div>
 
         </div><!-- /.modal-content -->

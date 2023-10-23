@@ -283,6 +283,7 @@ class ModulsController extends CBController
         $row = DB::table('cms_moduls')->where('id', $id)->first();
 
         $columns = CRUDBooster::getTableColumns($row->table_name);
+        $translation_columns = CRUDBooster::getTranslationTableColumns($row->translation_table);
 
         $tables = CRUDBooster::listTables();
         $table_list = [];
@@ -303,6 +304,7 @@ class ModulsController extends CBController
         $data = [];
         $data['id'] = $id;
         $data['columns'] = $columns;
+        $data['translation_columns'] = $translation_columns;
         $data['table_list'] = $table_list;
         $data['cb_col'] = (isset($cb_col)) ? $cb_col : null;
 
@@ -322,6 +324,7 @@ class ModulsController extends CBController
 
         $name = Request::get('name');
         $table_name = Request::get('table');
+        $translation_table = Request::get('translation_table');
         $icon = Request::get('icon');
         $path = Request::get('path');
         $has_images = Request::get('has_images');
@@ -334,8 +337,8 @@ class ModulsController extends CBController
 
             $created_at = now();
 
-            $controller = CRUDBooster::generateController($table_name, $path);
-            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images", "table_name", "icon", "path", "created_at"));
+            $controller = CRUDBooster::generateController($table_name, $path, $translation_table);
+            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images", "table_name", "translation_table", "icon", "path", "created_at"));
 
             //Insert Menu
             if ($controller && Request::get('create_menu')) {
@@ -374,7 +377,7 @@ class ModulsController extends CBController
             return redirect(Route("ModulsControllerGetStep2") . "/" . $id);
         } else {
             $id = Request::get('id');
-            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "has_images", "icon", "path"));
+            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "translation_table", "has_images", "icon", "path"));
 
             $row = DB::table('cms_moduls')->where('id', $id)->first();
 
@@ -406,6 +409,7 @@ class ModulsController extends CBController
         $is_image = Request::input('is_image');
         $is_download = Request::input('is_download');
         $is_switch = Request::input('is_switch');
+        $is_translation = Request::input('is_translation');
         $callbackphp = Request::input('callbackphp');
         $str_limit = Request::input('str_limit');
         $id = Request::input('id');
@@ -437,6 +441,10 @@ class ModulsController extends CBController
 
             if ($is_switch[$i]) {
                 $script_cols[$i] .= ',"switch"=>true';
+            }
+
+            if ($is_translation[$i]) {
+                $script_cols[$i] .= ',"translation"=>true';
             }
 
             if ($str_limit[$i]) {
@@ -521,6 +529,7 @@ class ModulsController extends CBController
         $type = $post['type'];
         $option = $post['option'];
         $validation = $post['validation'];
+        $translation = $post['translation'];
 
         $row = DB::table('cms_moduls')->where('id', $id)->first();
 
@@ -535,6 +544,7 @@ class ModulsController extends CBController
                 $form['name'] = $name[$i];
                 $form['type'] = $type[$i];
                 $form['validation'] = $validation[$i];
+                $form['translation'] = $translation[$i];
                 $form['width'] = $width[$i];
                 if ($option[$i]) {
                     $form = array_merge($form, $option[$i]);
@@ -776,7 +786,7 @@ class ModulsController extends CBController
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
 
-        $this->validation();
+        $this->validation($this->data_inputan);
         $this->input_assignment();
 
         //Generate Controller

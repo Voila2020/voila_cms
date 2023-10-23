@@ -3,20 +3,6 @@
     @if (Crudbooster::getCurrentModule()->path == 'email_templates')
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.16.34/css/grapes.min.css">
     @endif
-    <style>
-        #model_scrach .modal-dialog {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }
-
-        #model_scrach .modal-content {
-            height: auto;
-            min-height: 100%;
-            border-radius: 0;
-        }
-    </style>
 @endpush
 @push('bottom')
     <script type="text/javascript" src="{{ asset('vendor/crudbooster/assets/summernote/summernote.min.js') }}"></script>
