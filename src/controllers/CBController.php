@@ -1316,7 +1316,7 @@ class CBController extends Controller
                             $column_data[$colname] = $colvalue;
                         }
                     }
-                    if (isset($column_data) === true) {
+                    if (isset($column_data) === true && !empty($column_data)) {
                         $column_data[$fk] = (!empty($id) ? $id : $lastInsertId);
                         $child_array[] = $column_data;
                     }
