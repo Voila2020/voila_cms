@@ -185,6 +185,12 @@
                         $select_where = $form['datatable_where'];
                         $datatable_format = $form['datatable_format'];
                         $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
+
+                        if ($form['datatable_translation_table']) {
+                            $select_table = $form['datatable_translation_table'];
+                            $select_table_pk = CRUDBooster::getTranslationTableMainColumn($select_table);
+                            $select_where .= " $select_table.locale = '" . $websiteLanguages[0]->code . "'";
+                        }
                         $result = DB::table($select_table)->select($select_table_pk, $select_title);
                         if ($datatable_format) {
                             $result->addSelect(DB::raw('CONCAT(' . $datatable_format . ") as $select_title"));
