@@ -969,6 +969,19 @@ class CRUDBooster
         return $pk->getColumns()[0];
     }
 
+    public static function getTranslationTableMainColumn($table){
+        $matchingColumn = "";
+        $tempColumns = Schema::getColumnListing($table);
+        $matchingColumn = '';
+        foreach ($tempColumns as $column) {
+            if (str_ends_with($column, '_id')) {
+                $matchingColumn = $column;
+                break;
+            }
+        }
+        return $matchingColumn;
+    }
+
     public static function newId($table)
     {
         $key = CRUDBooster::findPrimaryKey($table);
@@ -1989,7 +2002,7 @@ class Admin' . $controllername . ' extends CBController {
                 $php .= ',"validation"=>"' . $validation . '"';
             }
             if ($translationTable) {
-                $php .= ',"translation"=>"TRUE"';
+                $php .= ',"translation"=>TRUE';
             }
 
             if ($attribute) {

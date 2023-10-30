@@ -1,4 +1,4 @@
-@if (@$form['translation'] != 'TRUE')
+@if (!@$form['translation'])
     {!! nl2br($value) !!}
 @else
     <div>

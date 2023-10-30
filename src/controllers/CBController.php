@@ -149,15 +149,7 @@ class CBController extends Controller
 
         //-------------------------------------------//
         if ($this->translation_table) {
-            $tempColumns = Schema::getColumnListing($this->translation_table);
-            $matchingColumn = "";
-            foreach ($tempColumns as $column) {
-                if (str_ends_with($column, '_id')) {
-                    $matchingColumn = $column;
-                    break;
-                }
-            }
-            $this->translation_main_column = $matchingColumn;
+            $this->translation_main_column = CRUDBooster::getTranslationTableMainColumn($this->translation_table);
         }
         //-------------------------------------------//
 
@@ -165,7 +157,7 @@ class CBController extends Controller
         $this->translation_table = $this->translation_table;
         $this->columns_table = $this->col;
         $this->data_inputan = $this->form;
-        $this->websiteLanguages = DB::table("languages")->where("active",1)->orderby("active","desc")->get();
+        $this->websiteLanguages = DB::table("languages")->where("active", 1)->orderby("default", "desc")->get();
         $this->data['pk'] = $this->primary_key;
         $this->data['forms'] = $this->data_inputan;
         $this->data['hide_form'] = $this->hide_form;
@@ -310,6 +302,7 @@ class CBController extends Controller
         $columns_table = $this->columns_table;
         $translationTableJoined = false;
         foreach ($columns_table as $index => $coltab) {
+            $table = $this->table;
 
             $join = @$coltab['join'];
             $join_where = @$coltab['join_where'];
@@ -318,10 +311,11 @@ class CBController extends Controller
             if ($coltab["translation"]) {
                 $field = $this->translation_table . "." . $field;
                 if (!$translationTableJoined) {
+                    $join_table_temp[] = $this->translation_table;
                     $result->leftJoin($this->translation_table, function ($join) {
                         $join->on($this->table . '.id', '=', $this->translation_table . '.' . $this->translation_main_column);
                     })
-                    ->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
+                        ->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
                 }
                 $translationTableJoined = true;
             }
@@ -369,6 +363,12 @@ class CBController extends Controller
                 if (in_array($join_table, $join_table_temp)) {
                     $join_alias_count += 1;
                     $join_alias = $join_table . $join_alias_count;
+                }
+
+                if (@$coltab['join_translation_table']) {
+                    $join_table = @$coltab['join_translation_table'];
+                    $joinTablePK = CRUDBooster::getTranslationTableMainColumn($join_table);
+                    $join_where .= "$join_alias.locale = '" . $this->websiteLanguages[0]->code . "'";
                 }
                 $join_table_temp[] = $join_table;
                 $result->leftjoin($join_table . ' as ' . $join_alias, $join_alias . (($join_id) ? '.' . $join_id : '.' . $joinTablePK), '=', DB::raw($table . '.' . $field . (($join_where) ? ' AND ' . $join_where . ' ' : '')));
@@ -1067,7 +1067,7 @@ class CBController extends Controller
 
         $hide_form = (request('hide_form')) ? unserialize(request('hide_form')) : [];
         foreach ($this->data_inputan as $ro) {
-            if (($ro["translation"] == "TRUE" && !$translationLocale) || $ro["translation"] != "TRUE" && $translationLocale)
+            if (($ro["translation"] && !$translationLocale) || (!$ro["translation"] && $translationLocale))
                 continue;
             $name = $ro['name'];
             if (!$name) {
@@ -1385,7 +1385,7 @@ class CBController extends Controller
             $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
             foreach ($translationData as $item) {
                 foreach ($this->form as $column) {
-                    if ($column["translation"] == 'TRUE') {
+                    if ($column["translation"]) {
                         $row->{$column["name"] . "_" . $item->locale} = $item->{$column["name"]};
                     }
                 }
@@ -1644,7 +1644,7 @@ class CBController extends Controller
             $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
             foreach ($translationData as $item) {
                 foreach ($this->form as $column) {
-                    if ($column["translation"] == 'TRUE') {
+                    if ($column["translation"]) {
                         $row->{$column["name"] . "_" . $item->locale} = $item->{$column["name"]};
                     }
                 }

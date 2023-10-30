@@ -1,4 +1,4 @@
-@if (@$form['translation'] != 'TRUE')
+@if (!@$form['translation'])
     {{ $value }}
 @else
     <div>
