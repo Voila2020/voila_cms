@@ -1729,6 +1729,20 @@ class Admin' . $controllername . ' extends CBController {
 
 	    /*
 	    | ----------------------------------------------------------------------
+	    | Hook for manipulate data input before update page is open
+	    | ----------------------------------------------------------------------
+	    | @row = model object
+	    | @id  = current id
+	    |
+	    */
+	    public function hook_before_get_edit($id, &$row)
+        {
+            //Your code here
+
+        }
+
+	    /*
+	    | ----------------------------------------------------------------------
 	    | Hook for execute command after edit public static function called
 	    | ----------------------------------------------------------------------
 	    | @id       = current id

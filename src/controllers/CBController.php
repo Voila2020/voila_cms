@@ -1404,6 +1404,8 @@ class CBController extends Controller
         $command = 'edit';
         Session::put('current_row_id', $id);
         $manualView = null;
+        $this->hook_before_get_edit($id, $row);
+
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
         }
@@ -1992,6 +1994,7 @@ class CBController extends Controller
     {
     }
 
+
     public function hook_row_index($index, &$value)
     {
     }
@@ -2004,6 +2007,10 @@ class CBController extends Controller
     {
     }
 
+    public function hook_before_get_edit($id, &$row)
+    {
+    }
+    
     public function hook_before_edit(&$arr, $id)
     {
     }
