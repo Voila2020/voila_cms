@@ -250,6 +250,7 @@ if (isset($_GET['editor'])) {
 }
 
 $field_id = isset($_GET['field_id']) ? fix_get_params($_GET['field_id']) : null;
+$parent_field_id = isset($_GET['parent_field_id']) ? fix_get_params($_GET['parent_field_id']) : null;
 $type_param = fix_get_params($_GET['type']);
 $apply = null;
 
@@ -281,6 +282,7 @@ $get_params = [
     'crossdomain' => $crossdomain,
     'extensions' => $extensions ? urlencode(json_encode($extensions)) : null,
     'field_id' => $field_id,
+    'parent_field_id' => $parent_field_id,
     'multiple' => $multiple,
     'relative_url' => $return_relative_url,
     'akey' => isset($_GET['akey']) && $_GET['akey'] != '' ? $_GET['akey'] : 'key',
@@ -378,6 +380,7 @@ $get_params = http_build_query($get_params);
     <input type="hidden" id="view" value="<?php echo $view; ?>" />
     <input type="hidden" id="subdir" value="<?php echo $subdir; ?>" />
     <input type="hidden" id="field_id" value="<?php echo $field_id; ?>" />
+    <input type="hidden" id="parent_field_id" value="<?php echo $parent_field_id; ?>" />
     <input type="hidden" id="multiple" value="<?php echo $multiple; ?>" />
     <input type="hidden" id="type_param" value="<?php echo $type_param; ?>" />
     <input type="hidden" id="upload_dir" value="<?php echo $config['upload_dir']; ?>" />

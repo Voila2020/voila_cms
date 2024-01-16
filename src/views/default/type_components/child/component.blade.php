@@ -85,7 +85,7 @@ $name = str_slug($form['label'], '');
                                                     style="{{ $value ? '' : 'display: none;' }}">
                                                     <input id="thumbnail-{{ $col['name'] }}" class="form-control"
                                                         type="hidden" value='{{ $value }}'
-                                                        name="{{ $col['name'] }}">
+                                                        >
                                                     @if ($col['filemanager_type'] == 'file')
                                                         @if ($value)
                                                             <div style='margin-top:15px'><a
@@ -149,27 +149,27 @@ $name = str_slug($form['label'], '');
                                                             // reback size of iframe to default
                                                             $('.modal.in .modal-dialog').width(900);
                                                             // check file manager type
-                                                            if ($('#_' + name).attr("value") == 'file_type') {
+                                                            if ($('#panel-form-{{ $name }} #_' + name).attr("value") == 'file_type') {
                                                                 var link =
-                                                                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=` +
+                                                                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=2&multiple=0&parent_field_id=panel-form-{{ $name }}&field_id=` +
                                                                     name +
                                                                     `" frameborder="0" ></iframe>`;
                                                             } else {
                                                                 var link =
-                                                                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&field_id=` +
+                                                                    `<iframe class="filemanager-iframe" width="100%" height="600" src="{{ Route('dialog') }}?type=1&multiple=0&parent_field_id=panel-form-{{ $name }}&field_id=` +
                                                                     name +
                                                                     `" frameborder="0"></iframe>`;
                                                             }
-                                                            $('#img-' + name).prop("src", "");
-                                                            $('#link-' + name).prop("href", "");
-                                                            $('#link-' + name).addClass("hide");
+                                                            $('#panel-form-{{ $name }} #img-' + name).prop("src", "");
+                                                            $('#panel-form-{{ $name }} #link-' + name).prop("href", "");
+                                                            $('#panel-form-{{ $name }} #link-' + name).addClass("hide");
                                                             // col-sm-10 empty value clear
-                                                            $('#' + name).val("");
-                                                            $('#thumbnail-' + name).prop("src", "").val("");
-                                                            $('#roadtrip-' + name).prop("href", "");
-                                                            $('#holder-' + name).prop("src", "");
-                                                            $("#modalInsertChildPhotosingle_{{ $col['name'] }} .modal-body").html(link);
-                                                            $("#modalInsertChildPhotosingle_{{ $col['name'] }}").modal();
+                                                            $('#panel-form-{{ $name }} #' + name).val("");
+                                                            $('#panel-form-{{ $name }} #thumbnail-' + name).prop("src", "").val("");
+                                                            $('#panel-form-{{ $name }} #roadtrip-' + name).prop("href", "");
+                                                            $('#panel-form-{{ $name }} #holder-' + name).prop("src", "");
+                                                            $("#panel-form-{{ $name }} #modalInsertChildPhotosingle_" + name + " .modal-body").html(link);
+                                                            $("#panel-form-{{ $name }} #modalInsertChildPhotosingle_" + name).modal();
                                                         }
 
                                                         function showDeletePopout(name) {
@@ -198,15 +198,15 @@ $name = str_slug($form['label'], '');
                                                                 url: ajaxUrl,
                                                                 success: function(data) {
                                                                     $('.filemanager-col_' + form_name).hide();
-                                                                    $('#img-' + form_name).prop("src", "");
-                                                                    $('#link-' + form_name).prop("href", "");
-                                                                    $('#link-' + form_name).addClass("hide");
+                                                                    $('#panel-form-{{ $name }} #img-' + form_name).prop("src", "");
+                                                                    $('#panel-form-{{ $name }} #link-' + form_name).prop("href", "");
+                                                                    $('#panel-form-{{ $name }} #link-' + form_name).addClass("hide");
                                                                     // col-sm-10 empty value clear
-                                                                    $('#' + form_name).val("");
-                                                                    $('#thumbnail-' + form_name).prop("src", "").val("");
-                                                                    $('#roadtrip-' + form_name).prop("href", "");
-                                                                    $('#holder-' + form_name).prop("src", "");
-                                                                    $('.empty-filemanager-col_' + form_name).show();
+                                                                    $('#panel-form-{{ $name }} #' + form_name).val("");
+                                                                    $('#panel-form-{{ $name }} #thumbnail-' + form_name).prop("src", "").val("");
+                                                                    $('#panel-form-{{ $name }} #roadtrip-' + form_name).prop("href", "");
+                                                                    $('#panel-form-{{ $name }} #holder-' + form_name).prop("src", "");
+                                                                    $('#panel-form-{{ $name }} .empty-filemanager-col_' + form_name).show();
                                                                     swal.close();
                                                                 },
                                                                 error: function(data) {
@@ -215,19 +215,22 @@ $name = str_slug($form['label'], '');
                                                             });
                                                         }
                                                         $(function() {
-                                                            var id = '#modalInsertChildPhotosingle_{{ $col['name'] }}';
+                                                            var id = '#panel-form-{{ $name }} #modalInsertChildPhotosingle_{{ $col['name'] }}';
                                                             $(id).on('hidden.bs.modal', function() {
-                                                                var check = $('#' + _Name).val();
+                                                                var check = $('#panel-form-{{ $name }} #' + _Name).val();
                                                                 if (check != "") {
                                                                     check = check.substring(1);
                                                                     if ("{{ $col['filemanager_type'] }}" == 'file')
-                                                                        $("#file-" + _Name).html(check);
+                                                                        $("#panel-form-{{ $name }} #file-" + _Name).html(check);
                                                                     else
-                                                                        $("#img-" + _Name).attr("src", '{{ URL::asset('') }}' + check);
-                                                                    $("#link-" + _Name).attr("href", check);
-                                                                    $("#link-" + _Name).removeClass("hide");
-                                                                    $("#thumbnail-" + _Name).attr("src", '{{ URL::asset('') }}' + check);
-                                                                    $("#thumbnail-" + _Name).attr("value", check);
+                                                                        $("#panel-form-{{ $name }} #img-" + _Name).attr("src",
+                                                                            '{{ URL::asset('') }}' + check);
+                                                                    $("#panel-form-{{ $name }} #link-" + _Name).attr("href", check);
+                                                                    $("#panel-form-{{ $name }} #link-" + _Name).removeClass("hide");
+                                                                    $("#panel-form-{{ $name }} #thumbnail-" + _Name).attr("src",
+                                                                        '{{ URL::asset('') }}' + check);
+                                                                    $("#panel-form-{{ $name }} #thumbnail-" + _Name).attr("value", check);
+                                                                    $("#panel-form-{{ $name }} #" + _Name).val(check);
                                                                 }
                                                             });
                                                             resizeFilemanagerPopout();
@@ -395,24 +398,25 @@ $name = str_slug($form['label'], '');
                                                             function showModal{{ $name_column }}() {
                                                                 if (url_is_setted_{{ $name_column }} == false) {
                                                                     url_is_setted_{{ $name_column }} = true;
-                                                                    $('#iframe-modal-{{ $name_column }}').attr('src', url_{{ $name_column }});
+                                                                    $('#panel-form-{{ $name }} #iframe-modal-{{ $name_column }}').attr('src',
+                                                                        url_{{ $name_column }});
                                                                 }
-                                                                $('#modal-datamodal-{{ $name_column }}').modal('show');
+                                                                $('#panel-form-{{ $name }} #modal-datamodal-{{ $name_column }}').modal('show');
                                                             }
 
                                                             function hideModal{{ $name_column }}() {
-                                                                $('#modal-datamodal-{{ $name_column }}').modal('hide');
+                                                                $('#panel-form-{{ $name }} #modal-datamodal-{{ $name_column }}').modal('hide');
                                                             }
 
                                                             function selectAdditionalData{{ $name_column }}(select_to_json) {
                                                                 $.each(select_to_json, function(key, val) {
                                                                     if (key == 'datamodal_id') {
-                                                                        $('#{{ $name_column }} .input-id').val(val);
+                                                                        $('#panel-form-{{ $name }} #{{ $name_column }} .input-id').val(val);
                                                                     }
                                                                     if (key == 'datamodal_label') {
-                                                                        $('#{{ $name_column }} .input-label').val(val);
+                                                                        $('#panel-form-{{ $name }} #{{ $name_column }} .input-label').val(val);
                                                                     }
-                                                                    $('#{{ $name }}' + key).val(val).trigger('change');
+                                                                    $('#panel-form-{{ $name }} #{{ $name }}' + key).val(val).trigger('change');
                                                                 })
                                                                 hideModal{{ $name_column }}();
                                                             }
@@ -602,11 +606,11 @@ $name = str_slug($form['label'], '');
                                                                 }
 
 
-                                                                $('#{{ $name_column }} .input-label').val(filename);
+                                                                $('#panel-form-{{ $name }} #{{ $name_column }} .input-label').val(filename);
 
-                                                                $('#loading-{{ $name_column }}').fadeIn();
-                                                                $('#btn-add-table-{{ $name }}').addClass('disabled');
-                                                                $('#btn-upload-{{ $name_column }}').addClass('disabled');
+                                                                $('#panel-form-{{ $name }} #loading-{{ $name_column }}').fadeIn();
+                                                                $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').addClass('disabled');
+                                                                $('#panel-form-{{ $name }} #btn-upload-{{ $name_column }}').addClass('disabled');
                                                                 is_uploading = true;
 
                                                                 //Upload File To Server
@@ -631,23 +635,27 @@ $name = str_slug($form['label'], '');
                                                                     processData: false, // Don't process the files
                                                                     contentType: false, // Set content type to false as jQuery will tell the server its a query string request
                                                                     success: function(data, textStatus, jqXHR) {
-                                                                        $('#btn-add-table-{{ $name }}').removeClass('disabled');
-                                                                        $('#loading-{{ $name_column }}').hide();
-                                                                        $('#btn-upload-{{ $name_column }}').removeClass('disabled');
+                                                                        $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').removeClass(
+                                                                            'disabled');
+                                                                        $('#panel-form-{{ $name }} #loading-{{ $name_column }}').hide();
+                                                                        $('#panel-form-{{ $name }} #btn-upload-{{ $name_column }}').removeClass(
+                                                                            'disabled');
                                                                         is_uploading = false;
 
                                                                         var basename = data.split('/').reverse()[0];
-                                                                        $('#{{ $name_column }} .input-label').val(basename);
+                                                                        $('#panel-form-{{ $name }} #{{ $name_column }} .input-label').val(basename);
 
-                                                                        $('#{{ $name_column }} .input-id').val(data);
+                                                                        $('#panel-form-{{ $name }} #{{ $name_column }} .input-id').val(data);
                                                                     },
                                                                     error: function(jqXHR, textStatus, errorThrown) {
-                                                                        $('#btn-add-table-{{ $name }}').removeClass('disabled');
-                                                                        $('#btn-upload-{{ $name_column }}').removeClass('disabled');
+                                                                        $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').removeClass(
+                                                                            'disabled');
+                                                                        $('#panel-form-{{ $name }} #btn-upload-{{ $name_column }}').removeClass(
+                                                                            'disabled');
                                                                         is_uploading = false;
                                                                         // Handle errors here
                                                                         // STOP LOADING SPINNER
-                                                                        $('#loading-{{ $name_column }}').hide();
+                                                                        $('#panel-form-{{ $name }} #loading-{{ $name_column }}').hide();
                                                                     }
                                                                 });
                                                             }
@@ -768,11 +776,8 @@ $name = str_slug($form['label'], '');
                                             $script_onchange = '';
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
-                                                    $script_onchange .= "
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        $formula_function_name();
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    });
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    ";
+                                                    $script_onchange .= "$('#$name$c[name]').change(function() {
+                                                        $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -808,9 +813,10 @@ $name = str_slug($form['label'], '');
 
                                                 if (confirm("{{ cbLang('delete_title_confirm') }}")) {
                                                     $(t).parent().parent().remove();
-                                                    if ($('#table-{{ $name }} tbody tr').length == 0) {
+                                                    if ($('#panel-form-{{ $name }} #table-{{ $name }} tbody tr').length == 0) {
                                                         var colspan = $('#table-{{ $name }} thead tr th').length;
-                                                        $('#table-{{ $name }} tbody').html("<tr class='trNull'><td colspan='" + colspan +
+                                                        $('#panel-form-{{ $name }} #table-{{ $name }} tbody').html(
+                                                            "<tr class='trNull'><td colspan='" + colspan +
                                                             "' align='center'>{{ cbLang('table_data_not_found') }}</td></tr>");
                                                     }
                                                 }
@@ -822,36 +828,41 @@ $name = str_slug($form['label'], '');
                                                 let currValue = currentRow.find('input[name="{{ $name }}-id[]"]').val();
                                                 $('.hidden-value').attr("value", currValue);
                                                 p.addClass('warning');
-                                                $('#btn-add-table-{{ $name }}').val('{{ cbLang('save_changes') }}');
+                                                $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').val(
+                                                    '{{ cbLang('save_changes') }}');
                                                 @foreach ($form['columns'] as $c)
                                                     @if ($c['type'] == 'filemanager')
-                                                        let pSRC = p.find($('.tb_img-{{ $c['name'] }}')).attr("src");
+                                                        pSRC = p.find($('.tb_img-{{ $c['name'] }}')).attr("src");
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
                                                             pSRC = "/".pSRC;
-                                                        $('#link-{{ $c['name'] }}').removeClass('hide');
-                                                        $('#link-{{ $c['name'] }}').attr('href', pSRC);
-                                                        $('#img-{{ $c['name'] }}').attr('src', pSRC);
+                                                        $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').removeClass('hide');
+                                                        $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').attr('href', pSRC);
+                                                        $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src', pSRC);
                                                     @elseif ($c['type'] == 'switch')
                                                         var s_val = p.find($('.{{ $c['name'] }} input[type=hidden]')).attr('value');
                                                         if (s_val == "1") {
-                                                            $('#child_switch{{ $c['name'] }}').val(1);
-                                                            $('#child_switch{{ $c['name'] }}').prop('checked', true);
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').val(1);
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').prop('checked', true);
                                                         } else {
-                                                            $('#child_switch{{ $c['name'] }}').val(0);
-                                                            $('#child_switch{{ $c['name'] }}').prop('checked', false);
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').val(0);
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').prop('checked', false);
                                                         }
                                                     @elseif ($c['type'] == 'icon')
                                                         var icon_value = p.find($('.{{ $c['name'] }} input[type=hidden]')).val();
-                                                        $('#list-icon_{{ $c['name'] }}').val(icon_value).trigger('change');
+                                                        $('#panel-form-{{ $name }} #list-icon_{{ $c['name'] }}').val(icon_value).trigger(
+                                                            'change');
                                                     @elseif ($c['type'] == 'select')
-                                                        $('#{{ $name . $c['name'] }}').val(p.find(".{{ $c['name'] }} input").val()).trigger("change");
+                                                        $('#panel-form-{{ $name }} #{{ $name . $c['name'] }}').val(p.find(
+                                                            ".{{ $c['name'] }} input").val()).trigger("change");
                                                     @elseif ($c['type'] == 'radio')
                                                         var v = p.find(".{{ $c['name'] }} input").val();
                                                         $('.{{ $name . $c['name'] }}[value=' + v + ']').prop('checked', true);
                                                     @elseif ($c['type'] == 'datamodal')
-                                                        $('#{{ $name . $c['name'] }} .input-label').val(p.find(".{{ $c['name'] }} .td-label").text());
-                                                        $('#{{ $name . $c['name'] }} .input-id').val(p.find(".{{ $c['name'] }} input").val());
+                                                        $('#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val(p.find(
+                                                            ".{{ $c['name'] }} .td-label").text());
+                                                        $('#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val(p.find(
+                                                            ".{{ $c['name'] }} input").val());
                                                     @elseif ($c['type'] == 'multitext')
                                                         var values = p.find($('input[name="{{ $name }}-{{ $c['name'] }}[]"]')).val();
                                                         var valuesArr = values.split('|');
@@ -874,14 +885,18 @@ $name = str_slug($form['label'], '');
                                                         });
                                                     @elseif ($c['type'] == 'upload')
                                                         @if ($c['upload_type'] == 'image')
-                                                            $('#{{ $name . $c['name'] }} .input-label').val(p.find(".{{ $c['name'] }} img").data(
+                                                            $('#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val(p.find(
+                                                                ".{{ $c['name'] }} img").data(
                                                                 'label'));
                                                         @else
-                                                            $('#{{ $name . $c['name'] }} .input-label').val(p.find(".{{ $c['name'] }} a").data('label'));
+                                                            $('#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val(p.find(
+                                                                ".{{ $c['name'] }} a").data('label'));
                                                         @endif
-                                                        $('#{{ $name . $c['name'] }} .input-id').val(p.find(".{{ $c['name'] }} input").val());
+                                                        $('#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val(p.find(
+                                                            ".{{ $c['name'] }} input").val());
                                                     @else
-                                                        $('#{{ $name . $c['name'] }}').val(p.find(".{{ $c['name'] }} input").val());
+                                                        $('#panel-form-{{ $name }} #{{ $name . $c['name'] }}').val(p.find(
+                                                            ".{{ $c['name'] }} input").val());
                                                     @endif
                                                 @endforeach
                                             }
@@ -891,6 +906,8 @@ $name = str_slug($form['label'], '');
                                                 $('#panel-form-{{ $name }} .required').each(function() {
                                                     var v = $(this).val();
                                                     if (v == '') {
+                                                        console.log($(this));
+                                                        console.log(v);
                                                         sweetAlert("{{ cbLang('alert_warning') }}", "{{ cbLang('please_complete_the_form') }}",
                                                             "warning");
                                                         is_false += 1;
@@ -916,26 +933,28 @@ $name = str_slug($form['label'], '');
                                                 @foreach ($form['columns'] as $c)
                                                     @if ($c['type'] == 'filemanager')
 
-                                                        let pSRC = $('#img-{{ $c['name'] }}').attr('src');
+                                                        pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
                                                             pSRC = "/".pSRC;
                                                         trRow += "<td class='{{ $c['name'] }}'>" +
                                                             "<a data-lightbox='roadtrip' href='" + pSRC + "'><img class='tb_img-" + '{{ $c['name'] }}' +
                                                             "' data-label='" + $(
-                                                                '#{{ $name . $c['name'] }} .input-label').val() + "' src='" + pSRC +
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val() +
+                                                            "' src='" + pSRC +
                                                             "' width='50px' height='50px'/></a>" +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + pSRC + "'/>" +
                                                             "</td>"
-                                                        $('#link-{{ $c['name'] }}').addClass('hide');
-                                                        $('#link-{{ $c['name'] }}').attr("href", "");
-                                                        $('#img-{{ $c['name'] }}').attr("src", "");
+                                                        $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').addClass('hide');
+                                                        $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').attr("href", "");
+                                                        $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr("src", "");
                                                     @elseif ($c['type'] == 'switch')
                                                         trRow += "<td class='{{ $c['name'] }}' value='" +
-                                                            $('#child_switch{{ $c['name'] }}').val() + "'>" + $('#child_switch{{ $c['name'] }} ')
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').val() + "'>" + $(
+                                                                '#panel-form-{{ $name }} #child_switch{{ $c['name'] }} ')
                                                             .val() +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" +
-                                                            $('#child_switch{{ $c['name'] }}').val() + "'/>" +
+                                                            $('#panel-form-{{ $name }} #child_switch{{ $c['name'] }}').val() + "'/>" +
                                                             "</td>";
                                                     @elseif ($c['type'] == 'icon')
                                                         trRow += "<td class='{{ $c['name'] }}' value='" +
@@ -944,7 +963,7 @@ $name = str_slug($form['label'], '');
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" +
                                                             $('select[name=child_icon_{{ $c['name'] }}]').val() + "'/>" +
                                                             "</td>";
-                                                        $('#list-icon_{{ $c['name'] }}').val('').trigger("change");
+                                                        $('#panel-form-{{ $name }} #list-icon_{{ $c['name'] }}').val('').trigger("change");
                                                     @elseif ($c['type'] == 'multitext')
                                                         var values = $('input[name="{{ $col['name'] }}[]"]').map(function() {
                                                             return $(this).val();
@@ -957,10 +976,11 @@ $name = str_slug($form['label'], '');
                                                             if (index > 0) $(this).parent().remove();
                                                         });
                                                     @elseif ($c['type'] == 'select')
-                                                        trRow += "<td class='{{ $c['name'] }}'>" + $('#{{ $name . $c['name'] }} option:selected')
+                                                        trRow += "<td class='{{ $c['name'] }}'>" + $(
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }} option:selected')
                                                             .text() +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + $(
-                                                                '#{{ $name . $c['name'] }}').val() + "'/>" +
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }}').val() + "'/>" +
                                                             "</td>";
                                                     @elseif ($c['type'] == 'radio')
                                                         trRow += "<td class='{{ $c['name'] }}'><span class='td-label'>" + $(
@@ -970,33 +990,40 @@ $name = str_slug($form['label'], '');
                                                             "</td>";
                                                     @elseif ($c['type'] == 'datamodal')
                                                         trRow += "<td class='{{ $c['name'] }}'><span class='td-label'>" + $(
-                                                                '#{{ $name . $c['name'] }} .input-label').val() + "</span>" +
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val() +
+                                                            "</span>" +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + $(
-                                                                '#{{ $name . $c['name'] }} .input-id').val() + "'/>" +
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() + "'/>" +
                                                             "</td>";
                                                     @elseif ($c['type'] == 'upload')
                                                         @if ($c['upload_type'] == 'image')
                                                             trRow += "<td class='{{ $c['name'] }}'>" +
                                                                 "<a data-lightbox='roadtrip' href='{{ asset('/') }}" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-id').val() + "'><img data-label='" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-label').val() + "' src='{{ asset('/') }}" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-id').val() + "' width='50px' height='50px'/></a>" +
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() +
+                                                                "'><img data-label='" + $(
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val() +
+                                                                "' src='{{ asset('/') }}" + $(
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() +
+                                                                "' width='50px' height='50px'/></a>" +
                                                                 "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-id').val() + "'/>" +
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() + "'/>" +
                                                                 "</td>";
                                                         @else
                                                             trRow += "<td class='{{ $c['name'] }}'><a data-label='" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-label').val() + "' href='{{ asset('/') }}" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-id').val() + "'>" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-label').val() + "</a>" +
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val() +
+                                                                "' href='{{ asset('/') }}" + $(
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() + "'>" + $(
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-label').val() +
+                                                                "</a>" +
                                                                 "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + $(
-                                                                    '#{{ $name . $c['name'] }} .input-id').val() + "'/>" +
+                                                                    '#panel-form-{{ $name }} #{{ $name . $c['name'] }} .input-id').val() + "'/>" +
                                                                 "</td>";
                                                         @endif
                                                     @else
-                                                        trRow += "<td class='{{ $c['name'] }}'>" + $('#{{ $name . $c['name'] }}').val() +
+                                                        trRow += "<td class='{{ $c['name'] }}'>" + $(
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }}').val() +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + $(
-                                                                '#{{ $name . $c['name'] }}').val() + "'/>" +
+                                                                '#panel-form-{{ $name }} #{{ $name . $c['name'] }}').val() + "'/>" +
                                                             "</td>";
                                                     @endif
                                                 @endforeach
@@ -1004,7 +1031,7 @@ $name = str_slug($form['label'], '');
                                                     "<a href='#panel-form-{{ $name }}' onclick='editRow{{ $name }}(this)' class='btn btn-warning btn-xs'><i class='fa fa-pencil'></i></a> " +
                                                     "<a href='javascript:void(0)' onclick='deleteRow{{ $name }}(this)' class='btn btn-danger btn-xs'><i class='fa fa-trash'></i></a></td>";
                                                 trRow += '</tr>';
-                                                $('#table-{{ $name }} tbody .trNull').remove();
+                                                $('#panel-form-{{ $name }} #table-{{ $name }} tbody .trNull').remove();
                                                 if (currentRow == null) {
                                                     $("#table-{{ $name }} tbody").prepend(trRow);
                                                 } else {
@@ -1012,8 +1039,9 @@ $name = str_slug($form['label'], '');
                                                     currentRow.replaceWith(trRow);
                                                     currentRow = null;
                                                 }
-                                                $('#btn-add-table-{{ $name }}').val('{{ cbLang('button_add_to_table') }}');
-                                                $('#btn-reset-form-{{ $name }}').click();
+                                                $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').val(
+                                                    '{{ cbLang('button_add_to_table') }}');
+                                                $('#panel-form-{{ $name }} #btn-reset-form-{{ $name }}').click();
                                             }
                                         </script>
                                     @endpush
@@ -1081,7 +1109,7 @@ $name = str_slug($form['label'], '');
                                                 <?php
                                                 if ($col['type'] == 'filemanager') {
                                                     $tempLink = $d->{$col['name']};
-                                                    $tempLink = str_replace(url("/"),"",$tempLink);
+                                                    $tempLink = str_replace(url('/'), '', $tempLink);
                                                     if (strpos($tempLink, '/') !== 0) {
                                                         $tempLink = "/$tempLink";
                                                     }
