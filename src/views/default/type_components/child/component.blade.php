@@ -109,7 +109,7 @@ $name = str_slug($form['label'], '');
                                                     @if (!$readonly || !$disabled)
                                                         <p>
                                                             <a class='btn btn-danger btn-delete btn-sm btn-del-filemanager'
-                                                                onclick='showDeletePopout("{{ $col['name'] }}")'><i
+                                                                onclick='showChildDeletePopout("{{ $col['name'] }}")'><i
                                                                     class='fa fa-ban'></i>
                                                                 {{ cbLang('text_delete') }} </a>
                                                         </p>
@@ -172,7 +172,7 @@ $name = str_slug($form['label'], '');
                                                             $("#panel-form-{{ $name }} #modalInsertChildPhotosingle_" + name).modal();
                                                         }
 
-                                                        function showDeletePopout(name) {
+                                                        function showChildDeletePopout(name) {
                                                             swal({
                                                                 title: "{{ cbLang('delete_title_confirm') }}",
                                                                 text: "{{ cbLang('delete_description_confirm') }}",
@@ -183,11 +183,11 @@ $name = str_slug($form['label'], '');
                                                                 cancelButtonText: "{{ cbLang('button_cancel') }}",
                                                                 closeOnConfirm: false
                                                             }, function() {
-                                                                deleteImage(name);
+                                                                deleteImageFromChild(name);
                                                             });
                                                         }
 
-                                                        function deleteImage(form_name) {
+                                                        function deleteImageFromChild(form_name) {
                                                             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
                                                             let table = @json($table);
                                                             let id = @json($id);
