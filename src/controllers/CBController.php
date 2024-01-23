@@ -1306,24 +1306,26 @@ class CBController extends Controller
                 $count_input_data = ($getColName) ? (count($getColName) - 1) : 0;
                 $child_array = [];
                 $fk = $ro['foreign_key'];
+                if ($getColName > 0) {
 
-                for ($i = 0; $i <= $count_input_data; $i++) {
-                    $column_data = [];
-                    foreach ($columns as $col) {
-                        $colname = $col['name'];
-                        $colvalue = request($name . '-' . $colname)[$i];
-                        if (isset($colvalue) === true) {
-                            $column_data[$colname] = $colvalue;
+                    for ($i = 0; $i <= $count_input_data; $i++) {
+                        $column_data = [];
+                        foreach ($columns as $col) {
+                            $colname = $col['name'];
+                            $colvalue = request($name . '-' . $colname)[$i];
+                            if (isset($colvalue) === true) {
+                                $column_data[$colname] = $colvalue;
+                            }
+                        }
+                        if (isset($column_data) === true && !empty($column_data)) {
+                            $column_data[$fk] = (!empty($id) ? $id : $lastInsertId);
+                            $child_array[] = $column_data;
                         }
                     }
-                    if (isset($column_data) === true && !empty($column_data)) {
-                        $column_data[$fk] = (!empty($id) ? $id : $lastInsertId);
-                        $child_array[] = $column_data;
-                    }
-                }
 
-                $childtable = CRUDBooster::parseSqlTable($ro['table'])['table'];
-                DB::table($childtable)->insert($child_array);
+                    $childtable = CRUDBooster::parseSqlTable($ro['table'])['table'];
+                    DB::table($childtable)->insert($child_array);
+                }
             }
         }
 
@@ -1501,51 +1503,52 @@ class CBController extends Controller
                 $childtable = CRUDBooster::parseSqlTable($ro['table'])['table'];
                 $fk = $ro['foreign_key'];
 
-                // DB::table($childtable)->where($fk, $id)->delete();
                 $lastId = CRUDBooster::newId($childtable);
                 $childtablePK = CB::pk($childtable);
-                //fesal
-                $updatedIds = [];
-                for ($i = 0; $i <= $count_input_data; $i++) {
-                    $column_data = [];
-                    $column_data[$childtablePK] = $lastId;
-                    $column_data[$fk] = $id;
-                    if (isset($column_data["sorting"])) {
-                        $column_data["sorting"] = $i + 1;
+                if ($getColName > 0) {
+                    //fesal
+                    $updatedIds = [];
+                    for ($i = 0; $i <= $count_input_data; $i++) {
+                        $column_data = [];
+                        $column_data[$childtablePK] = $lastId;
+                        $column_data[$fk] = $id;
+                        if (isset($column_data["sorting"])) {
+                            $column_data["sorting"] = $i + 1;
+                        }
+                        foreach ($columns as $col) {
+                            $colname = $col['name'];
+                            $column_data[$colname] = Request::get($name . '-' . $colname)[$i];
+                        }
+                        if (Request::get($name . '-id')[$i]) {
+                            $updatedIds[] = Request::get($name . '-id')[$i];
+                            unset($column_data[$childtablePK]);
+                            DB::table($childtable)->where("id", Request::get($name . '-id')[$i])->update($column_data);
+                            continue;
+                        }
+                        $child_array[] = $column_data;
+                        $lastId++;
                     }
-
-                    foreach ($columns as $col) {
-                        $colname = $col['name'];
-                        $column_data[$colname] = Request::get($name . '-' . $colname)[$i];
-                    }
-                    if (Request::get($name . '-id')[$i]) {
-                        $updatedIds[] = Request::get($name . '-id')[$i];
-                        unset($column_data[$childtablePK]);
-                        DB::table($childtable)->where("id", Request::get($name . '-id')[$i])->update($column_data);
-                        continue;
-                    }
-                    $child_array[] = $column_data;
-                    $lastId++;
+                    DB::table($childtable)->where($fk, $id)->whereNotIn("id", $updatedIds)->delete();
+                    DB::table($childtable)->insert($child_array);
+                } else {
+                    DB::table($childtable)->where($fk, $id)->delete();
                 }
-                DB::table($childtable)->where($fk, $id)->whereNotIn("id", $updatedIds)->delete();
-                DB::table($childtable)->insert($child_array);
             }
-        }
-
-        //--- Check if translation table
-        if ($this->translation_table) {
-            DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
-            foreach ($this->websiteLanguages as $lang) {
-                $this->arr = [];
-                $this->input_assignment("", $lang->code);
-                //--- Get main column name
-                $this->arr["locale"] = $lang->code;
-                $this->arr[$this->translation_main_column] = $id;
-                //------------------------------//
-                DB::table($this->translation_table)->insert($this->arr);
+            //--- Check if translation table
+            if ($this->translation_table) {
+                DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+                foreach ($this->websiteLanguages as $lang) {
+                    $this->arr = [];
+                    $this->input_assignment("", $lang->code);
+                    //--- Get main column name
+                    $this->arr["locale"] = $lang->code;
+                    $this->arr[$this->translation_main_column] = $id;
+                    //------------------------------//
+                    DB::table($this->translation_table)->insert($this->arr);
+                }
             }
+            //----------------------------------------------------//
         }
-        //----------------------------------------------------//
 
         $this->hook_after_edit($id);
 
@@ -2010,7 +2013,7 @@ class CBController extends Controller
     public function hook_before_get_edit($id, &$row)
     {
     }
-    
+
     public function hook_before_edit(&$arr, $id)
     {
     }
