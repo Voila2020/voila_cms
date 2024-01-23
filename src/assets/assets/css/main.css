@@ -57,8 +57,6 @@
     font-size: 12px;
 }
 
-
-
 .login-box-body {
     box-shadow: 0px 0px 25px #999999;
 }
@@ -119,7 +117,6 @@
     z-index: 999999;
     display: block;
 }
-
 
 .spinner-loader {
     display: block;
@@ -215,14 +212,12 @@
 }
 
 @keyframes spinner-loader {
-
     0%,
     20%,
     80%,
     100% {
         transform: scale(1);
     }
-
     50% {
         transform: scale(1.5);
     }
@@ -234,4 +229,13 @@
 
 #show-images {
     background: #f3f3f3;
+}
+
+[id^="modalInsertChildPhotosingle_"] .modal-body,
+[id^="modalInsertPhotosingle_"] .modal-body {
+    background-image: url('/vendor/crudbooster/assets/giphy.gif');
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 30%;
+    background-color: #e5eff1;
 }
