@@ -356,7 +356,7 @@ class AdminFormsController extends CBController
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit/' . $form->id) . "' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' class=' well' style='background:#FFF' >";
             $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
