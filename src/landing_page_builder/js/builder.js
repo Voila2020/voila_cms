@@ -49,12 +49,12 @@ editor = grapesjs.init({
                     autoDimensions: false,
                     fitToView: false,
                     autoSize: false,
-                    afterClose: function () {
+                    afterClose: function() {
                         editor.stopCommand("open-assets");
                     },
                 });
             },
-            close(props) { },
+            close(props) {},
         },
     },
     styleManager: {
@@ -84,11 +84,13 @@ editor = grapesjs.init({
     canvas: {
         styles: [
             "https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css",
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/v4-shims.min.css",
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css",
             $_SITE + "/landing_page_builder/css/builder.css",
             $_SITE + "/landing_page_builder/css/canvas.css",
             $is_rtl == "1" ?
-                $_SITE + "/landing_page_builder/css/rtl_styles.css" :
-                $_SITE + "/landing_page_builder/css/ltr_styles.css",
+            $_SITE + "/landing_page_builder/css/rtl_styles.css" :
+            $_SITE + "/landing_page_builder/css/ltr_styles.css",
 
         ],
         scripts: [
@@ -131,7 +133,7 @@ editor.on('component:selected', (editor) => {
 });
 
 
-$('#custom-block-form').submit(function (evt) {
+$('#custom-block-form').submit(function(evt) {
     evt.preventDefault();
     const selected = editor.getSelected();
     var name = $("#block_name").val();
@@ -154,8 +156,7 @@ const getCss = (editor, id) => {
             return style.toCSS() + ' ' + hoverStyle.toCSS()
         }
         return style.toCSS()
-    }
-    else {
+    } else {
         return ''
     }
 }
@@ -169,8 +170,7 @@ const findComponentStyles = (editor, selected) => {
                 css = css + findComponentStyles(editor, model)
             }
             return css + getCss(editor, selected.getId());
-        }
-        else {
+        } else {
             return getCss(editor, selected.getId());
         }
     }
@@ -211,10 +211,10 @@ const createBlockTemplate = (editor, selected, name_blockId) => {
             blockId: blockId,
         },
         type: 'POST',
-        success: function (data) {
+        success: function(data) {
             $('html, body').css("cursor", "auto");
         },
-        error: function (data) {
+        error: function(data) {
             $('html, body').css("cursor", "auto");
         }
     });
@@ -249,14 +249,14 @@ editor.on("component:selected", model => {
 editor.Panels.addButton("options", [{
     id: "save",
     className: "fa fa-floppy-o icon-blank fa-3x",
-    command: function (editor1, sender) {
+    command: function(editor1, sender) {
         var rr = editor.store();
     },
     attributes: {
         title: "Save Landing Page"
     },
 
-},]);
+}, ]);
 
 //color theme button
 editor.Panels.addButton("options", [{
@@ -266,10 +266,10 @@ editor.Panels.addButton("options", [{
     attributes: {
         title: "Select Theme Colors"
     },
-},]);
+}, ]);
 
 //open the color picker modal
-$(".open-modal").click(function () {
+$(".open-modal").click(function() {
     $("#less-modal").modal("show");
 });
 
@@ -298,7 +298,7 @@ codeViewer.set({
 
 btnEdit.innerHTML = 'Import';
 btnEdit.className = pfx + 'btn-prim ' + pfx + 'btn-import';
-btnEdit.onclick = function () {
+btnEdit.onclick = function() {
     var code = codeViewer.editor.getValue();
     editor.DomComponents.getWrapper().set('content', '');
     editor.setComponents(code.trim());
@@ -307,7 +307,7 @@ btnEdit.onclick = function () {
 
 //Set the html and css code in the prev window
 cmdm.add('html-edit', {
-    run: function (editor, sender) {
+    run: function(editor, sender) {
         sender && sender.set('active', 0);
         var viewer = codeViewer.editor;
         modal.setTitle('Edit code');
@@ -338,7 +338,7 @@ pnm.addButton('options', [{
     }
 }]);
 
-editor.on('load', function () {
+editor.on('load', function() {
 
     //import the less styles and scripts to the canvas.
     const link1 = document.createElement("link");
@@ -355,7 +355,7 @@ editor.on('load', function () {
     editor.Canvas.getDocument().head.appendChild(script2);
 
 
-    $(".color-inputs").on("input", function () {
+    $(".color-inputs").on("input", function() {
         let varName = $(this).attr("var");
         let varValue = $(this).val();
         variables[varName] = varValue;
@@ -372,7 +372,7 @@ editor.on('load', function () {
         storageManager.store(data);
     });
 
-    setTimeout(function () {
+    setTimeout(function() {
         var f = $(".gjs-frame");
         f.get(0).contentWindow.firstInputColor(variables);
         less.modifyVars(variables);
@@ -383,7 +383,7 @@ editor.on('load', function () {
         $('.hexcolor[var="' + key + '"]').attr("value", value);
     }
 
-    $(".hexcolor").on("input", function () {
+    $(".hexcolor").on("input", function() {
         let varName = $(this).attr("var");
         let varValue = $(this).val();
         variables[varName] = varValue;
@@ -411,10 +411,10 @@ function responsive_filemanager_callback(field_id, value) {
     $("#" + field_id, $(".gjs-frame").contents()).prop("src", value);
     if (editor.getSelected().attributes.tagName == "div")
         editor
-            .getSelected()
-            .addStyle({
-                "background-image": `url("${$_SITE + value}")`
-            });
+        .getSelected()
+        .addStyle({
+            "background-image": `url("${$_SITE + value}")`
+        });
     else editor.getSelected().set("src", $_SITE + value);
     editor.stopCommand("open-assets");
 }
