@@ -215,13 +215,21 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             array_push($conditions, ['page_id', '=', null]);
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         }
+       
+
+        $record_id = $data[0]->id;
+        $seo_image = $data[0]->image;
+        $seo_optional_tags = stripslashes($data[0]->optional_tags);
+        $seo_optional_tags = ($seo_optional_tags) ? $seo_optional_tags:"";
+       
         $keys = array_keys($data);
         foreach ($keys as $key) {
             $newKey = $data[$key]->language;
             $data[$newKey] = $data[$key];
             unset($data[$key]);
         }
-        return view('crudbooster::seo', array('data' => $data, 'type' => $page, 'id' => $page_id, 'languages' => $languages));
+        
+        return view('crudbooster::seo', array('data' => $data,'record_id'=>$record_id,'seo_image'=>$seo_image,'seo_optional_tags'=>$seo_optional_tags,'type' => $page, 'id' => $page_id, 'languages' => $languages));
     }
 
     public function postSeoStore(Request $request)
@@ -237,11 +245,14 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             $oldSEO = DB::table('cms_seo')->where($conditions)->first();
 
             if ($oldSEO) {
+                
                 DB::table('cms_seo')->where($conditions)->update([
                     'title' => $data['title_' . $lang->code],
                     'description' => $data['description_' . $lang->code],
                     'keywords' => $data['keywords_' . $lang->code],
                     'author' => $data['author_' . $lang->code],
+                    'image' => $data['image'],
+                    'optional_tags' => addslashes($data['optional_tags']),
                 ]);
             } else {
                 DB::table('cms_seo')->insert([
@@ -249,6 +260,8 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
                     'description' => $data['description_' . $lang->code],
                     'keywords' => $data['keywords_' . $lang->code],
                     'author' => $data['author_' . $lang->code],
+                    'image' => $data['image'],
+                    'optional_tags' => addslashes($data['optional_tags']),
                     'page_id' => (Request::input('page_id')) ? Request::input('page_id') : null,
                     'page' => Request::input('page'),
                     'language' => $lang->code,
@@ -258,6 +271,7 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
                 ]);
             }
         }
+        
         if(Request::input("back_url"))
             return redirect(Request::input("back_url"))->with(['message' => cbLang("alert_update_seo_success"), 'message_type' => 'success']);
         $module = DB::table('cms_moduls')->where('path', Request::input('page'))->first();
