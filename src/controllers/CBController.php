@@ -932,110 +932,112 @@ class CBController extends Controller
 
         $request_all = Request::all();
         $array_input = [];
-        // foreach ($this->data_inputan as $di) {
-        foreach ($formArrToValidate as $di) {
-            $ai = [];
-            $name = $di['name'];
+        if (is_array($formArrToValidate) || is_object($formArrToValidate)){    
+            // foreach ($this->data_inputan as $di) {
+            foreach ($formArrToValidate as $di) {
+                $ai = [];
+                $name = $di['name'];
 
-            if (!isset($request_all[$name])) {
-                continue;
-            }
-
-            if ($di['type'] != 'upload') {
-                if (@$di['required']) {
-                    $ai[] = 'required';
+                if (!isset($request_all[$name])) {
+                    continue;
                 }
-            }
 
-            if ($di['type'] == 'upload') {
-                if ($id) {
-                    $row = DB::table($this->table)->where($this->primary_key, $id)->first();
-                    if ($row->{$di['name']} == '') {
+                if ($di['type'] != 'upload') {
+                    if (@$di['required']) {
                         $ai[] = 'required';
                     }
                 }
-            }
 
-            if (@$di['min']) {
-                $ai[] = 'min:' . $di['min'];
-            }
-            if (@$di['max']) {
-                $ai[] = 'max:' . $di['max'];
-            }
-            if (@$di['image']) {
-                $ai[] = 'image';
-            }
-            if (@$di['mimes']) {
-                $ai[] = 'mimes:' . $di['mimes'];
-            }
-            $name = $di['name'];
-            if (!$name) {
-                continue;
-            }
-
-            if ($di['type'] == 'money') {
-                $request_all[$name] = preg_replace('/[^\d-]+/', '', $request_all[$name]);
-            }
-
-            if ($di['type'] == 'child') {
-                $slug_name = str_slug($di['label'], '');
-                foreach ($di['columns'] as $child_col) {
-                    if (isset($child_col['validation'])) {
-                        //https://laracasts.com/discuss/channels/general-discussion/array-validation-is-not-working/
-                        if (strpos($child_col['validation'], 'required') !== false) {
-                            $array_input[$slug_name . '-' . $child_col['name']] = 'required';
-
-                            str_replace('required', '', $child_col['validation']);
+                if ($di['type'] == 'upload') {
+                    if ($id) {
+                        $row = DB::table($this->table)->where($this->primary_key, $id)->first();
+                        if ($row->{$di['name']} == '') {
+                            $ai[] = 'required';
                         }
-
-                        $array_input[$slug_name . '-' . $child_col['name'] . '.*'] = $child_col['validation'];
                     }
                 }
-            }
 
-            if (@$di['validation']) {
+                if (@$di['min']) {
+                    $ai[] = 'min:' . $di['min'];
+                }
+                if (@$di['max']) {
+                    $ai[] = 'max:' . $di['max'];
+                }
+                if (@$di['image']) {
+                    $ai[] = 'image';
+                }
+                if (@$di['mimes']) {
+                    $ai[] = 'mimes:' . $di['mimes'];
+                }
+                $name = $di['name'];
+                if (!$name) {
+                    continue;
+                }
 
-                $exp = explode('|', $di['validation']);
-                if ($exp && count($exp)) {
-                    foreach ($exp as &$validationItem) {
-                        if (substr($validationItem, 0, 6) == 'unique') {
-                            $parseUnique = explode(',', str_replace('unique:', '', $validationItem));
-                            $uniqueTable = ($parseUnique[0]) ?: $this->table;
-                            $uniqueColumn = ($parseUnique[1]) ?: $name;
-                            $uniqueIgnoreId = ($parseUnique[2]) ?: (($id) ?: '');
+                if ($di['type'] == 'money') {
+                    $request_all[$name] = preg_replace('/[^\d-]+/', '', $request_all[$name]);
+                }
 
-                            //Make sure table name
-                            $uniqueTable = CB::parseSqlTable($uniqueTable)['table'];
+                if ($di['type'] == 'child') {
+                    $slug_name = str_slug($di['label'], '');
+                    foreach ($di['columns'] as $child_col) {
+                        if (isset($child_col['validation'])) {
+                            //https://laracasts.com/discuss/channels/general-discussion/array-validation-is-not-working/
+                            if (strpos($child_col['validation'], 'required') !== false) {
+                                $array_input[$slug_name . '-' . $child_col['name']] = 'required';
 
-                            //Rebuild unique rule
-                            $uniqueRebuild = [];
-                            $uniqueRebuild[] = $uniqueTable;
-                            $uniqueRebuild[] = $uniqueColumn;
-                            if ($uniqueIgnoreId) {
-                                $uniqueRebuild[] = $uniqueIgnoreId;
-                            } else {
-                                $uniqueRebuild[] = 'NULL';
+                                str_replace('required', '', $child_col['validation']);
                             }
 
-                            //Check whether deleted_at exists or not
-                            if (CB::isColumnExists($uniqueTable, 'deleted_at')) {
-                                $uniqueRebuild[] = CB::findPrimaryKey($uniqueTable);
-                                $uniqueRebuild[] = 'deleted_at';
-                                $uniqueRebuild[] = 'NULL';
-                            }
-                            $uniqueRebuild = array_filter($uniqueRebuild);
-                            $validationItem = 'unique:' . implode(',', $uniqueRebuild);
+                            $array_input[$slug_name . '-' . $child_col['name'] . '.*'] = $child_col['validation'];
                         }
                     }
+                }
+
+                if (@$di['validation']) {
+
+                    $exp = explode('|', $di['validation']);
+                    if ($exp && count($exp)) {
+                        foreach ($exp as &$validationItem) {
+                            if (substr($validationItem, 0, 6) == 'unique') {
+                                $parseUnique = explode(',', str_replace('unique:', '', $validationItem));
+                                $uniqueTable = ($parseUnique[0]) ?: $this->table;
+                                $uniqueColumn = ($parseUnique[1]) ?: $name;
+                                $uniqueIgnoreId = ($parseUnique[2]) ?: (($id) ?: '');
+
+                                //Make sure table name
+                                $uniqueTable = CB::parseSqlTable($uniqueTable)['table'];
+
+                                //Rebuild unique rule
+                                $uniqueRebuild = [];
+                                $uniqueRebuild[] = $uniqueTable;
+                                $uniqueRebuild[] = $uniqueColumn;
+                                if ($uniqueIgnoreId) {
+                                    $uniqueRebuild[] = $uniqueIgnoreId;
+                                } else {
+                                    $uniqueRebuild[] = 'NULL';
+                                }
+
+                                //Check whether deleted_at exists or not
+                                if (CB::isColumnExists($uniqueTable, 'deleted_at')) {
+                                    $uniqueRebuild[] = CB::findPrimaryKey($uniqueTable);
+                                    $uniqueRebuild[] = 'deleted_at';
+                                    $uniqueRebuild[] = 'NULL';
+                                }
+                                $uniqueRebuild = array_filter($uniqueRebuild);
+                                $validationItem = 'unique:' . implode(',', $uniqueRebuild);
+                            }
+                        }
+                    } else {
+                        $exp = [];
+                    }
+
+                    $validation = implode('|', $exp);
+
+                    $array_input[$name] = $validation;
                 } else {
-                    $exp = [];
+                    $array_input[$name] = implode('|', $ai);
                 }
-
-                $validation = implode('|', $exp);
-
-                $array_input[$name] = $validation;
-            } else {
-                $array_input[$name] = implode('|', $ai);
             }
         }
         $validator = Validator::make($request_all, $array_input);
