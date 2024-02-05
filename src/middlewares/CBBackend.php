@@ -36,7 +36,8 @@ class CBBackend
             $menus = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . CRUDBooster::myPrivilegeId() . "')")->where('is_dashboard', 1)->where('is_active', 1)->first();
             if ($menus) {
                 if ($menus->type == 'Statistic') {
-                    return redirect()->action('\crocodicstudio\crudbooster\controllers\StatisticBuilderController@getDashboard');
+                    //return redirect()->action('\crocodicstudio\crudbooster\controllers\StatisticBuilderController@getDashboard');
+                    return redirect(CRUDBooster::adminPath($menus->path));
                 } elseif ($menus->type == 'Module') {
                     $module = CRUDBooster::first('cms_moduls', ['path' => $menus->path]);
                     return redirect()->action($module->controller . '@getIndex');

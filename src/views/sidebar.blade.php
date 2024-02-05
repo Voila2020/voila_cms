@@ -24,11 +24,17 @@
                 <li class="header">{{ cbLang('menu_navigation') }}</li>
                 <!-- Optionally, you can add icons to the links -->
 
-                <?php $dashboard = CRUDBooster::sidebarDashboard(); ?>
+                <?php 
+                    $dashboard = CRUDBooster::sidebarDashboard(); 
+                    $dashboard_href = CRUDBooster::adminPath();
+                    if($dashboard->type == 'Statistic'){
+                        $dashboard_href = CRUDBooster::adminPath($dashboard->path);
+                    }
+                ?>
                 @if ($dashboard)
                     <li data-id='{{ $dashboard->id }}'
                         class="{{ Request::is(config('crudbooster.ADMIN_PATH')) ? 'active' : '' }}"><a
-                            href='{{ CRUDBooster::adminPath() }}'
+                            href='{{  $dashboard_href  }}'
                             class='{{ $dashboard->color ? 'text-' . $dashboard->color : '' }}'><i
                                 class='fa fa-dashboard'></i>
                             <span>{{ cbLang('text_dashboard') }}</span> </a></li>
