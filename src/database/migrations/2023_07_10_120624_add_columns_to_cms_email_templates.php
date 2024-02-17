@@ -16,6 +16,7 @@ class AddColumnsToCmsEmailTemplates extends Migration
         Schema::table('cms_email_templates', function (Blueprint $table) {
             $table->longtext('content_ar')->nullable();
             $table->longText('template_ar')->nullable();
+            $table->longText('html_ar')->nullable();
             $table->longText('css_ar')->nullable();
         });
     }
