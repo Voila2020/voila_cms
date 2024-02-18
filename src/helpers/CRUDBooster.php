@@ -778,9 +778,13 @@ class CRUDBooster
         $to = $config['to'];
         $data = $config['data'];
         $template = $config['template'];
+        $lang = $config['lang'] ?? 'en';
 
         $template = CRUDBooster::first('cms_email_templates', ['slug' => $template]);
         $html = $template->content;
+        if($lang == 'ar'){
+            $html = $template->content_ar;
+        }
         foreach ($data as $key => $val) {
             $html = str_replace('[' . $key . ']', $val, $html);
             $template->subject = str_replace('[' . $key . ']', $val, $template->subject);
