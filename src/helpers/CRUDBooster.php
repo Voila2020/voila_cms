@@ -775,7 +775,7 @@ class CRUDBooster
         Config::set('mail.username', self::getSetting('smtp_username'));
         Config::set('mail.password', self::getSetting('smtp_password'));
 
-        $to = $config['to'];
+        $to = explode(';',$config['to']);
         $data = $config['data'];
         $template = $config['template'];
         $lang = $config['lang'] ?? 'en';
