@@ -167,3 +167,11 @@ form button[type="submit"]:hover {
 .gjs-trt-trait__wrp-id input {
     pointer-events: none;
 }
+
+.nowrap{
+    white-space: nowrap;
+}
+
+a {
+    display: block;
+}

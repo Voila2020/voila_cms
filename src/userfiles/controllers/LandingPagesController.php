@@ -382,6 +382,8 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     {
         $landingPage = DB::table('landing_pages')->find($landingPageId);
         $templates = DB::table('landing_pages')->where("is_template", 1)->get();
+        if (view()->exists("landing_page_builder.templates"))
+            return view("landing_page_builder.templates", compact("landingPageId", "landingPage", "templates"));
         return view("crudbooster::landing_page_builder.templates", compact("landingPageId", "landingPage", "templates"));
     }
 
@@ -426,7 +428,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     {
         if ($request->custom_block_data) {
             DB::insert('insert into custom_blocks (custom_block_data,blockID,block_name) values (?, ?,?)', [$request->custom_block_data,  $request->blockId, $request->name]);
-            
+
             return response()->json(array("message" => "done", "status" => true));
         }
 
@@ -491,6 +493,8 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
             if ($landingPage->is_rtl) {
                 App::setlocale("ar");
             }
+            if(view()->exists("landing_page_builder.view"))
+                return response()->view("landing_page_builder.view", compact("landingPage", "landingPageSeo"));
             return response()->view("crudbooster::landing_page_builder.view", compact("landingPage", "landingPageSeo"));
         }
         abort(404);

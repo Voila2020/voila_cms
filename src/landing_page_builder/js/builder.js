@@ -10,7 +10,7 @@ editor = grapesjs.init({
 
     storageManager: {
         type: 'remote',
-        stepsBeforeSave: 20,
+        stepsBeforeSave: 100,
         options: {
             remote: {
                 headers: {

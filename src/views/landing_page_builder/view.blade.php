@@ -43,13 +43,14 @@
         href="https://fonts.googleapis.com/css?family=Lobster|Tajawal|Vollkorn|Open+Sans|Cairo|Almarai|Changa|Lareza|Noto+Sans+Arabic|IBM+Plex+Sans+Arabic|Lato">
 
     <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/less/styles.less') }}" />
-    <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/css/styles.css') }}" />
-    <link rel="stylesheet/less" type="text/css"
+    <link rel="stylesheet" type="text/css" href="{{ url('landing_page_builder/css/styles.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url('landing_page_builder/css/canvas.css') }}" />
+    <link rel="stylesheet" type="text/css"
         href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" />
     @if ($landingPage->is_rtl)
-        <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/css/rtl_styles.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url('landing_page_builder/css/rtl_styles.css') }}" />
     @else
-        <link rel="stylesheet/less" type="text/css" href="{{ url('landing_page_builder/css/ltr_styles.css') }}" />
+        <link rel="stylesheet" type="text/css" href="{{ url('landing_page_builder/css/ltr_styles.css') }}" />
     @endif
 
     <script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
