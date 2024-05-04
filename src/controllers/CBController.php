@@ -932,13 +932,13 @@ class CBController extends Controller
 
         $request_all = Request::all();
         $array_input = [];
-        if (is_array($formArrToValidate) || is_object($formArrToValidate)){    
+        if (is_array($formArrToValidate) || is_object($formArrToValidate)){
             // foreach ($this->data_inputan as $di) {
             foreach ($formArrToValidate as $di) {
                 $ai = [];
                 $name = $di['name'];
 
-                if (!isset($request_all[$name])) {
+                if (!array_key_exists($name, $request_all)) {
                     continue;
                 }
 
@@ -1115,7 +1115,7 @@ class CBController extends Controller
                 if ($inputdata != '') {
                     $this->arr[$name] = $inputdata;
                 } else {
-                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload' && $ro['type'] != 'switch') {
+                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload' && $ro['type'] != 'switch' && $ro['type'] != 'text') {
                         continue;
                     } else {
                         $this->arr[$name] = "";
@@ -1223,7 +1223,7 @@ class CBController extends Controller
         }
         $formArrToValidate = [];
         foreach ($this->data_inputan as $field) {
-            if ($field["translation"] == "FALSE") {
+            if ($field["translation"] == null || $field["translation"] == "FALSE") {
                 $formArrToValidate[] = $field;
                 continue;
             }

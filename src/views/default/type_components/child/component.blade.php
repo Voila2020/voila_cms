@@ -26,7 +26,7 @@ $name = str_slug($form['label'], '');
                             <div class="panel panel-default">
                                 <div class="panel-heading"><i class="fa fa-pencil-square-o"></i>
                                     {{ cbLang('text_form') }}</div>
-                                <div class="panel-body child-form-area">
+                                <div class="panel-body child-form-area child-form-area-{{ $name }}">
                                     <div class="hidden-value hide"></div>
                                     @foreach ($form['columns'] as $col_key => $col)
                                         <?php
@@ -84,8 +84,7 @@ $name = str_slug($form['label'], '');
                                                 <div class="{{ 'col-sm-10 filemanager-col_' . $col['name'] }}"
                                                     style="{{ $value ? '' : 'display: none;' }}">
                                                     <input id="thumbnail-{{ $col['name'] }}" class="form-control"
-                                                        type="hidden" value='{{ $value }}'
-                                                        >
+                                                        type="hidden" value='{{ $value }}'>
                                                     @if ($col['filemanager_type'] == 'file')
                                                         @if ($value)
                                                             <div style='margin-top:15px'><a
@@ -777,7 +776,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                        $formula_function_name();});";
+                                                                                                    $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -807,6 +806,8 @@ $name = str_slug($form['label'], '');
                                                 $('#panel-form-{{ $name }}').find("input[type=checkbox]").val(0);
                                                 $('#panel-form-{{ $name }}').find("input[type=checkbox]").prop('checked', false);
 
+                                                $('.child-form-area-{{ $name }}').find('a:not(span a)').prop("href", "").addClass("hide");
+                                                $('.child-form-area-{{ $name }}').find('img').prop("src", "");
                                             }
 
                                             function deleteRow{{ $name }}(t) {

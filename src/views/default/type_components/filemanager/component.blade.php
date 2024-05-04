@@ -148,6 +148,20 @@
             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
             let table = @json($table);
             let id = @json($id);
+            if (id == null) {
+                $('.filemanager-col_' + form_name).hide();
+                $('#img-' + form_name).prop("src", "");
+                $('#link-' + form_name).prop("href", "");
+                $('#link-' + form_name).addClass("hide");
+                // col-sm-10 empty value clear
+                $('#' + form_name).val("");
+                $('#thumbnail-' + form_name).prop("src", "").val("");
+                $('#roadtrip-' + form_name).prop("href", "");
+                $('#holder-' + form_name).prop("src", "");
+                $('.empty-filemanager-col_' + form_name).show();
+                swal.close();
+                return;
+            }
             let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
 
             $.ajax({
