@@ -20,11 +20,6 @@
                 filemanager_type="{{ @$form['filemanager_type'] == 'file' ? 'file' : 'image' }}"
                 class="form-control hide" type="text" value='{{ $value }}' name="{{ $name }}">
 
-            {{-- webp Images Hidden Inputs --}}
-            <input id="{{ $name }}_webp"
-                filemanager_type="{{ @$form['filemanager_type'] == 'file' ? 'file' : 'image' }}"
-                class="form-control hide" type="text" value='' name="{{ $name }}_webp">
-
             <a data-lightbox="roadtrip" class="hide" id="link-{{ $name }}" href=""
                 style="{{ @$form['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
                 <img style="width:150px;height:150px; {{ @$form['filemanager_type'] == 'file' ? 'display:none;' : '' }}"
@@ -219,7 +214,7 @@
                                 reader.onloadend = function() {
                                     var base64Data = reader.result;
                                     //---------------------------------------//
-                                    $('#' + Name + '_webp').val(base64Data);
+                                    $('input[name="' + Name + '_webp"]').val(base64Data);                                    //---------------------------------------//
                                     //---------------------------------------//
                                     var webpImageElement = document.createElement('img');
                                     webpImageElement.src = base64Data;
