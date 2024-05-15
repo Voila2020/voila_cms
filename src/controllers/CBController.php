@@ -682,7 +682,7 @@ class CBController extends Controller
                 $html_content[] = $value;
             } //end foreach columns_table
 
-            if ($this->button_table_action) :
+            if ($this->button_table_action):
 
                 $button_action_style = $this->button_action_style;
                 $html_content[] = "<div class='button_action' style='text-align:right'>" . view('crudbooster::components.action', compact('addaction', 'row', 'button_action_style', 'parent_field'))->render() . "</div>";
@@ -932,7 +932,7 @@ class CBController extends Controller
 
         $request_all = Request::all();
         $array_input = [];
-        if (is_array($formArrToValidate) || is_object($formArrToValidate)){
+        if (is_array($formArrToValidate) || is_object($formArrToValidate)) {
             // foreach ($this->data_inputan as $di) {
             foreach ($formArrToValidate as $di) {
                 $ai = [];
@@ -1069,8 +1069,10 @@ class CBController extends Controller
 
         $hide_form = (request('hide_form')) ? unserialize(request('hide_form')) : [];
         foreach ($this->data_inputan as $ro) {
-            if (($ro["translation"] && !$translationLocale) || (!$ro["translation"] && $translationLocale))
+            if (($ro["translation"] && !$translationLocale) || (!$ro["translation"] && $translationLocale)) {
                 continue;
+            }
+
             $name = $ro['name'];
             if (!$name) {
                 continue;
@@ -1100,8 +1102,9 @@ class CBController extends Controller
             }
 
             $inputdata = request($name);
-            if ($translationLocale)
+            if ($translationLocale) {
                 $inputdata = request($name . "_$translationLocale");
+            }
 
             if ($ro['type'] == 'money') {
                 $inputdata = preg_replace('/[^\d-]+/', '', $inputdata);
@@ -1111,7 +1114,7 @@ class CBController extends Controller
                 continue;
             }
 
-            if ($name) {
+            if ($name && $ro['type']!='hidden') {
                 if ($inputdata != '') {
                     $this->arr[$name] = $inputdata;
                 } else {
@@ -1187,6 +1190,21 @@ class CBController extends Controller
             if ($ro['type'] == 'switch' && !$inputdata) {
                 $this->arr[$name] = 0;
             }
+
+            //for images webp hidden inputs
+            if ($ro['type']=='hidden' && strpos($name, 'webp') !== false) {
+                //convert base 64 to file image
+                $image = request($name);
+                //---------------------------------------//
+                $image = str_replace('data:image/webp;base64,', '', $image);
+                $image = str_replace(' ', '+', $image);
+                $imageName = str_random(10) . '.' . 'webp';
+                $directory = public_path('images/webp_images/');
+                //---------------------------------------//
+                file_put_contents($directory . $imageName, base64_decode($image));
+                //---------------------------------------//
+                $this->arr[$name] = 'images/webp_images/' . $imageName;
+            }
         }
     }
 
@@ -1246,7 +1264,6 @@ class CBController extends Controller
 
         $this->hook_before_add($this->arr);
         $lastInsertId = $id = DB::table($this->table)->insertGetId($this->arr);
-
 
         //fix bug if primary key is uuid
         if (isset($this->arr[$this->primary_key]) && $this->arr[$this->primary_key] != $id) {
@@ -1998,7 +2015,6 @@ class CBController extends Controller
     public function hook_query_index(&$query)
     {
     }
-
 
     public function hook_row_index($index, &$value)
     {

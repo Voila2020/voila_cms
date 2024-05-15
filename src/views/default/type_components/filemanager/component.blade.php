@@ -20,6 +20,11 @@
                 filemanager_type="{{ @$form['filemanager_type'] == 'file' ? 'file' : 'image' }}"
                 class="form-control hide" type="text" value='{{ $value }}' name="{{ $name }}">
 
+            {{-- webp Images Hidden Inputs --}}
+            <input id="{{ $name }}_webp"
+                filemanager_type="{{ @$form['filemanager_type'] == 'file' ? 'file' : 'image' }}"
+                class="form-control hide" type="text" value='' name="{{ $name }}_webp">
+
             <a data-lightbox="roadtrip" class="hide" id="link-{{ $name }}" href=""
                 style="{{ @$form['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
                 <img style="width:150px;height:150px; {{ @$form['filemanager_type'] == 'file' ? 'display:none;' : '' }}"
@@ -194,8 +199,36 @@
                     check = check.substring(1);
                     if ($('#_' + Name).attr("value") == 'file_type') {
                         $("#file-" + Name).html(check);
-                    } else
+                    } else {
                         $("#img-" + Name).attr("src", '{{ URL::asset('') }}' + check);
+                        //---------------------------------------//
+                        //convert to webp
+                        var imageUrl = '{{ URL::asset('') }}' + check;
+
+                        var img = new Image();
+                        img.crossOrigin = 'Anonymous';
+                        img.onload = function() {
+                            var canvas = document.createElement('canvas');
+                            canvas.width = img.width;
+                            canvas.height = img.height;
+                            var ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, img.width, img.height);
+                            //---------------------------------------//
+                            canvas.toBlob(function(blob) {
+                                var reader = new FileReader();
+                                reader.onloadend = function() {
+                                    var base64Data = reader.result;
+                                    //---------------------------------------//
+                                    $('#' + Name + '_webp').val(base64Data);
+                                    //---------------------------------------//
+                                    var webpImageElement = document.createElement('img');
+                                    webpImageElement.src = base64Data;
+                                };
+                                reader.readAsDataURL(blob);
+                            }, 'image/webp');
+                        };
+                        img.src = imageUrl;
+                    }
                     $("#link-" + Name).attr("href", '{{ URL::asset('') }}' + check);
                     $("#link-" + Name).removeClass("hide");
                     $("#thumbnail-" + Name).attr("src", '{{ URL::asset('') }}' + check);
