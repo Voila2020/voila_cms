@@ -1114,7 +1114,7 @@ class CBController extends Controller
                 continue;
             }
 
-            if ($name && $ro['type']!='hidden') {
+            if ($name) {
                 if ($inputdata != '') {
                     $this->arr[$name] = $inputdata;
                 } else {
@@ -1192,7 +1192,7 @@ class CBController extends Controller
             }
 
             //for images webp hidden inputs
-            if ($ro['type']=='hidden' && strpos($name, 'webp') !== false) {
+            if ($ro['type']=='webp' && strpos($name, 'webp') !== false) {
                 //convert base 64 to file image
                 $image = request($name);
                 //---------------------------------------//

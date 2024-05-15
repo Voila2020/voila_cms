@@ -6,6 +6,11 @@ foreach($forms as $form) {
 $type = @$form['type'] ?: 'text';
 $name = $form['name'];
 
+//for webp images
+if($type == 'webp'){
+    continue;
+}
+
 if (in_array($type, $asset_already)) continue;
 ?>
 @if(file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/'.$type.'/asset.blade.php')))
@@ -79,6 +84,11 @@ if ($type == 'header') {
     $header_group_class = "header-group-$index";
 } else {
     $header_group_class = ($header_group_class) ?: "header-group-$index";
+}
+
+//for webp images
+if($type == 'webp'){
+    continue;
 }
 
 ?>
