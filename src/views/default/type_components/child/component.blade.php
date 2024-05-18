@@ -1098,6 +1098,7 @@ $name = str_slug($form['label'], '');
                                 <thead>
                                     <tr>
                                         @foreach ($form['columns'] as $col_key => $col)
+                                            @continue($col['type']=='hidden' && strpos($col['name'] , 'webp')!=false)
                                             <th>{{ $col['label'] }}</th>
                                         @endforeach
                                         <th width="90px">{{ cbLang('action_label') }}</th>
