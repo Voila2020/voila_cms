@@ -1194,7 +1194,7 @@ class CBController extends Controller
             //Conversion Functionality to webp images
             if ($ro['type'] == 'hidden' && strpos($name, 'webp') !== false) {
                 $mainImage = request(str_replace("_webp", "", $name));
-                if($mainImage){
+                if ($mainImage) {
                     $image = request($name);
                     //---------------------------------------//
                     $image = str_replace('data:image/webp;base64,', '', $image);
@@ -1206,6 +1206,12 @@ class CBController extends Controller
                     $imageName = basename($imageName);
                     $imageName = pathinfo($imageName, PATHINFO_FILENAME);
                     $imageName = $imageName . '.webp';
+                    //---------------------------------------//
+                    $imagePath = $directory . $imageName;
+                    // Check if the image doesn't exist in the directory
+                    if (!file_exists($imagePath)) {
+                        file_put_contents($imagePath, base64_decode($image));
+                    }
                     //---------------------------------------//
                     file_put_contents($directory . $imageName, base64_decode($image));
                     //---------------------------------------//
@@ -1339,7 +1345,29 @@ class CBController extends Controller
                         foreach ($columns as $col) {
                             $colname = $col['name'];
                             $colvalue = request($name . '-' . $colname)[$i];
-                            if (isset($colvalue) === true) {
+
+                            // Conversion Functionality to webp images
+                            if ($col['type'] == 'hidden' && strpos($colname, 'webp') !== false) {
+                                $image = request($name . '-' . $colname)[$i];
+                                //---------------------------------------//
+                                $image = str_replace('data:image/webp;base64,', '', $image);
+                                $image = str_replace(' ', '+', $image);
+                                $directory = public_path(config('crudbooster.filemanager_current_path') . '/webp_images/');
+                                //---------------------------------------//
+                                // Retrieve the main image name and use it to set a new image's name
+                                $imageName = $column_data[str_replace("_webp", "", $colname)];
+                                $imageName = basename($imageName);
+                                $imageName = pathinfo($imageName, PATHINFO_FILENAME);
+                                $imageName = $imageName . '.webp';
+                                //---------------------------------------//
+                                $imagePath = $directory . $imageName;
+                                // Check if the image doesn't exist in the directory
+                                if (!file_exists($imagePath)) {
+                                    file_put_contents($imagePath, base64_decode($image));
+                                }
+                                //---------------------------------------//
+                                $column_data[$colname] = config('crudbooster.filemanager_current_path') . 'webp_images/' . $imageName;
+                            } else if (isset($colvalue) === true) {
                                 $column_data[$colname] = $colvalue;
                             }
                         }
