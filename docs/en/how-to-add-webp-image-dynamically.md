@@ -10,11 +10,20 @@ Why Use WebP?
 >
 > High-Quality Images: WebP supports both lossy and lossless compression, providing flexibility for maintaining image quality.
 
-### Code Sample
+### FileManager Code Sample
 
 ```php
 $this->form[] = ['label' => 'Image', 'name' => 'image', 'type' => 'filemanager'];
 $this->form[] = ['label' => 'Image Webp', 'name' => 'image_webp' , 'type'=>'hidden'];
+```
+
+### Child Code Sample
+
+```php
+$columns = [];
+$columns[] = ['label' => 'Interior Image', 'name' => 'interior_image', 'type' => 'filemanager'];
+$columns[] = ['label' => 'Interior Image (WebP)', 'name' => 'interior_image_webp', 'type' => 'hidden'];
+$this->form[] = ['label' => 'Portfolio Images', 'name' => 'portfolio_image', 'type' => 'child', 'columns' => $columns, 'table' => 'portfolio_images', 'foreign_key' => 'portfolio_id'];
 ```
 
 
@@ -30,9 +39,6 @@ The name of the image in the WebP format typically follows a similar naming conv
 
 - [How To Make The Graded Select Boxes (Parent Select -> Child Select -> Etc..)](./how-make-graded-select-box.md)
 
-## What's Next
-
-- [Form Input Type: googlemaps](./form-googlemaps.md)
 
 ## Table Of Contents
 
