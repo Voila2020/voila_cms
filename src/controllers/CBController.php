@@ -1573,7 +1573,32 @@ class CBController extends Controller
                         }
                         foreach ($columns as $col) {
                             $colname = $col['name'];
-                            $column_data[$colname] = Request::get($name . '-' . $colname)[$i];
+                            // Conversion Functionality to webp images
+                            if ($col['type'] == 'hidden' && strpos($colname, 'webp') !== false) {
+                                $image = Request::get($name . '-' . $colname)[$i];
+                                //---------------------------------------//
+                                if (isset($image)) {
+                                    $image = str_replace('data:image/webp;base64,', '', $image);
+                                    $image = str_replace(' ', '+', $image);
+                                    $directory = public_path(config('crudbooster.filemanager_current_path') . 'webp_images/');
+                                    //---------------------------------------//
+                                    // Retrieve the main image name and use it to set a new image's name
+                                    $imageName = $column_data[str_replace("_webp", "", $colname)];
+                                    $imageName = basename($imageName);
+                                    $imageName = pathinfo($imageName, PATHINFO_FILENAME);
+                                    $imageName = $imageName . '.webp';
+                                    //---------------------------------------//
+                                    $imagePath = $directory . $imageName;
+                                    // Check if the image doesn't exist in the directory
+                                    if (!file_exists($imagePath)) {
+                                        file_put_contents($imagePath, base64_decode($image));
+                                    }
+                                    //---------------------------------------//
+                                    $column_data[$colname] = config('crudbooster.filemanager_current_path') . 'webp_images/' . $imageName;
+                                }
+                            }else{
+                                $column_data[$colname] = Request::get($name . '-' . $colname)[$i];
+                            }
                         }
                         if (Request::get($name . '-id')[$i]) {
                             $updatedIds[] = Request::get($name . '-id')[$i];

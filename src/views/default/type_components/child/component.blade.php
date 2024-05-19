@@ -776,7 +776,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                    $formula_function_name();});";
+                                                                                                                                                                                                                                                                                                                                $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -836,7 +836,8 @@ $name = str_slug($form['label'], '');
                                                         pSRC = p.find($('.tb_img-{{ $c['name'] }}')).attr("src");
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
-                                                            +pSRC = "/".pSRC;
+                                                            +
+                                                            pSRC = "/".pSRC;
                                                         //---------------------------------------//
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').removeClass('hide');
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').attr('href', pSRC);
@@ -1137,8 +1138,12 @@ $name = str_slug($form['label'], '');
                                         <input type='hidden' name='{{ $name }}-id[]'
                                             value='{{ $d->id }}' />
                                         @foreach ($form['columns'] as $col)
-                                            @continue($col['type'] == 'hidden' && strpos($col['name'], 'webp') != false)
-                                            <td class="{{ $col['name'] }} ALAMA">
+                                            <?php //for webp images
+                                            if ($col['type'] == 'hidden' && strpos($col['name'], 'webp') != false) {
+                                                echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
+                                                continue;
+                                            }
+                                            ?> <td class="{{ $col['name'] }} ALAMA">
                                                 <?php
                                                 if ($col['type'] == 'filemanager') {
                                                     $tempLink = $d->{$col['name']};
