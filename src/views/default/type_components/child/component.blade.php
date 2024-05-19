@@ -776,7 +776,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                                                                                                                                                            $formula_function_name();});";
+                                                                                                                                                                                                                                                                                    $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -832,41 +832,11 @@ $name = str_slug($form['label'], '');
                                                 $('#panel-form-{{ $name }} #btn-add-table-{{ $name }}').val(
                                                     '{{ cbLang('save_changes') }}');
                                                 @foreach ($form['columns'] as $c)
-                                                    @if ($c['type'] == 'hidden' && strpos($c['name'], 'webp') != false)
-                                                        trRow +=
-                                                            "<input id='{{ $name }}-{{ $c['name'] }}' type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''/>"
-                                                    @elseif ($c['type'] == 'filemanager')
+                                                    @if ($c['type'] == 'filemanager')
                                                         pSRC = p.find($('.tb_img-{{ $c['name'] }}')).attr("src");
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
-                                                            pSRC = "/".pSRC;
-                                                        //---------------------------------------//
-                                                        pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
-                                                        //convert to webp
-                                                        var imageUrl = pSRC;
-                                                        var img = new Image();
-                                                        img.crossOrigin = 'Anonymous';
-                                                        img.onload = function() {
-                                                            var canvas = document.createElement('canvas');
-                                                            canvas.width = img.width;
-                                                            canvas.height = img.height;
-                                                            var ctx = canvas.getContext('2d');
-                                                            ctx.drawImage(img, 0, 0, img.width, img.height);
-                                                            //---------------------------------------//
-                                                            canvas.toBlob(function(blob) {
-                                                                var reader = new FileReader();
-                                                                reader.onloadend = function() {
-                                                                    var base64Data = reader.result;
-                                                                    //---------------------------------------//
-                                                                    $('#{{ $name }}-{{ $c['name'] }}_webp').val(base64Data);
-                                                                    //---------------------------------------//
-                                                                    var webpImageElement = document.createElement('img');
-                                                                    webpImageElement.src = base64Data;
-                                                                };
-                                                                reader.readAsDataURL(blob);
-                                                            }, 'image/webp');
-                                                        };
-                                                        img.src = imageUrl;
+                                                            +pSRC = "/".pSRC;
                                                         //---------------------------------------//
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').removeClass('hide');
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').attr('href', pSRC);
@@ -961,8 +931,10 @@ $name = str_slug($form['label'], '');
                                                 if (typeof currValue == 'undefined') currValue = '';
                                                 trRow += "<input type='hidden' name='{{ $name }}-id[]' value='" + currValue + "'/>";
                                                 @foreach ($form['columns'] as $c)
-                                                    @if ($c['type'] == 'filemanager')
-
+                                                    @if ($c['type'] == 'hidden' && strpos($c['name'], 'webp') != false)
+                                                        trRow +=
+                                                            "<input id='{{ $name }}-{{ $c['name'] }}' type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''/>"
+                                                    @elseif ($c['type'] == 'filemanager')
                                                         pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
@@ -975,6 +947,35 @@ $name = str_slug($form['label'], '');
                                                             "' width='50px' height='50px'/></a>" +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + pSRC + "'/>" +
                                                             "</td>"
+
+                                                        pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
+                                                        //---------------------------------------//
+                                                        //convert to webp
+                                                        var imageUrl = pSRC;
+                                                        var img = new Image();
+                                                        img.crossOrigin = 'Anonymous';
+                                                        img.onload = function() {
+                                                            var canvas = document.createElement('canvas');
+                                                            canvas.width = img.width;
+                                                            canvas.height = img.height;
+                                                            var ctx = canvas.getContext('2d');
+                                                            ctx.drawImage(img, 0, 0, img.width, img.height);
+                                                            //---------------------------------------//
+                                                            canvas.toBlob(function(blob) {
+                                                                var reader = new FileReader();
+                                                                reader.onloadend = function() {
+                                                                    var base64Data = reader.result;
+                                                                    //---------------------------------------//
+                                                                    $('#{{ $name }}-{{ $c['name'] }}_webp').val(base64Data);
+                                                                    //---------------------------------------//
+                                                                    var webpImageElement = document.createElement('img');
+                                                                    webpImageElement.src = base64Data;
+                                                                };
+                                                                reader.readAsDataURL(blob);
+                                                            }, 'image/webp');
+                                                        };
+                                                        img.src = imageUrl;
+                                                        //---------------------------------------//
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').addClass('hide');
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').attr("href", "");
                                                         $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr("src", "");
@@ -1098,7 +1099,7 @@ $name = str_slug($form['label'], '');
                                 <thead>
                                     <tr>
                                         @foreach ($form['columns'] as $col_key => $col)
-                                            @continue($col['type']=='hidden' && strpos($col['name'] , 'webp')!=false)
+                                            @continue($col['type'] == 'hidden' && strpos($col['name'], 'webp') != false)
                                             <th>{{ $col['label'] }}</th>
                                         @endforeach
                                         <th width="90px">{{ cbLang('action_label') }}</th>
@@ -1136,6 +1137,7 @@ $name = str_slug($form['label'], '');
                                         <input type='hidden' name='{{ $name }}-id[]'
                                             value='{{ $d->id }}' />
                                         @foreach ($form['columns'] as $col)
+                                            @continue($col['type'] == 'hidden' && strpos($col['name'], 'webp') != false)
                                             <td class="{{ $col['name'] }} ALAMA">
                                                 <?php
                                                 if ($col['type'] == 'filemanager') {
