@@ -10,14 +10,14 @@ Why Use WebP?
 >
 > High-Quality Images: WebP supports both lossy and lossless compression, providing flexibility for maintaining image quality.
 
-### FileManager Code Sample
+### FileManager : Code Sample
 
 ```php
 $this->form[] = ['label' => 'Image', 'name' => 'image', 'type' => 'filemanager'];
 $this->form[] = ['label' => 'Image Webp', 'name' => 'image_webp' , 'type'=>'hidden'];
 ```
 
-### Child Code Sample
+### Child : Code Sample
 
 ```php
 $columns = [];
