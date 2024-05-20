@@ -776,7 +776,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                                                                $formula_function_name();});";
+                                                                                                                                                                                                                                                                                                                                                                            $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -931,10 +931,12 @@ $name = str_slug($form['label'], '');
                                                 $('.hidden-value').attr("value", ''); // to avoid scenario of edit exist child then add new child
                                                 if (typeof currValue == 'undefined') currValue = '';
                                                 trRow += "<input type='hidden' name='{{ $name }}-id[]' value='" + currValue + "'/>";
+
                                                 @foreach ($form['columns'] as $c)
+                                                    <?php $inputId = "{$name}-{$c['name']}"; ?>
                                                     @if ($c['type'] == 'hidden' && strpos($c['name'], 'webp') != false)
                                                         trRow +=
-                                                            "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''/>"
+                                                            "<input <?= $currValue !== '' ? "id='$inputId'" : '' ?> type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='{{ $currValue }}'>";
                                                     @elseif ($c['type'] == 'filemanager')
                                                         pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
@@ -947,9 +949,11 @@ $name = str_slug($form['label'], '');
                                                             "' src='" + pSRC +
                                                             "' width='50px' height='50px'/></a>" +
                                                             "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='" + pSRC + "'/>" +
+
                                                             "</td>"
 
                                                         pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
+
                                                         //---------------------------------------//
                                                         //convert to webp
                                                         var imageUrl = pSRC;
@@ -967,14 +971,18 @@ $name = str_slug($form['label'], '');
                                                                 reader.onloadend = function() {
                                                                     var base64Data = reader.result;
                                                                     //---------------------------------------//
-                                                                    $('input[name="{{ $name }}-id[]"]').each(function() {
-                                                                        if ($(this).val() === currValue) {
-                                                                            var row = $(this).closest('tr');
-                                                                            row.find(
-                                                                                'input[name="{{ $name }}-{{ $c['name'] }}_webp[]"]'
+                                                                    if (currValue != '') {
+                                                                        $('input[name="{{ $name }}-id[]"]').each(function() {
+                                                                            if ($(this).val() === currValue) {
+                                                                                var row = $(this).closest('tr');
+                                                                                row.find(
+                                                                                    'input[name="{{ $name }}-{{ $c['name'] }}_webp[]"]'
                                                                                 ).val(base64Data);
-                                                                        }
-                                                                    });
+                                                                            }
+                                                                        });
+                                                                    } else {
+                                                                        $('#{{ $name }}-{{ $c['name'] }}_webp').val(base64Data);
+                                                                    }
                                                                     //---------------------------------------//
                                                                     var webpImageElement = document.createElement('img');
                                                                     webpImageElement.src = base64Data;
