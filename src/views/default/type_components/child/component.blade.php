@@ -934,7 +934,7 @@ $name = str_slug($form['label'], '');
                                                 @foreach ($form['columns'] as $c)
                                                     @if ($c['type'] == 'hidden' && strpos($c['name'], 'webp') != false)
                                                         trRow +=
-                                                            "<input id='{{ $name }}-{{ $c['name'] }}' type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''/>"
+                                                            "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''/>"
                                                     @elseif ($c['type'] == 'filemanager')
                                                         pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
@@ -967,7 +967,14 @@ $name = str_slug($form['label'], '');
                                                                 reader.onloadend = function() {
                                                                     var base64Data = reader.result;
                                                                     //---------------------------------------//
-                                                                    $('#{{ $name }}-{{ $c['name'] }}_webp').val(base64Data);
+                                                                    $('input[name="{{ $name }}-id[]"]').each(function() {
+                                                                        if ($(this).val() === currValue) {
+                                                                            var row = $(this).closest('tr');
+                                                                            row.find(
+                                                                                'input[name="{{ $name }}-{{ $c['name'] }}_webp[]"]'
+                                                                                ).val(base64Data);
+                                                                        }
+                                                                    });
                                                                     //---------------------------------------//
                                                                     var webpImageElement = document.createElement('img');
                                                                     webpImageElement.src = base64Data;
