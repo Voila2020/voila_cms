@@ -349,6 +349,39 @@ $get_params = http_build_query($get_params);
 </head>
 
 <body>
+    <script>
+        $(window).on('load', function() {
+            $('.filemanager-loading').delay(1000).animate({
+                'opacity': '0'
+            }, function() {
+                loading(false);
+            });
+        });
+
+        $(window).bind('beforeunload', function() {
+            loading(true);
+        });
+        function loading(show=true){
+            if(show){
+                $(".filemanager-loading").removeClass("hide");
+            } else {
+                $(".filemanager-loading").addClass("hide");
+            }
+        }
+    </script>
+    <div class="filemanager-loading"
+        style="
+        background-image: url(/vendor/crudbooster/assets/giphy.gif);
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: 30%;
+        background-color: #e5eff1;
+        position: fixed;
+        width: 100vw;
+        height: 100vh;
+        z-index: 1000000;
+    ">
+    </div>
     <!-- The Templates plugin is included to render the upload/download listings -->
     <script src="//blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
     <!-- The Load Image plugin is included for the preview images and image resizing functionality -->
