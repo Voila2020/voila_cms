@@ -31,26 +31,31 @@
             });
         @else
             @foreach ($websiteLanguages as $lang)
-            $("#input_{{ $name }}_{{ $lang->code }}").on("change", function() {
-                var is_empty = $(this).val();
-                if (is_empty) {
-                    let slash = is_empty.charAt(0);
-                    if (slash == '/') is_empty = is_empty.substring(1);
-                    tinymce.get('textarea_{{ $name }}_{{ $lang->code }}').insertContent('<img src="' +
-                        '{{ URL::asset('') }}' +
-                        is_empty +
-                        '" data-mce-src="' + '{{ URL::asset('') }}' + is_empty +
-                        '" style="width:100px;height:100px;">');
-                }
-                $(this).val("");
-            });
+                $("#input_{{ $name }}_{{ $lang->code }}").on("change", function() {
+                    var is_empty = $(this).val();
+                    if (is_empty) {
+                        let slash = is_empty.charAt(0);
+                        if (slash == '/') is_empty = is_empty.substring(1);
+                        tinymce.get('textarea_{{ $name }}_{{ $lang->code }}').insertContent(
+                            '<img src="' +
+                            '{{ URL::asset('') }}' +
+                            is_empty +
+                            '" data-mce-src="' + '{{ URL::asset('') }}' + is_empty +
+                            '" style="width:100px;height:100px;">');
+                    }
+                    $(this).val("");
+                });
             @endforeach
         @endif
     </script>
 @endpush
 @if (!@$form['translation'])
     <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
-        <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}</label>
+        <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
+            @if ($required)
+                <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
+            @endif
+        </label>
 
         <div class="{{ $col_width ?: 'col-sm-10' }}">
             <input type="hidden" id="input_{{ $name }}">
@@ -69,7 +74,11 @@
             $value = !empty($old) ? $old : $value;
         @endphp
         <div class='form-group' id='form-group-{{ $name . '_' . $lang->code }}' style="{{ @$form['style'] }}">
-            <label class='control-label col-sm-2'>{{ cbLang($form['label']) . ' - ' . $lang->name }}</label>
+            <label class='control-label col-sm-2'>{{ cbLang($form['label']) . ' - ' . $lang->name }}
+                @if ($required)
+                    <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
+                @endif
+            </label>
 
             <div class="{{ $col_width ?: 'col-sm-10' }}">
                 <input type="hidden" id="input_{{ $name . '_' . $lang->code }}">
