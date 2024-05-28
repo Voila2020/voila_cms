@@ -59,7 +59,7 @@
 
         <div class="{{ $col_width ?: 'col-sm-10' }}">
             <input type="hidden" id="input_{{ $name }}">
-            <textarea id='textarea_{{ $name }}' {{ $required }} {{ $readonly }} {{ $disabled }}
+            <textarea id='textarea_{{ $name }}' {{ $readonly }} {{ $disabled }}
                 name="{{ $form['name'] }}" class='form-control' rows='5'>{!! $value !!}</textarea>
             <div class="text-danger">{{ $errors->first($name) }}</div>
             <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
@@ -82,7 +82,7 @@
 
             <div class="{{ $col_width ?: 'col-sm-10' }}">
                 <input type="hidden" id="input_{{ $name . '_' . $lang->code }}">
-                <textarea id='textarea_{{ $name . '_' . $lang->code }}' {{ $required }} {{ $readonly }} {{ $disabled }}
+                <textarea id='textarea_{{ $name . '_' . $lang->code }}' {{ $readonly }} {{ $disabled }}
                     name="{{ $name . '_' . $lang->code }}" class='form-control' rows='5'>{!! $value !!}</textarea>
                 <div class="text-danger">{{ $errors->first($name . '_' . $lang->code) }}</div>
                 <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
@@ -139,6 +139,26 @@
                 menubar: 'file edit view insert format tools table tc help',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
                 setup: function(editor) {
+                    //Add a custom validator to the form
+                    $('form').on('submit', function(e) {
+                        var $tinyMceEditor = $('#textarea_{{ $name }}');
+                        if ($tinyMceEditor.length && !editor.getContent().trim() &&
+                            "{{ $required }}") {
+
+                            editor.notificationManager.open({
+                                text: 'This field is required.',
+                                type: 'warning',
+                                position: 'top-right'
+                            });
+
+                            $('html, body').animate({
+                                scrollTop: $tinyMceEditor.offset().top - 300
+                            }, 100);
+
+                            e.preventDefault();
+                        }
+                    });
+                    //////********************************************
                     editor.ui.registry.addButton('FileManager', {
                         text: 'File Manager',
                         onAction: function(_) {
