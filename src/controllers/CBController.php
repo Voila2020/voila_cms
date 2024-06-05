@@ -938,7 +938,7 @@ class CBController extends Controller
                 $ai = [];
                 $name = $di['name'];
 
-                if (!array_key_exists($name, $request_all)) {
+                if (!isset($request_all[$name])) {
                     continue;
                 }
 
@@ -1118,7 +1118,7 @@ class CBController extends Controller
                 if ($inputdata != '') {
                     $this->arr[$name] = $inputdata;
                 } else {
-                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload' && $ro['type'] != 'switch' && $ro['type'] != 'text') {
+                    if (CB::isColumnNULL($this->table, $name) && $ro['type'] != 'upload' && $ro['type'] != 'switch' && $ro['type'] != 'text' && $ro['type'] != 'wysiwyg') {
                         continue;
                     } else {
                         $this->arr[$name] = "";
