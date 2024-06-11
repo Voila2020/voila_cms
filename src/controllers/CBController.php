@@ -257,6 +257,9 @@ class CBController extends Controller
         if (request('parent_table')) {
             $parentTablePK = CB::pk(g('parent_table'));
             $data['parent_table'] = DB::table(request('parent_table'))->where($parentTablePK, request('parent_id'))->first();
+            if (request("parent_translation_table")) {
+                $data['parent_table'] = CB::getRowWithTranslations(request('parent_table'), request("parent_translation_table"), request('parent_id'));
+            }
             if (request('foreign_key')) {
                 $data['parent_field'] = request('foreign_key');
             } else {
@@ -570,7 +573,7 @@ class CBController extends Controller
                 $addaction[] = [
                     'label' => $s['label'],
                     'icon' => $s['button_icon'],
-                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']),
+                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']).'&parent_translation_table=' . $s['parent_translation_table'],
                     'color' => $s['button_color'],
                     'showIf' => $s['showIf'],
                     'target' => isset($s['target']) ?: '_self',

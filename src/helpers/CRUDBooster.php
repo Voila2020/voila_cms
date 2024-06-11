@@ -775,14 +775,14 @@ class CRUDBooster
         Config::set('mail.username', self::getSetting('smtp_username'));
         Config::set('mail.password', self::getSetting('smtp_password'));
 
-        $to = explode(';',$config['to']);
+        $to = explode(';', $config['to']);
         $data = $config['data'];
         $template = $config['template'];
         $lang = $config['lang'] ?? 'en';
 
         $template = CRUDBooster::first('cms_email_templates', ['slug' => $template]);
         $html = $template->content;
-        if($lang == 'ar'){
+        if ($lang == 'ar') {
             $html = $template->content_ar;
         }
         foreach ($data as $key => $val) {
@@ -973,7 +973,8 @@ class CRUDBooster
         return $pk->getColumns()[0];
     }
 
-    public static function getTranslationTableMainColumn($table){
+    public static function getTranslationTableMainColumn($table)
+    {
         $matchingColumn = "";
         $tempColumns = Schema::getColumnListing($table);
         $matchingColumn = '';
@@ -984,6 +985,46 @@ class CRUDBooster
             }
         }
         return $matchingColumn;
+    }
+
+    public static function getRowWithTranslations($mainTable, $translationTable, $rowId)
+    {
+        // Fetch all distinct locales
+        $locales = DB::table($translationTable)
+            ->distinct()
+            ->pluck('locale');
+        //---------------------------------//
+        $translationMainColumn = self::getTranslationTableMainColumn($translationTable);
+        //---------------------------------//
+        $tempColumns = Schema::getColumnListing($mainTable);
+        $mainTableColumns = [];
+        foreach ($tempColumns as $column) {
+            $mainTableColumns[] = "$mainTable.$column";
+        }
+        //---------------------------------//
+        $tempColumns = Schema::getColumnListing($translationTable);
+        $translationTableColumns = [];
+        foreach ($tempColumns as $column) {
+            if ($column != "id" && $column != "locale" && $column != $translationMainColumn)
+                $translationTableColumns[] = "$column";
+        }
+        //---------------------------------//
+        // Start building the main query
+        $query = DB::table($mainTable)
+            ->select($mainTableColumns);
+        // Add the dynamic locale columns
+        foreach ($translationTableColumns as $column) {
+            foreach ($locales as $locale) {
+                $query->addSelect(DB::raw(
+                    "MAX(CASE WHEN $translationTable.locale = '{$locale}' THEN $translationTable.$column END) as {$column}_{$locale}"
+                ));
+            }
+        }
+        $result = $query->leftJoin($translationTable, "$mainTable.id", '=', "$translationTable.$translationMainColumn")
+            ->where("$mainTable.id", $rowId)
+            ->groupBy($mainTableColumns)
+            ->first();
+        return $result;
     }
 
     public static function newId($table)
