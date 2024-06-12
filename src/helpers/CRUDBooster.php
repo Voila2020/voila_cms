@@ -488,47 +488,53 @@ class CRUDBooster
             $menu->url = $url . $menu->additional_path;
             $menu->url_path = trim(str_replace(url('/'), '', $url), "/");
 
-            $child = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('is_dashboard', 0)->where('is_active', 1)->where('parent_id', $menu->id)->select('cms_menus.*')->orderby('sorting', 'asc')->get();
-            if (count($child)) {
-
-                foreach ($child as &$c) {
-
-                    try {
-                        switch ($c->type) {
-                            case 'Route':
-                                $url = route($c->path);
-                                break;
-                            default:
-                            case 'URL':
-                                $url = $c->path;
-                                break;
-                            case 'Controller & Method':
-                                $url = action($c->path);
-                                break;
-                            case 'Module':
-                            case 'Statistic':
-                                $url = self::adminPath($c->path);
-                                break;
-                        }
-                        $c->is_broken = false;
-                    } catch (\Exception $e) {
-                        $url = "#";
-                        $c->is_broken = true;
-                    }
-
-                    $c->url = $url . $c->additional_path;
-                    $c->url_path = trim(str_replace(url('/'), '', $url), "/");
-                }
-                $menu->children = $child;
-            }
+            $temp = self::getMenuChildren($menu);
+            if ($temp)
+                $menu->children = $temp;
         }
 
         return $menu_active;
     }
-
-    public static function deleteConfirm($redirectTo)
+    private static function getMenuChildren($menu)
     {
-        echo "swal({
+        $child = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('is_dashboard', 0)->where('is_active', 1)->where('parent_id', $menu->id)->select('cms_menus.*')->orderby('sorting', 'asc')->get();
+        if (count($child)) {
+            foreach ($child as &$c) {
+                try {
+                    switch ($c->type) {
+                        case 'Route':
+                            $url = route($c->path);
+                            break;
+                        default:
+                        case 'URL':
+                            $url = $c->path;
+                            break;
+                        case 'Controller & Method':
+                            $url = action($c->path);
+                            break;
+                        case 'Module':
+                        case 'Statistic':
+                            $url = self::adminPath($c->path);
+                            break;
+                    }
+                    $c->is_broken = false;
+                } catch (\Exception $e) {
+                    $url = "#";
+                    $c->is_broken = true;
+                }
+                $c->url = $url . $c->additional_path;
+                $c->url_path = trim(str_replace(url('/'), '', $url), "/");
+                $temp = self::getMenuChildren($c);
+                if ($temp)
+                    $c->children = $temp;
+            }
+        }
+        return $child;
+    }
+
+    public static function deleteConfirm($redirectTo, $returnString = false)
+    {
+        $str = "swal({
 				title: \"" . cbLang('delete_title_confirm') . "\",
 				text: \"" . cbLang('delete_description_confirm') . "\",
 				type: \"warning\",
@@ -538,6 +544,10 @@ class CRUDBooster
 				cancelButtonText: \"" . cbLang('confirmation_no') . "\",
 				closeOnConfirm: false },
 				function(){  location.href=\"$redirectTo\" });";
+        if (!$returnString)
+            echo $str;
+        else
+            return $str;
     }
 
     public static function getModulePath()
@@ -986,7 +996,6 @@ class CRUDBooster
         }
         return $matchingColumn;
     }
-
     public static function getRowWithTranslations($mainTable, $translationTable, $rowId)
     {
         // Fetch all distinct locales
