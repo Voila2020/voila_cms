@@ -88,7 +88,7 @@
                     delay: 200,
                     isValidTarget: function($item, container) {
                         var depth = 1, // Start with a depth of one (the element itself)
-                            maxDepth = 2,
+                            maxDepth = 3,
                             children = $item.find('ul').first().find('li');
 
                         // Add the amount of parents to the depth
@@ -99,7 +99,6 @@
                             depth++;
                             children = children.find('ul').first().find('li');
                         }
-
                         return depth <= maxDepth;
                     },
                     onDrop: function($item, container, _super) {
@@ -125,8 +124,6 @@
                         _super($item, container);
                     }
                 });
-
-
             });
         </script>
     @endpush
@@ -144,7 +141,12 @@
                         @foreach ($menu_active as $menu)
                             @php
                                 $privileges = DB::table('cms_menus_privileges')
-                                    ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
+                                    ->join(
+                                        'cms_privileges',
+                                        'cms_privileges.id',
+                                        '=',
+                                        'cms_menus_privileges.id_cms_privileges',
+                                    )
                                     ->where('id_cms_menus', $menu->id)
                                     ->pluck('cms_privileges.name')
                                     ->toArray();
@@ -163,36 +165,7 @@
                                         <small><i class="fa fa-users"></i> &nbsp; {{ implode(', ', $privileges) }}</small>
                                     </em>
                                 </div>
-                                <ul>
-                                    @if ($menu->children)
-                                        @foreach ($menu->children as $child)
-                                            @php
-                                                $privileges = DB::table('cms_menus_privileges')
-                                                    ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
-                                                    ->where('id_cms_menus', $child->id)
-                                                    ->pluck('cms_privileges.name')
-                                                    ->toArray();
-                                            @endphp
-                                            <li data-id='{{ $child->id }}' data-name='{{ $child->name }}'>
-                                                <div class='{{ $child->is_dashboard ? 'is-dashboard' : '' }}'
-                                                    title="{{ $child->is_dashboard ? 'This is setted as Dashboard' : '' }}">
-                                                    <i
-                                                        class='{{ $child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon }}'></i>
-                                                    {{ $child->name }}
-                                                    <span class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                                            href='{{ route('MenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
-                                                            title="Delete" class='fa fa-trash'
-                                                            onclick='{{ CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id) }}'
-                                                            href='javascript:void(0)'></a></span>
-                                                    <br /><em class="text-muted">
-                                                        <small><i class="fa fa-users"></i> &nbsp;
-                                                            {{ implode(', ', $privileges) }}</small>
-                                                    </em>
-                                                </div>
-                                            </li>
-                                        @endforeach
-                                    @endif
-                                </ul>
+                                {!! getBuilderMenuChildren($menu) !!}
                             </li>
                         @endforeach
                     </ul>
@@ -222,9 +195,9 @@
                                             <li data-id='{{ $child->id }}' data-name='{{ $child->name }}'>
                                                 <div><i class='{{ $child->icon }}'></i> {{ $child->name }} <span
                                                         class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                                            href='{{  route('MenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                                            href='{{ route('MenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
                                                             title="Delete" class='fa fa-trash'
-                                                            onclick='{{  CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id) }}'
+                                                            onclick='{{ CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id) }}'
                                                             href='javascript:void(0)'></a></span></div>
                                             </li>
                                         @endforeach
@@ -260,3 +233,52 @@
         </div>
     </div>
 @endsection
+@php
+    function getBuilderMenuChildren($menu)
+    {
+        $results = '';
+        if ($menu->children) {
+            $results .= '<ul>';
+            foreach ($menu->children as $child) {
+                $privileges = DB::table('cms_menus_privileges')
+                    ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
+                    ->where('id_cms_menus', $child->id)
+                    ->pluck('cms_privileges.name')
+                    ->toArray();
+                $editHref =
+                    route('MenusControllerGetEdit') . '/' . $child->id . '?return_url=' . urlencode(Request::fullUrl());
+                $deleteClick = CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id, true);
+                $results .= "<li data-id='{ $child->id }' data-name='{$child->name}'>";
+                $results .=
+                    "   <div class='" .
+                    ($child->is_dashboard ? 'is-dashboard' : '') .
+                    "' title='" .
+                    ($child->is_dashboard ? 'This is setted as Dashboard' : '') .
+                    "'>";
+                $results .=
+                    "       <i class='" .
+                    ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
+                    "'></i>";
+                $results .= "       {$child->name}";
+                $results .= "       <span class='pull-right'>";
+                $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
+                $results .=
+                    "           <a class='fa fa-trash' title='Delete' onclick='" .
+                    $deleteClick .
+                    "' href='javascript:void(0)'></a>";
+                $results .= '       </span>';
+                $results .= '       <br />';
+                $results .=
+                    "       <em class='text-muted'><small><i class='fa fa-users'></i> &nbsp;" .
+                    implode(', ', $privileges) .
+                    '</small></em>';
+                $results .= '   </div>';
+                $results .= getBuilderMenuChildren($child);
+
+                $results .= '</li>';
+            }
+            $results .= '</ul>';
+        }
+        return $results;
+    }
+@endphp

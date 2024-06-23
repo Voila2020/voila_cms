@@ -488,47 +488,53 @@ class CRUDBooster
             $menu->url = $url . $menu->additional_path;
             $menu->url_path = trim(str_replace(url('/'), '', $url), "/");
 
-            $child = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('is_dashboard', 0)->where('is_active', 1)->where('parent_id', $menu->id)->select('cms_menus.*')->orderby('sorting', 'asc')->get();
-            if (count($child)) {
-
-                foreach ($child as &$c) {
-
-                    try {
-                        switch ($c->type) {
-                            case 'Route':
-                                $url = route($c->path);
-                                break;
-                            default:
-                            case 'URL':
-                                $url = $c->path;
-                                break;
-                            case 'Controller & Method':
-                                $url = action($c->path);
-                                break;
-                            case 'Module':
-                            case 'Statistic':
-                                $url = self::adminPath($c->path);
-                                break;
-                        }
-                        $c->is_broken = false;
-                    } catch (\Exception $e) {
-                        $url = "#";
-                        $c->is_broken = true;
-                    }
-
-                    $c->url = $url . $c->additional_path;
-                    $c->url_path = trim(str_replace(url('/'), '', $url), "/");
-                }
-                $menu->children = $child;
-            }
+            $temp = self::getMenuChildren($menu);
+            if ($temp)
+                $menu->children = $temp;
         }
 
         return $menu_active;
     }
-
-    public static function deleteConfirm($redirectTo)
+    private static function getMenuChildren($menu)
     {
-        echo "swal({
+        $child = DB::table('cms_menus')->whereRaw("cms_menus.id IN (select id_cms_menus from cms_menus_privileges where id_cms_privileges = '" . self::myPrivilegeId() . "')")->where('is_dashboard', 0)->where('is_active', 1)->where('parent_id', $menu->id)->select('cms_menus.*')->orderby('sorting', 'asc')->get();
+        if (count($child)) {
+            foreach ($child as &$c) {
+                try {
+                    switch ($c->type) {
+                        case 'Route':
+                            $url = route($c->path);
+                            break;
+                        default:
+                        case 'URL':
+                            $url = $c->path;
+                            break;
+                        case 'Controller & Method':
+                            $url = action($c->path);
+                            break;
+                        case 'Module':
+                        case 'Statistic':
+                            $url = self::adminPath($c->path);
+                            break;
+                    }
+                    $c->is_broken = false;
+                } catch (\Exception $e) {
+                    $url = "#";
+                    $c->is_broken = true;
+                }
+                $c->url = $url . $c->additional_path;
+                $c->url_path = trim(str_replace(url('/'), '', $url), "/");
+                $temp = self::getMenuChildren($c);
+                if ($temp)
+                    $c->children = $temp;
+            }
+        }
+        return $child;
+    }
+
+    public static function deleteConfirm($redirectTo, $returnString = false)
+    {
+        $str = "swal({
 				title: \"" . cbLang('delete_title_confirm') . "\",
 				text: \"" . cbLang('delete_description_confirm') . "\",
 				type: \"warning\",
@@ -538,6 +544,10 @@ class CRUDBooster
 				cancelButtonText: \"" . cbLang('confirmation_no') . "\",
 				closeOnConfirm: false },
 				function(){  location.href=\"$redirectTo\" });";
+        if (!$returnString)
+            echo $str;
+        else
+            return $str;
     }
 
     public static function getModulePath()
@@ -775,14 +785,14 @@ class CRUDBooster
         Config::set('mail.username', self::getSetting('smtp_username'));
         Config::set('mail.password', self::getSetting('smtp_password'));
 
-        $to = explode(';',$config['to']);
+        $to = explode(';', $config['to']);
         $data = $config['data'];
         $template = $config['template'];
         $lang = $config['lang'] ?? 'en';
 
         $template = CRUDBooster::first('cms_email_templates', ['slug' => $template]);
         $html = $template->content;
-        if($lang == 'ar'){
+        if ($lang == 'ar') {
             $html = $template->content_ar;
         }
         foreach ($data as $key => $val) {
@@ -973,7 +983,8 @@ class CRUDBooster
         return $pk->getColumns()[0];
     }
 
-    public static function getTranslationTableMainColumn($table){
+    public static function getTranslationTableMainColumn($table)
+    {
         $matchingColumn = "";
         $tempColumns = Schema::getColumnListing($table);
         $matchingColumn = '';
@@ -984,6 +995,45 @@ class CRUDBooster
             }
         }
         return $matchingColumn;
+    }
+    public static function getRowWithTranslations($mainTable, $translationTable, $rowId)
+    {
+        // Fetch all distinct locales
+        $locales = DB::table($translationTable)
+            ->distinct()
+            ->pluck('locale');
+        //---------------------------------//
+        $translationMainColumn = self::getTranslationTableMainColumn($translationTable);
+        //---------------------------------//
+        $tempColumns = Schema::getColumnListing($mainTable);
+        $mainTableColumns = [];
+        foreach ($tempColumns as $column) {
+            $mainTableColumns[] = "$mainTable.$column";
+        }
+        //---------------------------------//
+        $tempColumns = Schema::getColumnListing($translationTable);
+        $translationTableColumns = [];
+        foreach ($tempColumns as $column) {
+            if ($column != "id" && $column != "locale" && $column != $translationMainColumn)
+                $translationTableColumns[] = "$column";
+        }
+        //---------------------------------//
+        // Start building the main query
+        $query = DB::table($mainTable)
+            ->select($mainTableColumns);
+        // Add the dynamic locale columns
+        foreach ($translationTableColumns as $column) {
+            foreach ($locales as $locale) {
+                $query->addSelect(DB::raw(
+                    "MAX(CASE WHEN $translationTable.locale = '{$locale}' THEN $translationTable.$column END) as {$column}_{$locale}"
+                ));
+            }
+        }
+        $result = $query->leftJoin($translationTable, "$mainTable.id", '=', "$translationTable.$translationMainColumn")
+            ->where("$mainTable.id", $rowId)
+            ->groupBy($mainTableColumns)
+            ->first();
+        return $result;
     }
 
     public static function newId($table)

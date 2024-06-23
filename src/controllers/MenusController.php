@@ -270,10 +270,7 @@ class MenusController extends CBController
         $menu_active = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 1)->orderby('sorting', 'asc')->get();
 
         foreach ($menu_active as &$menu) {
-            $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
-            if (count($child)) {
-                $menu->children = $child;
-            }
+            $menu->children = $this->getMenuChildren($menu);
         }
 
         $menu_inactive = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 0)->orderby('sorting', 'asc')->get();
@@ -288,6 +285,14 @@ class MenusController extends CBController
         $return_url = Request::fullUrl();
         $page_title = 'Menu Management';
         return view('crudbooster::menus_management', compact('menu_active', 'menu_inactive', 'privileges', 'id_cms_privileges', 'return_url', 'page_title'));
+    }
+
+    private function getMenuChildren($menu)
+    {
+        $children = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
+        foreach ($children as $child)
+            $child->children = $this->getMenuChildren($child);
+        return $children;
     }
 
     public function hook_before_add(&$postdata)
@@ -346,22 +351,44 @@ class MenusController extends CBController
         $post = Request::input('menus');
         $isActive = Request::input('isActive');
         $post = json_decode($post, true);
-
         $i = 1;
-        foreach ($post[0] as $ro) {
+        $items = $post[0];
+        foreach ($items as $ro) {
             $pid = $ro['id'];
-            if ($ro['children'][0]) {
-                $ci = 1;
-                foreach ($ro['children'][0] as $c) {
-                    $id = $c['id'];
-                    DB::table('cms_menus')->where('id', $id)->update(['sorting' => $ci, 'parent_id' => $pid, 'is_active' => $isActive]);
-                    $ci++;
-                }
-            }
+            // if ($ro['children'][0]) {
+            //     $ci = 1;
+            //     foreach ($ro['children'][0] as $c) {
+            //         $id = $c['id'];
+            //         DB::table('cms_menus')->where('id', $id)->update(['sorting' => $ci, 'parent_id' => $pid, 'is_active' => $isActive]);
+            //         $ci++;
+            //     }
+            // }
+            $this->updateChildrenSorting($ro, $isActive);
             DB::table('cms_menus')->where('id', $pid)->update(['sorting' => $i, 'parent_id' => 0, 'is_active' => $isActive]);
             $i++;
         }
 
         return response()->json(['success' => true]);
+    }
+    private function updateChildrenSorting($item, $isActive)
+    {
+        $parentId = $item['id'];
+        $parentId = str_replace("{", "", $parentId);
+        $parentId = str_replace("}", "", $parentId);
+        $parentId = trim($parentId);
+        // if($parentId == 43)
+        // dd($item);
+        if ($item['children'][0]) {
+            $ci = 1;
+            foreach ($item['children'][0] as $c) {
+                $id = $c['id'];
+                $id = str_replace("{", "", $id);
+                $id = str_replace("}", "", $id);
+                $id = trim($id);
+                DB::table('cms_menus')->where('id', $id)->update(['sorting' => $ci, 'parent_id' => $parentId, 'is_active' => $isActive]);
+                $ci++;
+                $this->updateChildrenSorting($c, $isActive);
+            }
+        }
     }
 }

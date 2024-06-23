@@ -24,17 +24,17 @@
                 <li class="header">{{ cbLang('menu_navigation') }}</li>
                 <!-- Optionally, you can add icons to the links -->
 
-                <?php 
-                    $dashboard = CRUDBooster::sidebarDashboard(); 
-                    $dashboard_href = CRUDBooster::adminPath();
-                    if($dashboard->type == 'Statistic'){
-                        $dashboard_href = CRUDBooster::adminPath($dashboard->path);
-                    }
+                <?php
+                $dashboard = CRUDBooster::sidebarDashboard();
+                $dashboard_href = CRUDBooster::adminPath();
+                if ($dashboard->type == 'Statistic') {
+                    $dashboard_href = CRUDBooster::adminPath($dashboard->path);
+                }
                 ?>
                 @if ($dashboard)
                     <li data-id='{{ $dashboard->id }}'
                         class="{{ Request::is(config('crudbooster.ADMIN_PATH')) ? 'active' : '' }}"><a
-                            href='{{  $dashboard_href  }}'
+                            href='{{ $dashboard_href }}'
                             class='{{ $dashboard->color ? 'text-' . $dashboard->color : '' }}'><i
                                 class='fa fa-dashboard'></i>
                             <span>{{ cbLang('text_dashboard') }}</span> </a></li>
@@ -60,24 +60,11 @@
                             class='{{ $menu->color ? 'text-' . $menu->color : '' }}'>
                             <i class='{{ $menu->icon }} {{ $menu->color ? 'text-' . $menu->color : '' }}'></i>
                             <span>{{ cbLang($menu->name) }}</span>
-                            @if (!empty($menu->children))
+                            @if (count($menu->children))
                                 <i class="fa fa-angle-{{ cbLang('right') }} pull-{{ cbLang('right') }}"></i>
                             @endif
                         </a>
-                        @if (!empty($menu->children))
-                            <ul class="treeview-menu">
-                                @foreach ($menu->children as $child)
-                                    <li data-id='{{ $child->id }}'
-                                        class='{{ Request::is($child->url_path .= !Str::endsWith(Request::decodedPath(), $child->url_path) ? '/*' : '') ? 'active' : '' }}'>
-                                        <a href='{{ $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url }}'
-                                            class='{{ $child->color ? 'text-' . $child->color : '' }}'>
-                                            <i class='{{ $child->icon }}'></i>
-                                            <span>{{ cbLang($child->name) }}</span>
-                                        </a>
-                                    </li>
-                                @endforeach
-                            </ul>
-                        @endif
+                        {!! getMenuChildren($menu) !!}
                     </li>
                 @endforeach
 
@@ -245,3 +232,37 @@
     </section>
     <!-- /.sidebar -->
 </aside>
+@php
+    function getMenuChildren($menu)
+    {
+        $results = '';
+        $listOpen = false;
+        if (!empty($menu->children)) {
+            $results .= '<ul class="treeview-menu">';
+            foreach ($menu->children as $key => $child) {
+                $listClass = Request::is(
+                    $child->url_path .= !Str::endsWith(Request::decodedPath(), $child->url_path) ? '/*' : '',
+                )
+                    ? 'active'
+                    : '';
+                $listClass .= count($child->children) ? 'inner-level-li' : '';
+                $aClass = $child->color ? 'text-' . $child->color : '';
+                $aHref = $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url;
+                $results .= "<li data-id='{$child->id}' class='$listClass' >";
+                $results .= "<a href='$aHref' class='$aClass' >";
+                $results .= "<i class='{$child->icon}'></i>";
+                $results .= '<span>' . cbLang($child->name) . '</span>';
+                if (count($child->children)) {
+                    $results .= '<i class="fa fa-angle-' . cbLang('right') . ' pull-' . cbLang('right') . '"></i>';
+                }
+                $results .= '</a>';
+                if (count($child->children)) {
+                    $results .= getMenuChildren($child);
+                }
+                $results .= '</li>';
+            }
+            $results .= '</ul>';
+        }
+        return $results;
+    }
+@endphp
