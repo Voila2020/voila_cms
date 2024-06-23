@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Session;
+use Log;
 use crocodicstudio\crudbooster\fonts\Fontawesome;
 
 class MenusController extends CBController
@@ -355,15 +356,10 @@ class MenusController extends CBController
         $items = $post[0];
         foreach ($items as $ro) {
             $pid = $ro['id'];
-            // if ($ro['children'][0]) {
-            //     $ci = 1;
-            //     foreach ($ro['children'][0] as $c) {
-            //         $id = $c['id'];
-            //         DB::table('cms_menus')->where('id', $id)->update(['sorting' => $ci, 'parent_id' => $pid, 'is_active' => $isActive]);
-            //         $ci++;
-            //     }
-            // }
             $this->updateChildrenSorting($ro, $isActive);
+            $pid = str_replace("{", "", $pid);
+            $pid = str_replace("}", "", $pid);
+            $pid = trim($pid);
             DB::table('cms_menus')->where('id', $pid)->update(['sorting' => $i, 'parent_id' => 0, 'is_active' => $isActive]);
             $i++;
         }
@@ -376,8 +372,6 @@ class MenusController extends CBController
         $parentId = str_replace("{", "", $parentId);
         $parentId = str_replace("}", "", $parentId);
         $parentId = trim($parentId);
-        // if($parentId == 43)
-        // dd($item);
         if ($item['children'][0]) {
             $ci = 1;
             foreach ($item['children'][0] as $c) {

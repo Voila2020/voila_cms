@@ -237,7 +237,7 @@
     {
         $results = '';
         $listOpen = false;
-        if (!empty($menu->children)) {
+        if (count($menu->children)) {
             $results .= '<ul class="treeview-menu">';
             foreach ($menu->children as $key => $child) {
                 $listClass = Request::is(
