@@ -1092,7 +1092,12 @@ class CRUDBooster
         } elseif (substr($fieldName, -3) == '_id') {
             $table = substr($fieldName, 0, (strlen($fieldName) - 3));
         }
-
+        if ($table) {
+            $hasTable = Schema::hasTable($table);
+            if (!$hasTable){
+                $table = Str::plural($table);
+            }
+        }
         return $table;
     }
 
@@ -1103,12 +1108,13 @@ class CRUDBooster
         } elseif (substr($fieldName, -3) == '_id') {
             $table = substr($fieldName, 0, (strlen($fieldName) - 3));
         }
-
         if (Cache::has('isForeignKey_' . $fieldName)) {
             return Cache::get('isForeignKey_' . $fieldName);
         } else {
             if ($table) {
                 $hasTable = Schema::hasTable($table);
+                if (!$hasTable)
+                    $hasTable = Schema::hasTable(Str::plural($table));
                 if ($hasTable) {
                     Cache::forever('isForeignKey_' . $fieldName, true);
 
