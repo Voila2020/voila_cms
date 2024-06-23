@@ -489,6 +489,7 @@ class CRUDBooster
             $menu->url_path = trim(str_replace(url('/'), '', $url), "/");
 
             $temp = self::getMenuChildren($menu);
+            $menu->children = [];
             if ($temp)
                 $menu->children = $temp;
         }
@@ -525,6 +526,7 @@ class CRUDBooster
                 $c->url = $url . $c->additional_path;
                 $c->url_path = trim(str_replace(url('/'), '', $url), "/");
                 $temp = self::getMenuChildren($c);
+                $c->children = [];
                 if ($temp)
                     $c->children = $temp;
             }
