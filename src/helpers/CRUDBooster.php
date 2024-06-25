@@ -489,6 +489,7 @@ class CRUDBooster
             $menu->url_path = trim(str_replace(url('/'), '', $url), "/");
 
             $temp = self::getMenuChildren($menu);
+            $menu->children = [];
             if ($temp)
                 $menu->children = $temp;
         }
@@ -525,6 +526,7 @@ class CRUDBooster
                 $c->url = $url . $c->additional_path;
                 $c->url_path = trim(str_replace(url('/'), '', $url), "/");
                 $temp = self::getMenuChildren($c);
+                $c->children = [];
                 if ($temp)
                     $c->children = $temp;
             }
@@ -1092,7 +1094,12 @@ class CRUDBooster
         } elseif (substr($fieldName, -3) == '_id') {
             $table = substr($fieldName, 0, (strlen($fieldName) - 3));
         }
-
+        if ($table) {
+            $hasTable = Schema::hasTable($table);
+            if (!$hasTable){
+                $table = Str::plural($table);
+            }
+        }
         return $table;
     }
 
@@ -1103,12 +1110,13 @@ class CRUDBooster
         } elseif (substr($fieldName, -3) == '_id') {
             $table = substr($fieldName, 0, (strlen($fieldName) - 3));
         }
-
         if (Cache::has('isForeignKey_' . $fieldName)) {
             return Cache::get('isForeignKey_' . $fieldName);
         } else {
             if ($table) {
                 $hasTable = Schema::hasTable($table);
+                if (!$hasTable)
+                    $hasTable = Schema::hasTable(Str::plural($table));
                 if ($hasTable) {
                     Cache::forever('isForeignKey_' . $fieldName, true);
 

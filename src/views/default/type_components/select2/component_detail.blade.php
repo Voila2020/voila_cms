@@ -1,4 +1,7 @@
 <?php
+if (!$value) {
+    return;
+}
 $datatable = $form['datatable'];
 if ($datatable && !$form['relationship_table']) {
     $datatable = explode(',', $datatable);
@@ -30,11 +33,7 @@ if ($datatable && $form['relationship_table']) {
                 ->where($params[2], $id)
                 ->first()->{$params[1]},
         );
-        $tableData = DB::table($datatable_table)
-            ->whereIn('id', $values)
-            ->select($datatable_field)
-            ->pluck($datatable_field)
-            ->toArray();
+        $tableData = DB::table($datatable_table)->whereIn('id', $values)->select($datatable_field)->pluck($datatable_field)->toArray();
     } else {
         $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
         $foreignKey2 = CRUDBooster::getForeignKey($datatable_table, $form['relationship_table']);
@@ -43,10 +42,7 @@ if ($datatable && $form['relationship_table']) {
             ->pluck($foreignKey2)
             ->toArray();
 
-        $tableData = DB::table($datatable_table)
-            ->whereIn('id', $ids)
-            ->pluck($datatable_field)
-            ->toArray();
+        $tableData = DB::table($datatable_table)->whereIn('id', $ids)->pluck($datatable_field)->toArray();
     }
 
     echo implode(', ', $tableData);

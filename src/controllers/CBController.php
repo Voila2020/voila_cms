@@ -1792,9 +1792,7 @@ class CBController extends Controller
         if (request('file') && !request('import')) {
             $file = base64_decode(request('file'));
             $file = storage_path('app/' . $file);
-            $rows = Excel::load($file, function ($reader) {
-            })->get();
-
+            $rows = Excel::toArray([], $file)[0];
             $countRows = ($rows) ? count($rows) : 0;
 
             Session::put('total_data_import', $countRows);
@@ -1803,7 +1801,7 @@ class CBController extends Controller
             foreach ($rows as $value) {
                 $a = [];
                 foreach ($value as $k => $v) {
-                    $a[] = $k;
+                    $a[] = $v;
                 }
                 if ($a && count($a)) {
                     $data_import_column = $a;
@@ -1812,7 +1810,19 @@ class CBController extends Controller
             }
 
             $table_columns = DB::getSchemaBuilder()->getColumnListing($this->table);
-
+            if ($this->translation_table) {
+                $addedColumns = [];
+                $translationColumns = DB::getSchemaBuilder()->getColumnListing($this->translation_table);
+                foreach ($translationColumns as $column) {
+                    if ($column != "id" && $column != "locale" && strpos($column, "_id") == 0) {
+                        foreach ($this->websiteLanguages as $lang) {
+                            $addedColumns[] = $column . "_" . $lang->code;
+                        }
+                    }
+                }
+                if ($addedColumns)
+                    $table_columns = array_merge($addedColumns, $table_columns);
+            }
             $data['table_columns'] = $table_columns;
             $data['data_import_column'] = $data_import_column;
         }
@@ -1849,24 +1859,47 @@ class CBController extends Controller
         $select_column = Session::get('select_column');
         $select_column = array_filter($select_column);
         $table_columns = DB::getSchemaBuilder()->getColumnListing($this->table);
+        $tableMainColumns = DB::getSchemaBuilder()->getColumnListing($this->table);
+        if ($this->translation_table) {
+            $translationAddedColumns = [];
+            $translationColumns = DB::getSchemaBuilder()->getColumnListing($this->translation_table);
+            foreach ($translationColumns as $column) {
+                if ($column != "id" && $column != "locale" && strpos($column, "_id") == 0) {
+                    foreach ($this->websiteLanguages as $lang) {
+                        $translationAddedColumns[] = $column . "_" . $lang->code;
+                    }
+                }
+            }
+            if ($translationAddedColumns)
+                $table_columns = array_merge($translationAddedColumns, $table_columns);
+        }
 
         $file = base64_decode(request('file'));
         $file = storage_path('app/' . $file);
 
-        $rows = Excel::load($file, function ($reader) {
-        })->get();
+        // $rows = Excel::load($file, function ($reader) {
+        // })->get();
+        $rows = Excel::toArray([], $file)[0];
+        $headerRow = $rows[0];
+        $finalRows = [];
+        foreach ($rows as $index => $row) {
+            if ($index == 0)
+                continue;
+            $temp = new stdClass();
+            foreach ($headerRow as $headerIndex => $headerValue) {
+                $temp->$headerValue = $row[$headerIndex];
+            }
+            $finalRows[] = $temp;
+        }
 
         $has_created_at = false;
         if (CRUDBooster::isColumnExists($this->table, 'created_at')) {
             $has_created_at = true;
         }
-
-        $data_import_column = [];
-        foreach ($rows as $value) {
+        foreach ($finalRows as $index => $value) {
             $a = [];
             foreach ($select_column as $sk => $s) {
                 $colname = $table_columns[$sk];
-
                 if (CRUDBooster::isForeignKey($colname)) {
 
                     //Skip if value is empty
@@ -1897,14 +1930,29 @@ class CBController extends Controller
                         }
 
                         try {
-                            $relation_exists = DB::table($relation_table)->where($title_field, $value->$s)->first();
-                            if ($relation_exists) {
-                                $relation_primary_key = $relation_class->primary_key;
-                                $relation_id = $relation_exists->$relation_primary_key;
+                            //--- Check if title field is exist
+                            $relationColumn = array_values(array_filter($relation_class->columns_table, function ($column) use ($title_field) {
+                                if ($column["name"] == $title_field)
+                                    return $column;
+                            }))[0];
+                            //----------------------------------------//
+                            if (!optional($relationColumn)["translation"]) {
+                                $relation_exists = DB::table($relation_table)->where($title_field, $value->$s)->first();
+                                if ($relation_exists) {
+                                    $relation_primary_key = $relation_class->primary_key;
+                                    $relation_id = $relation_exists->$relation_primary_key;
+                                } else {
+                                    $relation_id = DB::table($relation_table)->insertGetId($relation_insert_data);
+                                }
                             } else {
-                                $relation_id = DB::table($relation_table)->insertGetId($relation_insert_data);
+                                $relation_exists = DB::table($relation_class->translation_table)->where($title_field, $value->$s)->first();
+                                if ($relation_exists) {
+                                    $relation_id = $relation_exists->$colname;
+                                } else {
+                                    $relation_id = DB::table($relation_table)->insertGetId($relation_insert_data);
+                                    // --- TODO Insert into translation table
+                                }
                             }
-
                             $a[$colname] = $relation_id;
                         } catch (\Exception $e) {
                             exit($e);
@@ -1915,7 +1963,6 @@ class CBController extends Controller
                     $a[$colname] = $value->$s;
                 }
             }
-
             $has_title_field = true;
             foreach ($a as $k => $v) {
                 if ($k == $this->title_field && $v == '') {
@@ -1929,15 +1976,34 @@ class CBController extends Controller
             }
 
             try {
-
                 if ($has_created_at) {
                     $a['created_at'] = date('Y-m-d H:i:s');
                 }
-
-                DB::table($this->table)->insert($a);
+                $dataToInsert = [];
+                foreach ($a as $column => $columnValue) {
+                    if (in_array($column, $tableMainColumns))
+                        $dataToInsert[$column] = $a[$column];
+                }
+                $lastInsertId = DB::table($this->table)->insertGetId($dataToInsert);
+                if ($this->translation_table) {
+                    foreach ($this->websiteLanguages as $lang) {
+                        $dataToInsert = [];
+                        //------------------------------//
+                        foreach ($translationColumns as $column) {
+                            if ($column != "id" && $column != "locale" && strpos($column, "_id") == 0) {
+                                $dataToInsert[$column] = $a[$column . "_" . $lang->code];
+                            }
+                        }
+                        $dataToInsert["locale"] = $lang->code;
+                        $dataToInsert[$this->translation_main_column] = $lastInsertId;
+                        //------------------------------//
+                        DB::table($this->translation_table)->insert($dataToInsert);
+                    }
+                }
                 Cache::increment('success_' . $file_md5);
             } catch (\Exception $e) {
                 $e = (string) $e;
+                Log::error("Error on importing $e");
                 Cache::put('error_' . $file_md5, $e, 500);
             }
         }
