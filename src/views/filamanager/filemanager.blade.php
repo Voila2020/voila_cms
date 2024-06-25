@@ -350,37 +350,47 @@ $get_params = http_build_query($get_params);
 
 <body>
     <script>
-        $(window).on('load', function() {
-            $('.filemanager-loading').delay(1000).animate({
-                'opacity': '0'
-            }, function() {
-                loading(false);
-            });
-        });
+        $(document).ready(function() {
+            $('.filemanager-loading').each(function() {
+                var $this = $(this);
+                var fieldId = $this.data('field-id');
+                $(".filemanager-loading[data-field-id='" + fieldId + "']").addClass("hide");
 
-        $(window).bind('beforeunload', function() {
-            loading(true);
-        });
-        function loading(show=true){
-            if(show){
-                $(".filemanager-loading").removeClass("hide");
-            } else {
-                $(".filemanager-loading").addClass("hide");
+
+                $(window).on('load', function() {
+                    $this.delay(1000).animate({
+                        'opacity': '0'
+                    }, function() {
+                        loading(fieldId, false);
+                    });
+                });
+
+                $(window).bind('beforeunload', function() {
+                    loading(fieldId, true);
+                });
+            });
+
+            function loading(fieldId, show = true) {
+                if (show) {
+                    $(".filemanager-loading[data-field-id='" + fieldId + "']").removeClass("hide");
+                } else {
+                    $(".filemanager-loading[data-field-id='" + fieldId + "']").addClass("hide");
+                }
             }
-        }
+        });
     </script>
-    <div class="filemanager-loading"
+    <div id="filemanager-loading-<?= $field_id ?>" class="filemanager-loading" data-field-id="<?= $field_id ?>"
         style="
-        background-image: url(/vendor/crudbooster/assets/giphy.gif);
-        background-repeat: no-repeat;
-        background-position: center;
-        background-size: 30%;
-        background-color: #e5eff1;
-        position: fixed;
-        width: 100vw;
-        height: 100vh;
-        z-index: 1000000;
-    ">
+     background-image: url(/vendor/crudbooster/assets/giphy.gif);
+     background-repeat: no-repeat;
+     background-position: center;
+     background-size: 30%;
+     background-color: #e5eff1;
+     position: fixed;
+     width: 100vw;
+     height: 100vh;
+     z-index: 1000000;
+ ">
     </div>
     <!-- The Templates plugin is included to render the upload/download listings -->
     <script src="//blueimp.github.io/JavaScript-Templates/js/tmpl.min.js"></script>
