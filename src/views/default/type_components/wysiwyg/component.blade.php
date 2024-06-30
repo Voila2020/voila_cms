@@ -59,8 +59,8 @@
 
         <div class="{{ $col_width ?: 'col-sm-10' }}">
             <input type="hidden" id="input_{{ $name }}">
-            <textarea id='textarea_{{ $name }}' {{ $readonly }} {{ $disabled }}
-                name="{{ $form['name'] }}" class='form-control' rows='5'>{!! $value !!}</textarea>
+            <textarea id='textarea_{{ $name }}' {{ $readonly }} {{ $disabled }} name="{{ $form['name'] }}"
+                class='form-control' rows='5'>{!! $value !!}</textarea>
             <div class="text-danger">{{ $errors->first($name) }}</div>
             <p class='help-block'>{{ cbLang(@$form['help']) }}</p>
         </div>
@@ -124,6 +124,14 @@
     }
 </script>
 
+<?php
+$editorCss = Crudbooster::getSetting('editor_css_links');
+$editorCssFiles = explode(',', $editorCss);
+$editorCssArray = [];
+foreach ($editorCssFiles as $file) {
+    $editorCssArray[] = "'" . trim($file) . "'";
+}
+?>
 @push('bottom')
     <script>
         $(function() {
@@ -138,6 +146,7 @@
                 },
                 menubar: 'file edit view insert format tools table tc help',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
+                content_css: [<?php echo implode(',', $editorCssArray); ?>],
                 setup: function(editor) {
                     //Add a custom validator to the form
                     $('form').on('submit', function(e) {
