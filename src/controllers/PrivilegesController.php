@@ -67,6 +67,14 @@ class PrivilegesController extends CBController
             ->orderby("name", "asc")
             ->get();
         $data['page_menu'] = Route::getCurrentRoute()->getActionName();
+        $menu_active = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 1)->orderby('sorting', 'asc')->get();
+        foreach ($menu_active as &$menu) {
+            $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
+            if (count($child)) {
+                $menu->children = $child;
+            }
+        }
+        $data['menu_active'] = $menu_active;
 
         return view('crudbooster::privileges', $data);
     }
@@ -106,6 +114,15 @@ class PrivilegesController extends CBController
             }
         }
 
+        $menus = Request::input('menus');
+        if ($menus) {
+            foreach ($menus as $menu) {
+                DB::table('cms_menus_privileges')->insert([
+                    'id_cms_menus' => $menu,
+                    'id_cms_privileges' => $id
+                ]);
+            }
+        }
         //Refresh Session Roles
         $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', CRUDBooster::myPrivilegeId())->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
         Session::put('admin_privileges_roles', $roles);
@@ -130,6 +147,16 @@ class PrivilegesController extends CBController
 
         $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
         $page_menu = Route::getCurrentRoute()->getActionName();
+
+        $menu_active = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 1)->orderby('sorting', 'asc')->get();
+        foreach ($menu_active as &$menu) {
+            $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
+            if (count($child)) {
+                $menu->children = $child;
+            }
+        }
+        $checked_menu = DB::table('cms_menus_privileges')->where('id_cms_privileges', $id)->get('id_cms_menus');
+
 
         return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu'));
     }
@@ -182,7 +209,17 @@ class PrivilegesController extends CBController
                 }
             }
         }
-
+        
+        DB::table('cms_menus_privileges')->where('id_cms_privileges' , $id)->delete();
+        $menus = Request::input('menus');
+        if($menus){
+            foreach ($menus as $menu) {
+                DB::table('cms_menus_privileges')->insert([
+                    'id_cms_menus'=>$menu,
+                    'id_cms_privileges'=>$id
+                ]);
+            }
+        }
         //Refresh Session Roles
         if ($id == CRUDBooster::myPrivilegeId()) {
             $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', CRUDBooster::myPrivilegeId())->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
