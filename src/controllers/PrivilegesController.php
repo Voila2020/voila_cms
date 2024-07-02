@@ -158,7 +158,7 @@ class PrivilegesController extends CBController
         $checked_menu = DB::table('cms_menus_privileges')->where('id_cms_privileges', $id)->get('id_cms_menus');
 
 
-        return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu'));
+        return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu','menu_active','checked_menu'));
     }
 
     public function postEditSave($id)
@@ -209,7 +209,7 @@ class PrivilegesController extends CBController
                 }
             }
         }
-        
+
         DB::table('cms_menus_privileges')->where('id_cms_privileges' , $id)->delete();
         $menus = Request::input('menus');
         if($menus){
