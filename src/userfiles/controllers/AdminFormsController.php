@@ -396,6 +396,9 @@ class AdminFormsController extends CBController
                     else if($item->title =='number'){
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
+                    else if ($item->title == 'file') {
+                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    }
 
                     $element_form .= "</div>";
                 }
@@ -487,6 +490,9 @@ class AdminFormsController extends CBController
                         }
                         $elemnt_form .= "</select>";
                     } else if($item->title =='number'){
+                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    }
+                    else if ($item->title == 'file') {
                         $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 

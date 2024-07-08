@@ -1516,6 +1516,10 @@ class CBSeeder extends Seeder
           'title' => 'number',
           'multi' => 0,
         ],
+        [
+          'title' => 'file',
+          'multi' => 0,
+        ],
       ];
       DB::table('fields')->insert($data);
     }
