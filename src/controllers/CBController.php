@@ -573,7 +573,7 @@ class CBController extends Controller
                 $addaction[] = [
                     'label' => $s['label'],
                     'icon' => $s['button_icon'],
-                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']).'&parent_translation_table=' . $s['parent_translation_table'],
+                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . (!isset($s['custom_parent_id']) ? "id" : $s['custom_parent_id']) . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode($s['label']) . '&parent_translation_table=' . $s['parent_translation_table'],
                     'color' => $s['button_color'],
                     'showIf' => $s['showIf'],
                     'target' => isset($s['target']) ?: '_self',
@@ -1199,6 +1199,9 @@ class CBController extends Controller
                 $mainImage = request(str_replace("_webp", "", $name));
                 if ($mainImage) {
                     $image = request($name);
+                    // Assuming $mainImage is the main image URL that might contain spaces So will update image and webp_image
+                    $this->arr[str_replace("_webp", "", $name)] = urldecode($mainImage);
+                    //-----------------------------------------//
 
                     //check if the image type is base64
                     if (strpos($image, 'data:image/') === 0) {
@@ -1208,10 +1211,9 @@ class CBController extends Controller
                         $directory = public_path(config('crudbooster.filemanager_current_path') . 'webp_images/');
                         //---------------------------------------//
                         // Retrieve the main image name and use it to set a new image's name
-                        $imageName = $this->arr[str_replace("_webp", "", $name)];
-                        $imageName = basename($imageName);
+                        $imageName = urldecode($this->arr[str_replace("_webp", "", $name)]);
                         $imageName = pathinfo($imageName, PATHINFO_FILENAME);
-                        $imageName = $imageName . '.webp';
+                        $imageName .= '.webp';
                         //---------------------------------------//
                         $imagePath = $directory . $imageName;
                         // Check if the image doesn't exist in the directory
