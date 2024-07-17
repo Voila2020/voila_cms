@@ -103,6 +103,20 @@ function define_new_traits(editor) {
           label: "Theme",
         },
         {
+          type: 'class_select',
+          options: [
+            {
+              value: "",
+              name: "None",
+            },
+            ...((getIcons()) || []).map((iconClass) => ({
+              value: iconClass,
+              name: iconClass,
+            })),
+          ],
+          label: "Icon",
+        },
+        {
           type: "class_select",
           options: [
             {
