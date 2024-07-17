@@ -9,579 +9,589 @@ use Illuminate\Support\Facades\Hash;
 
 class CBSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     *
-     * @return void
-     */
-    public function run()
-    {
-        $this->command->info('Please wait updating the data...');
-        # User
-        if (DB::table('cms_users')->count() == 0) {
-            $password = Hash::make('123456');
-            $cms_users = DB::table('cms_users')->insert([
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Super Admin',
-                'email' => 'superadmin@voila.digital',
-                'password' => $password,
-                'id_cms_privileges' => 1,
-                'status' => 'Active',
-            ]);
-            $cms_users = DB::table('cms_users')->insert([
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Ahmad Voila',
-                'email' => 'ahmad@voila.digital',
-                'password' => $password,
-                'id_cms_privileges' => 1,
-                'status' => 'Active',
-            ]);
+  /**
+   * Run the database seeds.
+   *
+   * @return void
+   */
+  public function run()
+  {
+    $this->command->info('Please wait updating the data...');
+    # User
+    if (DB::table('cms_users')->count() == 0) {
+      $password = Hash::make('123456');
+      $cms_users = DB::table('cms_users')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Super Admin',
+        'email' => 'superadmin@voila.digital',
+        'password' => $password,
+        'id_cms_privileges' => 1,
+        'status' => 'Active',
+      ]);
+      $cms_users = DB::table('cms_users')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Ahmad Voila',
+        'email' => 'ahmad@voila.digital',
+        'password' => $password,
+        'id_cms_privileges' => 1,
+        'status' => 'Active',
+      ]);
+    }
+    $this->command->info("Create users completed");
+    # User End
+
+    # Email Templates
+    $pass_temp_email = DB::table('cms_email_templates')->where('slug', 'forgot_password_backend')->get();
+    if (!count($pass_temp_email)) {
+      DB::table('cms_email_templates')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Email Template Forgot Password Backend',
+        'slug' => 'forgot_password_backend',
+        'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
+        'template' => '<mjml><mj-body id="irdi"></mj-body></mjml>',
+        'description' => 'Forgot Password',
+        'from_name' => 'Voila System',
+        'from_email' => 'test@voila.digital',
+        'cc_email' => null,
+        'priority' => 3,
+      ]);
+      $this->command->info("Create email templates completed");
+    }
+
+    # CB Modules
+    $data = [
+      [
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Notifications',
+        'icon' => 'fa fa-cog',
+        'path' => 'notifications',
+        'table_name' => 'cms_notifications',
+        'controller' => 'NotificationsController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Privileges',
+        'icon' => 'fa fa-cog',
+        'path' => 'privileges',
+        'table_name' => 'cms_privileges',
+        'controller' => 'PrivilegesController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+
+      [
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Users_Management',
+        'icon' => 'fa fa-users',
+        'path' => 'users',
+        'table_name' => 'cms_users',
+        'controller' => 'AdminCmsUsersController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'settings',
+        'icon' => 'fa fa-cog',
+        'path' => 'settings',
+        'table_name' => 'cms_settings',
+        'controller' => 'SettingsController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Module_Generator',
+        'icon' => 'fa fa-database',
+        'path' => 'module_generator',
+        'table_name' => 'cms_moduls',
+        'controller' => 'ModulsController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Module_Status',
+        'icon' => 'fa fa-database',
+        'path' => 'module_status',
+        'table_name' => 'cms_moduls',
+        'controller' => 'ModulsStatusController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Website_Languages',
+        'icon' => 'fa fa-database',
+        'path' => 'website_languages',
+        'table_name' => 'cms_moduls',
+        'controller' => 'WebsiteLanguagesController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Menu_Management',
+        'icon' => 'fa fa-bars',
+        'path' => 'menu_management',
+        'table_name' => 'cms_menus',
+        'controller' => 'MenusController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Email_Templates',
+        'icon' => 'fa fa-envelope-o',
+        'path' => 'email_templates',
+        'table_name' => 'cms_email_templates',
+        'controller' => 'EmailTemplatesController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Statistic_Builder',
+        'icon' => 'fa fa-dashboard',
+        'path' => 'statistic_builder',
+        'table_name' => 'cms_statistics',
+        'controller' => 'StatisticBuilderController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'API_Generator',
+        'icon' => 'fa fa-cloud-download',
+        'path' => 'api_generator',
+        'table_name' => '',
+        'controller' => 'ApiCustomController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Log_User_Access',
+        'icon' => 'fa fa-flag-o',
+        'path' => 'logs',
+        'table_name' => 'cms_logs',
+        'controller' => 'LogsController',
+        'is_protected' => 1,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Forms',
+        'icon' => 'fa fa-mail-forward',
+        'path' => 'forms',
+        'table_name' => 'forms',
+        'controller' => 'AdminFormsController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Pages',
+        'icon' => 'fa fa-users',
+        'path' => 'landing-pages',
+        'table_name' => 'landing_pages',
+        'controller' => 'LandingPagesController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Blocked IPS',
+        'icon' => 'fa fa-ban',
+        'path' => 'blocked_ips',
+        'table_name' => 'cms_login_attempts',
+        'controller' => 'LoginAttemptsController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Backup_Restore_DB',
+        'icon' => 'fa fa-database',
+        'path' => 'backup',
+        'table_name' => null,
+        'controller' => 'BackupRestoreDatabaseController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'SEO',
+        'icon' => 'fa fa-language',
+        'path' => 'seo',
+        'table_name' => null,
+        'controller' => 'AdminSeoController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Labels Translation',
+        'icon' => 'fa fa-language',
+        'path' => 'languages',
+        'table_name' => null,
+        'controller' => 'TranslationController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+    ];
+
+    foreach ($data as $k => $d) {
+      if (DB::table('cms_moduls')->where('name', $d['name'])->count()) {
+        unset($data[$k]);
+      }
+    }
+
+    DB::table('cms_moduls')->insert($data);
+    $this->command->info("Create default cb modules completed");
+    # CB Modules End
+
+    # CB Setting
+    $data = [
+
+      //LOGIN REGISTER STYLE
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'login_background_color',
+        'label' => 'Login Background Color',
+        'content' => null,
+        'content_input_type' => 'text',
+        'group_setting' => 'login_register_style',
+        'dataenum' => null,
+        'helper' => 'Input hexacode',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'login_font_color',
+        'label' => 'Login Font Color',
+        'content' => null,
+        'content_input_type' => 'text',
+        'group_setting' => 'login_register_style',
+        'dataenum' => null,
+        'helper' => 'Input hexacode',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'login_background_image',
+        'label' => 'Login Background Image',
+        'content' => null,
+        'content_input_type' => 'upload_image',
+        'group_setting' => 'login_register_style',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+
+      //EMAIL SETTING
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'email_sender',
+        'label' => 'email_sender',
+        'content' => 'test@voila.digital',
+        'content_input_type' => 'text',
+        'group_setting' => 'email_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'smtp_driver',
+        'label' => 'mail_driver',
+        'content' => 'smtp',
+        'content_input_type' => 'select',
+        'group_setting' => 'email_setting',
+        'dataenum' => 'smtp,mail,sendmail',
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'smtp_host',
+        'label' => 'smtp_host',
+        'content' => 'mail.voilahost.com',
+        'content_input_type' => 'text',
+        'group_setting' => 'email_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'smtp_port',
+        'label' => 'smtp_port',
+        'content' => '2525',
+        'content_input_type' => 'text',
+        'group_setting' => 'email_setting',
+        'dataenum' => null,
+        'helper' => 'default 25',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'smtp_username',
+        'label' => 'smtp_username',
+        'content' => 'test@voila.digital',
+        'content_input_type' => 'text',
+        'group_setting' => 'email_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'smtp_password',
+        'label' => 'smtp_password',
+        'content' => 'a84yAe0OL=',
+        'content_input_type' => 'text',
+        'group_setting' => 'email_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+
+      //APPLICATION SETTING
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'appname',
+        'label' => 'application_name',
+        'group_setting' => 'application_setting',
+        'content' => 'Voila CMS',
+        'content_input_type' => 'text',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'default_paper_size',
+        'label' => 'default_paper_size',
+        'group_setting' => 'application_setting',
+        'content' => 'Legal',
+        'content_input_type' => 'text',
+        'dataenum' => null,
+        'helper' => 'Paper size, ex : A4, Legal, etc',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'default_img',
+        'label' => 'uploaded_default_image',
+        'content' => '',
+        'content_input_type' => 'upload_image',
+        'group_setting' => 'application_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'default_img_compression',
+        'label' => 'image_compression_value',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'application_setting',
+        'dataenum' => null,
+        'helper' => 'def_img_quality',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'favicon',
+        'label' => 'favicon',
+        'content' => '',
+        'content_input_type' => 'upload_image',
+        'group_setting' => 'application_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'api_debug_mode',
+        'label' => 'api_debug_mode',
+        'content' => 'true',
+        'content_input_type' => 'select',
+        'group_setting' => 'application_setting',
+        'dataenum' => 'true,false',
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'google_api_key',
+        'label' => 'google_api_key',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'application_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'google_fcm_key',
+        'label' => 'google_fcm_key',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'application_setting',
+        'dataenum' => null,
+        'helper' => null,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'activate_notifications',
+        'label' => 'activate_notifications',
+        'content' => '',
+        'content_input_type' => 'select',
+        'group_setting' => 'application_setting',
+        'dataenum' => 'true,false',
+        'helper' => 'notifications_activity',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'editor_css_links',
+        'label' => 'Editor Css Links',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'TinyMCE Setting',
+        'dataenum' => '',
+        'helper' => '',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'default_language',
+        'label' => 'default_cms_language',
+        'content_input_type' => 'select',
+        'group_setting' => 'language_setting',
+        'dataenum' => 'العربية,english',
+        'content' => 'english',
+        'helper' => 'default_language',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'tow_languages_active',
+        'label' => 'Activate Tow Languages',
+        'content' => 'no',
+        'content_input_type' => 'select',
+        'group_setting' => 'language_setting',
+        'dataenum' => 'yes,no',
+        'helper' => 'activate_tow_languages',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'block_ip_in_hours',
+        'label' => 'block_ip_in_hours',
+        'content' => "24",
+        'content_input_type' => 'text',
+        'group_setting' => 'block_users_setting',
+        'dataenum' => '',
+        'helper' => 'block_ip_in_hours_helper',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'max_failed_login_trying',
+        'label' => 'max_failed_login_trying',
+        'content' => "5",
+        'content_input_type' => 'text',
+        'group_setting' => 'block_users_setting',
+        'dataenum' => '',
+        'helper' => 'max_failed_login_trying',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'recaptcha_site_key',
+        'label' => 'recaptcha_site_key',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'reCAPTCHA_setting',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'recaptcha_secret_key',
+        'label' => 'recaptcha_secret_key',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'reCAPTCHA_setting',
+      ],
+    ];
+
+    foreach ($data as $row) {
+      $count = DB::table('cms_settings')->where('name', $row['name'])->count();
+      if ($count) {
+        if ($count > 1) {
+          $newsId = DB::table('cms_settings')->where('name', $row['name'])->orderby('id', 'asc')->take(1)->first();
+          DB::table('cms_settings')->where('name', $row['name'])->where('id', '!=', $newsId->id)->delete();
         }
-        $this->command->info("Create users completed");
-        # User End
+        continue;
+      }
+      DB::table('cms_settings')->insert($row);
+    }
+    $this->command->info("Create cb settings completed");
+    # CB Setting End
 
-        # Email Templates
-        $pass_temp_email = DB::table('cms_email_templates')->where('slug', 'forgot_password_backend')->get();
-        if (!count($pass_temp_email)) {
-            DB::table('cms_email_templates')->insert([
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Email Template Forgot Password Backend',
-                'slug' => 'forgot_password_backend',
-                'content' => '<p>Hi,</p><p>Someone requested forgot password,</p><p>[link]</p><p><br></p><p>--</p><p>Regards,</p><p>Admin</p>',
-                'template' => '<mjml><mj-body id="irdi"></mj-body></mjml>',
-                'description' => 'Forgot Password',
-                'from_name' => 'Voila System',
-                'from_email' => 'test@voila.digital',
-                'cc_email' => null,
-                'priority' => 3,
-            ]);
-            $this->command->info("Create email templates completed");
+    # CB Privilege
+    if (DB::table('cms_privileges')->where('name', 'Super Administrator')->count() == 0) {
+      DB::table('cms_privileges')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Super Administrator',
+        'is_superadmin' => 1,
+        'theme_color' => 'skin-red',
+      ]);
+    }
+    if (DB::table('cms_privileges_roles')->count() == 0) {
+      $modules = DB::table('cms_moduls')->get();
+      $i = 1;
+      foreach ($modules as $module) {
+
+        $is_visible = 1;
+        $is_create = 1;
+        $is_read = 1;
+        $is_edit = 1;
+        $is_delete = 1;
+
+        switch ($module->table_name) {
+          case 'cms_logs':
+            $is_create = 0;
+            $is_edit = 0;
+            break;
+          case 'cms_privileges_roles':
+            $is_visible = 0;
+            break;
+          case 'cms_apicustom':
+            $is_visible = 0;
+            break;
+          case 'cms_notifications':
+            $is_create = $is_read = $is_edit = $is_delete = 0;
+            break;
         }
 
-        # CB Modules
-        $data = [
-            [
+        DB::table('cms_privileges_roles')->insert([
+          'created_at' => date('Y-m-d H:i:s'),
+          'is_visible' => $is_visible,
+          'is_create' => $is_create,
+          'is_edit' => $is_edit,
+          'is_delete' => $is_delete,
+          'is_read' => $is_read,
+          'id_cms_privileges' => 1,
+          'id_cms_moduls' => $module->id,
+        ]);
+        $i++;
+      }
+    }
+    $this->command->info("Create roles completed");
+    # CB Privilege End
 
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Notifications',
-                'icon' => 'fa fa-cog',
-                'path' => 'notifications',
-                'table_name' => 'cms_notifications',
-                'controller' => 'NotificationsController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Privileges',
-                'icon' => 'fa fa-cog',
-                'path' => 'privileges',
-                'table_name' => 'cms_privileges',
-                'controller' => 'PrivilegesController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-
-            [
-
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Users_Management',
-                'icon' => 'fa fa-users',
-                'path' => 'users',
-                'table_name' => 'cms_users',
-                'controller' => 'AdminCmsUsersController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'settings',
-                'icon' => 'fa fa-cog',
-                'path' => 'settings',
-                'table_name' => 'cms_settings',
-                'controller' => 'SettingsController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Module_Generator',
-                'icon' => 'fa fa-database',
-                'path' => 'module_generator',
-                'table_name' => 'cms_moduls',
-                'controller' => 'ModulsController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Module_Status',
-                'icon' => 'fa fa-database',
-                'path' => 'module_status',
-                'table_name' => 'cms_moduls',
-                'controller' => 'ModulsStatusController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Website_Languages',
-                'icon' => 'fa fa-database',
-                'path' => 'website_languages',
-                'table_name' => 'cms_moduls',
-                'controller' => 'WebsiteLanguagesController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Menu_Management',
-                'icon' => 'fa fa-bars',
-                'path' => 'menu_management',
-                'table_name' => 'cms_menus',
-                'controller' => 'MenusController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Email_Templates',
-                'icon' => 'fa fa-envelope-o',
-                'path' => 'email_templates',
-                'table_name' => 'cms_email_templates',
-                'controller' => 'EmailTemplatesController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Statistic_Builder',
-                'icon' => 'fa fa-dashboard',
-                'path' => 'statistic_builder',
-                'table_name' => 'cms_statistics',
-                'controller' => 'StatisticBuilderController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'API_Generator',
-                'icon' => 'fa fa-cloud-download',
-                'path' => 'api_generator',
-                'table_name' => '',
-                'controller' => 'ApiCustomController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Log_User_Access',
-                'icon' => 'fa fa-flag-o',
-                'path' => 'logs',
-                'table_name' => 'cms_logs',
-                'controller' => 'LogsController',
-                'is_protected' => 1,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Forms',
-                'icon' => 'fa fa-mail-forward',
-                'path' => 'forms',
-                'table_name' => 'forms',
-                'controller' => 'AdminFormsController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Pages',
-                'icon' => 'fa fa-users',
-                'path' => 'landing-pages',
-                'table_name' => 'landing_pages',
-                'controller' => 'LandingPagesController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Blocked IPS',
-                'icon' => 'fa fa-ban',
-                'path' => 'blocked_ips',
-                'table_name' => 'cms_login_attempts',
-                'controller' => 'LoginAttemptsController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Backup_Restore_DB',
-                'icon' => 'fa fa-database',
-                'path' => 'backup',
-                'table_name' => null,
-                'controller' => 'BackupRestoreDatabaseController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'SEO',
-                'icon' => 'fa fa-language',
-                'path' => 'seo',
-                'table_name' => null,
-                'controller' => 'AdminSeoController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Labels Translation',
-                'icon' => 'fa fa-language',
-                'path' => 'languages',
-                'table_name' => null,
-                'controller' => 'TranslationController',
-                'is_protected' => 0,
-                'is_active' => 1,
-            ],
-        ];
-
-        foreach ($data as $k => $d) {
-            if (DB::table('cms_moduls')->where('name', $d['name'])->count()) {
-                unset($data[$k]);
-            }
-        }
-
-        DB::table('cms_moduls')->insert($data);
-        $this->command->info("Create default cb modules completed");
-        # CB Modules End
-
-        # CB Setting
-        $data = [
-
-            //LOGIN REGISTER STYLE
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'login_background_color',
-                'label' => 'Login Background Color',
-                'content' => null,
-                'content_input_type' => 'text',
-                'group_setting' => 'login_register_style',
-                'dataenum' => null,
-                'helper' => 'Input hexacode',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'login_font_color',
-                'label' => 'Login Font Color',
-                'content' => null,
-                'content_input_type' => 'text',
-                'group_setting' => 'login_register_style',
-                'dataenum' => null,
-                'helper' => 'Input hexacode',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'login_background_image',
-                'label' => 'Login Background Image',
-                'content' => null,
-                'content_input_type' => 'upload_image',
-                'group_setting' => 'login_register_style',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-
-            //EMAIL SETTING
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'email_sender',
-                'label' => 'email_sender',
-                'content' => 'test@voila.digital',
-                'content_input_type' => 'text',
-                'group_setting' => 'email_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'smtp_driver',
-                'label' => 'mail_driver',
-                'content' => 'smtp',
-                'content_input_type' => 'select',
-                'group_setting' => 'email_setting',
-                'dataenum' => 'smtp,mail,sendmail',
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'smtp_host',
-                'label' => 'smtp_host',
-                'content' => 'mail.voilahost.com',
-                'content_input_type' => 'text',
-                'group_setting' => 'email_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'smtp_port',
-                'label' => 'smtp_port',
-                'content' => '2525',
-                'content_input_type' => 'text',
-                'group_setting' => 'email_setting',
-                'dataenum' => null,
-                'helper' => 'default 25',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'smtp_username',
-                'label' => 'smtp_username',
-                'content' => 'test@voila.digital',
-                'content_input_type' => 'text',
-                'group_setting' => 'email_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'smtp_password',
-                'label' => 'smtp_password',
-                'content' => 'a84yAe0OL=',
-                'content_input_type' => 'text',
-                'group_setting' => 'email_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-
-            //APPLICATION SETTING
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'appname',
-                'label' => 'application_name',
-                'group_setting' => 'application_setting',
-                'content' => 'Voila CMS',
-                'content_input_type' => 'text',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'default_paper_size',
-                'label' => 'default_paper_size',
-                'group_setting' => 'application_setting',
-                'content' => 'Legal',
-                'content_input_type' => 'text',
-                'dataenum' => null,
-                'helper' => 'Paper size, ex : A4, Legal, etc',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'default_img',
-                'label' => 'uploaded_default_image',
-                'content' => '',
-                'content_input_type' => 'upload_image',
-                'group_setting' => 'application_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'default_img_compression',
-                'label' => 'image_compression_value',
-                'content' => '',
-                'content_input_type' => 'text',
-                'group_setting' => 'application_setting',
-                'dataenum' => null,
-                'helper' => 'def_img_quality',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'favicon',
-                'label' => 'favicon',
-                'content' => '',
-                'content_input_type' => 'upload_image',
-                'group_setting' => 'application_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'api_debug_mode',
-                'label' => 'api_debug_mode',
-                'content' => 'true',
-                'content_input_type' => 'select',
-                'group_setting' => 'application_setting',
-                'dataenum' => 'true,false',
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'google_api_key',
-                'label' => 'google_api_key',
-                'content' => '',
-                'content_input_type' => 'text',
-                'group_setting' => 'application_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'google_fcm_key',
-                'label' => 'google_fcm_key',
-                'content' => '',
-                'content_input_type' => 'text',
-                'group_setting' => 'application_setting',
-                'dataenum' => null,
-                'helper' => null,
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'activate_notifications',
-                'label' => 'activate_notifications',
-                'content' => '',
-                'content_input_type' => 'select',
-                'group_setting' => 'application_setting',
-                'dataenum' => 'true,false',
-                'helper' => 'notifications_activity',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'default_language',
-                'label' => 'default_cms_language',
-                'content_input_type' => 'select',
-                'group_setting' => 'language_setting',
-                'dataenum' => 'العربية,english',
-                'content' => 'english',
-                'helper' => 'default_language',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'tow_languages_active',
-                'label' => 'Activate Tow Languages',
-                'content' => 'no',
-                'content_input_type' => 'select',
-                'group_setting' => 'language_setting',
-                'dataenum' => 'yes,no',
-                'helper' => 'activate_tow_languages',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'block_ip_in_hours',
-                'label' => 'block_ip_in_hours',
-                'content' => "24",
-                'content_input_type' => 'text',
-                'group_setting' => 'block_users_setting',
-                'dataenum' => '',
-                'helper' => 'block_ip_in_hours_helper',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'max_failed_login_trying',
-                'label' => 'max_failed_login_trying',
-                'content' => "5",
-                'content_input_type' => 'text',
-                'group_setting' => 'block_users_setting',
-                'dataenum' => '',
-                'helper' => 'max_failed_login_trying',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'recaptcha_site_key',
-                'label' => 'recaptcha_site_key',
-                'content' => '',
-                'content_input_type' => 'text',
-                'group_setting' => 'reCAPTCHA_setting',
-            ],
-            [
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'recaptcha_secret_key',
-                'label' => 'recaptcha_secret_key',
-                'content' => '',
-                'content_input_type' => 'text',
-                'group_setting' => 'reCAPTCHA_setting',
-            ],
-        ];
-
-        foreach ($data as $row) {
-            $count = DB::table('cms_settings')->where('name', $row['name'])->count();
-            if ($count) {
-                if ($count > 1) {
-                    $newsId = DB::table('cms_settings')->where('name', $row['name'])->orderby('id', 'asc')->take(1)->first();
-                    DB::table('cms_settings')->where('name', $row['name'])->where('id', '!=', $newsId->id)->delete();
-                }
-                continue;
-            }
-            DB::table('cms_settings')->insert($row);
-        }
-        $this->command->info("Create cb settings completed");
-        # CB Setting End
-
-        # CB Privilege
-        if (DB::table('cms_privileges')->where('name', 'Super Administrator')->count() == 0) {
-            DB::table('cms_privileges')->insert([
-                'created_at' => date('Y-m-d H:i:s'),
-                'name' => 'Super Administrator',
-                'is_superadmin' => 1,
-                'theme_color' => 'skin-red',
-            ]);
-        }
-        if (DB::table('cms_privileges_roles')->count() == 0) {
-            $modules = DB::table('cms_moduls')->get();
-            $i = 1;
-            foreach ($modules as $module) {
-
-                $is_visible = 1;
-                $is_create = 1;
-                $is_read = 1;
-                $is_edit = 1;
-                $is_delete = 1;
-
-                switch ($module->table_name) {
-                    case 'cms_logs':
-                        $is_create = 0;
-                        $is_edit = 0;
-                        break;
-                    case 'cms_privileges_roles':
-                        $is_visible = 0;
-                        break;
-                    case 'cms_apicustom':
-                        $is_visible = 0;
-                        break;
-                    case 'cms_notifications':
-                        $is_create = $is_read = $is_edit = $is_delete = 0;
-                        break;
-                }
-
-                DB::table('cms_privileges_roles')->insert([
-                    'created_at' => date('Y-m-d H:i:s'),
-                    'is_visible' => $is_visible,
-                    'is_create' => $is_create,
-                    'is_edit' => $is_edit,
-                    'is_delete' => $is_delete,
-                    'is_read' => $is_read,
-                    'id_cms_privileges' => 1,
-                    'id_cms_moduls' => $module->id,
-                ]);
-                $i++;
-            }
-        }
-        $this->command->info("Create roles completed");
-        # CB Privilege End
-
-        # Voia Seeder Start
-        if (DB::table('landing_pages')->count() == 0) {
-            $data = [
-                'name' => 'Test',
-                'title' => 'Test',
-                'response_message' => '<p>thank you</p>',
-                'is_template' => 0,
-                'url' => 'test_page',
-                'send_email_to' => 'test@voila.digital',
-                'active' => 1,
-                'is_rtl' => 0,
-                'html' => '<body>
+    # Voia Seeder Start
+    if (DB::table('landing_pages')->count() == 0) {
+      $data = [
+        'name' => 'Test',
+        'title' => 'Test',
+        'response_message' => '<p>thank you</p>',
+        'is_template' => 0,
+        'url' => 'test_page',
+        'send_email_to' => 'test@voila.digital',
+        'active' => 1,
+        'is_rtl' => 0,
+        'html' => '<body>
                 <header class="header-banner">
                   <div class="container-width">
                     <div class="logo-container">
@@ -894,7 +904,7 @@ class CBSeeder extends Seeder
                   </div>
                 </footer>
               </body>',
-                'css' => '* {
+        'css' => '* {
                     box-sizing: border-box;
                     }
                     body {
@@ -1371,146 +1381,150 @@ class CBSeeder extends Seeder
                         display:none;
                     }
                     }',
-            ];
-            DB::table('landing_pages')->insert($data);
-        }
-
-        $data = [
-            [
-                'name' => 'SEO',
-                'type' => 'Module',
-                'path' => 'seo',
-                'color' => 'normal',
-                'icon' => 'fa fa-language',
-                'parent_id' => 0,
-                'is_active' => 1,
-                'is_dashboard' => 0,
-                'id_cms_privileges' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'labels_translation',
-                'type' => 'Module',
-                'path' => 'languages',
-                'color' => 'normal',
-                'icon' => 'fa fa-language',
-                'parent_id' => 0,
-                'is_active' => 1,
-                'is_dashboard' => 0,
-                'id_cms_privileges' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'pages_and_forms',
-                'type' => 'URL',
-                'path' => '#',
-                'color' => 'normal',
-                'icon' => 'fa fa-th-list',
-                'parent_id' => 0,
-                'is_active' => 1,
-                'is_dashboard' => 0,
-                'id_cms_privileges' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Forms',
-                'type' => 'Module',
-                'path' => 'forms',
-                'color' => 'normal',
-                'icon' => 'fa fa-list-alt',
-                'parent_id' => 3,
-                'is_active' => 1,
-                'is_dashboard' => 0,
-                'id_cms_privileges' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-            [
-                'name' => 'Pages',
-                'type' => 'Module',
-                'path' => 'landing-pages',
-                'color' => 'normal',
-                'icon' => 'fa fa-file-o',
-                'parent_id' => 3,
-                'is_active' => 1,
-                'is_dashboard' => 0,
-                'id_cms_privileges' => 1,
-                'created_at' => Carbon::now(),
-                'updated_at' => Carbon::now(),
-            ],
-        ];
-        foreach ($data as $k => $d) {
-            if (DB::table('cms_menus')->where('name', $d['name'])->where('path', $d['path'])->count()) {
-                unset($data[$k]);
-            }
-        }
-        DB::table('cms_menus')->insert($data);
-
-        $menus = DB::table('cms_menus')->get();
-        foreach ($menus as $menu) {
-            $menuPrivilege = DB::table('cms_menus_privileges')
-                ->where('id_cms_privileges', 1)
-                ->where('id_cms_menus', $menu->id)
-                ->first();
-            if (!$menuPrivilege) {
-                DB::table('cms_menus_privileges')->insert([
-                    'id_cms_menus' => $menu->id,
-                    'id_cms_privileges' => 1,
-                ]);
-            }
-        }
-        if (DB::table('languages')->count() == 0) {
-            $data = [
-                [
-                    'name' => 'English',
-                    'code' => 'en',
-                    'active' => 1,
-                    'default' => 1,
-                ],
-                [
-                    'name' => 'Arabic',
-                    'code' => 'ar',
-                    'active' => 1,
-                    'default' => null,
-                ],
-            ];
-            DB::table('languages')->insert($data);
-        }
-        # Fields
-        if (DB::table('fields')->count() == 0) {
-            $data = [
-                [
-                    'title' => 'text',
-                    'multi' => 0,
-                ],
-                [
-                    'title' => 'email',
-                    'multi' => 0,
-                ],
-                [
-                    'title' => 'radio',
-                    'multi' => 1,
-                ],
-                [
-                    'title' => 'checkbox',
-                    'multi' => 1,
-                ],
-                [
-                    'title' => 'select',
-                    'multi' => 1,
-                ],
-                [
-                  'title' => 'number',
-                  'multi' => 0,
-                ],
-            ];
-            DB::table('fields')->insert($data);
-        }
-        # Voila Seeder End
-
-        $this->command->info('All cb seeders completed !');
+      ];
+      DB::table('landing_pages')->insert($data);
     }
+
+    $data = [
+      [
+        'name' => 'SEO',
+        'type' => 'Module',
+        'path' => 'seo',
+        'color' => 'normal',
+        'icon' => 'fa fa-language',
+        'parent_id' => 0,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'labels_translation',
+        'type' => 'Module',
+        'path' => 'languages',
+        'color' => 'normal',
+        'icon' => 'fa fa-language',
+        'parent_id' => 0,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'pages_and_forms',
+        'type' => 'URL',
+        'path' => '#',
+        'color' => 'normal',
+        'icon' => 'fa fa-th-list',
+        'parent_id' => 0,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'Forms',
+        'type' => 'Module',
+        'path' => 'forms',
+        'color' => 'normal',
+        'icon' => 'fa fa-list-alt',
+        'parent_id' => 3,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'Pages',
+        'type' => 'Module',
+        'path' => 'landing-pages',
+        'color' => 'normal',
+        'icon' => 'fa fa-file-o',
+        'parent_id' => 3,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+    ];
+    foreach ($data as $k => $d) {
+      if (DB::table('cms_menus')->where('name', $d['name'])->where('path', $d['path'])->count()) {
+        unset($data[$k]);
+      }
+    }
+    DB::table('cms_menus')->insert($data);
+
+    $menus = DB::table('cms_menus')->get();
+    foreach ($menus as $menu) {
+      $menuPrivilege = DB::table('cms_menus_privileges')
+        ->where('id_cms_privileges', 1)
+        ->where('id_cms_menus', $menu->id)
+        ->first();
+      if (!$menuPrivilege) {
+        DB::table('cms_menus_privileges')->insert([
+          'id_cms_menus' => $menu->id,
+          'id_cms_privileges' => 1,
+        ]);
+      }
+    }
+    if (DB::table('languages')->count() == 0) {
+      $data = [
+        [
+          'name' => 'English',
+          'code' => 'en',
+          'active' => 1,
+          'default' => 1,
+        ],
+        [
+          'name' => 'Arabic',
+          'code' => 'ar',
+          'active' => 1,
+          'default' => null,
+        ],
+      ];
+      DB::table('languages')->insert($data);
+    }
+    # Fields
+    if (DB::table('fields')->count() == 0) {
+      $data = [
+        [
+          'title' => 'text',
+          'multi' => 0,
+        ],
+        [
+          'title' => 'email',
+          'multi' => 0,
+        ],
+        [
+          'title' => 'radio',
+          'multi' => 1,
+        ],
+        [
+          'title' => 'checkbox',
+          'multi' => 1,
+        ],
+        [
+          'title' => 'select',
+          'multi' => 1,
+        ],
+        [
+          'title' => 'number',
+          'multi' => 0,
+        ],
+        [
+          'title' => 'file',
+          'multi' => 0,
+        ],
+      ];
+      DB::table('fields')->insert($data);
+    }
+    # Voila Seeder End
+
+    $this->command->info('All cb seeders completed !');
+  }
 }

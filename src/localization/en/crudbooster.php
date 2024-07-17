@@ -489,4 +489,6 @@ return [
     'reCAPTCHA_setting' => 'reCaptcha Settings',
 
     'alert_recaptcha' => 'There was an error with the reCAPTCHA. Please try again later',
+    'menus_configuration'=>'Menus Configuration',
+
 ];

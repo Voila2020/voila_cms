@@ -392,8 +392,9 @@ class AdminFormsController extends CBController
                             $element_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
                         $element_form .= "</select>";
-                    }
-                    else if($item->title =='number'){
+                    } else if ($item->title == 'number') {
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    } else if ($item->title == 'file') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
@@ -486,7 +487,9 @@ class AdminFormsController extends CBController
                             $elemnt_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
                         $elemnt_form .= "</select>";
-                    } else if($item->title =='number'){
+                    } else if ($item->title == 'number') {
+                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    } else if ($item->title == 'file') {
                         $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
@@ -579,7 +582,10 @@ class AdminFormsController extends CBController
         }
         $submit .= "</tr></thead><body><tr>";
         foreach ($fields as $item) {
-            if (is_array($request->input($this->stripSpace($item->label_filed)))) {
+            if ($item->title == "file") {
+                $key = $item->label_filed;
+                $submit .= "<td><a target='_blank' href=\"" . config('app.url') . '/files/' . $form->name . '/' . $request->$key->getClientOriginalName() . "\">" . $request->$key->getClientOriginalName() . "</a></td>";
+            } else if (is_array($request->input($this->stripSpace($item->label_filed)))) {
                 $submit .= "<td>";
                 foreach ($request->input($this->stripSpace($item->label_filed)) as $val) {
                     $submit .= $val . ",";
@@ -596,6 +602,15 @@ class AdminFormsController extends CBController
                 'landing_page_id' => $request->landing_page_id,
                 'value' => $request->input($this->stripSpace($item->label_filed)),
             ]);
+            //type file
+            if ($item->title == "file") {
+                $key = $item->label_filed;
+                if ($request->hasFile($key)) {
+                    $file = $request->file($key);
+                    $fileName = $file->getClientOriginalName();
+                    $file->move(public_path('files/' . $form->name), $fileName);
+                }
+            }
         }
 
         $submit .= "</tr></tbody></table>";

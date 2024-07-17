@@ -276,7 +276,7 @@ function components(editor) {
     );
 
 
-    //column component type 
+    //column component type
     editor.DomComponents.addType('column', {
         model: {
             defaults: {
@@ -396,5 +396,23 @@ function components(editor) {
         },
     });
 
+    //Icon Component
+    editor.DomComponents.addType('icon-block', {
+        model: {
+            defaults: {
+                tagName: 'div',
+                draggable: true,
+                droppable: false,
+                selectable: true,
+                components: [
+                    {
+                        tagName: 'i',
+                        type: 'icon',
+                        classes: ['fa', 'fa-cube'],
+                    },
+                ],
+            },
+        },
+    });
 
 }

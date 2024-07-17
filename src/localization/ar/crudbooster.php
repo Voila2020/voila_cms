@@ -438,5 +438,6 @@ return [
     'reCAPTCHA_setting' => 'reCaptcha اعدادات',
 
     'alert_recaptcha' => 'حدث خطأ في reCAPTCHA. الرجاء معاودة المحاولة في وقت لاحق',
+    'menus_configuration'=>'إعدادات القوائم',
 
 ];
