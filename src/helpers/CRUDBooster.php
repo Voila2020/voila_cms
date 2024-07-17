@@ -163,10 +163,16 @@ class CRUDBooster
 
     public static function setSetting($name, $value)
     {
-        if (Cache::has('setting_' . $name)) {
-            $value = $value == 'en' ? 'english' : 'arabic';
-            Cache::forever('setting_' . $name, $value);
+        if ($value == "en") {
+            $value = "english";
+        } else if ($value == "ar") {
+            $value = "arabic";
         }
+        Cache::forget('setting_' . $name);
+        DB::table('cms_settings')->where('name', $name)->update([
+            "content" => $value
+        ]);
+        Cache::forever('setting_' . $name, $value);
     }
 
     public static function insert($table, $data = [])
@@ -1096,7 +1102,7 @@ class CRUDBooster
         }
         if ($table) {
             $hasTable = Schema::hasTable($table);
-            if (!$hasTable){
+            if (!$hasTable) {
                 $table = Str::plural($table);
             }
         }

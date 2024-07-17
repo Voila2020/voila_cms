@@ -1736,7 +1736,9 @@ class CBController extends Controller
         } else {
             DB::table($this->table)->where($this->primary_key, $id)->delete();
         }
-
+        if ($this->translation_table) {
+            DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+        }
         $this->hook_after_delete($id);
 
         $url = g('return_url') ?: CRUDBooster::referer();
@@ -1860,6 +1862,12 @@ class CBController extends Controller
         $select_column = array_filter($select_column);
         $table_columns = DB::getSchemaBuilder()->getColumnListing($this->table);
         $tableMainColumns = DB::getSchemaBuilder()->getColumnListing($this->table);
+        $dateColumns = [];
+        foreach ($tableMainColumns as $column) {
+            $type = DB::getSchemaBuilder()->getColumnType($this->table, $column);
+            if ($type == "date" || $type == "datetime")
+                $dateColumns[] = $column;
+        }
         if ($this->translation_table) {
             $translationAddedColumns = [];
             $translationColumns = DB::getSchemaBuilder()->getColumnListing($this->translation_table);
@@ -1981,8 +1989,14 @@ class CBController extends Controller
                 }
                 $dataToInsert = [];
                 foreach ($a as $column => $columnValue) {
-                    if (in_array($column, $tableMainColumns))
-                        $dataToInsert[$column] = $a[$column];
+                    if (in_array($column, $tableMainColumns)) {
+                        if (in_array($column, $dateColumns)) {
+                            $dateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($a[$column])->format('Y-m-d');
+                            $dataToInsert[$column] = $dateValue;
+                        } else {
+                            $dataToInsert[$column] = $a[$column];
+                        }
+                    }
                 }
                 $lastInsertId = DB::table($this->table)->insertGetId($dataToInsert);
                 if ($this->translation_table) {
