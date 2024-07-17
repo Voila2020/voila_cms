@@ -595,14 +595,7 @@ class AdminFormsController extends CBController
                 $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
             }
 
-            $applicationField = DB::table('applications_fields')->insert([
-                'application_id' => $applicationID,
-                'form_id' => $item->form_id,
-                'field_id' => $item->id,
-                'landing_page_id' => $request->landing_page_id,
-                'value' => $request->input($this->stripSpace($item->label_filed)),
-            ]);
-            //type file
+            //-------------------------------------------//
             if ($item->title == "file") {
                 $key = $item->label_filed;
                 if ($request->hasFile($key)) {
@@ -610,7 +603,24 @@ class AdminFormsController extends CBController
                     $fileName = $file->getClientOriginalName();
                     $file->move(public_path('files/' . $form->name), $fileName);
                 }
+
+                $applicationField = DB::table('applications_fields')->insert([
+                    'application_id' => $applicationID,
+                    'form_id' => $item->form_id,
+                    'field_id' => $item->id,
+                    'landing_page_id' => $request->landing_page_id,
+                    'value' => 'files/' . $form->name . $fileName
+                ]);
+            } else {
+                $applicationField = DB::table('applications_fields')->insert([
+                    'application_id' => $applicationID,
+                    'form_id' => $item->form_id,
+                    'field_id' => $item->id,
+                    'landing_page_id' => $request->landing_page_id,
+                    'value' => $request->input($this->stripSpace($item->label_filed)),
+                ]);
             }
+            //-------------------------------------------//
         }
 
         $submit .= "</tr></tbody></table>";

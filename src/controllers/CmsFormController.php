@@ -133,7 +133,10 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
         }
         $submit .= "</tr></thead><body><tr>";
         foreach ($fields as $item) {
-            if (is_array($request->input($this->stripSpace($item->label_filed)))) {
+            if ($item->title == "file") {
+                $key = $item->label_filed;
+                $submit .= "<td><a target='_blank' href=\"" . config('app.url') . '/files/' . $form->name . '/' . $request->$key->getClientOriginalName() . "\">" . $request->$key->getClientOriginalName() . "</a></td>";
+            } else if (is_array($request->input($this->stripSpace($item->label_filed)))) {
                 $submit .= "<td>";
                 foreach ($request->input($this->stripSpace($item->label_filed)) as $val) {
                     $submit .= $val . ",";
@@ -143,13 +146,31 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
                 $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
             }
 
-            $applicationField = DB::table('applications_fields')->insert([
-                'application_id' => $application->id,
-                'form_id' => $item->form_id,
-                'field_id' => $item->id,
-                'landing_page_id' => $request->landing_page_id,
-                'value' => $request->input($this->stripSpace($item->label_filed)),
-            ]);
+            //-------------------------------------------//
+            if ($item->title == "file") {
+                $key = $item->label_filed;
+                if ($request->hasFile($key)) {
+                    $file = $request->file($key);
+                    $fileName = $file->getClientOriginalName();
+                    $file->move(public_path('files/' . $form->name), $fileName);
+                }
+                $applicationField = DB::table('applications_fields')->insert([
+                    'application_id' => $application->id,
+                    'form_id' => $item->form_id,
+                    'field_id' => $item->id,
+                    'landing_page_id' => $request->landing_page_id,
+                    'value' => 'files/' . $form->name . $fileName,
+                ]);
+            } else {
+                $applicationField = DB::table('applications_fields')->insert([
+                    'application_id' => $application->id,
+                    'form_id' => $item->form_id,
+                    'field_id' => $item->id,
+                    'landing_page_id' => $request->landing_page_id,
+                    'value' => $request->input($this->stripSpace($item->label_filed)),
+                ]);
+            }
+            //-------------------------------------------//
         }
 
         $submit .= "</tr></tbody></table>";
