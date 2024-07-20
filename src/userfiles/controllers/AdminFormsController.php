@@ -4,15 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Rules\ReCaptcha;
 use Carbon\Carbon;
+use crocodicstudio\crudbooster\controllers\CBController;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
-use crocodicstudio\crudbooster\controllers\CBController;
-
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Request as FacadeRequest;
+
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Schema;
+use crocodicstudio\crudbooster\export\DefaultExportXls;
+use Maatwebsite\Excel\Facades\Excel;
 
 class AdminFormsController extends CBController
 {
@@ -356,7 +360,7 @@ class AdminFormsController extends CBController
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
             $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
@@ -437,7 +441,84 @@ class AdminFormsController extends CBController
     public function getFormApplications($id, Request $request)
     {
         $applications = DB::table('applications')->where('form_id', $id)->get();
-        return view('crudbooster::form_builder.submits', array('data' => $applications));
+        $applicationData = collect([]);
+
+        //---------------------------------------------------//
+
+        foreach ($applications as $application) {
+            $fields = DB::table("applications_fields")
+                ->join("form_field", "applications_fields.field_id", "=", "form_field.id")
+                ->where("applications_fields.application_id", $application->id)
+                ->get();
+
+            // get all fields with values
+            $applicationFields = $fields->map(function ($field) {
+                return [
+                    'label_field' => $field->label_filed,
+                    'value' => $field->value,
+                ];
+            });
+
+            $applicationData->push([
+                'created_at' => $application->created_at,
+                'ip' => $application->ip,
+                'fields' => $applicationFields,
+            ]);
+        }
+
+
+        //---------------------------------------------------//
+        $result = [
+            "items" => $applicationData->map(function ($application) {
+                $item = [
+                    "created_at" => $application['created_at'],
+                    "ip" => $application['ip'],
+                ];
+                //added fields to values to result
+                foreach ($application['fields'] as $field) {
+                    $item[$field['label_field']] = $field['value'];
+                }
+
+                return $item;
+            })->all(),
+        ];
+
+        $result = json_decode(json_encode($result));
+
+        //---------------------------------------------------//
+
+        $columns = Schema::getColumnListing("applications");
+        $columns = array_reverse($columns);
+
+        $formattedColumns = [];
+
+        //added fields to columns
+        foreach ($applicationData as $application) {
+            foreach ($application['fields'] as $field) {
+                $formattedColumns[] = [
+                    "label" => $field['label_field'],
+                    "name" => $field['label_field'],
+                    "field" => $field['label_field'],
+                ];
+            }
+            break;
+        }
+        foreach ($columns as $col) {
+            $formattedColumns[] = [
+                "label" => $col,
+                "name" => $col,
+                "field" => $col,
+            ];
+        }
+
+        $filteredColumns = array_filter($formattedColumns, function ($column) {
+            return $column["label"] !== "response" && $column["label"] !== "updated_at" && $column["label"] !== "id" && $column["label"] !== "form_id" && $column["label"] !== "landing_page_id" && $column["label"] !== "active";
+        });
+
+        $filteredColumns = array_values($filteredColumns);
+        //---------------------------------------------------//
+
+        return view('crudbooster::form_builder.submits', array('data' => $applications, 'export_data_columns' => $filteredColumns, 'export_data_result' => $result));
     }
 
     public function getShowForm($id, Request $request)
@@ -450,7 +531,7 @@ class AdminFormsController extends CBController
         $form = DB::table('forms')->find($id);
         $elemnt_form = "";
         if ($form) {
-            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit') . '/' . $form->id . "' class=' well' style='background:#FFF' >";
+            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit') . '/' . $form->id . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
             $elemnt_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
@@ -594,7 +675,7 @@ class AdminFormsController extends CBController
             } else {
                 $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
             }
-
+            
             //-------------------------------------------//
             if ($item->title == "file") {
                 $key = $item->label_filed;
@@ -661,5 +742,50 @@ class AdminFormsController extends CBController
         }
 
         return back()->with('success', $form->response);
+    }
+
+    public function postExportData()
+    {
+        ini_set('memory_limit', '1024M');
+        set_time_limit(180);
+
+        $this->limit = facadeRequest::input('limit');
+        $this->index_return = true;
+        $filetype = facadeRequest::input('fileformat');
+        $filename = facadeRequest::input('filename');
+        $papersize = facadeRequest::input('page_size');
+        $paperorientation = facadeRequest::input('page_orientation');
+        $response = $this->getIndex();
+
+        if (facadeRequest::input('export_data_columns')) {
+            $columns = json_decode(facadeRequest::input('export_data_columns'), true);
+            $result = json_decode(facadeRequest::input('export_data_result'));
+
+            $response = [
+                "columns" => $columns,
+                "result" => $result->items,
+            ];
+        }
+
+        if (facadeRequest::input('default_paper_size')) {
+            DB::table('cms_settings')->where('name', 'default_paper_size')->update(['content' => $papersize]);
+        }
+        switch ($filetype) {
+            case "pdf":
+                $view = view('crudbooster::export', $response)->render();
+                $pdf = App::make('dompdf.wrapper');
+                $pdf->loadHTML($view);
+                $pdf->setPaper($papersize, $paperorientation);
+
+                return $pdf->stream($filename . '.pdf');
+                break;
+            case 'xls':
+                return Excel::download(new DefaultExportXls($response), $filename . ".xls");
+                break;
+            case 'csv':
+
+                return Excel::download(new DefaultExportXls($response), $filename . ".csv");
+                break;
+        }
     }
 }
