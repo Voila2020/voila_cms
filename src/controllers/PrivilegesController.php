@@ -90,7 +90,7 @@ class PrivilegesController extends CBController
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang("denied_access"));
         }
 
-        $this->validation();
+        $this->validation($this->arr);
         $this->input_assignment();
         $id = DB::table($this->table)->insertGetId($this->arr);
 
