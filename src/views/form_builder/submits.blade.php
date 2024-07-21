@@ -10,7 +10,7 @@
         <input type="hidden" name="export_data_columns" value="{{ json_encode($export_data_columns) }}">
 
         <input type="hidden" name="export_data_result" value="{{ json_encode($export_data_result) }}">
-        <input type="hidden" name="fileformat" value="csv">
+        <input type="hidden" name="fileformat" value="xls">
         <div class="mb-4" style="margin-bottom:4px ; margin-left:70px">
             <button class="btn btn-primary btn-submit " type="submit">Export</button>
         </div>
