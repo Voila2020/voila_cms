@@ -776,7 +776,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                                                                                                            $formula_function_name();});";
+                                                                                                                                                                                                                                                                                                                                                                                                                        $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -836,7 +836,6 @@ $name = str_slug($form['label'], '');
                                                         pSRC = p.find($('.tb_img-{{ $c['name'] }}')).attr("src");
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
                                                         if (pSRC.charAt(0) !== '/')
-                                                            +
                                                             pSRC = "/".pSRC;
                                                         //---------------------------------------//
                                                         $('#panel-form-{{ $name }} #link-{{ $c['name'] }}').removeClass('hide');
