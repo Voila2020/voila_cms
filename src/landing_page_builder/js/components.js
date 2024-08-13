@@ -400,19 +400,13 @@ function components(editor) {
     editor.DomComponents.addType('icon-block', {
         model: {
             defaults: {
-                tagName: 'div',
+                tagName: 'i',
                 draggable: true,
                 droppable: false,
                 selectable: true,
-                components: [
-                    {
-                        tagName: 'i',
-                        type: 'icon',
-                        classes: ['fa', 'fa-cube'],
-                    },
-                ],
+                type: 'icon',
+                classes: ['fa', 'fa-cube', 'fa-2x'],
             },
         },
     });
-
 }
