@@ -83,7 +83,7 @@ function define_new_traits(editor) {
     onEvent({ elInput, component, event }) { },
   });
 
-} 8
+}
 
 //put the new defined traits in use so we created new inputs using them.
 function traits(editor) {
