@@ -55,7 +55,7 @@
 
 [class*="col-"] {
     display: flex;
-    flex-direction: column !important;
+    /* flex-direction: column !important; */
 }
 
 @media (max-width: 760px) {
@@ -79,6 +79,10 @@
 
 .flex-direction-column {
     flex-direction: column;
+}
+
+.flex-direction-row {
+    flex-direction: row;
 }
 
 .align-items-center {

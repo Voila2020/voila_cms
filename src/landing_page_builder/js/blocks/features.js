@@ -9,10 +9,10 @@ editor.BlockManager.add("feature-image", {
     content: `  <div>
     <div class="container">
         <div class="row flex-lg-row-reverse center-all text-center">
-            <div class="col-10 col-sm-8 col-lg-6 center-all text-center">
+            <div class="col-10 col-sm-8 col-lg-6 center-all text-center flex-direction-column">
                 <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="d-block ms-auto me-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
             </div>
-            <div class="col-lg-6 center-all text-center">
+            <div class="col-lg-6 center-all text-center flex-direction-column">
                 <h1 class="display-5">Responsive left-aligned hero with image</h1>
                 <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful
                     JavaScript plugins.</p>
@@ -38,7 +38,7 @@ editor.BlockManager.add("feature-image1", {
     content: ` <div>
     <div class="container">
         <div class="row flex-lg-row-reverse center-all text-center">
-            <div class="col-lg-6 center-all text-center">
+            <div class="col-lg-6 center-all text-center flex-direction-column">
                 <h1 class="display-5">Responsive left-aligned hero with image</h1>
                 <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful
                     JavaScript plugins.</p>
@@ -48,7 +48,7 @@ editor.BlockManager.add("feature-image1", {
              </a>
                 </div>
             </div>
-            <div class="col-10 col-sm-8 col-lg-6 center-all text-center">
+            <div class="col-10 col-sm-8 col-lg-6 center-all text-center flex-direction-column">
                 <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="d-block ms-auto me-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy">
             </div>
         </div>
@@ -276,30 +276,30 @@ editor.BlockManager.add("section1", {
      <div class="row g-4 row-cols-1 row-cols-lg-3 center-all text-center">
       <div class="col">
        <div class="row center-all text-center">
-        <div class="col-4">
+        <div class="col-4 flex-direction-column">
          <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="img-fluid">
         </div>
-        <div class="col-8">
+        <div class="col-8 flex-direction-column">
            Advanced security
         </div>
        </div>
       </div>
       <div class="col">
        <div class="row center-all text-center">
-        <div class="col-4">
+        <div class="col-4 flex-direction-column">
          <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="img-fluid">
         </div>
-        <div class="col-8">
+        <div class="col-8 flex-direction-column">
           Access and data control
         </div>
        </div>
       </div>
       <div class="col">
         <div class="row center-all text-center">
-          <div class="col-4">
+          <div class="col-4 flex-direction-column">
             <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="img-fluid">
           </div>
-          <div class="col-8">
+          <div class="col-8 flex-direction-column">
              Cyberthreat protection
            </div>
         </div>
@@ -322,10 +322,10 @@ editor.BlockManager.add("featureVideo", {
     content: `  <section id="hero" class="hero d-flex center-all text-center">
     <div class="container">
         <div class="row">
-            <div class="col-lg-6 hero-img center-all text-center">
+            <div class="col-lg-6 hero-img center-all text-center flex-direction-column">
                 <video controls></video>
             </div>
-            <div class="col-lg-6 d-flex flex-column center-all text-center">
+            <div class="col-lg-6 d-flex flex-column center-all text-center flex-direction-column">
                 <h1>We offer modern solutions for growing your business</h1>
                 <h2>We are team of talented designers making websites with Bootstrap</h2>
                 <div class="center-all text-center">
@@ -354,36 +354,36 @@ editor.BlockManager.add("iconsWithImg", {
     content: `<section>
       <div class="container">
           <div class="row">
-              <div class="col-lg-6">
+              <div class="col-lg-6 flex-direction-column">
                   <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" class="img-fluid">
               </div>
-              <div class="col-lg-6">
+              <div class="col-lg-6 flex-direction-column">
                   <div>
                       <h3>Test</h3>
                   </div>
                   <div class="d-flex">
-                      <div class="col-2">
+                      <div class="col-2 flex-direction-column">
                           <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" alt="">
                       </div>
-                      <div class="col-10 ps-4">
+                      <div class="col-10 ps-4 flex-direction-column">
                           <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Integer adipiscing erat</p>
                       </div>
                   </div>
-  
+
                   <div class="d-flex">
-                      <div class="col-2">
+                      <div class="col-2 flex-direction-column">
                           <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" alt="">
                       </div>
-                      <div class="col-10 ps-4">
+                      <div class="col-10 ps-4 flex-direction-column">
                           <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Integer adipiscing erat</p>
                       </div>
                   </div>
-  
+
                   <div class="d-flex">
-                      <div class="col-2">
+                      <div class="col-2 flex-direction-column">
                           <img src="https://getbootstrap.com/docs/5.1/examples/heroes/bootstrap-themes.png" alt="">
                       </div>
-                      <div class="col-10 ps-4">
+                      <div class="col-10 ps-4 flex-direction-column">
                           <p>Lorem ipsum dolor sit amet consectetur adipiscing elit Integer adipiscing erat</p>
                       </div>
                   </div>
@@ -393,8 +393,8 @@ editor.BlockManager.add("iconsWithImg", {
                       </a>
                   </div>
               </div>
-  
-  
+
+
           </div>
       </div>
   </section>

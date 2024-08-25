@@ -38,14 +38,14 @@ function voila_forms(editor) {
                     content: `
                       <div class="container">
                           <div class="row flex-lg-row-reverse">
-                          <div class="col-10 col-sm-8 col-lg-6">
+                          <div class="col-10 col-sm-8 col-lg-6 flex-direction-column">
                               <div class="pt-4 pb-4 ps-4 pe-4">
                                   <h2 class="text-center">Get Started today!</h2>
                                   <p class="text-center">Kindly take a moment to fill out the form below with your name and contact information.</p>
                                   ${e.html}
                               </div>
                           </div>
-                          <div class="col-lg-6 center-all text-center">
+                          <div class="col-lg-6 center-all text-center flex-direction-column">
                               <h1 class="display-5">Responsive left-aligned hero with image</h1>
                               <p class="lead">Quickly design and customize responsive mobile-first sites with Bootstrap, the world’s most popular front-end open source toolkit, featuring Sass variables and mixins, responsive grid system, extensive prebuilt components, and powerful
                                   JavaScript plugins.</p>
@@ -75,14 +75,14 @@ function voila_forms(editor) {
                       <div>
                           <div class="container">
                               <div class="row">
-                                  <div class="col-md-12 col-lg-5 col-sm-12 center-all text-center">
+                                  <div class="col-md-12 col-lg-5 col-sm-12 center-all text-center flex-direction-column">
                                       <div class="pt-4 pb-4 ps-4 pe-4">
                                           <h2 class="text-center">Get Started today!</h2>
                                           <p class="text-center">Kindly take a moment to fill out the form below with your name and contact information.</p>
                                           ${e.html}
                                       </div>
                                   </div>
-                                  <div class="col-lg-7 col-md-12 col-sm-12 center-all text-center">
+                                  <div class="col-lg-7 col-md-12 col-sm-12 center-all text-center flex-direction-column">
                                   <img src="https://bootstrapmade.com/demo/templates/FlexStart/assets/img/hero-img.png" class="img-fluid" alt="">
                                   </div>
                               </div>
@@ -95,5 +95,3 @@ function voila_forms(editor) {
         }
     );
 }
-
-

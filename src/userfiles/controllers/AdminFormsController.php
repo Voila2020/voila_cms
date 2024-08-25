@@ -375,9 +375,9 @@ class AdminFormsController extends CBController
                 foreach ($fields as $item) {
                     $req = ($item->required_filed == 'Yes') ? "required" : "";
                     $element_form .= "<div class='form-group'>";
-                    $element_form .= "<label>" . $item->label_filed . ":</label>";
+                    // $element_form .= "<label>" . $item->label_filed . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
-                        $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' placeholder='".$item->label_filed."' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {
                         $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
@@ -675,7 +675,7 @@ class AdminFormsController extends CBController
             } else {
                 $submit .= "<td>" . $request->input($this->stripSpace($item->label_filed)) . "</td>";
             }
-            
+
             //-------------------------------------------//
             if ($item->title == "file") {
                 $key = $item->label_filed;

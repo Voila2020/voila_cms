@@ -7,10 +7,10 @@ function footers_blocks(editor) {
             '/landing_page_builder/blocks/images/footer.svg" alt=""><div class="draggable"></div><br> Footer1',
         content: ` <div>
     <div class="container">
-        <div class="col-sm-12 center-all text-center">
+        <div class="col-sm-12 center-all text-center flex-direction-column">
             <p class="address center-all text-center">HAS HO Building, Second Floor - Mohammed Ibn Abdul Aziz St. </p>
             <p class="contact-us center-all text-center">Contact Us: +966 12 261 9667</p>
-            <div class="social center-all text-center">
+            <div class="social center-all text-center col-sm-12">
                 <a target="_blank" class="text-decoration-none" href="https://twitter.com/Voila_digital"> <span class="fa-brands fa-square-x-twitter fa-2x"></span> </a>
                 <a target="_blank" class="text-decoration-none" href="https://www.facebook.com/voila2006">
                     <span class="fa fa-facebook-square fa-2x"></span> </a>
@@ -33,8 +33,8 @@ function footers_blocks(editor) {
             $_SITE +
             '/landing_page_builder/blocks/images/footer.svg" alt=""><div class="draggable"></div><br> Footer2',
         content: `<div style="background-color:#262627">
-    <div class="col-sm-12 center-all text-center">
-        <div class="social center-all text-center">
+    <div class="col-sm-12 center-all text-center flex-direction-column">
+        <div class="social center-all text-center col-sm-12">
             <a target="_blank" href="https://twitter.com/ctelecoms2007"
                 class="text-decoration-none">
                 <span class="fa-brands fa-square-x-twitter fa-2x first-color m-2"></span>

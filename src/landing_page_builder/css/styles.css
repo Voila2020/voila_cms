@@ -1050,6 +1050,9 @@ div[class^="col-"] {
 .flex-direction-column {
     flex-direction: column;
 }
+.flex-direction-row {
+    flex-direction: row;
+}
 
 .align-items-center {
     align-items: center;
