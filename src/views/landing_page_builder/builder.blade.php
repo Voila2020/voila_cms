@@ -158,7 +158,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/grapesjs/0.21.2/grapes.min.js"></script>
 
 
-    <script src="https://unpkg.com/grapesjs-preset-webpage"></script>
+    <script src="{{ url('landing_page_builder/plugins/js/grapesjs-preset-webpage.min.js') }}"></script>
+    <script src="{{ url('landing_page_builder/plugins/js/grapesjs-plugin-export.min.js') }}"></script>
     <script>
         $_SITE = "{{ url('/') }}";
         $id = "{{ $landingPageId }}";
@@ -176,7 +177,7 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
 
-    <script src="{{ url('landing_page_builder/js/fontawsome.js') }}"></script>
+
     <script src="{{ url('landing_page_builder/js/traits.js') }}"></script>
     <script src="{{ url('landing_page_builder/js/components.js') }}"></script>
     <script src="{{ url('landing_page_builder/js/blocks/basic.js') }}"></script>

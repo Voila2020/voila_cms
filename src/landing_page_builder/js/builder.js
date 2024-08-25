@@ -69,6 +69,7 @@ editor = grapesjs.init({
     },
     plugins: [
         'grapesjs-preset-webpage',
+        'grapesjs-plugin-export',
         'components',
         'traits',
         'define_new_traits',
@@ -428,11 +429,13 @@ function removeComponentsNulled(editor) {
     // Recursive function to search and remove components
     function searchAndRemoveComponents(components) {
         components.forEach(component => {
-            if (component.get('content') && component.get('content') == "null") {
-                console.log(component.get('content'))
-                // component.remove();
-            } else if (component.components().length) {
-                searchAndRemoveComponents(component.components());
+            try{
+                if (component.get('content') && component.get('content') == "null") {
+                    component.remove();
+                } else if (component.components().length) {
+                    searchAndRemoveComponents(component.components());
+                }
+            } catch (e){
             }
         });
     }
