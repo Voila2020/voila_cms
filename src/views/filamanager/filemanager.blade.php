@@ -434,7 +434,7 @@ $get_params = http_build_query($get_params);
     <input type="hidden" id="new_folder" value="<?php echo cbLang('filemanager.New_Folder'); ?>" />
     <input type="hidden" id="ok" value="<?php echo cbLang('filemanager.OK'); ?>" />
     <input type="hidden" id="cancel" value="<?php echo cbLang('filemanager.Cancel'); ?>" />
-    <input type="hidden" id="rename" value="<?php echo cbLang('filemanager.Rename'); ?>" />
+    <input type="hidden" id="rename" value="<?php echo cbLang('filemanager.Rename_with_note'); ?>" />
     <input type="hidden" id="lang_duplicate" value="<?php echo cbLang('filemanager.Duplicate'); ?>" />
     <input type="hidden" id="duplicate" value="<?php if ($config['duplicate_files']) {
         echo 1;
@@ -1239,7 +1239,7 @@ if (!empty($bc)) {
             $file_path = $config['current_path'] . $rfm_subfolder . $subdir . $file;
             //check if file have illegal caracter
 
-            if ($file != fix_filename($file, $config)) {
+            if ($file != fix_filename($file, $config) && $config['fix_filename_only_on_new_items'] != 'true') {
                 $file1 = fix_filename($file, $config);
                 $file_path1 = ($config['current_path'] . $rfm_subfolder . $subdir . $file1);
                 if (file_exists($file_path1)) {

@@ -549,12 +549,26 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
     }
 
     function Q(e) {
-        return null != e ? ("true" == jQuery("#transliteration").val() && (e = (e = function(e) {
-            for (var a = [/[\300-\306]/g, /[\340-\346]/g, /[\310-\313]/g, /[\350-\353]/g, /[\314-\317]/g, /[\354-\357]/g, /[\322-\330]/g, /[\362-\370]/g, /[\331-\334]/g, /[\371-\374]/g, /[\321]/g, /[\361]/g, /[\307]/g, /[\347]/g], t = ["A", "a", "E", "e", "I", "i", "O", "o", "U", "u", "N", "n", "C", "c"], r = 0; r < a.length; r++) e = e.replace(a[r], t[r]);
-            return e
-        }(e)).replace(/[^A-Za-z0-9\.\-\[\] _]+/g, "")), "true" == jQuery("#convert_spaces").val() && (e = e.replace(/ /g, jQuery("#replace_with").val())), "true" == jQuery("#lower_case").val() && (e = e.toLowerCase()), e = (e = (e = (e = (e = e.replace('"', "")).replace("'", "")).replace("/", "")).replace("\\", "")).replace(/<\/?[^>]+(>|$)/g, ""), y.trim(e)) : null
+        if(null != e){
+            if("true" == jQuery("#transliteration").val()){
+                e = (e = function (e) {
+                    for (var a = [/[\300-\306]/g, /[\340-\346]/g, /[\310-\313]/g, /[\350-\353]/g, /[\314-\317]/g, /[\354-\357]/g, /[\322-\330]/g, /[\362-\370]/g, /[\331-\334]/g, /[\371-\374]/g, /[\321]/g, /[\361]/g, /[\307]/g, /[\347]/g], t = ["A", "a", "E", "e", "I", "i", "O", "o", "U", "u", "N", "n", "C", "c"], r = 0; r < a.length; r++) e = e.replace(a[r], t[r]);
+                    return e
+                }(e)).replace(/[^A-Za-z0-9\.\-\[\] _]+/g, "");
+            }
+            if("true" == jQuery("#convert_spaces").val()){
+                e = e.replace(/ /g, jQuery("#replace_with").val());
+            }
+            if("true" == jQuery("#lower_case").val()){
+                e = e.toLowerCase();
+            }
+            e = (e = (e = (e = (e = e.replace('"', "")).replace("'", "")).replace("/", "")).replace("\\", "")).replace(/<\/?[^>]+(>|$)/g, "");
+            e.trim(e);
+            return e;
+        }else{
+            return null
+        }   
     }
-
     function g(e, a, t, r, i) {
         null !== t && (t = Q(t), y.ajax({
             type: "POST",
