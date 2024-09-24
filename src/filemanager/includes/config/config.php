@@ -259,7 +259,7 @@ $config = array(
     'lower_case'                            => true, 
     //apply fix name Just on new items 
     //note: default value is false, make value true if you have already userd images in filemanager you dont want break its path
-    'fix_filename_only_on_new_items'        => false, 
+    'fix_filename_only_on_new_items'        => true, 
 
     //Add ?484899493349 (time value) to returned images to prevent cache
     'add_time_to_img'                       => false,
