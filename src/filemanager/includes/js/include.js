@@ -1,4 +1,4 @@
-var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, apply_any, apply_video, apply_link, apply_file_rename, apply_file_duplicate, apply_folder_rename;
+var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, apply_any, apply_video, apply_link, apply_file_rename, apply_file_duplicate, apply_folder_rename,apply_alt_text
 ! function(y, n, a) {
     "use strict";
     var t, i = null,
@@ -318,6 +318,15 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
                     bootbox.prompt(jQuery("#rename").val(), jQuery("#cancel").val(), jQuery("#ok").val(), function(e) {
                         null !== e && (e = Q(e)) != r && g("rename_file", t, e, a, "apply_file_rename")
                     }, r)
+                }),e.on("click", ".edit-alt-text-button", function () {
+                    var a = jQuery(this).closest("figure"),
+                        t = a.attr("data-path"),
+                        alt = a.attr("data-alt-text"),
+                        e = a.find("h4"),
+                        r = y.trim(e.text());
+                    bootbox.prompt(jQuery("#Edit_alt_text").val(), jQuery("#cancel").val(), jQuery("#ok").val(), function (e) {
+                        null !== e && edit_alt_text("edit_alt_text", t, r, e, a, "apply_alt_text")
+                    }, alt)
                 }), e.on("click", ".rename-folder", function() {
                     var a = jQuery(this).closest("figure"),
                         t = a.attr("data-path"),
@@ -582,6 +591,20 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
         }))
     }
 
+    function edit_alt_text(e, a, n, t, r, i) {
+        null !== t && (t, y.ajax({
+            type: "POST",
+            url: "filemanager-execute?action=" + e,
+            data: {
+                path: a,
+                name: n.replace("/", ""),
+                alt:t
+            }
+        }).done(function (e) {
+            return "" != e ? (bootbox.alert(e), !1) : ("" != i && window[i](r, t), !0)
+        }))
+    }
+    
     function _(e, t) {
         var a = jQuery("li.dir", "ul.grid").filter(":visible"),
             r = jQuery("li.file", "ul.grid").filter(":visible");
@@ -1029,6 +1052,8 @@ var encodeURL, show_animation, hide_animation, apply, apply_none, apply_img, app
         void 0 !== (t = l.attr("data-url")) && t && l.attr("data-url", t.replace(encodeURIComponent(i), encodeURIComponent(a + n))), e.parent().attr("data-name", a + n), e.attr("data-name", a + n), e.find(".name_download").val(a + n);
         var o = e.attr("data-path").replace(i, a + n);
         e.attr("data-path", o)
+    }, apply_alt_text = function (e, a) {
+        e.attr("data-alt-text", a);
     }, apply_folder_rename = function(e, a) {
         e.attr("data-name", a), e.find("figure").attr("data-name", a);
         var t = e.find("h4").find("a").text();

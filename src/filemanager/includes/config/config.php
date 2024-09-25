@@ -341,6 +341,7 @@ $config = array(
     'delete_folders'                          => config('crudbooster.filemanager_delete_folders', true),
     'upload_files'                            => config('crudbooster.filemanager_upload_files', true),
     'rename_files'                            => config('crudbooster.filemanager_rename_files', true),
+    'edit_alt_text'                           => config('crudbooster.filemanager_edit_alt_text', true),
     'rename_folders'                          => config('crudbooster.filemanager_rename_folders', true),
     'duplicate_files'                         => config('crudbooster.filemanager_duplicate_files', true),
     'extract_files'                           => config('crudbooster.filemanager_extract_files', true),

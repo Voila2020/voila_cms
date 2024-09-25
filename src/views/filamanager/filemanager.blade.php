@@ -320,6 +320,15 @@ $get_params = http_build_query($get_params);
         href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.7.1/skin/blue.monday/jplayer.blue.monday.min.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-image-editor/latest/tui-image-editor.css">
     <link href="{{ asset('vendor/filemanager/css/style.css') }}" rel="stylesheet" type="text/css" />
+    <?php 
+    if ($config['edit_alt_text']) {
+    ?>
+        <style>
+            .grid li i{margin-left:0px;margin-right:0px;z-index:0}
+        </style>
+    <?php
+    }
+    ?>    
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
@@ -435,6 +444,7 @@ $get_params = http_build_query($get_params);
     <input type="hidden" id="ok" value="<?php echo cbLang('filemanager.OK'); ?>" />
     <input type="hidden" id="cancel" value="<?php echo cbLang('filemanager.Cancel'); ?>" />
     <input type="hidden" id="rename" value="<?php echo cbLang('filemanager.Rename_with_note'); ?>" />
+    <input type="hidden" id="Edit_alt_text" value="<?php echo cbLang('filemanager.Edit_alt_text'); ?>" />
     <input type="hidden" id="lang_duplicate" value="<?php echo cbLang('filemanager.Duplicate'); ?>" />
     <input type="hidden" id="duplicate" value="<?php if ($config['duplicate_files']) {
         echo 1;
@@ -1352,6 +1362,7 @@ if (!empty($bc)) {
                         }
                         ?>
                         <figure data-name="<?php echo $file; ?>" data-path="<?php echo $rfm_subfolder . $subdir . $file; ?>"
+                            data-alt-text="<?=get_alt_text($rfm_subfolder . $subdir . $file)?>"
                             data-type="<?php if ($is_img) {
                                 echo 'img';
                             } else {
@@ -1472,6 +1483,18 @@ if (!empty($bc)) {
                                             echo 'icon-white';
                                         }
                                         ?>"></i></a>
+                                        
+                                    <?php 
+                                    if ($config['edit_alt_text']) {
+                                    ?>
+                                      <a href="javascript:void('')" class="tip-left edit-alt-text-button"
+                                        title="<?php echo cbLang('filemanager.Edit_alt_text'); ?>">
+                                        <i class="icon-edit"></i>
+                                       </a>
+                                    <?php
+                                    }
+                                    ?>    
+                                    
 
                                     <a href="javascript:void('')" class="tip-left erase-button <?php if ($config['delete_files'] && !$file_prevent_delete) {
                                         echo 'delete-file';

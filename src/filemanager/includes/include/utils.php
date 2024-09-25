@@ -1,4 +1,5 @@
 <?php
+include(base_path() . '/vendor/voila_cms/crudbooster/src/helpers/FileManager.php');
 
 if (!isset($_SESSION['RF']) || $_SESSION['RF']["verify"] != "RESPONSIVEfilemanager") {
      die('forbiden');
@@ -293,6 +294,17 @@ function rename_file($old_path, $name, $ftp = null, $config = null)
      }
 }
 
+function edit_alt_text($path, $name, $alt, $ftp = null, $config = null)
+{    
+     if(str_contains($path,'images/') != false){
+          $path = str_replace('images/',"",$path);
+     }
+     return FileManager::edit_alt_text($path,$name,$alt);
+}
+
+function get_alt_text($path){
+     return FileManager::get_file_alt_text($path);
+}
 
 function url_exists($url)
 {

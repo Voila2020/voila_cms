@@ -305,7 +305,20 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                         }
                     }
                     break;
-
+                    case 'edit_alt_text':
+                        if ($config['edit_alt_text']) {
+                            $alt = $_POST['alt'];
+                            if (!empty($alt)) {
+                                if (!edit_alt_text($path,$name ,$alt, $ftp, $config)) {
+                                    response(trans('Edit alternate text done') . AddErrorLocation())->send();
+                                    exit;
+                                }
+                            } else {
+                                response(trans('Empty alternate text') . AddErrorLocation())->send();
+                                exit;
+                            }
+                        }
+                        break;
                 case 'duplicate_file':
                     if ($config['duplicate_files']) {
                         $name = fix_filename($name, $config);
