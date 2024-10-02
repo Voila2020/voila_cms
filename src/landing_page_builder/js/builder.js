@@ -272,6 +272,25 @@ editor.Panels.addButton("options", [{
     },
 },]);
 
+
+// Go To Page Button
+editor.Commands.add('redirect-to-page', {
+    run(editor, sender) {
+        const url = $_SITE +"/"+$url ;
+        window.open(url, '_blank');
+        sender && sender.set('active', false);
+    }
+});
+editor.Panels.addButton("options", [{
+    id: "go-to",
+    className: "fa fa-search icon-blank open-modal",
+    command: "redirect-to-page",
+    attributes: {
+        title: "Go To Page"
+    },
+},]);
+
+
 //open the color picker modal
 $(".open-modal").click(function () {
     $("#less-modal").modal("show");
