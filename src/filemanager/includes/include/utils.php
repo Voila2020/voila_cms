@@ -295,7 +295,7 @@ function rename_file($old_path, $name, $ftp = null, $config = null)
 }
 
 function edit_alt_text($path, $name, $alt, $ftp = null, $config = null)
-{    
+{
      if(str_contains($path,'images/') != false){
           $path = str_replace('images/',"",$path);
      }
@@ -416,7 +416,8 @@ function create_img($imgfile, $imgthumb, $newwidth, $newheight = null, $option =
           if (strpos($imgfile, 'http') === 0 || image_check_memory_usage($imgfile, $newwidth, $newheight)) {
                require_once('php_image_magician.php');
                // die("imgfile: $imgfile,  strpos: ".strpos($imgfile, ".webp"));
-               if (strpos($imgfile, ".webp")) {
+               // if (strpos($imgfile, ".webp")) {
+               if (exif_imagetype($imgfile) === IMAGETYPE_WEBP) {
                     try {
                          $originalImage = imagecreatefromwebp($imgfile);
                          // $croppedImage = imagecreatetruecolor($newwidth, $newheight);
