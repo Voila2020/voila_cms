@@ -145,7 +145,7 @@ foreach ($editorCssFiles as $file) {
                     plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
                 },
                 menubar: 'file edit view insert format tools table tc help',
-                toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat custom-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
+                toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
                 content_css: [<?php echo implode(',', $editorCssArray); ?>],
                 setup: function(editor) {
                     //Add a custom validator to the form
@@ -222,16 +222,31 @@ foreach ($editorCssFiles as $file) {
                         editor.save();
 
                     });
-                    //////********************************************
-                    editor.ui.registry.addButton('custom-clear-format', {
-                        text: 'Custom Clear (All)',
+                    //*************************************
+                    editor.ui.registry.addButton('selected-clear-format', {
+                        text: 'Clear (Selected)',
+                        onAction: function () {
+
+                            var selectedNode = editor.selection.getNode();
+                            if(selectedNode){
+                                // Create a new element with the desired HTML content (e.g., a new paragraph)
+                                var newElement = document.createElement('p');
+                                newElement.innerHTML = selectedNode.innerHTML;
+                                // Replace the selected node with the new element
+                                selectedNode.parentNode.replaceChild(newElement, selectedNode);
+                                editor.setContent(editor.getContent());
+                            }
+                        }
+                    });
+                    editor.ui.registry.addButton('all-clear-format', {
+                        text: 'Clear (All)',
                         onAction: function () {
                             var content = editor.getContent();
-                            var text = content.replace(/<(?!br\s*\/?)[^>]+>/g, ''); // Remove all HTML tags except br
+                            var text = content.replace(/<\/?(?!(p|br)\b)[^>]*>/g, ''); // Remove all HTML tags except for <p> and <br>
                             editor.setContent(text);
                         }
                     });
-                    //////********************************************
+                    //*************************************
                 },
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
