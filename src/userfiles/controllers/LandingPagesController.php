@@ -398,7 +398,8 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     {
         $blocks =  DB::table('custom_blocks')->get();
         $landingPage = DB::table('landing_pages')->where('id', $landingPageId)->first();
-        return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage", "blocks"));
+        $landingPageUrl = $landingPage->url;
+        return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage", "blocks","landingPageUrl"));
     }
 
     public function getPageBuilderContent($id)

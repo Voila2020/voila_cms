@@ -163,6 +163,7 @@
     <script>
         $_SITE = "{{ url('/') }}";
         $id = "{{ $landingPageId }}";
+        $url = "{{ $landingPageUrl }}";
         $is_rtl = "{{ $landingPage->is_rtl }}";
         $template = "";
         $_token = $('meta[name="csrf-token"]').attr("content");
@@ -177,7 +178,7 @@
         integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous">
     </script>
 
-
+    <script src="{{ url('landing_page_builder/js/fontawsome.js') }}"></script>
     <script src="{{ url('landing_page_builder/js/traits.js') }}"></script>
     <script src="{{ url('landing_page_builder/js/components.js') }}"></script>
     <script src="{{ url('landing_page_builder/js/blocks/basic.js') }}"></script>
