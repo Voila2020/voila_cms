@@ -23,8 +23,40 @@
                 <strong>Date: </strong> {{ $item->updated_at }}<strong style="margin-left: 20px">IP: </strong>
                 {{ $item->ip }}
                 {!! $item->response !!}
+                <div style="display:flex;justify-content:end;">
+                    <button class="btn btn-danger delete-application" data-application-id="{{ $item->id }}"
+                        data-form-id="{{ $item->form_id }}">Delete</button>
+                </div>
             </div>
         @endforeach
     </div>
 </div>
+@push('bottom')
+    <script type="text/javascript">
+        $(document).ready(function() {
+            // Delete Form Application
+            $('.delete-application').click(function() {
+                let applicationId = $(this).data('application-id');
+                let formId = $(this).data('form-id');
+                let currUrl = @json(CRUDBooster::mainpath()) + '/delete-application/' + applicationId;
+
+                $.ajax({
+                    url: currUrl,
+                    type: 'GET',
+                    data: {
+                        form_id: formId
+                    },
+                    success: function(response) {
+                        $(this).closest('.well')
+                            .addClass('hide');
+                    }.bind(this),
+                    error: function(xhr) {
+                        alert('Error deleting application: ' + xhr.responseText);
+                    }
+                });
+
+            });
+        });
+    </script>
+@endpush
 @endsection
