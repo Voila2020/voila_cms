@@ -82,6 +82,82 @@ function define_new_traits(editor) {
     onUpdate({ elInput, component }) { },
     onEvent({ elInput, component, event }) { },
   });
+  //-------------------- Select2 Type ---------------------------------//
+  var select2Value;
+  editor.TraitManager.addType('select2', {
+    createInput({ trait }) {
+      const input = document.createElement('select');
+      input.className = 'select2-dropdown';
+
+      const options = trait.attributes.options || [];
+      options.forEach(option => {
+        const optionEl = document.createElement('option');
+        optionEl.value = option.value;
+        optionEl.text = option.name;
+        input.appendChild(optionEl);
+      });
+      return input;
+    },
+    //--------------------
+    onUpdate({ elInput, component, trait }) {
+      setTimeout(() => {
+        $(elInput).select2({
+          width: '100%',
+          templateResult: formatState,
+          templateSelection: formatState,
+        });
+
+        const traitValue = trait.getValue();
+        if (traitValue) {
+          $(elInput).val(traitValue).trigger('change');
+          select2Value = traitValue;
+        } else {
+          $(elInput).val(select2Value).trigger('change');
+        }
+
+        $(elInput).off('change').on('change', () => {
+          const value = $(elInput).val();
+          const previousValue = trait.previousValue || '';
+
+          updateComponentClass(component, previousValue, value);
+
+          trait.previousValue = value;
+          trait.setValue(value);
+        });
+      }, 0);
+    },
+    //--------------------------------
+    onEvent({ elInput, component, event }) {
+      if (event.type === 'change') {
+        const value = $(elInput).val();
+        const previousValue = trait.previousValue || '';
+
+        updateComponentClass(component, previousValue, value);
+
+        trait.previousValue = value;
+        trait.setValue(value);
+      }
+    },
+  });
+  //--------------------------------
+  function updateComponentClass(component, previousValue, newValue) {
+    if (previousValue) {
+      component.removeClass(previousValue);
+    }
+    if (newValue) {
+      component.addClass(newValue);
+    }
+  }
+  //--------------------------------
+  function formatState(state) {
+    if (!state.id) {
+      return state.text;
+    }
+    const $state = $(
+      `<span><i class="fa ${state.text}"></i> ${state.text}</span>`);
+    return $state;
+  }
+  //--------------------------------
 
 }
 
@@ -723,11 +799,11 @@ function traits(editor) {
           label: "Icon Classes",
         },
         {
-          type: 'class_select',
+          type: 'select2',
           options: [
             {
-              value: "",
-              name: "None",
+              value: "fa-cube",
+              name: "fa-cube",
             },
             ...((getIcons()) || []).map((iconClass) => ({
               value: iconClass,
