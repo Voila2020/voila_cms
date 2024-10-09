@@ -111,8 +111,10 @@ function define_new_traits(editor) {
         if (traitValue) {
           $(elInput).val(traitValue).trigger('change');
           select2Value = traitValue;
-        } else {
+        } else if(select2Value) {
           $(elInput).val(select2Value).trigger('change');
+        }else{
+          $(elInput).val("fa-cube").trigger('change');
         }
 
         $(elInput).off('change').on('change', () => {

@@ -252,7 +252,7 @@ editor.on("component:selected", model => {
 //save button
 editor.Panels.addButton("options", [{
     id: "save",
-    className: "fa fa-floppy-o icon-blank fa-3x",
+    className: "fa fa-floppy-o icon-blank d-flex align-items-center justify-content-center",
     command: function (editor1, sender) {
         var rr = editor.store();
     },
@@ -265,7 +265,7 @@ editor.Panels.addButton("options", [{
 //color theme button
 editor.Panels.addButton("options", [{
     id: "less",
-    className: "fa fa-tint icon-blank open-modal",
+    className: "fa fa-tint icon-blank open-modal d-flex align-items-center justify-content-center",
     command: "",
     attributes: {
         title: "Select Theme Colors"
@@ -283,7 +283,7 @@ editor.Commands.add('redirect-to-page', {
 });
 editor.Panels.addButton("options", [{
     id: "go-to",
-    className: "fa fa-search icon-blank open-modal",
+    className: "fa fa-search icon-blank open-modal d-flex align-items-center justify-content-center",
     command: "redirect-to-page",
     attributes: {
         title: "Go To Page"
