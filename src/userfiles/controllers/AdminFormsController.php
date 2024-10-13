@@ -60,6 +60,7 @@ class AdminFormsController extends CBController
         $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'switch', 'width' => 'col-sm-9'];
 
         $columns[] = ['label' => 'Fileds', 'name' => 'field_id', 'type' => 'select', 'datatable' => 'fields,title'];
+        $columns[] = ['label' => 'Label Name', 'name' => 'label_name', 'type' => 'text', 'required' => true];
         $columns[] = ['label' => 'label', 'name' => 'label_filed', 'type' => 'text', 'formula' => "[label_filed]", 'required' => true];
         $columns[] = ['label' => 'required', 'name' => 'required_filed', "type" => "switch", 'required' => true];
         $columns[] = ['label' => 'Unique', 'name' => 'unique_field', "type" => "switch", 'required' => true];
@@ -377,7 +378,7 @@ class AdminFormsController extends CBController
                     $element_form .= "<div class='form-group'>";
                     // $element_form .= "<label>" . $item->label_filed . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
-                        $element_form .= "<input type='" . $item->title . "' class='form-control' placeholder='".$item->label_filed."' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' placeholder='" . $item->label_name . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {
                         $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
@@ -454,7 +455,7 @@ class AdminFormsController extends CBController
             // get all fields with values
             $applicationFields = $fields->map(function ($field) {
                 return [
-                    'label_field' => $field->label_filed,
+                    'label_name' => $field->label_name,
                     'value' => $field->value,
                 ];
             });
@@ -476,7 +477,7 @@ class AdminFormsController extends CBController
                 ];
                 //added fields to values to result
                 foreach ($application['fields'] as $field) {
-                    $item[$field['label_field']] = $field['value'];
+                    $item[$field['label_name']] = $field['value'];
                 }
 
                 return $item;
@@ -491,14 +492,13 @@ class AdminFormsController extends CBController
         $columns = array_reverse($columns);
 
         $formattedColumns = [];
-
         //added fields to columns
         foreach ($applicationData as $application) {
             foreach ($application['fields'] as $field) {
                 $formattedColumns[] = [
-                    "label" => $field['label_field'],
-                    "name" => $field['label_field'],
-                    "field" => $field['label_field'],
+                    "label" => $field['label_name'],
+                    "name" => $field['label_name'],
+                    "field" => $field['label_name'],
                 ];
             }
             break;
@@ -547,7 +547,7 @@ class AdminFormsController extends CBController
                 foreach ($fields as $item) {
                     $req = ($item->required_filed == 'Yes') ? "required" : "";
                     $elemnt_form .= "<div class='form-group'>";
-                    $elemnt_form .= "<label>" . $item->label_filed . ":</label>";
+                    $elemnt_form .= "<label>" . $item->label_name . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
                         $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {

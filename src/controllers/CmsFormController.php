@@ -129,7 +129,7 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
 
         $submit = "<table class='table'><thead><tr>";
         foreach ($fields as $item) {
-            $submit .= "<th>" . $item->label_filed . "</th>";
+            $submit .= "<th>" . $item->label_name . "</th>";
         }
         $submit .= "</tr></thead><body><tr>";
         foreach ($fields as $item) {
