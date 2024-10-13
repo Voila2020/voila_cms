@@ -61,7 +61,7 @@ class AdminFormsController extends CBController
 
         $columns[] = ['label' => 'Fileds', 'name' => 'field_id', 'type' => 'select', 'datatable' => 'fields,title'];
         $columns[] = ['label' => 'Label Name', 'name' => 'label_name', 'type' => 'text', 'required' => true];
-        $columns[] = ['label' => 'label', 'name' => 'label_filed', 'type' => 'text', 'formula' => "[label_filed]", 'required' => true];
+        $columns[] = ['label' => 'Unique Name', 'name' => 'label_filed', 'type' => 'text', 'required' => true];
         $columns[] = ['label' => 'required', 'name' => 'required_filed', "type" => "switch", 'required' => true];
         $columns[] = ['label' => 'Unique', 'name' => 'unique_field', "type" => "switch", 'required' => true];
         // $columns[] = ['label' => 'values', 'name' => 'values', 'formula' => "[values]", "type" => "text"];
