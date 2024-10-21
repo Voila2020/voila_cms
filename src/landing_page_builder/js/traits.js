@@ -111,9 +111,9 @@ function define_new_traits(editor) {
         if (traitValue) {
           $(elInput).val(traitValue).trigger('change');
           select2Value = traitValue;
-        } else if(select2Value) {
+        } else if (select2Value) {
           $(elInput).val(select2Value).trigger('change');
-        }else{
+        } else {
           $(elInput).val("fa-cube").trigger('change');
         }
 
@@ -129,7 +129,7 @@ function define_new_traits(editor) {
       }, 0);
     },
     //--------------------------------
-    onEvent({ elInput, component, event }) {
+    onEvent({ elInput, component, event , trait}) {
       if (event.type === 'change') {
         const value = $(elInput).val();
         const previousValue = trait.previousValue || '';
@@ -145,6 +145,16 @@ function define_new_traits(editor) {
   function updateComponentClass(component, previousValue, newValue) {
     if (previousValue) {
       component.removeClass(previousValue);
+    } else {
+      // Remove all classes that start with 'fa-' except size-related ones (fa-2x to fa-10x, fa-xs, fa-sm, fa-lg)
+      const classesToKeep = [
+        'fa-xs', 'fa-sm', 'fa-lg',
+        'fa-2x', 'fa-3x', 'fa-4x', 'fa-5x', 'fa-6x', 'fa-7x', 'fa-8x', 'fa-9x', 'fa-10x'
+      ];
+      const classesToRemove = component.getClasses().filter(cls =>
+        cls.startsWith('fa-') && !classesToKeep.includes(cls)
+      );
+      classesToRemove.forEach(cls => component.removeClass(cls));
     }
     if (newValue) {
       component.addClass(newValue);

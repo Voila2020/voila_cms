@@ -168,7 +168,7 @@ function navigation_blocks(editor) {
             <div class="col-lg-6 center-all text-center">
                 <div class="row">
                     <div class="col-sm-3 center-all text-center">
-                        <i class="fa fa-envelope"></i>
+                        <i class="fa fa-envelope" data-gjs-type="icon-block"></i>
                     </div>
                     <div class="col-sm-9 flex flex-direction-column">
                         <strong>Contact us</strong>
@@ -179,7 +179,7 @@ function navigation_blocks(editor) {
             <div class="col-lg-6 center-all text-center">
                 <div class="row">
                     <div class="col-sm-3 center-all text-center">
-                        <i class="fa fa-phone"></i>
+                        <i class="fa fa-phone" data-gjs-type="icon-block"></i>
                     </div>
                     <div class="col-sm-9 flex flex-direction-column">
                         <strong>Call us</strong>
@@ -209,7 +209,7 @@ function navigation_blocks(editor) {
             <div class="col-lg-6 center-all text-center">
                 <div class="row">
                     <div class="col-sm-3 center-all text-center">
-                        <i class="fa fa-envelope"></i>
+                        <i class="fa fa-envelope" data-gjs-type="icon-block"></i>
                     </div>
                     <div class="col-sm-9 flex flex-direction-column">
                         <strong>Contact us</strong>
@@ -220,7 +220,7 @@ function navigation_blocks(editor) {
             <div class="col-lg-6 center-all text-center">
                 <div class="row">
                     <div class="col-sm-3 center-all text-center">
-                        <i class="fa fa-phone"></i>
+                        <i class="fa fa-phone" data-gjs-type="icon-block"></i>
                     </div>
                     <div class="col-sm-9 flex flex-direction-column">
                         <strong>Call us</strong>

@@ -47,7 +47,7 @@ editor.BlockManager.add("heading2", {
                         <div class="center-all text-center">
                             <a href="#formLandingPage" class="second-background btn-voila-custom btn-get-started scrollto center-all text-center">
                                   Get Started
-                                <i class="bi bi-arrow-right"></i>
+                                <i class="bi bi-arrow-right" data-gjs-type="icon-block"></i>
                             </a>
                         </div>
                     </div>

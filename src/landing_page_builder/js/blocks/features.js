@@ -90,7 +90,7 @@ editor.BlockManager.add("feature-3-images", {
             <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
             <a href="#formLandingPage" class="icon-link">
           Call to action
-          <span class="fa fa-arrow-right fa-sm"></span>
+          <i class="fa fa-arrow-right fa-sm" data-gjs-type="icon-block"></i>
         </a>
         </div>
         <div class="feature col center-all text-center">
@@ -101,7 +101,7 @@ editor.BlockManager.add("feature-3-images", {
             <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
             <a href="#formLandingPage" class="icon-link">
           Call to action
-          <span class="fa fa-arrow-right fa-sm"></span>
+          <i class="fa fa-arrow-right fa-sm" data-gjs-type="icon-block"></i>
         </a>
         </div>
         <div class="feature col center-all text-center">
@@ -113,7 +113,7 @@ editor.BlockManager.add("feature-3-images", {
             <p>Paragraph of text beneath the heading to explain the heading. We'll add onto it with another sentence and probably just keep going until we run out of words.</p>
             <a href="#formLandingPage" class="icon-link">
           Call to action
-          <span class="fa fa-arrow-right fa-sm"></span>
+          <i class="fa fa-arrow-right fa-sm" data-gjs-type="icon-block"></i>
 
         </a>
         </div>
