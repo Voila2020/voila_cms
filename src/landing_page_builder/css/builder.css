@@ -65,7 +65,7 @@ body {
 }
 
 /* Select2 Styles */
-.gjs-field-select2 .select2-container--default .select2-selection--single {
+.gjs-field-icon-selector .select2-container--default .select2-selection--single {
   background-color: rgba(0, 0, 0, 0);
   border: none;
 }

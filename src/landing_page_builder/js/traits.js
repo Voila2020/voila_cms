@@ -82,9 +82,9 @@ function define_new_traits(editor) {
     onUpdate({ elInput, component }) { },
     onEvent({ elInput, component, event }) { },
   });
-  //-------------------- Select2 Type ---------------------------------//
+  //-------------------- icon-selector Select2 Type ---------------------------------//
   var select2Value;
-  editor.TraitManager.addType('select2', {
+  editor.TraitManager.addType('icon-selector', {
     createInput({ trait }) {
       const input = document.createElement('select');
       input.className = 'select2-dropdown';
@@ -805,13 +805,13 @@ function traits(editor) {
       );
     }
     if (type.id == "icon-block") {
-      traitArr.unshift(
+      traitArr.splice(5, 0,
         {
           type: "label",
-          label: "Icon Classes",
+          label: "Icon Settings",
         },
         {
-          type: 'select2',
+          type: 'icon-selector',
           options: [
             {
               value: "fa-cube",
@@ -840,7 +840,7 @@ function traits(editor) {
             { value: 'fa-9x', name: '9x' },
             { value: 'fa-10x', name: '10x' },
           ],
-          label: 'Icon Size',
+          label: 'Size',
         },
       );
     }
