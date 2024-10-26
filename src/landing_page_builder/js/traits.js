@@ -111,9 +111,9 @@ function define_new_traits(editor) {
         if (traitValue) {
           $(elInput).val(traitValue).trigger('change');
           select2Value = traitValue;
-        } else if (select2Value) {
+        } else if(select2Value) {
           $(elInput).val(select2Value).trigger('change');
-        } else {
+        }else{
           $(elInput).val("fa-cube").trigger('change');
         }
 
@@ -129,7 +129,7 @@ function define_new_traits(editor) {
       }, 0);
     },
     //--------------------------------
-    onEvent({ elInput, component, event , trait}) {
+    onEvent({ elInput, component, event, trait }) {
       if (event.type === 'change') {
         const value = $(elInput).val();
         const previousValue = trait.previousValue || '';
@@ -170,7 +170,6 @@ function define_new_traits(editor) {
     return $state;
   }
   //--------------------------------
-
 }
 
 //put the new defined traits in use so we created new inputs using them.
@@ -190,6 +189,7 @@ function traits(editor) {
         type: "label",
         label: "Theme",
       },
+
       {
         type: "class_select",
         options: [
@@ -282,6 +282,29 @@ function traits(editor) {
         ],
         label: "White Space",
       },
+      {
+        type: "label",
+        label: "Direction",
+      },
+      {
+        type: "class_select",
+        options: [
+          {
+            value: "",
+            name: "None",
+          },
+          {
+            value: "flex-direction-column",
+            name: "Column",
+          },
+          {
+            value: "flex-direction-row",
+            name: "Row",
+          },
+        ],
+        label: "Flex Direction",
+      },
+
       {
         type: "label",
         label: "Alignment",
@@ -844,6 +867,7 @@ function traits(editor) {
         },
       );
     }
+
     if (type.id == "col") {
       traitArr.unshift({
         type: "class_select",
@@ -1065,6 +1089,20 @@ function traits(editor) {
           label: "Required",
           name: "required",
         }
+      );
+    }
+
+    if (type.id == "image") {
+      traitArr.unshift(
+        {
+          type: "label",
+          label: "Image Settings",
+        },
+        {
+          type: "text",
+          label: "Alternative Text",
+          name: "alt",
+        },
       );
     }
 
