@@ -596,7 +596,7 @@
                     <div class='col-sm-4'>
                         <div class='form-group'>
                             <label>Table</label>
-                            <select id='combo_tabel' name='tabel' required class='form-control'>
+                            <select id='combo_tabel' name='tabel' class='form-control'>
                                 <option value=''>** Choose a Table</option>
                                 @foreach($tables as $tab)
                                     <option {{($row->tabel == $tab)?"selected":""}} value='{{$tab}}'>{{$tab}}</option>
