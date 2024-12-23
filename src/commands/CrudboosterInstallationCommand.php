@@ -143,6 +143,13 @@ class CrudboosterInstallationCommand extends Command
                 File::deleteDirectory(resource_path('views/email_builder'));
             }
 
+            //Delete Header and Footer Menus
+            if (file_exists(resource_path('views/footermenus'))) {
+                File::deleteDirectory(resource_path('views/footermenus'));
+            }
+            if (file_exists(resource_path('views/headermenus'))) {
+                File::deleteDirectory(resource_path('views/headermenus'));
+            }
 
             if (!file_exists(app_path('Rules'))) {
                 mkdir(app_path('Rules'), 0777);

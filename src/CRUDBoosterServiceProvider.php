@@ -67,6 +67,14 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/email_builder' => public_path('email_builder')], 'email_builder_files');
             # lang
             $this->publishes([__DIR__ . '/localization' => resource_path('lang')], 'crudbooster_lang');
+
+            # Menus Header & Menus footer
+            $this->publishes([
+                __DIR__.'/views/headermenus/index.blade.php' => resource_path('views/headermenus/index.blade.php'),
+            ], 'header_menus_views');
+            $this->publishes([
+                __DIR__.'/views/footermenus/index.blade.php' => resource_path('views/footermenus/index.blade.php'),
+            ], 'header_menus_views');
         }
 
         $this->customValidation();
