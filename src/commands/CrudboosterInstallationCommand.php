@@ -92,6 +92,14 @@ class CrudboosterInstallationCommand extends Command
                 File::delete(app_path('Http/Controllers/AdminFormsController.php'));
             }
 
+            if (file_exists(app_path('Http/Controllers/AdminHeaderMenusController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminHeaderMenusController.php'));
+            }
+
+            if (file_exists(app_path('Http/Controllers/AdminFooterMenusController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminFooterMenusController.php'));
+            }
+
             //Delete Models
             if (file_exists(app_path('Models/Menu.php'))) {
                 File::delete(app_path('Models/Menu.php'));

@@ -37,12 +37,11 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/userfiles/controllers/AdminFormsController.php' => app_path('Http/Controllers/AdminFormsController.php')], 'cb_form_controller');
             $this->publishes([__DIR__ . '/userfiles/controllers/EmailTemplatesController.php' => app_path('Http/Controllers/EmailTemplatesController.php')], 'cb_email_template_controller');
             $this->publishes([__DIR__ . '/userfiles/controllers/LandingPagesController.php' => app_path('Http/Controllers/LandingPagesController.php')], 'cb_landing_pages_controller');
-
+            $this->publishes([__DIR__ . '/userfiles/controllers/AdminFooterMenusController.php' => app_path('Http/Controllers/AdminFooterMenusController.php')], 'cb_footer_menus_controller');
+            $this->publishes([__DIR__ . '/userfiles/controllers/AdminHeaderMenusController.php' => app_path('Http/Controllers/AdminHeaderMenusController.php')], 'cb_header_menus_controller');
             //Publish Models
-            $this->publishes([
-                __DIR__.'/Models/Menu.php' => app_path('Models/Menu.php'),
-                __DIR__.'/Models/MenuTranslation.php' => app_path('Models/MenuTranslation.php'),
-            ], 'models');
+            $this->publishes([__DIR__.'/userfiles/Models/Menu.php' => app_path('Models/Menu.php')], 'menu_model');
+            $this->publishes([__DIR__.'/userfiles/Models/MenuTranslation.php' => app_path('Models/MenuTranslation.php')], 'menu_translation_ model');
 
             $this->publishes([__DIR__ . '/Rules' => app_path('Rules')], 'cb_rules');
             $this->publishes([__DIR__ . '/assets' => public_path('vendor/crudbooster')], 'cb_asset');
