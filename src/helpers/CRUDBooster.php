@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
@@ -14,7 +15,6 @@ use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
-use Illuminate\Support\Facades\Log;
 use Image;
 
 class CRUDBooster
@@ -170,7 +170,7 @@ class CRUDBooster
         }
         Cache::forget('setting_' . $name);
         DB::table('cms_settings')->where('name', $name)->update([
-            "content" => $value
+            "content" => $value,
         ]);
         Cache::forever('setting_' . $name, $value);
     }
@@ -496,8 +496,10 @@ class CRUDBooster
 
             $temp = self::getMenuChildren($menu);
             $menu->children = [];
-            if ($temp)
+            if ($temp) {
                 $menu->children = $temp;
+            }
+
         }
 
         return $menu_active;
@@ -533,8 +535,10 @@ class CRUDBooster
                 $c->url_path = trim(str_replace(url('/'), '', $url), "/");
                 $temp = self::getMenuChildren($c);
                 $c->children = [];
-                if ($temp)
+                if ($temp) {
                     $c->children = $temp;
+                }
+
             }
         }
         return $child;
@@ -552,10 +556,12 @@ class CRUDBooster
 				cancelButtonText: \"" . cbLang('confirmation_no') . "\",
 				closeOnConfirm: false },
 				function(){  location.href=\"$redirectTo\" });";
-        if (!$returnString)
+        if (!$returnString) {
             echo $str;
-        else
+        } else {
             return $str;
+        }
+
     }
 
     public static function getModulePath()
@@ -1022,8 +1028,10 @@ class CRUDBooster
         $tempColumns = Schema::getColumnListing($translationTable);
         $translationTableColumns = [];
         foreach ($tempColumns as $column) {
-            if ($column != "id" && $column != "locale" && $column != $translationMainColumn)
+            if ($column != "id" && $column != "locale" && $column != $translationMainColumn) {
                 $translationTableColumns[] = "$column";
+            }
+
         }
         //---------------------------------//
         // Start building the main query
@@ -1121,8 +1129,10 @@ class CRUDBooster
         } else {
             if ($table) {
                 $hasTable = Schema::hasTable($table);
-                if (!$hasTable)
+                if (!$hasTable) {
                     $hasTable = Schema::hasTable(Str::plural($table));
+                }
+
                 if ($hasTable) {
                     Cache::forever('isForeignKey_' . $fieldName, true);
 
@@ -1363,8 +1373,10 @@ class CRUDBooster
 
         foreach ($result as $ro) {
             if (!in_array($ro['COLUMN_NAME'], ["id", "locale", "created_at", "updated_at", "deleted_at"])) {
-                if (substr($ro['COLUMN_NAME'], -3) === "_id")
+                if (substr($ro['COLUMN_NAME'], -3) === "_id") {
                     continue;
+                }
+
                 $new_result[] = $ro['COLUMN_NAME'];
             }
         }
@@ -1444,6 +1456,13 @@ class CRUDBooster
 		        //This method will be execute after run the main process
 
 		    }';
+        if (!$table_name) {
+            $php .= "\n" . '
+		    public function execute_api($output = "JSON") {
+		        //This method will be execute after run the main process
+
+		    }';
+        }
 
         $php .= "\n" . '
 		}
@@ -1935,8 +1954,10 @@ class Admin' . $controllername . ' extends CBController {
                 $joinname = CRUDBooster::getNameTable($joincols);
                 $php .= "\t\t" . '$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
             } elseif (substr($field, -3) == '_id') {
-                if ($translationTable)
+                if ($translationTable) {
                     continue;
+                }
+
                 $jointable = substr($field, 0, (strlen($field) - 3));
                 $joincols = CRUDBooster::getTableColumns($jointable);
                 $joinname = CRUDBooster::getNameTable($joincols);
@@ -2018,8 +2039,10 @@ class Admin' . $controllername . ' extends CBController {
             }
 
             if (substr($field, -3) == '_id') {
-                if ($translationTable)
+                if ($translationTable) {
                     continue;
+                }
+
                 $jointable = str_replace('_id', '', $field);
                 $joincols = CRUDBooster::getTableColumns($jointable);
                 $joinname = CRUDBooster::getNameTable($joincols);

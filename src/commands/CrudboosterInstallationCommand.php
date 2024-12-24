@@ -92,6 +92,22 @@ class CrudboosterInstallationCommand extends Command
                 File::delete(app_path('Http/Controllers/AdminFormsController.php'));
             }
 
+            if (file_exists(app_path('Http/Controllers/AdminHeaderMenusController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminHeaderMenusController.php'));
+            }
+
+            if (file_exists(app_path('Http/Controllers/AdminFooterMenusController.php'))) {
+                File::delete(app_path('Http/Controllers/AdminFooterMenusController.php'));
+            }
+
+            //Delete Models
+            if (file_exists(app_path('Models/Menu.php'))) {
+                File::delete(app_path('Models/Menu.php'));
+            }
+            if (file_exists(app_path('Models/MenuTranslation.php'))) {
+                File::delete(app_path('Models/MenuTranslation.php'));
+            }
+
             if (!file_exists(public_path('vendor'))) {
                 mkdir(public_path('vendor'), 0777);
                 mkdir(public_path('vendor/filemanager'), 0777);
@@ -135,6 +151,13 @@ class CrudboosterInstallationCommand extends Command
                 File::deleteDirectory(resource_path('views/email_builder'));
             }
 
+            //Delete Header and Footer Menus
+            if (file_exists(resource_path('views/footermenus'))) {
+                File::deleteDirectory(resource_path('views/footermenus'));
+            }
+            if (file_exists(resource_path('views/headermenus'))) {
+                File::deleteDirectory(resource_path('views/headermenus'));
+            }
 
             if (!file_exists(app_path('Rules'))) {
                 mkdir(app_path('Rules'), 0777);

@@ -41,7 +41,11 @@ editor = grapesjs.init({
     assetManager: {
         custom: {
             open(props) {
-                let imageId = props.options.target.ccid;
+                let imageId;
+                if (props.options.target)
+                    imageId = props.options.target.ccid;
+                else
+                    imageId = editor.getSelected().ccid;
                 let iframeUrl = `${$_SITE}/filemanager-dialog?type=1&multiple=0&crossdomain=0&popup=0&field_id=${imageId}`;
                 let fancybox = $.fancybox.open({
                     width: 900,
@@ -272,11 +276,10 @@ editor.Panels.addButton("options", [{
     },
 },]);
 
-
 // Go To Page Button
 editor.Commands.add('redirect-to-page', {
     run(editor, sender) {
-        const url = $_SITE +"/"+$url ;
+        const url = $_SITE + "/" + $url;
         window.open(url, '_blank');
         sender && sender.set('active', false);
     }
@@ -424,21 +427,28 @@ editor.on('load', function () {
         category.set("open", false);
     });
 
-
-
-
+    $(".gjs-frame").contents().on("paste", '[contenteditable="true"]', function (e) {
+        e.preventDefault();
+        var text = e.originalEvent.clipboardData.getData('text');
+        e.target.ownerDocument.execCommand("insertText", false, text);
+    });
 });
 
 //link the version 2 builder with the voila file manager.
 function responsive_filemanager_callback(field_id, value) {
-    $("#" + field_id, $(".gjs-frame").contents()).prop("src", value);
-    if (editor.getSelected().attributes.tagName == "div")
+
+    if (editor.getSelected().attributes.tagName != "img") {
         editor
             .getSelected()
             .addStyle({
                 "background-image": `url("${$_SITE + value}")`
             });
-    else editor.getSelected().set("src", $_SITE + value);
+        $("#" + field_id, $(".gjs-frame").contents()).css("background-image", `url("${$_SITE + value}")`);
+    }
+    else {
+        editor.getSelected().set("src", $_SITE + value);
+        $("#" + field_id, $(".gjs-frame").contents()).prop("src", value);
+    }
     editor.stopCommand("open-assets");
 }
 
@@ -448,13 +458,13 @@ function removeComponentsNulled(editor) {
     // Recursive function to search and remove components
     function searchAndRemoveComponents(components) {
         components.forEach(component => {
-            try{
+            try {
                 if (component.get('content') && component.get('content') == "null") {
                     component.remove();
                 } else if (component.components().length) {
                     searchAndRemoveComponents(component.components());
                 }
-            } catch (e){
+            } catch (e) {
             }
         });
     }

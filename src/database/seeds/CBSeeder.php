@@ -263,6 +263,26 @@ class CBSeeder extends Seeder
         'is_protected' => 0,
         'is_active' => 1,
       ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Header Menu',
+        'icon' => 'fa fa-header',
+        'path' => 'header_menus',
+        'table_name' => "menus",
+        'controller' => 'AdminHeaderMenusController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Footer Menus',
+        'icon' => 'fa fa-users',
+        'path' => 'footer_menus',
+        'table_name' => "menus",
+        'controller' => 'AdminFooterMenusController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ],
     ];
 
     foreach ($data as $k => $d) {

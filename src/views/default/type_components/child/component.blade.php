@@ -1,5 +1,6 @@
 <?php
 $name = str_slug($form['label'], '');
+$childTableName = $form['table'];
 ?>
 @push('bottom')
     <script type="text/javascript">
@@ -8,6 +9,34 @@ $name = str_slug($form['label'], '');
         })
         var idtable = "#table-{{ $name }} tbody";
         $(idtable).sortable({});
+
+        $('#table-{{ $name }} tbody').sortable({
+            axis: 'y',
+            update: function(event, ui) {
+                var data_list = new Array();
+                $('#table-{{ $name }}').find('tbody tr').each(function(e) {
+                    data_list.push($(this).find('[name="{{ $name }}-id[]"]').val());
+                });
+                var table = '{{ $table }}';
+                $('html, body').css("cursor", "wait");
+
+                // POST to server using $.post or $.ajax
+                $.ajax({
+                    data: {
+                        data: data_list,
+                        table_name: "{{ $childTableName }}"
+                    },
+                    type: 'POST',
+                    url: "{{ Crudbooster::mainPath('sort-table') }}",
+                    success: function(data) {
+                        $('html, body').css("cursor", "auto");
+                    },
+                    error: function(data) {
+                        $('html, body').css("cursor", "auto");
+                    }
+                });
+            }
+        });
     </script>
 @endpush
 <div class='form-group {{ $header_group_class }}' id='form-group-{{ $name }}'>
@@ -776,7 +805,7 @@ $name = str_slug($form['label'], '');
                                             foreach ($form['columns'] as $c) {
                                                 if (strpos($formula, '[' . $c['name'] . ']') !== false) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
-                                                                                                                                                                                                                                                                                                                                                                                                                        $formula_function_name();});";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                    $formula_function_name();});";
                                                 }
                                                 $formula = str_replace('[' . $c['name'] . ']', "\$('#" . $name . $c['name'] . "').val()", $formula);
                                             }
@@ -1144,8 +1173,11 @@ $name = str_slug($form['label'], '');
 
                                     }
                                 }
-
-                                $data_child = $data_child->orderby($form['table'].'.id', 'desc')->get();
+                                if(Crudbooster::isColumnExists($form['table'],"sorting")){
+                                    $data_child = $data_child->orderby($form['table'].'.sorting', 'asc')->get();
+                                } else {
+                                    $data_child = $data_child->orderby($form['table'].'.id', 'desc')->get();
+                                }
                                 foreach($data_child as $d):
                                 ?>
                                     <tr>
@@ -1157,7 +1189,7 @@ $name = str_slug($form['label'], '');
                                                 echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                 continue;
                                             }
-                                            ?> <td class="{{ $col['name'] }} ALAMA">
+                                            ?> <td class="{{ $col['name'] }}">
                                                 <?php
                                                 if ($col['type'] == 'filemanager') {
                                                     $tempLink = $d->{$col['name']};
