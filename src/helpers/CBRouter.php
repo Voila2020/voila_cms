@@ -63,6 +63,8 @@ class CBRouter
             Route::get('lock-screen', ['uses' => 'AdminController@getLockscreen', 'as' => 'getLockScreen']);
             Route::post('forgot', ['uses' => 'AdminController@postForgot', 'as' => 'postForgot']);
             Route::get('forgot', ['uses' => 'AdminController@getForgot', 'as' => 'getForgot']);
+            Route::post('multi_authentication', ['uses' => 'AdminController@postMultiAuthentication', 'as' => 'postMultiAuthentication']);
+            Route::get('multi_authentication', ['uses' => 'AdminController@getMultiAuthentication', 'as' => 'getMultiAuthentication']);
             Route::post('register', ['uses' => 'AdminController@postRegister', 'as' => 'postRegister']);
             Route::get('register', ['uses' => 'AdminController@getRegister', 'as' => 'getRegister']);
             Route::get('logout', ['uses' => 'AdminController@getLogout', 'as' => 'getLogout']);

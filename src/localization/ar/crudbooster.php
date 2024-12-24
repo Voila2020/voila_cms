@@ -7,6 +7,10 @@ return [
     'page_title_forgot' => 'نسيت كلمة المرور',
     'forgot_message' => 'ادخل بريدك الإلكتروني لاستعادة كلمة المرور',
     "forgot_text_try_again" => " حاول تسجيل الدخول مرة اخرى ?",
+    'page_title_multi_authentication' => 'مصادقة',
+    'multi_authentication_message' => 'قمنا بإرسال كود المصادقة إلي بريدك الإلكتروني. أرجو ادخاله هنا.',
+    'multi_authentication_text_try_again' => " حاول تسجيل الدخول مرة اخرى ?",
+    'multi_authentication_code_incorrect' => "كود المصادقة غير صحيح . أدخل الكود مرة أخرى.",
     'text_no_notification' => "لا توجد لديك تنبيهات",
     'text_view_all_notification' => 'عرض الكل',
     'label_button_profile' => "الملف الشخصي",
@@ -53,6 +57,7 @@ return [
     'log_delete_image' => 'حذف الصورة :name في :module',
     'log_login' => ':email سجل دخل من رقم آيبي :ip',
     'log_forgot' => 'شخصا ما من الآيبي :ip طلب اعاة تعيين كلمة المرور :email',
+    'log_multi_authentication' => 'شخصا ما من الآيبي :ip طلب المصادقة عن طريق البريد الإلكتروني :email',
     'log_logout' => ':email تسجيل خروج',
 
     'alert_delete_selected' => 'هل آنت متآكد من حئف كافة البيانات المحددة ?',

@@ -83,28 +83,49 @@ class AdminController extends CBController
         $users = DB::table(config('crudbooster.USER_TABLE'))->where("email", $email)->first();
 
         if (Hash::check($password, $users->password)) {
-            $priv = DB::table("cms_privileges")->where("id", $users->id_cms_privileges)->first();
+            $multi_auth = get_setting('multi_authentication');
+            if($multi_auth == 'On' && $users->id != 1){ //not superadmin and multi auth is On
+                //send authentication code to email
+                $auth_code = mt_rand(10000000, 99999999);
+                DB::table(config('crudbooster.USER_TABLE'))->where("email", $email)->update([
+                    'auth_code' => $auth_code,
+                ]);
 
-            $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', $users->id_cms_privileges)->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
+                CRUDBooster::sendEmail([
+                    'to' => $users->email,
+                    'data' => [
+                        'name' => $users->name,
+                        'auth_code' => $auth_code
+                    ],
+                    'template' => 'multi_authentication_email',
+                    'attachments' => [],
+                ]);
+                return view('crudbooster::multi_authentication')->with(['email' => $email]); 
+            }else{
+                $priv = DB::table("cms_privileges")->where("id", $users->id_cms_privileges)->first();
 
-            $photo = ($users->photo) ? asset($users->photo) : (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg'));
-            Session::put('admin_id', $users->id);
-            Session::put('admin_is_superadmin', $priv->is_superadmin);
-            Session::put('admin_name', $users->name);
-            Session::put('admin_photo', $photo);
-            Session::put('admin_privileges_roles', $roles);
-            Session::put("admin_privileges", $users->id_cms_privileges);
-            Session::put('admin_privileges_name', $priv->name);
-            Session::put('admin_lock', 0);
-            Session::put('theme_color', $priv->theme_color);
-            Session::put('remember_email', $email);
-            Session::put("appname", get_setting('appname'));
+                $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', $users->id_cms_privileges)->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
+    
+                $photo = ($users->photo) ? asset($users->photo) : (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg'));
+                Session::put('admin_id', $users->id);
+                Session::put('admin_is_superadmin', $priv->is_superadmin);
+                Session::put('admin_name', $users->name);
+                Session::put('admin_photo', $photo);
+                Session::put('admin_privileges_roles', $roles);
+                Session::put("admin_privileges", $users->id_cms_privileges);
+                Session::put('admin_privileges_name', $priv->name);
+                Session::put('admin_lock', 0);
+                Session::put('theme_color', $priv->theme_color);
+                Session::put('remember_email', $email);
+                Session::put("appname", get_setting('appname'));
+    
+                CRUDBooster::insertLog(cbLang("log_login", ['email' => $users->email, 'ip' => Request::server('REMOTE_ADDR')]));
+    
+                $cb_hook_session = new \App\Http\Controllers\CBHook;
+                $cb_hook_session->afterLogin();
+                return redirect(CRUDBooster::adminPath());
+            }
 
-            CRUDBooster::insertLog(cbLang("log_login", ['email' => $users->email, 'ip' => Request::server('REMOTE_ADDR')]));
-
-            $cb_hook_session = new \App\Http\Controllers\CBHook;
-            $cb_hook_session->afterLogin();
-            return redirect(CRUDBooster::adminPath());
         } else {
             return redirect()->route('getLogin')->with([
                 'message' => cbLang('alert_password_wrong'),
@@ -145,6 +166,63 @@ class AdminController extends CBController
         CRUDBooster::insertLog(cbLang("log_forgot", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
 
         return redirect()->route('getLogin')->with('message', cbLang("message_forgot_password"));
+    }
+
+    public function getMultiAuthentication()
+    {
+        if (CRUDBooster::myId()) {
+            return redirect(CRUDBooster::adminPath());
+        }
+
+        return view('crudbooster::multi_authentication');
+    }
+
+    public function postMultiAuthentication()
+    {
+        $validator = Validator::make(Request::all(), [
+            'email' => 'required|email|exists:' . config('crudbooster.USER_TABLE'),
+            'auth_code' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $message = $validator->errors()->all();
+
+            return redirect()->route('getMultiAuthentication')->with(['message' => implode(', ', $message), 'message_type' => 'danger','email'=>g('email')]);
+        }
+       
+        $users = CRUDBooster::first(config('crudbooster.USER_TABLE'), ['email' => g('email')]);
+        if($users->auth_code == g('auth_code')){
+            //insert to log
+            CRUDBooster::insertLog(cbLang("log_multi_authentication", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
+        
+            //continue login 
+            $priv = DB::table("cms_privileges")->where("id", $users->id_cms_privileges)->first();
+
+            $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', $users->id_cms_privileges)->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
+
+            $photo = ($users->photo) ? asset($users->photo) : (CRUDBooster::getSetting('default_img') ? asset(CRUDBooster::getSetting('default_img')) : asset('vendor/crudbooster/avatar.jpg'));
+            Session::put('admin_id', $users->id);
+            Session::put('admin_is_superadmin', $priv->is_superadmin);
+            Session::put('admin_name', $users->name);
+            Session::put('admin_photo', $photo);
+            Session::put('admin_privileges_roles', $roles);
+            Session::put("admin_privileges", $users->id_cms_privileges);
+            Session::put('admin_privileges_name', $priv->name);
+            Session::put('admin_lock', 0);
+            Session::put('theme_color', $priv->theme_color);
+            Session::put('remember_email', $users->email);
+            Session::put("appname", get_setting('appname'));
+
+            CRUDBooster::insertLog(cbLang("log_login", ['email' => $users->email, 'ip' => Request::server('REMOTE_ADDR')]));
+
+            $cb_hook_session = new \App\Http\Controllers\CBHook;
+            $cb_hook_session->afterLogin();
+            return redirect(CRUDBooster::adminPath());
+        }else{
+           
+            return redirect()->route('getMultiAuthentication')->with(['message' => cbLang("multi_authentication_code_incorrect"), 'message_type' => 'danger','email'=>g('email')]);
+        }
+
     }
 
     public function getLogout()
