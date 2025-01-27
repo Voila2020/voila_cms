@@ -7,6 +7,10 @@ return [
     'page_title_forgot' => 'Forgot Password',
     'forgot_message' => 'Enter your email address, to request password',
     "forgot_text_try_again" => "Try login again ?",
+    'page_title_multi_authentication' => 'Multi Authentication',
+    'multi_authentication_message' => 'We send Authentication Code to your email. Please, enter code here',
+    'multi_authentication_text_try_again' => "Try login again ?",
+    'multi_authentication_code_incorrect' => "Code is not correct. please enter code again.",
     'text_no_notification' => "You have 0 notifications",
     'text_view_all_notification' => 'View All',
     'label_button_profile' => "Profile",
@@ -57,6 +61,7 @@ return [
     'log_delete_image' => 'Delete the image of :name at :module',
     'log_login' => ':email login with IP Address :ip',
     'log_forgot' => 'Someone with IP :ip request a password for :email',
+    'log_multi_authentication' => 'Someone with IP :ip request multi authentication for :email',
     'log_logout' => ':email logout',
 
     'alert_delete_selected' => 'Are you sure want to delete all selected data ?',

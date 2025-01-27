@@ -58,6 +58,23 @@ class CBSeeder extends Seeder
       $this->command->info("Create email templates completed");
     }
 
+    $multi_authentication_email = DB::table('cms_email_templates')->where('slug', 'multi_authentication_email')->get();
+    if (!count($multi_authentication_email)) {
+      DB::table('cms_email_templates')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Multi Authentication Code',
+        'slug' => 'multi_authentication_email',
+        'content' => '<body id="imax" style="box-sizing: border-box; margin: 0; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px;"><table id="im4s" width="100%" height="150" style="box-sizing: border-box; height: 150px; margin-top: 0px; margin-right: auto; margin-bottom: 10px; margin-left: auto; padding-top: 5px; padding-right: 5px; padding-bottom: 5px; padding-left: 5px; width: 100%;"><tbody id="if6r" style="box-sizing: border-box;"><tr id="ikrp" style="box-sizing: border-box;"><td id="iqmh" valign="top" style="box-sizing: border-box; font-size: 12px; font-weight: 300; vertical-align: top; color: rgb(111, 119, 125); margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px;"><p style="box-sizing: border-box;">Dear [name],</p><p style="box-sizing: border-box;">This your authentication Code <strong style="box-sizing: border-box;">[auth_code]</strong>.</p><p style="box-sizing: border-box;">Thanks.</p></td></tr></tbody></table></body>',
+        'template' => '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"im4s","width":"100%","height":"150"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"attributes":{"id":"if6r"},"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"attributes":{"id":"ikrp"},"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"iqmh","valign":"top"},"components":[{"tagName":"p","type":"text","components":[{"type":"textnode","content":"Dear [name],"}]},{"tagName":"p","type":"text","components":[{"type":"textnode","content":"This your authentication Code"},{"tagName":"strong","type":"text","components":[{"type":"textnode","content":"[auth_code]"}]},{"type":"textnode","content":"."}]},{"tagName":"p","type":"text","components":[{"type":"textnode","content":"Thanks."}]}]}]}]}]}]',
+        'description' => 'Send Multi Authentication Code',
+        'from_name' => 'Voila System',
+        'from_email' => 'test@voila.digital',
+        'cc_email' => null,
+        'priority' => 3,
+      ]);
+      $this->command->info("Create multi authentication email completed");
+    }
+
     # CB Modules
     $data = [
       [
@@ -531,6 +548,16 @@ class CBSeeder extends Seeder
         'content' => '',
         'content_input_type' => 'text',
         'group_setting' => 'reCAPTCHA_setting',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'multi_authentication',
+        'label' => 'Multi Authentication',
+        'content' => 'Off',
+        'content_input_type' => 'select',
+        'dataenum' => 'On,Off',
+        'helper' => 'Multi Authentication is a system of authentication in which multiple methods are used to verify a user identity.',
+        'group_setting' => 'general_setting',
       ],
     ];
 
@@ -1471,6 +1498,45 @@ class CBSeeder extends Seeder
         'created_at' => Carbon::now(),
         'updated_at' => Carbon::now(),
       ],
+      [
+        'name' => 'Menus',
+        'type' => 'URL',
+        'path' => '#',
+        'color' => 'normal',
+        'icon' => 'fa fa-qrcode',
+        'parent_id' => 0,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'Header Menus',
+        'type' => 'Module',
+        'path' => 'header_menus',
+        'color' => 'normal',
+        'icon' => 'fa fa-header',
+        'parent_id' => 6,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ],
+      [
+        'name' => 'Footer Menus',
+        'type' => 'Module',
+        'path' => 'footer_menus',
+        'color' => 'normal',
+        'icon' => 'fa fa-foursquare',
+        'parent_id' => 6,
+        'is_active' => 1,
+        'is_dashboard' => 0,
+        'id_cms_privileges' => 1,
+        'created_at' => Carbon::now(),
+        'updated_at' => Carbon::now(),
+      ]
     ];
     foreach ($data as $k => $d) {
       if (DB::table('cms_menus')->where('name', $d['name'])->where('path', $d['path'])->count()) {
