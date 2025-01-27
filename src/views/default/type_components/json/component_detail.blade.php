@@ -1,23 +1,50 @@
 <div id="{{$name}}"></div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        // Set an option globally
-        JSONEditor.defaults.options.theme = 'bootstrap2';
+@push("bottom")
 
-        // Set an option during instantiation
-        var editor = new JSONEditor(document.getElementById('{{$name}}'), {
-            theme: 'bootstrap2',
-            disable_array_add: true,
-            disable_array_delete: true,
-            disable_array_reorder: true,
-            disable_collapse: true,
-            disable_edit_json: true,
-            disable_properties: true,
-            startval: <?=json_encode(json_decode($value, false))?>,
-            schema: <?=json_encode(json_decode($form["schema"], false))?>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Set an option globally
+            // JSONEditor.defaults.options.theme = 'bootstrap2';
+            // JSONEditor.plugins.select2.enable = false;
+            // JSONEditor.plugins.selectize.enable = true;//to avoid select2
+
+            // Set an option during instantiation
+            // var editor = new JSONEditor(document.getElementById('{{$name}}'), {
+            //     theme: 'bootstrap2'
+            // });
+            // const container = document.getElementById('{{$name}}')
+            // const options = {
+            //     mode: 'tree',
+            //     modes: ['tree'],
+            //     onEditable: function (node) {
+            //         if (!node.path) {
+            //             // In modes code and text, node is empty: no path, field, or value
+            //             // returning false makes the text area read-only
+            //             return false;
+            //         }
+            //     },
+            //     onModeChange: function (newMode, oldMode) {
+            //         console.log('Mode switched from', oldMode, 'to', newMode)
+            //     }
+            // }
+
+            // const editor = new JSONEditor(container, options, @json($value))
+            const container = document.getElementById('{{$name}}')
+
+            const options = {
+                mode: 'view'
+            }
+
+            json = JSON.parse('{!! $value !!}');
+            const editor = new JSONEditor(container, options, json)
+
+
+            $('[name="{{$name}}"]').parents('form').on('submit', function () {
+                $('[name="{{$name}}"]').val(JSON.stringify(editor.getValue()));
+                return true;
+            })
         });
-        editor.disable();
-    });
 
-</script>
+    </script>
+@endpush
