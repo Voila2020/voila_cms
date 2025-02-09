@@ -59,7 +59,7 @@
 
     @push('bottom')
         <script type="text/javascript">
-            $(function () {
+            $(function() {
                 function format(icon) {
                     var originalOption = icon.element;
                     var label = $(originalOption).text();
@@ -75,12 +75,12 @@
     @push('bottom')
         <script src='{{ asset('vendor/crudbooster/assets/jquery-sortable-min.js') }}'></script>
         <script type="text/javascript">
-            $(function () {
+            $(function() {
                 var id_cms_privileges = '{{ $id_cms_privileges }}';
                 var sortactive = $(".draggable-menu").sortable({
                     group: '.draggable-menu',
                     delay: 200,
-                    isValidTarget: function ($item, container) {
+                    isValidTarget: function($item, container) {
                         var depth = 1, // Start with a depth of one (the element itself)
                             maxDepth = 3,
                             children = $item.find('ul').first().find('li');
@@ -95,7 +95,7 @@
                         }
                         return depth <= maxDepth;
                     },
-                    onDrop: function ($item, container, _super) {
+                    onDrop: function($item, container, _super) {
 
                         if ($item.parents('ul').hasClass('draggable-menu-active')) {
                             var isActive = 1;
@@ -111,7 +111,7 @@
                         $.post("{{ route('AdminFooterMenusControllerPostSaveMenu') }}", {
                             menus: jsonString,
                             isActive: isActive
-                        }, function (resp) {
+                        }, function(resp) {
                             $('#menu-saved-info').fadeIn('fast').delay(1000).fadeOut('fast');
                         });
 
@@ -127,45 +127,46 @@
 
             <div class="panel panel-success">
                 <div class="panel-heading">
-                    <strong>{{ cbLang('Menu Order') . '(' . cbLang('Active') . ')' }} </strong> <span
-                            id='menu-saved-info'
-                            style="display:none" class='pull-right text-success'><i class='fa fa-check'></i> Menu Saved !</span>
+                    <strong>{{ cbLang('Menu Order') . '(' . cbLang('Active') . ')' }} </strong> <span id='menu-saved-info'
+                        style="display:none" class='pull-right text-success'><i class='fa fa-check'></i> Menu Saved !</span>
                 </div>
                 <div class="panel-body clearfix">
                     <ul class='draggable-menu draggable-menu-active'>
-                        @foreach ($menu_active??[] as $menu)
+                        @foreach ($menu_active ?? [] as $menu)
                             @php
                                 $privileges = DB::table('cms_menus_privileges')
                                     ->join(
                                         'cms_privileges',
                                         'cms_privileges.id',
                                         '=',
-                                        'cms_menus_privileges.id_cms_privileges'
+                                        'cms_menus_privileges.id_cms_privileges',
                                     )
                                     ->where('id_cms_menus', $menu->id)
                                     ->pluck('cms_privileges.name')
                                     ->toArray();
                             @endphp
-                            <li data-id='{{ $menu->id }}' data-name='{{ $menu->name }}'>
+                            <li data-id='{{ $menu->id }}'
+                                data-name='{{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }}'>
                                 <div class='{{ $menu->is_dashboard ? 'is-dashboard' : '' }}'
-                                     title="{{ $menu->is_dashboard ? 'This is set as Dashboard' : '' }}">
+                                    title="{{ $menu->is_dashboard ? 'This is set as Dashboard' : '' }}">
                                     <i
-                                            class='{{ $menu->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $menu->icon }}'></i>
-                                    {{ $menu->name }} <span class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                                                                  href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
-                                                title='Delete' class='fa fa-trash'
-                                                onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $menu->id) }}'
-                                                href='javascript:void(0)'></a></span>
-                                    <br/><em class="text-muted">
+                                        class='{{ $menu->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $menu->icon }}'></i>
+                                    {{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }} <span
+                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
+                                            href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                            title='Delete' class='fa fa-trash'
+                                            onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $menu->id) }}'
+                                            href='javascript:void(0)'></a></span>
+                                    <br /><em class="text-muted">
                                         <small><i class="fa fa-users"></i> &nbsp; {{ implode(', ', $privileges) }}
                                         </small>
                                     </em>
                                 </div>
-                                {!! getBuilderMenuChildren($menu) !!}
+                                {!! getBuilderMenuChildren($menu, $current_lang) !!}
                             </li>
                         @endforeach
                     </ul>
-                    @if (count($menu_active??[]) == 0)
+                    @if (count($menu_active ?? []) == 0)
                         <div align="center">Active menu is empty, please add new menu</div>
                     @endif
                 </div>
@@ -177,24 +178,28 @@
                 </div>
                 <div class="panel-body clearfix">
                     <ul class='draggable-menu draggable-menu-inactive'>
-                        @foreach ($menu_inactive??[] as $menu)
-                            <li data-id='{{ $menu->id }}' data-name='{{ $menu->name }}'>
-                                <div><i class='{{ $menu->icon }}'></i> {{ $menu->name }} <span class='pull-right'><a
-                                                class='fa fa-pencil' title='Edit'
-                                                href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
-                                                title='Delete' class='fa fa-trash'
-                                                onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $menu->id) }}'
-                                                href='javascript:void(0)'></a></span></div>
+                        @foreach ($menu_inactive ?? [] as $menu)
+                            <li data-id='{{ $menu->id }}'
+                                data-name='{{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }}'>
+                                <div><i class='{{ $menu->icon }}'></i>
+                                    {{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }} <span
+                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
+                                            href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                            title='Delete' class='fa fa-trash'
+                                            onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $menu->id) }}'
+                                            href='javascript:void(0)'></a></span></div>
                                 <ul>
                                     @if ($menu->children)
                                         @foreach ($menu->children as $child)
-                                            <li data-id='{{ $child->id }}' data-name='{{ $child->name }}'>
-                                                <div><i class='{{ $child->icon }}'></i> {{ $child->name }} <span
-                                                            class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                                                                  href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
-                                                                title="Delete" class='fa fa-trash'
-                                                                onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $child->id) }}'
-                                                                href='javascript:void(0)'></a></span></div>
+                                            <li data-id='{{ $child->id }}'
+                                                data-name='{{ $current_lang == 'en' ? $child->name_en : $child->name_ar }}'>
+                                                <div><i class='{{ $child->icon }}'></i>
+                                                    {{ $current_lang == 'en' ? $child->name_en : $child->name_ar }} <span
+                                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
+                                                            href='{{ route('AdminFooterMenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                                            title="Delete" class='fa fa-trash'
+                                                            onclick='{{ CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $child->id) }}'
+                                                            href='javascript:void(0)'></a></span></div>
                                             </li>
                                         @endforeach
                                     @endif
@@ -202,7 +207,7 @@
                             </li>
                         @endforeach
                     </ul>
-                    @if (count($menu_inactive??[]) == 0)
+                    @if (count($menu_inactive ?? []) == 0)
                         <div align="center" id='inactive_text' class='text-muted'>Inactive menu is empty</div>
                     @endif
                 </div>
@@ -217,11 +222,11 @@
                 </div>
                 <div class="panel-body">
                     <form class='form-horizontal' method='post' id="form" enctype="multipart/form-data"
-                          action='{{ CRUDBooster::mainpath('add-save') }}'>
+                        action='{{ CRUDBooster::mainpath('add-save') }}'>
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
-                        <input type='hidden' name='return_url' value='{{ Request::fullUrl() }}'/>
+                        <input type='hidden' name='return_url' value='{{ Request::fullUrl() }}' />
                         @include('crudbooster::default.form_body')
-                        <p align="right"><input type='submit' class='btn btn-primary' value='{{ cbLang('Add Menu') }}'/>
+                        <p align="right"><input type='submit' class='btn btn-primary' value='{{ cbLang('Add Menu') }}' />
                         </p>
                     </form>
                 </div>
@@ -230,7 +235,7 @@
     </div>
 @endsection
 @php
-    function getBuilderMenuChildren($menu)
+    function getBuilderMenuChildren($menu, $current_lang)
     {
         $results = '';
         if ($menu->children) {
@@ -241,21 +246,34 @@
                     ->where('id_cms_menus', $child->id)
                     ->pluck('cms_privileges.name')
                     ->toArray();
+
                 $editHref =
-                    route('AdminFooterMenusControllerGetEdit') . '/' . $child->id . '?return_url=' . urlencode(Request::fullUrl());
-                $deleteClick = CRUDBooster::deleteConfirm(route('AdminFooterMenusControllerGetDelete') . '/' . $child->id, true);
-                $results .= "<li data-id='{ $child->id }' data-name='{$child->name}'>";
+                    route('AdminFooterMenusControllerGetEdit') .
+                    '/' .
+                    $child->id .
+                    '?return_url=' .
+                    urlencode(Request::fullUrl());
+                $deleteClick = CRUDBooster::deleteConfirm(
+                    route('AdminFooterMenusControllerGetDelete') . '/' . $child->id,
+                    true,
+                );
+
+                // Corrected spacing and removed unnecessary spaces in data-id
+                $results .=
+                    "<li data-id='{$child->id}' data-name='" .
+                    ($current_lang == 'en' ? $child->name_en : $child->name_ar) .
+                    "'>";
                 $results .=
                     "   <div class='" .
                     ($child->is_dashboard ? 'is-dashboard' : '') .
                     "' title='" .
-                    ($child->is_dashboard ? 'This is setted as Dashboard' : '') .
+                    ($child->is_dashboard ? 'This is set as Dashboard' : '') .
                     "'>";
                 $results .=
                     "       <i class='" .
                     ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
                     "'></i>";
-                $results .= "       {$child->name}";
+                $results .= '       ' . ($current_lang == 'en' ? $child->name_en : $child->name_ar);
                 $results .= "       <span class='pull-right'>";
                 $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
                 $results .=
@@ -269,7 +287,7 @@
                     implode(', ', $privileges) .
                     '</small></em>';
                 $results .= '   </div>';
-                $results .= getBuilderMenuChildren($child);
+                $results .= getBuilderMenuChildren($child, $current_lang); // Recursive call
 
                 $results .= '</li>';
             }

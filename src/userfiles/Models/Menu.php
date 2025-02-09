@@ -5,17 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
-use Astrotomic\Translatable\Contracts\Translatable as TranslatableContract;
-use Astrotomic\Translatable\Translatable;
-
-class Menu extends Model implements TranslatableContract
+class Menu extends Model
 {
     protected $appends = ['rout'];
-    use Translatable;
 
-    public $translatedAttributes = ['name'];
-    protected $fillable = ['parent_id', 'link', 'page_id', 'type'];
-
+    protected $fillable = ['parent_id', 'link', 'page_id', 'type', 'name_ar','name_en'];
     public static function boot()
     {
         parent::boot();
@@ -39,5 +33,4 @@ class Menu extends Model implements TranslatableContract
     {
         return $this->hasMany(Menu::class, 'parent_id', 'id');
     }
-
 }
