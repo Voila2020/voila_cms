@@ -140,6 +140,7 @@ foreach ($editorCssFiles as $file) {
                 selector: selector,
                 valid_elements: '*[*]',
                 extended_valid_elements: 'code',
+                remove_trailing_brs: false,
                 plugins: 'preview code importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
                 mobile: {
                     plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
