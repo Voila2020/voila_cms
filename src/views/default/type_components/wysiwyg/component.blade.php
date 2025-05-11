@@ -3,20 +3,25 @@
         var selectId = null;
         var $id = '';
         var $template = '';
-        $(document).ready(function() {
+        $(document).ready(function () {
             $id = "{{ $id }}";
             $template = `"{{ $row->template }}"`;
         })
 
-        $('#modalInsertPhotoEditor').on('hidden.bs.modal', function() {
-            $("#input_{{ $name }}").trigger("change")
+        $('#modalInsertPhotoEditor').on('hidden.bs.modal', function () {
+            $("#input_{{ $name }}").trigger("change");
+            @if (@$form['translation'])
+                @foreach ($websiteLanguages as $lang)
+                    $("#input_{{ $name }}_{{ $lang->code }}").trigger("change");
+                @endforeach
+            @endif
         })
 
-        $('#modalInsertEmailTemplate').on('hidden.bs.modal', function() {
+        $('#modalInsertEmailTemplate').on('hidden.bs.modal', function () {
             $("#input_{{ $name }}").trigger("change")
         })
         @if (!@$form['translation'])
-            $("#input_{{ $name }}").on("change", function() {
+            $("#input_{{ $name }}").on("change", function () {
                 var is_empty = $(this).val();
                 if (is_empty) {
                     let slash = is_empty.charAt(0);
@@ -30,8 +35,8 @@
                 $(this).val("");
             });
         @else
-            @foreach ($websiteLanguages as $lang)
-                $("#input_{{ $name }}_{{ $lang->code }}").on("change", function() {
+        @foreach ($websiteLanguages as $lang)
+                $("#input_{{ $name }}_{{ $lang->code }}").on("change", function () {
                     var is_empty = $(this).val();
                     if (is_empty) {
                         let slash = is_empty.charAt(0);
@@ -98,8 +103,8 @@
             <div class="modal-header">
                 <div class="buttons">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <button type="button" class="resize" title="<?php echo cbLang('filemanager.resize'); ?>"><i class="fa fa-expand"
-                            aria-hidden="true"></i></button>
+                    <button type="button" class="resize" title="<?php echo cbLang('filemanager.resize'); ?>"><i
+                            class="fa fa-expand" aria-hidden="true"></i></button>
                 </div>
                 <div class="title-sec">
                     <h4 class="modal-title">Insert Image</h4>
@@ -134,23 +139,23 @@ foreach ($editorCssFiles as $file) {
 ?>
 @push('bottom')
     <script>
-        $(function() {
+        $(function () {
             let selector = '#textarea_{{ $name }}';
             let options = {
                 selector: selector,
                 valid_elements: '*[*]',
                 extended_valid_elements: 'code',
                 remove_trailing_brs: false,
-                plugins: 'preview code importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
+                plugins: 'preview code importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
                 mobile: {
-                    plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link template codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
+                    plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
                 },
                 menubar: 'file edit view insert format tools table tc help',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
                 content_css: [<?php echo implode(',', $editorCssArray); ?>],
-                setup: function(editor) {
+                setup: function (editor) {
                     //Add a custom validator to the form
-                    $('form').on('submit', function(e) {
+                    $('form').on('submit', function (e) {
                         var $tinyMceEditor = $('#textarea_{{ $name }}');
                         if ($tinyMceEditor.length && !editor.getContent().trim() &&
                             "{{ $required }}") {
@@ -171,7 +176,7 @@ foreach ($editorCssFiles as $file) {
                     //////********************************************
                     editor.ui.registry.addButton('FileManager', {
                         text: 'File Manager',
-                        onAction: function(_) {
+                        onAction: function (_) {
                             $("#modalInsertPhotoEditor .modal-body").html(
                                 `<iframe width="100%" height="400" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=input_{{ $name }}" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll; "></iframe>`
                             );
@@ -182,7 +187,7 @@ foreach ($editorCssFiles as $file) {
                     //////********************************************
                     editor.ui.registry.addButton('mymodalbutton', {
                         text: 'My Modal Button',
-                        onAction: function() {
+                        onAction: function () {
                             // Open the custom modal window
                             editor.windowManager.open({
                                 title: 'My Modal Window',
@@ -195,31 +200,31 @@ foreach ($editorCssFiles as $file) {
                                     }]
                                 },
                                 buttons: [{
-                                        type: 'cancel',
-                                        text: 'Cancel'
-                                    },
-                                    {
-                                        type: 'submit',
-                                        text: 'Submit',
-                                        primary: true,
-                                        onAction: function() {
-                                            // Custom button behavior goes here
-                                            editor.insertContent(
-                                                'Hello, ' +
-                                                editor.windowManager
+                                    type: 'cancel',
+                                    text: 'Cancel'
+                                },
+                                {
+                                    type: 'submit',
+                                    text: 'Submit',
+                                    primary: true,
+                                    onAction: function () {
+                                        // Custom button behavior goes here
+                                        editor.insertContent(
+                                            'Hello, ' +
+                                            editor.windowManager
                                                 .getWindows()[0]
                                                 .getData().textbox +
-                                                '!'
-                                            );
-                                            editor.windowManager.close();
-                                        }
+                                            '!'
+                                        );
+                                        editor.windowManager.close();
                                     }
+                                }
                                 ]
                             });
                         }
                     });
                     //////********************************************
-                    editor.on('change', function(e) {
+                    editor.on('change', function (e) {
                         editor.save();
 
                     });
@@ -229,7 +234,7 @@ foreach ($editorCssFiles as $file) {
                         onAction: function () {
 
                             var selectedNode = editor.selection.getNode();
-                            if(selectedNode){
+                            if (selectedNode) {
                                 // Create a new element with the desired HTML content (e.g., a new paragraph)
                                 var newElement = document.createElement('p');
                                 newElement.innerHTML = selectedNode.innerHTML;
@@ -252,24 +257,6 @@ foreach ($editorCssFiles as $file) {
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
                 importcss_append: true,
-                templates: [{
-                        title: 'New Table',
-                        description: 'creates a new table',
-                        content: '<div class="mceTmpl"><table width="98%%"  border="0" cellspacing="0" cellpadding="0"><tr><th scope="col"> </th><th scope="col"> </th></tr><tr><td> </td><td> </td></tr></table></div>'
-                    },
-                    {
-                        title: 'Starting my story',
-                        description: 'A cure for writers block',
-                        content: 'Once upon a time...'
-                    },
-                    {
-                        title: 'New list with dates',
-                        description: 'New List with dates',
-                        content: '<div class="mceTmpl"><span class="cdate">cdate</span><br /><span class="mdate">mdate</span><h2>My List</h2><ul><li></li><li></li></ul></div>'
-                    }
-                ],
-                template_cdate_format: '[Date Created (CDATE): %m/%d/%Y : %H:%M:%S]',
-                template_mdate_format: '[Date Modified (MDATE): %m/%d/%Y : %H:%M:%S]',
                 height: 400,
                 image_caption: true,
                 quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
@@ -282,12 +269,136 @@ foreach ($editorCssFiles as $file) {
                 var tinyEditor = tinymce.init(options);
             @else
                 @foreach ($websiteLanguages as $lang)
+                    options = {
+                        selector: selector,
+                        valid_elements: '*[*]',
+                        extended_valid_elements: 'code',
+                        remove_trailing_brs: false,
+                        plugins: 'preview code importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons  ',
+                        mobile: {
+                            plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
+                        },
+                        menubar: 'file edit view insert format tools table tc help',
+                        toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
+                        content_css: [<?php        echo implode(',', $editorCssArray); ?>],
+                        setup: function (editor) {
+                            //Add a custom validator to the form
+                            $('form').on('submit', function (e) {
+                                var $tinyMceEditor = $('#textarea_{{ $name }}');
+                                if ($tinyMceEditor.length && !editor.getContent().trim() &&
+                                    "{{ $required }}") {
+
+                                    editor.notificationManager.open({
+                                        text: 'This field is required.',
+                                        type: 'warning',
+                                        position: 'top-right'
+                                    });
+
+                                    $('html, body').animate({
+                                        scrollTop: $tinyMceEditor.offset().top - 300
+                                    }, 100);
+
+                                    e.preventDefault();
+                                }
+                            });
+                            //////********************************************
+                            editor.ui.registry.addButton('FileManager', {
+                                text: 'File Manager',
+                                onAction: function (_) {
+                                    $("#modalInsertPhotoEditor .modal-body").html(
+                                        `<iframe width="100%" height="400" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=input_{{ $name }}_{{ $lang->code }}" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll; "></iframe>`
+                                    );
+                                    $("#modalInsertPhotoEditor").modal();
+                                }
+                            });
+
+                            //////********************************************
+                            editor.ui.registry.addButton('mymodalbutton', {
+                                text: 'My Modal Button',
+                                onAction: function () {
+                                    // Open the custom modal window
+                                    editor.windowManager.open({
+                                        title: 'My Modal Window',
+                                        body: {
+                                            type: 'panel',
+                                            items: [{
+                                                type: 'textbox',
+                                                name: 'textbox',
+                                                label: 'Textbox'
+                                            }]
+                                        },
+                                        buttons: [{
+                                            type: 'cancel',
+                                            text: 'Cancel'
+                                        },
+                                        {
+                                            type: 'submit',
+                                            text: 'Submit',
+                                            primary: true,
+                                            onAction: function () {
+                                                // Custom button behavior goes here
+                                                editor.insertContent(
+                                                    'Hello, ' +
+                                                    editor.windowManager
+                                                        .getWindows()[0]
+                                                        .getData().textbox +
+                                                    '!'
+                                                );
+                                                editor.windowManager.close();
+                                            }
+                                        }
+                                        ]
+                                    });
+                                }
+                            });
+                            //////********************************************
+                            editor.on('change', function (e) {
+                                editor.save();
+
+                            });
+                            //*************************************
+                            editor.ui.registry.addButton('selected-clear-format', {
+                                text: 'Clear (Selected)',
+                                onAction: function () {
+
+                                    var selectedNode = editor.selection.getNode();
+                                    if (selectedNode) {
+                                        // Create a new element with the desired HTML content (e.g., a new paragraph)
+                                        var newElement = document.createElement('p');
+                                        newElement.innerHTML = selectedNode.innerHTML;
+                                        // Replace the selected node with the new element
+                                        selectedNode.parentNode.replaceChild(newElement, selectedNode);
+                                        editor.setContent(editor.getContent());
+                                    }
+                                }
+                            });
+                            editor.ui.registry.addButton('all-clear-format', {
+                                text: 'Clear (All)',
+                                onAction: function () {
+                                    var content = editor.getContent();
+                                    var text = content.replace(/<\/?(?!(p|br)\b)[^>]*>/g, ''); // Remove all HTML tags except for <p> and <br>
+                                    editor.setContent(text);
+                                }
+                            });
+                            //*************************************
+                        },
+                        // init_instance_callback: insert_contents,
+                        font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
+                        importcss_append: true,
+                        height: 400,
+                        image_caption: true,
+                        quickbars_selection_toolbar: 'bold italic | quicklink h2 h3 blockquote quickimage quicktable',
+                        noneditable_noneditable_class: 'mceNonEditable',
+                        toolbar_mode: 'sliding',
+                        tinycomments_mode: 'embedded',
+                        contextmenu: 'link image table configurepermanentpen',
+                    };
                     selector = '#textarea_{{ $name }}_{{ $lang->code }}';
                     options.selector = selector;
                     tinymce.init(options);
                 @endforeach
             @endif
-        })
+            })
 
         function insert_contents(inst) {
 
