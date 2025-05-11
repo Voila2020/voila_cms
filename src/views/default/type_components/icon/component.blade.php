@@ -14,8 +14,11 @@
             style="font-family: 'FontAwesome', Helvetica;">
             <option value="">** Select an Icon</option>
             @foreach ($fonts as $font)
-                <option value='fa fa-{{ $font }}' {{ $value == "fa fa-$font" ? 'selected' : '' }}
-                    data-label='{{ $font }}'>{{ $font }}</option>
+                @if($font == 'x-twitter')
+                    <option value='fa-brands fa-{{ $font }}' {{ $value == "fa-brands fa-$font" ? 'selected' : '' }} data-label='{{ $font }}'>{{ $font }}</option>
+                @else
+                    <option value='fa fa-{{ $font }}' {{ $value == "fa fa-$font" ? 'selected' : '' }} data-label='{{ $font }}'>{{ $font }}</option>
+                @endIf
             @endforeach
         </select>
     </div>

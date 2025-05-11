@@ -698,6 +698,7 @@ class Fontawesome {
             "bluetooth",
             "bluetooth-b",
             "percent",
+            "x-twitter"
         ];
 	}
 }
