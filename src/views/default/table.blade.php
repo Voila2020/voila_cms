@@ -686,7 +686,7 @@ $total = $result->total();
                             <div class="form-group">
                                 <label>{{ cbLang('export_dialog_format_export') }}</label>
                                 <select name='fileformat' class='form-control'>
-                                    <option value='pdf'>PDF</option>
+                                    <!--<option value='pdf'>PDF</option>-->
                                     <option value='xls'>Microsoft Excel (xls)</option>
                                     <option value='csv'>CSV</option>
                                 </select>

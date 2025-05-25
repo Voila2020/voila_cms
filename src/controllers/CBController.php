@@ -5,6 +5,7 @@ namespace crocodicstudio\crudbooster\controllers;
 error_reporting(E_ALL ^ E_NOTICE);
 
 use crocodicstudio\crudbooster\export\DefaultExportXls;
+use crocodicstudio\crudbooster\export\DefaultExportCsv;
 use crocodicstudio\crudbooster\helpers\CB;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
 use Exception;
@@ -749,7 +750,7 @@ class CBController extends Controller
                 break;
             case 'csv':
 
-                return Excel::download(new DefaultExportXls($response), $filename . ".csv");
+                return Excel::download(new DefaultExportCsv($response), $filename . ".csv", 'Csv');
                 break;
         }
     }
