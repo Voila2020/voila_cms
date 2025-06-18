@@ -114,8 +114,9 @@
     <div class="{{ $col_width ?: 'col-sm-10' }}">
         <select style='width:100%' class='form-control' id="{{ $name }}" {{ $required }} {{ $readonly }}
             {!! $placeholder !!} {{ $disabled }}
-            name="{{ $name }}{{ $form['relationship_table'] ? '[]' : '' }}"
-            {{ $form['relationship_table'] ? 'multiple="multiple"' : '' }}>
+            name="{{ $name }}{{ $form['relationship_table'] || !empty($form['multiple']) ? '[]' : '' }}"
+            {{ $form['relationship_table'] || !empty($form['multiple']) ? 'multiple' : '' }}>
+
             @if ($form['dataenum'])
                 <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
                 <?php
@@ -158,9 +159,7 @@
                         if (!isset($params[2])) {
                             $params[2] = 'id';
                         }
-                        $value = DB::table($params[0])
-                            ->where($params[2], $id)
-                            ->first()->{$params[1]};
+                        $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
                         $value = explode(',', $value);
                     } else {
                         $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
@@ -203,12 +202,24 @@
                         }
                         $result = $result->orderby($select_title, 'asc')->get();
 
-                        foreach ($result as $r) {
-                            $option_label = $r->{$select_title};
-                            $option_value = $r->$select_table_pk;
-                            $selected = $option_value == $value ? 'selected' : '';
-                            echo "<option $selected value='$option_value'>$option_label</option>";
+                        if (!empty($form['multiple'])) {
+                            $valuesArray = is_string($value) ? explode(',', $value) : [$value]; // Convert to array
+                            foreach ($result as $r) {
+                                $option_label = $r->{$select_title};
+                                $option_value = $r->$select_table_pk;
+                                // Check if current option value is in the values array
+                                $selected = in_array($option_value, $valuesArray) ? 'selected' : '';
+                                echo "<option $selected value='$option_value'>$option_label</option>";
+                            }
+                        } else {
+                            foreach ($result as $r) {
+                                $option_label = $r->{$select_title};
+                                $option_value = $r->$select_table_pk;
+                                $selected = $option_value == $value ? 'selected' : '';
+                                echo "<option $selected value='$option_value'>$option_label</option>";
+                            }
                         }
+
                         ?>
                         <!--end-datatable-ajax-->
                     @endif
