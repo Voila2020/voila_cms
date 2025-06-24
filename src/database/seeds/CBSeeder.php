@@ -559,6 +559,16 @@ class CBSeeder extends Seeder
         'helper' => 'Multi Authentication is a system of authentication in which multiple methods are used to verify a user identity.',
         'group_setting' => 'general_setting',
       ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'editor_js_links',
+        'label' => 'Editor Js Links',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'TinyMCE Setting',
+        'dataenum' => '',
+        'helper' => '',
+      ]
     ];
 
     foreach ($data as $row) {

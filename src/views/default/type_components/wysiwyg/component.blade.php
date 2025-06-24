@@ -1,4 +1,5 @@
 @push('bottom')
+    <script src="{{ asset('vendor/crudbooster/assets/js/tinymcMenu.js') }}"></script>
     <script type="text/javascript">
         var selectId = null;
         var $id = '';
@@ -130,17 +131,37 @@
 </script>
 
 <?php
-$editorCss = Crudbooster::getSetting('editor_css_links');
-$editorCssFiles = explode(',', $editorCss);
-$editorCssArray = [];
-foreach ($editorCssFiles as $file) {
-    $editorCssArray[] = "'" . trim($file) . "'";
-}
+    $editorCss = Crudbooster::getSetting('editor_css_links');
+    $editorCssFiles = explode(',', $editorCss);
+    $editorCssArray = [];
+    foreach ($editorCssFiles as $file) {
+        $editorCssArray[] = "'" . trim($file) . "'";
+    }
 ?>
+<?php
+    $editorJs = Crudbooster::getSetting('editor_js_links');
+    $editorJsFiles = explode(',', $editorJs);
+    $editorJsArray = [];
+    foreach ($editorJsFiles as $file) {
+        $editorJsArray[] = "'" . trim($file) . "'";
+    }
+?>
+
 @push('bottom')
     <script>
         $(function () {
             let selector = '#textarea_{{ $name }}';
+
+            cardsMenu = {
+                            cards: {
+                                title: 'Cards',
+                                items: ''
+                            }
+                        }
+            if ('customMenu' in window) {
+                cardsMenu = customMenu;
+            }
+
             let options = {
                 selector: selector,
                 valid_elements: '*[*]',
@@ -150,9 +171,10 @@ foreach ($editorCssFiles as $file) {
                 mobile: {
                     plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
                 },
-                menubar: 'file edit view insert format tools table tc help',
+                menubar: 'file edit view insert format tools table tc help cards',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
                 content_css: [<?php echo implode(',', $editorCssArray); ?>],
+                content_js: [<?php echo implode(',', $editorJsArray); ?>],
                 setup: function (editor) {
                     //Add a custom validator to the form
                     $('form').on('submit', function (e) {
@@ -253,6 +275,10 @@ foreach ($editorCssFiles as $file) {
                         }
                     });
                     //*************************************
+                    /*menu*/
+                    if (typeof registerMenu === 'function') {
+                        registerMenu(editor);
+                    }
                 },
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
@@ -264,6 +290,7 @@ foreach ($editorCssFiles as $file) {
                 toolbar_mode: 'sliding',
                 tinycomments_mode: 'embedded',
                 contextmenu: 'link image table configurepermanentpen',
+                menu: cardsMenu
             };
             @if (!@$form['translation'])
                 var tinyEditor = tinymce.init(options);
