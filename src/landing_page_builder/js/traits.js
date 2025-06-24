@@ -1052,6 +1052,71 @@ function traits(editor) {
           label: "Large Screen Size",
         }
       );
+      traitArr.unshift(
+        {
+          type: "label",
+          label: "Column",
+        },
+        {
+          type: "class_select",
+          name: "col_xl_class",
+          options: [
+            {
+              value: "",
+              name: "None",
+            },
+            {
+              value: "col-xl-12",
+              name: "12/12",
+            },
+            {
+              value: "col-xl-11",
+              name: "11/12",
+            },
+            {
+              value: "col-xl-10",
+              name: "10/12",
+            },
+            {
+              value: "col-xl-9",
+              name: "9/12",
+            },
+            {
+              value: "col-xl-8",
+              name: "8/12",
+            },
+            {
+              value: "col-xl-7",
+              name: "7/12",
+            },
+            {
+              value: "col-xl-6",
+              name: "6/12",
+            },
+            {
+              value: "col-xl-5",
+              name: "5/12",
+            },
+            {
+              value: "col-xl-4",
+              name: "4/12",
+            },
+            {
+              value: "col-xl-3",
+              name: "3/12",
+            },
+            {
+              value: "col-xl-2",
+              name: "2/12",
+            },
+            {
+              value: "col-xl-1",
+              name: "1/12",
+            },
+          ],
+          label: "Extra Large Screen Size",
+        }
+      );
     }
 
     if (type.id == "button") {
