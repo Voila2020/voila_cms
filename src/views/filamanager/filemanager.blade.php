@@ -320,7 +320,7 @@ $get_params = http_build_query($get_params);
         href="https://cdnjs.cloudflare.com/ajax/libs/jplayer/2.7.1/skin/blue.monday/jplayer.blue.monday.min.css" />
     <link rel="stylesheet" href="https://uicdn.toast.com/tui-image-editor/latest/tui-image-editor.css">
     <link href="{{ asset('vendor/filemanager/css/style.css') }}" rel="stylesheet" type="text/css" />
-    <?php 
+    <?php
     if ($config['edit_alt_text']) {
     ?>
         <style>
@@ -328,7 +328,7 @@ $get_params = http_build_query($get_params);
         </style>
     <?php
     }
-    ?>    
+    ?>
 
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"
         integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ=" crossorigin="anonymous"></script>
@@ -765,8 +765,16 @@ $get_params = http_build_query($get_params);
                     } else {
                         $current_files_number++;
                         $file_path = $config['current_path'] . $rfm_subfolder . $subdir . $file;
-                        $date = filemtime($file_path);
-                        $size = filesize($file_path);
+                        try{
+                            $date = filemtime($file_path);
+                        } catch (Exception $e) {
+                            $date = date("Y-m-d H:i:s");
+                        }
+                        try{
+                            $size = filesize($file_path);
+                        } catch (Exception $e) {
+                            $size = 0;
+                        }
                         $file_ext = substr(strrchr($file, '.'), 1);
                         $sorted[$k] = [
                             'is_dir' => false,
@@ -1483,8 +1491,8 @@ if (!empty($bc)) {
                                             echo 'icon-white';
                                         }
                                         ?>"></i></a>
-                                        
-                                    <?php 
+
+                                    <?php
                                     if ($config['edit_alt_text']) {
                                     ?>
                                       <a href="javascript:void('')" class="tip-left edit-alt-text-button"
@@ -1493,8 +1501,8 @@ if (!empty($bc)) {
                                        </a>
                                     <?php
                                     }
-                                    ?>    
-                                    
+                                    ?>
+
 
                                     <a href="javascript:void('')" class="tip-left erase-button <?php if ($config['delete_files'] && !$file_prevent_delete) {
                                         echo 'delete-file';
