@@ -55,6 +55,14 @@
         @endif
     </script>
 @endpush
+@push('head')
+    <style>
+        .tox-shadowhost.tox-fullscreen, 
+        .tox.tox-tinymce.tox-fullscreen {
+            z-index: 1049!important;
+        }
+    </style>
+@endpush
 @if (!@$form['translation'])
     <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
         <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
@@ -274,6 +282,19 @@
                             editor.setContent(text);
                         }
                     });
+
+                    //*************************************
+                    /*open file manager when double click on image*/
+
+                    editor.on('DblClick', function (e) {
+                        const target = e.target;
+                        if (target.nodeName === 'IMG') {
+                            $("#modalInsertPhotoEditor .modal-body").html(
+                                `<iframe width="100%" height="400" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=input_{{ $name }}" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll; "></iframe>`
+                            );
+                            $("#modalInsertPhotoEditor").modal();
+                        }
+                    });
                     //*************************************
                     /*menu*/
                     if (typeof registerMenu === 'function') {
@@ -305,7 +326,7 @@
                         mobile: {
                             plugins: 'preview importcss searchreplace autolink autosave save directionality visualblocks visualchars fullscreen image link codesample table charmap pagebreak nonbreaking anchor insertdatetime advlist lists wordcount help charmap quickbars emoticons '
                         },
-                        menubar: 'file edit view insert format tools table tc help',
+                        menubar: 'file edit view insert format tools table tc help cards',
                         toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
                         content_css: [<?php        echo implode(',', $editorCssArray); ?>],
                         setup: function (editor) {
@@ -408,6 +429,23 @@
                                 }
                             });
                             //*************************************
+                            //*************************************
+                            /*open file manager when double click on image*/
+
+                            editor.on('DblClick', function (e) {
+                                const target = e.target;
+                                if (target.nodeName === 'IMG') {
+                                    $("#modalInsertPhotoEditor .modal-body").html(
+                                        `<iframe width="100%" height="400" src="{{ Route('dialog') }}?type=2&multiple=0&field_id=input_{{ $name }}" frameborder="0" style="overflow: scroll; overflow-x: hidden; overflow-y: scroll; "></iframe>`
+                                    );
+                                    $("#modalInsertPhotoEditor").modal();
+                                }
+                            });
+                            //*************************************
+                            /*menu*/
+                            if (typeof registerMenu === 'function') {
+                                registerMenu(editor);
+                            }
                         },
                         // init_instance_callback: insert_contents,
                         font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
@@ -419,6 +457,7 @@
                         toolbar_mode: 'sliding',
                         tinycomments_mode: 'embedded',
                         contextmenu: 'link image table configurepermanentpen',
+                        menu: cardsMenu,
                     };
                     selector = '#textarea_{{ $name }}_{{ $lang->code }}';
                     options.selector = selector;
