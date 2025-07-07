@@ -13,6 +13,7 @@ class ModulsController extends CBController
     public function cbInit()
     {
         $this->table = 'cms_moduls';
+        $this->translation_table = '';
         $this->primary_key = 'id';
         $this->title_field = "name";
         $this->limit = 100;

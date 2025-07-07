@@ -823,12 +823,18 @@ class CBController extends Controller
 
     public function getUpdateSingle()
     {
+        $this->cbLoader();
         $table = request('table');
         $column = request('column');
         $value = request('value');
         $id = request('id');
+        $lang = request('lang');
         $tablePK = CB::pk($table);
-        DB::table($table)->where($tablePK, $id)->update([$column => $value]);
+        if($lang && $lang != null) {
+            $column = substr($column, 0, -(strlen($lang) + 1));
+            DB::table($this->translation_table)->where($this->translation_main_column, $id)->where('locale', $lang)->update([$column => $value]);
+        } else
+            DB::table($table)->where($tablePK, $id)->update([$column => $value]);
 
         return redirect()->back()->with(['message_type' => 'success', 'message' => cbLang('alert_delete_data_success')]);
     }
@@ -1178,6 +1184,15 @@ class CBController extends Controller
                 if ($ro['datatable']) {
                     if ($inputdata == '') {
                         $this->arr[$name] = 0;
+                    }
+                }
+
+                if($ro['multiple']) {
+                    if (isset($inputdata) && is_array($inputdata)) {
+                        $idsString = implode(',', $inputdata);
+                        $this->arr[$name] = $idsString;
+                    } else {
+                        $this->arr[$name] = null;
                     }
                 }
             }
