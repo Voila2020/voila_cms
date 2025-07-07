@@ -40,7 +40,7 @@
 
                     if (@$col['image']) {
                         if ($value == '') {
-                            $value = "http://placehold.it/50x50&text=NO+IMAGE";
+                            $value = "http://placehold.it/50x50&amp;text=NO+IMAGE";
                         }
                         $pic = (strpos($value, 'http://') !== FALSE) ? $value : asset($value);
                         $pic_small = $pic;
