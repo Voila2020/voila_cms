@@ -37,6 +37,7 @@ class WebsiteLanguagesController extends CBController
         $this->col = [];
         $this->col[] = ["label" => "Name", "name" => "name"];
         $this->col[] = ["label" => "Code", "name" => "code"];
+        $this->col[] = ["label" => "Direction", "name" => "direction"];
         $this->col[] = ["label" => "Active", "name" => "active", "switch" => true];
         $this->col[] = ["label" => "Default", "name" => "default", "switch" => true];
 
@@ -46,6 +47,7 @@ class WebsiteLanguagesController extends CBController
         $this->form = [];
         $this->form[] = ['label' => 'Name', 'name' => 'name', 'type' => 'text', 'validation' => 'required|string|min:3|max:70', 'width' => 'col-sm-10', 'placeholder' => 'You can only enter the letter only'];
         $this->form[] = ['label' => 'Code', 'name' => 'code', 'type' => 'text', 'validation' => 'required|min:1|max:255', 'width' => 'col-sm-10'];
+        $this->form[] = ['label' => 'Direction', 'name' => 'direction', 'type' => 'select', 'validation' => 'required', 'dataenum' => 'rtl;ltr', 'width' => 'col-sm-10'];
         $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'switch', 'validation' => 'required', 'width' => 'col-sm-9'];
         # END FORM DO NOT REMOVE THIS LINE
 

@@ -19,6 +19,7 @@ class CreateLanguages extends Migration
                 $table->increments('id');
                 $table->string('name');
                 $table->string('code');
+                $table->string('direction')->default('ltr');
                 $table->tinyInteger('active')->nullable();
                 $table->tinyInteger('default')->nullable();
                 $table->timestamps();
@@ -43,6 +44,11 @@ class CreateLanguages extends Migration
             if (!Schema::hasColumn('languages', 'default')) {
                 Schema::table('languages', function (Blueprint $table) {
                     $table->tinyInteger('default')->nullable();
+                });
+            }
+            if (!Schema::hasColumn('languages', 'direction')) {
+                Schema::table('languages', function (Blueprint $table) {
+                    $table->string('direction')->default('ltr');
                 });
             }
             // You can add more checks for additional columns if needed

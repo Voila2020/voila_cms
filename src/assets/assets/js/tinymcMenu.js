@@ -5,9 +5,9 @@ const customMenu = {
     }
 };
 
-function registerMenu(editor, lang = 'en') {
+function registerMenu(editor, direction = 'ltr') {
     //*************************************
-    if(lang == 'en')
+    if(direction == 'ltr')
         registerMenuLTR(editor)
     else 
         registerMenuRTL(editor)
