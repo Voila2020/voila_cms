@@ -444,7 +444,7 @@
                             //*************************************
                             /*menu*/
                             if (typeof registerMenu === 'function') {
-                                registerMenu(editor);
+                                registerMenu(editor, '{{ $lang->code }}');
                             }
                         },
                         // init_instance_callback: insert_contents,
