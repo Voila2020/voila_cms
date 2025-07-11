@@ -988,10 +988,7 @@ function traits(editor) {
         name: "col_md_class",
       });
       traitArr.unshift(
-        {
-          type: "label",
-          label: "Column",
-        },
+
         {
           type: "class_select",
           name: "col_lg_class",
