@@ -1573,12 +1573,14 @@ class CBSeeder extends Seeder
         [
           'name' => 'English',
           'code' => 'en',
+          'direction' => 'ltr',
           'active' => 1,
           'default' => 1,
         ],
         [
           'name' => 'Arabic',
           'code' => 'ar',
+          'direction' => 'rtl',
           'active' => 1,
           'default' => null,
         ],

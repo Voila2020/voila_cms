@@ -41,7 +41,7 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/userfiles/controllers/AdminHeaderMenusController.php' => app_path('Http/Controllers/AdminHeaderMenusController.php')], 'cb_header_menus_controller');
             //Publish Models
             $this->publishes([__DIR__.'/userfiles/Models/Menu.php' => app_path('Models/Menu.php')], 'menu_model');
-            $this->publishes([__DIR__.'/userfiles/Models/MenuTranslation.php' => app_path('Models/MenuTranslation.php')], 'menu_translation_ model');
+            //$this->publishes([__DIR__.'/userfiles/Models/MenuTranslation.php' => app_path('Models/MenuTranslation.php')], 'menu_translation_ model');
 
             $this->publishes([__DIR__ . '/Rules' => app_path('Rules')], 'cb_rules');
             $this->publishes([__DIR__ . '/assets' => public_path('vendor/crudbooster')], 'cb_asset');
