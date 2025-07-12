@@ -1155,6 +1155,65 @@ function traits(editor) {
           name: "required",
         }
       );
+      traitArr.splice(9, 0, 
+         {
+          type: "class_select",
+          options: [
+            {
+              value: "",
+              name: "None",
+            },
+            {
+              value: "first-placeholder-color",
+              name: "First Color",
+            },
+            {
+              value: "second-placeholder-color",
+              name: "Second Color",
+            },
+            {
+              value: "third-placeholder-color",
+              name: "Third Color",
+            },
+            {
+              value: "fourth-placeholder-color",
+              name: "Fourth Color",
+            },
+          ],
+          label: "Placeholder Color",
+        }
+      );
+    }
+
+    if (type.id == "select") {
+      traitArr.splice(5, 0, 
+         {
+          type: "class_select",
+          options: [
+            {
+              value: "",
+              name: "None",
+            },
+            {
+              value: "first-placeholder-color",
+              name: "First Color",
+            },
+            {
+              value: "second-placeholder-color",
+              name: "Second Color",
+            },
+            {
+              value: "third-placeholder-color",
+              name: "Third Color",
+            },
+            {
+              value: "fourth-placeholder-color",
+              name: "Fourth Color",
+            },
+          ],
+          label: "Placeholder Color",
+        }
+      );
     }
 
     if (type.id == "image") {
@@ -1168,6 +1227,29 @@ function traits(editor) {
           label: "Alternative Text",
           name: "alt",
         },
+      );
+    }
+
+    if (type.id == "container") {
+      traitArr.unshift(
+        {
+          type: "label",
+          label: "General",
+        },
+        {
+          type: "class_select",
+          options: [
+            {
+              value: "",
+              name: "None",
+            },
+            {
+              value: "container-full-width",
+              name: "Full Width",
+            },
+          ],
+          label: "Full Width",
+        }
       );
     }
 
