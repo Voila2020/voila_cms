@@ -1250,6 +1250,38 @@ function traits(editor) {
       );
     }
 
+    if (type.id == "list") {
+      traitArr.unshift(
+        {
+          type: "label",
+          label: "List Appearance",
+        },
+        {
+          type: "class_select",
+          options: [
+            {
+              value: "",
+              name: "Numbered or Bulleted (Default)",
+            },
+            {
+              value: "list-no-bullets",
+              name: "No Numbers or Bullets",
+            },
+            {
+              value: "list-arabic-bullets",
+              name: "Arabic Number",
+            }
+            ,
+            {
+              value: "list-english-bullets",
+              name: "English Number",
+            }
+          ],
+          label: "List Style",
+        }
+      );
+    }
+
     // if (type.id == "text" || type.id == "paragraph") {
     //     traitArr.unshift({
     //         type: "label",

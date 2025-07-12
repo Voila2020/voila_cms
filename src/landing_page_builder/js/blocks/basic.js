@@ -60,4 +60,18 @@ function basic_blocks(editor) {
         },
     });
 
+    editor.BlockManager.add('list', {
+        id: 'list',
+        label: 'List',
+        category: 'Basic',
+        media: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path fill="currentColor" d="M7 5h14v2H7V5zm0 6h14v2H7v-2zm0 6h14v2H7v-2zM4 5.5C4 6.3 3.3 7 2.5 7S1 6.3 1 5.5 1.7 4 2.5 4 4 4.7 4 5.5zM4 11.5C4 12.3 3.3 13 2.5 13S1 12.3 1 11.5 1.7 10 2.5 10 4 10.7 4 11.5zM4 17.5C4 18.3 3.3 19 2.5 19S1 18.3 1 17.5 1.7 16 2.5 16 4 16.7 4 17.5z"/></svg>`,
+        content: `
+                <ul class="list" style="list-style-type: disc;">
+                    <li>عنصر 1</li>
+                    <li>عنصر 2</li>
+                    <li>عنصر 3</li>
+                </ul>
+            `
+    });
+
 }

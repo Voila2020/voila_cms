@@ -409,4 +409,19 @@ function components(editor) {
             },
         },
     });
+
+    editor.DomComponents.addType('list', {
+        model: {
+            defaults: {
+                tagName: 'ul',
+                editable: true,
+                draggable: "*",
+                droppable: true,
+            },
+        },
+        isComponent: function (e) {
+            if (e && e.classList && e.classList.contains("list"))
+                return { type: "list" };
+        },
+    });
 }
