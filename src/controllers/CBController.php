@@ -710,6 +710,10 @@ class CBController extends Controller
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.index', $data);
         }
 
+        if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.index')) {
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.index', $data);
+        }
+        
         $view = $manualView ?: view("crudbooster::default.index", $data);
         return $view;
     }
@@ -1268,6 +1272,10 @@ class CBController extends Controller
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
         }
 
+        if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.form')) {
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+        }
+
         $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
         return $view;
     }
@@ -1501,6 +1509,10 @@ class CBController extends Controller
 
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        }
+
+        if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.form')) {
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
         }
 
         $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
@@ -1797,6 +1809,10 @@ class CBController extends Controller
         $manualView = null;
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
+        }
+
+        if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.form')) {
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
         }
 
         $view = $manualView ?: view('crudbooster::default.form', compact('row', 'page_menu', 'page_title', 'command', 'id'));
