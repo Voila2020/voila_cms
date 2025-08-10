@@ -1548,6 +1548,14 @@ class CBController extends Controller
             $this->arr['updated_at'] = date('Y-m-d H:i:s');
         }
         $this->hook_before_edit($this->arr, $id);
+        foreach ($this->data_inputan as $ro) {
+              $name = $ro['name'];
+             if ($ro['type'] == 'filemanager') {
+                if(!array_key_exists($name,$this->arr)){
+                   $this->arr[$name] = '';
+                }
+            }
+        }
         DB::table($this->table)->where($this->primary_key, $id)->update($this->arr);
         //Looping Data Input Again After Insert
         foreach ($this->data_inputan as $ro) {

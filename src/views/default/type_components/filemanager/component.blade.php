@@ -133,7 +133,7 @@
             function showDeletePopout(name) {
                 swal({
                     title: "{{ cbLang('delete_title_confirm') }}",
-                    text: "{{ cbLang('delete_description_confirm') }}",
+                    text: "{{ cbLang('delete_filemanager_description_confirm') }}",
                     type: "warning",
                     showCancelButton: true,
                     confirmButtonColor: "#DD6B55",
@@ -150,42 +150,21 @@
                 let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
                 let table = @json($table);
                 let id = @json($id);
-                if (id == null) {
-                    $('.filemanager-col_' + form_name).hide();
-                    $('#img-' + form_name).prop("src", "");
-                    $('#link-' + form_name).prop("href", "");
-                    $('#link-' + form_name).addClass("hide");
-                    // col-sm-10 empty value clear
-                    $('#' + form_name).val("");
-                    $('#thumbnail-' + form_name).prop("src", "").val("");
-                    $('#roadtrip-' + form_name).prop("href", "");
-                    $('#holder-' + form_name).prop("src", "");
-                    $('.empty-filemanager-col_' + form_name).show();
-                    swal.close();
-                    return;
-                }
-                let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
-
-                $.ajax({
-                    type: 'GET',
-                    url: ajaxUrl,
-                    success: function(data) {
-                        $('.filemanager-col_' + form_name).hide();
-                        $('#img-' + form_name).prop("src", "");
-                        $('#link-' + form_name).prop("href", "");
-                        $('#link-' + form_name).addClass("hide");
-                        // col-sm-10 empty value clear
-                        $('#' + form_name).val("");
-                        $('#thumbnail-' + form_name).prop("src", "").val("");
-                        $('#roadtrip-' + form_name).prop("href", "");
-                        $('#holder-' + form_name).prop("src", "");
-                        $('.empty-filemanager-col_' + form_name).show();
-                        swal.close();
-                    },
-                    error: function(data) {
-
-                    }
-                });
+            
+                $('.filemanager-col_' + form_name).hide();
+                $('#img-' + form_name).prop("src", "");
+                $('#link-' + form_name).prop("href", "");
+                $('#link-' + form_name).addClass("hide");
+                // col-sm-10 empty value clear
+                $('#' + form_name).val("");
+                $('#' + form_name).attr("value","");
+                $('#thumbnail-' + form_name).prop("src", "").val("");
+                $('#roadtrip-' + form_name).prop("href", "");
+                $('#holder-' + form_name).prop("src", "");
+                $('.empty-filemanager-col_' + form_name).show();
+                swal.close();
+                return;
+            
             }
 
             $(function() {
@@ -377,12 +356,12 @@
                     $('#holder-' + name).prop("src", "");
                     $("#modalInsertPhotosingle_{{ $name . '_' . $lang->code }} .modal-body").html(link);
                     $("#modalInsertPhotosingle_{{ $name . '_' . $lang->code }}").modal();
-                }
+                } 
 
                 function showDeletePopout_{{$lang->code}}(name) {
                     swal({
                         title: "{{ cbLang('delete_title_confirm') }}",
-                        text: "{{ cbLang('delete_description_confirm') }}",
+                        text: "{{ cbLang('delete_filemanager_description_confirm') }}",
                         type: "warning",
                         showCancelButton: true,
                         confirmButtonColor: "#DD6B55",
@@ -400,42 +379,20 @@
                     let table = @json($table);
                     let id = @json($id);
                     let lang = @json($lang->code);
-                    if (id == null) {
-                        $('.filemanager-col_' + form_name).hide();
-                        $('#img-' + form_name).prop("src", "");
-                        $('#link-' + form_name).prop("href", "");
-                        $('#link-' + form_name).addClass("hide");
-                        // col-sm-10 empty value clear
-                        $('#' + form_name).val("");
-                        $('#thumbnail-' + form_name).prop("src", "").val("");
-                        $('#roadtrip-' + form_name).prop("href", "");
-                        $('#holder-' + form_name).prop("src", "");
-                        $('.empty-filemanager-col_' + form_name).show();
-                        swal.close();
-                        return;
-                    }
-                    let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id + '&lang=' + lang;
-
-                    $.ajax({
-                        type: 'GET',
-                        url: ajaxUrl,
-                        success: function(data) {
-                            $('.filemanager-col_' + form_name).hide();
-                            $('#img-' + form_name).prop("src", "");
-                            $('#link-' + form_name).prop("href", "");
-                            $('#link-' + form_name).addClass("hide");
-                            // col-sm-10 empty value clear
-                            $('#' + form_name).val("");
-                            $('#thumbnail-' + form_name).prop("src", "").val("");
-                            $('#roadtrip-' + form_name).prop("href", "");
-                            $('#holder-' + form_name).prop("src", "");
-                            $('.empty-filemanager-col_' + form_name).show();
-                            swal.close();
-                        },
-                        error: function(data) {
-
-                        }
-                    });
+                
+                    $('.filemanager-col_' + form_name).hide();
+                    $('#img-' + form_name).prop("src", "");
+                    $('#link-' + form_name).prop("href", "");
+                    $('#link-' + form_name).addClass("hide");
+                    // col-sm-10 empty value clear
+                    $('#' + form_name).val("");
+                    $('#' + form_name).attr("value","");
+                    $('#thumbnail-' + form_name).prop("src", "").val("");
+                    $('#roadtrip-' + form_name).prop("href", "");
+                    $('#holder-' + form_name).prop("src", "");
+                    $('.empty-filemanager-col_' + form_name).show();
+                    swal.close();
+                    return;
                 }
 
                 $(function() {
