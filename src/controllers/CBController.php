@@ -1127,6 +1127,16 @@ class CBController extends Controller
             if ($ro['type'] == 'child') {
                 continue;
             }
+            
+            if($ro['type'] == 'slug'){
+                $slug_value = $inputdata;
+                //Convert to lowercase
+                $slug_value  = strtolower($slug_value );
+
+                // Replace spaces and listed symbols with a dash
+                $slug_value  = preg_replace('/[!@#$%^&*()=+{}\[\]|\\\\:;\"\'<>,?\/\s]+/', '-', $slug_value );
+                $inputdata = $slug_value ;
+            }
 
             if ($name && strpos($name, 'webp') === false) {
                 if ($inputdata != '') {
