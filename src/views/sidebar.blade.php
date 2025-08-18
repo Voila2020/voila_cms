@@ -68,6 +68,12 @@
                     </li>
                 @endforeach
 
+                <li class="header"> AI Contents</li>
+                <li class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/ai/settings') ? 'active' : '' }}">
+                        <a href='{{ Route('AIContentGeneratorControllerShowSettings') }}'><i class='fa fa-magic'></i>
+                            <span> AI Content Settings & Usage</span></a>
+                </li>
+
                 @if (CRUDBooster::isSuperadmin())
                     <li class="header">{{ cbLang('SUPERADMIN') }}</li>
                     <li class='treeview'>

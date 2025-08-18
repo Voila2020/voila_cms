@@ -93,6 +93,7 @@ return [
 
     'action_show_data' => 'عرض البيانات',
     'action_add_data' => 'اضافة بيانات',
+    'action_add_data_by_ai' => 'اضافة بيانات باستخدام الذكاء الإصطناعي',
     'action_delete_selected' => 'حذف المحدد',
 
     'action_label' => 'الاجراء',

@@ -4,11 +4,16 @@
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
 @php
-    $languages = DB::table('languages')->get();
+    $languages = DB::table('languages')->where('active',1)->get();
 @endphp
 
 <div class="row">
     <div class="col-lg-12">
+        @if(CRUDBooster::checkUsingAIFeaturesPermission())
+        <div class="seo-btns-sect"> 
+            <a class="btn btn-primary btn-sm pull-right" href="javascript:void(0)" id="GenerateSEOByAiBtn" data-post-url="{{ route('AIContentGeneratorControllerGenerateSEOByAi') }}" data-page="{{request()->input('page')}}" data-page-id="{{ request()->input('page_id') }}"> Generate Seo With AI <i class="fa fa-magic"></i></a>
+        </div>
+        @endif
         <div class="ibox float-e-margins">
             <div class="ibox-content">
 

@@ -99,6 +99,7 @@ return [
 
     'action_show_data' => 'Show Data',
     'action_add_data' => 'Add Data',
+    'action_add_data_by_ai' => 'Add Data By AI',
     'action_delete_selected' => 'Delete Selected',
 
     'action_label' => 'Action',

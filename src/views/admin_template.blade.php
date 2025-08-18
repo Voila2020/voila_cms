@@ -44,6 +44,9 @@
         <link href="{{ asset('vendor/crudbooster/assets/rtl.css') }}" rel="stylesheet" type="text/css" />
     @endif
 
+    <!-- include jquery toast -->
+    <link rel="stylesheet" href="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jquery.toast/css/jquery.toast.css') }}">
+
     <link rel='stylesheet' href='{{ asset('vendor/crudbooster/assets/css/main.css') }}' />
 
     <!-- load css -->
@@ -129,6 +132,8 @@
             <div></div>
             <div></div>
         </div>
+        <!--- Tokens Indicator -->
+        {!! CRUDBooster::showTokenUsageIndicator() !!}
         <!-- Header -->
         @include('crudbooster::header')
         <!-- Sidebar -->
@@ -163,6 +168,37 @@
                                     title="{{ cbLang('action_add_data') }}">
                                     <i class="fa fa-plus-circle"></i> {{ cbLang('action_add_data') }}
                                 </a>
+
+
+                                @if(CRUDBooster::checkUsingAIFeaturesPermission())
+                                    
+                                    <a href="javascript:void(0);"
+                                        id='AddDataByAI' class="btn btn-sm btn-primary"
+                                        title="{{ cbLang('action_add_data_by_ai') }}">
+                                        <i class="fa fa-magic"></i> {{ cbLang('action_add_data_by_ai') }}
+                                    </a>
+
+                                    <div class="modal fade " id="AddDataByAIModal" tabindex="-1" role="dialog" aria-labelledby="Add data by AI">
+                                        <div class="modal-dialog modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h3 class="modal-title" id="gridSystemModalLabel">Add Data By AI</h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p style="font-size: initial;">Please enter the item topic you want to generate content for.</p>
+                                                    <textarea id="item_topic" rows="10" class="form-control"></textarea>
+                                                    <span id="error-msg" class="error-msg hidden" style="color:red;font-size: initial;">This field is required</span>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" id="NoAddByAI" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                    <button type="button" id="YesAddByAI" class="btn btn-danger" data-post-url="{{ route('AIContentGeneratorControllerGenerateModuleItemContentByAi') }}" data-module_id="{{ CRUDBooster::getCurrentModule()->id }}" data-return-url="{{ CRUDBooster::adminPath(CRUDBooster::getCurrentModule()->path) }}">Generate Now  <i class='fa fa-magic'></i></button>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div>
+                                    </div>
+                                @endif
+
                             @endif
 
                             @if ($page_seo)
