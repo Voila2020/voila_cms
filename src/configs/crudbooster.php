@@ -106,4 +106,8 @@ return [
     //
 
     'reset_password_expired_time' => 60, // 60 minutes
+    
+    //AI Content Generator APIs Settings
+    'VOILA_API_LINK' => env('VOILA_API_LINK', 'https://api.voitest.com'),
+    'VOILA_API_SECRET_KEY' => env('VOILA_API_SECRET_KEY', '24a63a4c59444d2fb4e97082431fc06d'),
 ];

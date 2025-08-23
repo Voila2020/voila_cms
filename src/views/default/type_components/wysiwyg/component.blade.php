@@ -1,5 +1,5 @@
 @push('bottom')
-    <script src="{{ asset('vendor/crudbooster/assets/js/tinymcMenu.js') }}"></script>
+    <script src="{{ asset('vendor/crudbooster/assets/js/customizeTinymce.js') }}"></script>
     <script type="text/javascript">
         var selectId = null;
         var $id = '';
@@ -65,6 +65,7 @@
 @endpush
 @if (!@$form['translation'])
     <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
+        {!! CRUDBooster::generateAIActionsList($name,$form['type']) !!}
         <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
             @if ($required)
                 <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -88,6 +89,7 @@
             $value = !empty($old) ? $old : $value;
         @endphp
         <div class='form-group' id='form-group-{{ $name . '_' . $lang->code }}' style="{{ @$form['style'] }}">
+            {!! CRUDBooster::generateAIActionsList($name ."_". $lang->code,$form['type'],$lang->code,$form['translation']) !!}
             <label class='control-label col-sm-2'>{{ cbLang($form['label']) . ' - ' . $lang->name }}
                 @if ($required)
                     <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -157,6 +159,7 @@
 
 @push('bottom')
     <script>
+        editorJsArray = <?php echo json_encode($editorJsArray); ?>;
         $(function () {
             let selector = '#textarea_{{ $name }}';
 
@@ -300,6 +303,15 @@
                     if (typeof registerMenu === 'function') {
                         registerMenu(editor);
                     }
+                    /*Add Javascript Files*/
+                    editor.on('init', function () {
+                        doc = editor.getDoc();
+                        editorJsArray.forEach(element => {
+                            script1 = doc.createElement("script");
+                            script1.src = element;
+                            doc.head.appendChild(script1);
+                        });
+                    });
                 },
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
@@ -446,6 +458,15 @@
                             if (typeof registerMenu === 'function') {
                                 registerMenu(editor, '{{ $lang->direction }}');
                             }
+                            /*Add Javascript Files*/
+                            editor.on('init', function () {
+                                doc = editor.getDoc();
+                                editorJsArray.forEach(element => {
+                                    script1 = doc.createElement("script");
+                                    script1.src = element;
+                                    doc.head.appendChild(script1);
+                                });
+                            });
                         },
                         // init_instance_callback: insert_contents,
                         font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",

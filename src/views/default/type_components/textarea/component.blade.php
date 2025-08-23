@@ -1,6 +1,7 @@
 @if (!@$form['translation'])
     <div class='form-group {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
         id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
+         {!! CRUDBooster::generateAIActionsList($name,$form['type']) !!}
         <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
             @if ($required)
                 <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -24,6 +25,7 @@
         @endphp
         <div class='form-group {{ $header_group_class }} {{ $errors->first($name ."_". $lang->code) ? 'has-error' : '' }}'
             id='form-group-{{ $name ."_". $lang->code }}' style="{{ @$form['style'] }}">
+            {!! CRUDBooster::generateAIActionsList($name ."_". $lang->code,$form['type'],$lang->code,$form['translation']) !!}
             <label class='control-label col-sm-2'>{{ cbLang($form['label']) ." - ". $lang->name }}
                 @if ($required)
                     <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>

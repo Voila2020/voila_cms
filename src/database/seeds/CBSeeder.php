@@ -1621,6 +1621,20 @@ class CBSeeder extends Seeder
       ];
       DB::table('fields')->insert($data);
     }
+
+    # ai content settings
+    if (DB::table('ai_content_settings')->count() == 0) {
+      $data = [
+        ['setting_name' => 'using_ai_features', 'setting_value' => 'Off'],
+        ['setting_name' => 'maximum_token_usage_limit', 'setting_value' => null],
+        ['setting_name' => 'personal_openai_api_key', 'setting_value' => null],
+        ['setting_name' => 'company_name', 'setting_value' => null],
+        ['setting_name' => 'company_description', 'setting_value' => null],
+        ['setting_name' => 'website_type', 'setting_value' => null],
+      ];
+      DB::table('ai_content_settings')->insert($data);
+    }
+
     # Voila Seeder End
 
     $this->command->info('All cb seeders completed !');

@@ -88,10 +88,12 @@ return [
     'default_module_description' => 'جدول البيانات',
 
     'delete_description_confirm' => "لا يمكنك التراجع عن عملية الحذف !",
+    'delete_filemanager_description_confirm' => "عند الحذف، يمكنك رفع ملف بديل، ولن يتم اعتماد التعديلات إلا بعد النقر على زر حفظ",
     'delete_title_confirm' => "هل آنت متأكد ؟",
 
     'action_show_data' => 'عرض البيانات',
     'action_add_data' => 'اضافة بيانات',
+    'action_add_data_by_ai' => 'اضافة بيانات باستخدام الذكاء الإصطناعي',
     'action_delete_selected' => 'حذف المحدد',
 
     'action_label' => 'الاجراء',

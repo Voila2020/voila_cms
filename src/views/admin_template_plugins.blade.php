@@ -14,6 +14,7 @@
 </script>
 <!-- AdminLTE App -->
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/dist/js/app.js') }}" type="text/javascript"></script>
+<script src="{{ asset('vendor/crudbooster/assets/adminlte/dist/js/ai_content_generator_script.js') }}" type="text/javascript"></script>
 
 <!--BOOTSTRAP DATEPICKER-->
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/datepicker/bootstrap-datepicker.js') }}"></script>
@@ -47,6 +48,9 @@
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/datatables/dataTables.bootstrap.min.js') }}">
 </script>
+
+<!-- include jquery toast -->
+<script type="text/javascript" src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jquery.toast/js/jquery.toast.js') }}"></script>
 
 <script>
     var ASSET_URL = "{{ asset('/') }}";

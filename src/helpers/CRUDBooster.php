@@ -3,6 +3,7 @@
 namespace crocodicstudio\crudbooster\helpers;
 
 use Exception;
+use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
@@ -2125,4 +2126,475 @@ class Admin' . $controllername . ' extends CBController {
         }
         return $php;
     }
+
+    /******************* AI Content Generator Functions ****************/
+
+    public static function getAISetting($name)
+    {
+        if (Cache::has('ai_setting_' . $name)) {
+            return Cache::get('ai_setting_' . $name);
+        }
+
+        $query = DB::table('ai_content_settings')->where('setting_name', $name)->first();
+        Cache::forever('ai_setting_' . $name, $query->setting_value);
+
+        return $query->setting_value;
+    }
+
+     public static function setAISetting($name, $value)
+    {
+        Cache::forget('ai_setting_' . $name);
+        DB::table('ai_content_settings')->where('setting_name', $name)->update([
+            "setting_value" => $value,
+        ]);
+        Cache::forever('ai_setting_' . $name, $value);
+    }
+
+    public static function getGeneratedModuleControllerInstance($moduleInfo)
+    {
+        if (!$moduleInfo || empty($moduleInfo->controller)) {
+            return null;
+        }
+
+        $class = $moduleInfo->controller;
+
+        // If class not namespaced, add default
+        if (!class_exists($class)) {
+            $class = "App\\Http\\Controllers\\" . $class;
+        }
+
+        if (!class_exists($class)) {
+            throw new \Exception("Controller class [$class] not found");
+        }
+
+        // Instantiate controller
+        $controller = app($class);
+
+        // Run cbInit to populate cols, form, etc.
+        if (method_exists($controller, 'cbInit')) {
+            $controller->cbInit();
+        }
+
+        return $controller;
+    }
+
+     public static function callAPI($method, $url, $data, $header = array('Content-Type: application/json'))
+    {
+        $curl = curl_init();
+        switch ($method) {
+            case "POST":
+                curl_setopt($curl, CURLOPT_POST, 1);
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            case "PUT":
+                curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
+                if ($data)
+                    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+                break;
+            default:
+                if ($data) {
+                    $data = json_decode($data, 1);
+                    $url = sprintf("%s?%s", $url, http_build_query($data));
+                }
+
+        }
+
+        // OPTIONS:
+        curl_setopt($curl, CURLOPT_URL, $url);
+        curl_setopt($curl, CURLOPT_HTTPHEADER, $header);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+        // EXECUTE:
+        $result = curl_exec($curl);
+        if (!$result) {
+            echo "API Connection Failure";
+        }
+        curl_close($curl);
+        return $result;
+    }
+
+
+     public static function GetApiAccessToken()
+    {
+        $data_array = array(
+            "secret" => config('crudbooster.VOILA_API_SECRET_KEY'),
+        );
+
+        $res = CRUDBooster::callAPI("POST", config('crudbooster.VOILA_API_LINK') . "/api/get-token", json_encode($data_array));
+        $arr = json_decode($res, 1);
+        $accessToken = $arr['data']['access_token'];
+        return $accessToken;
+    }
+
+    public static function generateSEOForWebsite($website,$company_name,$theme_type,$languages){
+
+        $accessToken = CRUDBooster::GetApiAccessToken();
+        
+        $data_array = array(
+            "website"=> $website,
+            "company_name"=> "$company_name",
+            "theme_type"=> "$theme_type",
+            "seo_mode"=> "website",
+            "languages"=> "$languages",
+        );
+        if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+             $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+        }
+        
+        $header = array(
+            'Authorization: Bearer '.$accessToken,
+            'Content-Type: application/json',
+        );
+        $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/generate_seo_by_ai", json_encode($data_array),$header);
+        //return $response;
+        $result = json_decode($response,1);
+        if ($result['api_status'] == 0) {
+            return array('status' => 'failed','message' => 'generate SEO For Website failed');
+        } else{
+             CRUDBooster::saveAiApisLog($result['data']);
+            return array('status'=>'success','message'=>'generate SEO For Website success','result'=>$result['data']);
+        }
+    }
+
+     public static function generateSEOForPage($website,$company_name,$theme_type,$languages,$page_content){
+
+            $accessToken = CRUDBooster::GetApiAccessToken();
+
+            $data_array = array(
+                "website"=> $website,
+                "company_name"=> "$company_name",
+                "theme_type"=> "$theme_type",
+                "seo_mode"=> "page",
+                "languages"=> "$languages", 
+                "page_content"=>"$page_content",
+            );
+            if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+                $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+            }
+            //send api request
+          
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/generate_seo_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'generate SEO For Page failed');
+            } else{
+                 CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'generate SEO For Page success','result'=>$result['data']);
+            }
+    }
+
+    public static function generateSEOForModule($website,$company_name,$theme_type,$module_name,$languages){
+
+            $accessToken = CRUDBooster::GetApiAccessToken();
+
+            $data_array = array(
+                "website"=> $website,
+                "company_name"=> "$company_name",
+                "theme_type"=> "$theme_type",
+                "seo_mode"=> "module",
+                "module_name"=> "$module_name",
+                "languages"=> "$languages",
+            );
+            if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+                $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+            }
+            //send api request
+          
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/generate_seo_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'generate SEO For Module failed');
+            } else{
+                CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'generate SEO For Module success','result'=>$result['data']);
+            }
+    }
+
+    public static function generateSEOForModuleItem($website,$company_name,$theme_type,$module_name,$languages,$item_content){
+
+            $accessToken = CRUDBooster::GetApiAccessToken();
+
+            $data_array = array(
+                "website"=> $website,
+                "company_name"=> "$company_name",
+                "theme_type"=> "$theme_type",
+                "seo_mode"=> "item",
+                "module_name"=> "$module_name",
+                "languages"=> "$languages", 
+                "item_content"=>"$item_content"
+            );
+            if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+                $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+            }
+            //send api request
+          
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/generate_seo_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'generate SEO For Module Item failed');
+            } else{
+                CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'generate SEO For Module Item success','result'=>$result['data']);
+            }
+    }
+
+    public static function generateModuleItemContent($website,$company_name,$theme_type,$module_name,$languages,$item_topic,$item_fields){
+            $data_array = array(
+                "website"=> $website,
+                "company_name"=> "$company_name",
+                "theme_type"=> "$theme_type",
+                "module_name"=> "$module_name",
+                "languages"=> "$languages", 
+                "item_topic"=>"$item_topic",
+                "item_fields"=>"$item_fields"    
+            );
+           if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+                $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+            }
+            //send api request
+            $accessToken = CRUDBooster::GetApiAccessToken();
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/generate_module_item_content_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'generate Module Item Content failed');
+            } else{
+                CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'generate Module Item Content success','result'=>$result['data']);
+            }
+    }
+
+    public static function improveContent($website,$company_name,$theme_type,$module_name,$language,$content,$field_name){
+        if($content != ''){
+            $data_array = array(
+                "website"=> $website,
+                "company_name"=> "$company_name",
+                "theme_type"=> "$theme_type",
+                "module_name"=> "$module_name",
+                "language"=> "$language", 
+                "content"=>"$content",
+                "field_name"=>"$field_name"   
+            );
+           if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
+                $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
+            }
+            //send api request
+            $accessToken = CRUDBooster::GetApiAccessToken();
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/improve_content_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'improve Content failed');
+            } else{
+                CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'improve Content success','result'=>$result['data']);
+            }
+        }else{
+             return array('status' => 'failed','message' => 'improve Content failed. No Content.');
+        }
+    }
+
+     public static function translateContent($website, $content, $source_lang, $target_lang){
+        if($content != ''){
+           
+            $data_array = array(
+                "website"=> $website,
+                "content"=>"$content",
+                "source_lang"=> "$source_lang", 
+                "target_lang"=> "$target_lang"
+            );
+           
+            //send api request
+            $accessToken = CRUDBooster::GetApiAccessToken();
+            $header = array(
+                'Authorization: Bearer '.$accessToken,
+                'Content-Type: application/json',
+            );
+            $response = CRUDBooster::callAPI("GET", config('crudbooster.VOILA_API_LINK')."/api/translate_content_by_ai", json_encode($data_array),$header);
+            //return $response;
+            $result = json_decode($response,1);
+            if ($result['api_status'] == 0) {
+                return array('status' => 'failed','message' => 'translate Content failed');
+            } else{
+                CRUDBooster::saveAiApisLog($result['data']);
+                return array('status'=>'success','message'=>'translate Content success','result'=>$result['data']);
+            }
+        }else{
+             return array('status' => 'failed','message' => 'translate Content failed. No Content.');
+        }
+    }
+
+    public static function saveAiApisLog($result){
+       if (Schema::hasTable('ai_content_apis_logs')) {
+            $values = [
+                "ai_api_log_id" => $result['api_log_id'],
+                "ai_api_key" => $result['ai_api_key'],
+                "usage_prompt_tokens" => $result['usage_prompt_tokens'],
+                "usage_completion_tokens" => $result['usage_completion_tokens'],
+                "usage_total_tokens" => $result['usage_total_tokens']
+            ];
+            
+            DB::table('ai_content_apis_logs')->insert($values);
+        }
+    }
+
+    public static function checkUsingAIFeaturesPermission(){
+         $using_ai_features_status = CRUDBooster::getAISetting('using_ai_features');
+         if($using_ai_features_status == 'On'){
+            return true;
+         }else{
+            return false;
+         }
+    }
+
+    public static function getCurrentTokensUsage(){
+        $all_ai_process_logs =  DB::table('ai_content_apis_logs')->get();
+        $tokens_usage = 0;
+        foreach($all_ai_process_logs as $log){
+            $tokens_usage+=$log->usage_total_tokens;
+        }
+        return $tokens_usage;
+    }
+    public static function checkMaximumTokensUsageLimit(){
+        $max_token_usage = CRUDBooster::getAISetting('maximum_token_usage_limit') ?? 'unlimit';
+        if($max_token_usage == 'unlimit'){
+            return true;
+        }
+        $current_tokens_usage = CRUDBooster::getCurrentTokensUsage();
+        if($current_tokens_usage < $max_token_usage){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public static function generateAIActionsList($column,$type,$lang='default',$lang_effect = false){
+        if(CRUDBooster::checkUsingAIFeaturesPermission()){
+
+            if($lang == 'default'){
+                $lang = DB::table('languages')->where('active',1)->where('default',1)->first()->code;
+            }
+
+            $module_id = CRUDBooster::getCurrentModule()->id;
+            $ai_actions_list = '';
+            if(in_array($type,['text','textarea','wysiwyg']) && $column != 'slug'){
+
+                if($lang_effect == true){
+                    $ai_translate_actions = '';
+                
+                    $active_languages = DB::table('languages')->where('active',1)->get();
+                    if($active_languages && count($active_languages)>0){
+                        foreach($active_languages as $language){
+                            if($language->code != $lang){
+                                $ai_translate_actions .= '<li><a href="javascript:void(0)" class="translate-content-cls" data-col="'.$column.'" data-type="'.$type.'" data-source_lang="'.$language->code.'" data-target_lang="'.$lang.'" data-post-url="'.route('AIContentGeneratorControllerTranslateContentByAi').'" > <i class="fa fa-language"></i> Translate From '.$language->name.'</a></li>';    
+                            }
+                        }
+                    }
+                }
+                    
+                $ai_actions_list = '
+                            <div class="dropdown dropdown-ai-actions" >
+                                <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                    <i class="fa fa-magic"></i> AI Actions
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dropdownMenu1" style="font-size:12px;">
+                                    <li><a href="javascript:void(0)" class="improve-content-cls" data-col="'.$column.'" data-type="'.$type.'" data-language="'.$lang.'" data-module_id="'.$module_id.'" data-post-url="'.route('AIContentGeneratorControllerImproveContentByAi').'" ><i class="fa fa-edit"></i> Improve Content </a></li>
+                                    <!--li role="separator" class="divider"></li-->
+                                    '.$ai_translate_actions.'
+                                </ul>
+                                </div>
+                            ';
+            }
+            return $ai_actions_list;
+        }else{
+            return "";
+        }
+    }
+
+    public static function getAITokensUsageInfo(){
+     
+        //get max tokens usage limit
+        $max_token_usage =CRUDBooster::getAISetting('maximum_token_usage_limit') ?? INF;
+        
+        //get current tokens usage 
+        $all_ai_process_logs =  DB::table('ai_content_apis_logs')->get();
+        $tokens_usage = 0;
+        foreach($all_ai_process_logs as $log){
+            $tokens_usage+=$log->usage_total_tokens;
+        }
+        $remaining_tokens = $max_token_usage - $tokens_usage;
+        if($remaining_tokens < 0){
+            $remaining_tokens = 0;
+        }
+        $status = true;
+        $message = "Remaining Tokens Size_is $remaining_tokens Tokens";
+        if($tokens_usage > $max_token_usage){
+            $status = false;
+            $message = "You have exceeded the allowed token usage limit";
+        }
+
+        return [
+            'current_tokens_usage'=>$tokens_usage,
+            'max_tokens_usage_limit'=>$max_token_usage,
+            'remining_tokens'=>$remaining_tokens,
+            'status'=>$status,
+            'message'=>$message
+        ];
+    }
+
+    public static function showTokenUsageIndicator(){
+           
+        if(CRUDBooster::checkUsingAIFeaturesPermission() && CRUDBooster::getAISetting('personal_openai_api_key') == ''){
+            $tokens_usage_info = CRUDBooster::getAITokensUsageInfo();
+            $token_usage_values = $tokens_usage_info['current_tokens_usage'] .' / '.$tokens_usage_info['max_tokens_usage_limit'];
+            $token_usage_percentage = ($tokens_usage_info['current_tokens_usage'] * 100) / $tokens_usage_info['max_tokens_usage_limit'];
+            
+            $right_position = '';
+            
+            echo '
+                <div id="token-indicator" class="token-indicator" data-toggle="tooltip" title="AI Tokens Usage" '.$right_position.' >
+                    <svg viewBox="0 0 36 36" class="circular-chart">
+                        <path class="bg" d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <path id="progress-circle" class="progress" stroke-dasharray="'.$token_usage_percentage.', 100" d="M18 2.0845
+                        a 15.9155 15.9155 0 0 1 0 31.831
+                        a 15.9155 15.9155 0 0 1 0 -31.831"
+                        />
+                        <text x="18" y="20.35" class="percentage" id="token-text">'.$token_usage_values.'</text>
+                    </svg>
+                </div>
+            ';
+            
+        }else{
+            return '';
+        }
+    }
+
 }

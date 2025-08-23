@@ -137,3 +137,15 @@ $(function () {
         }, 10000);
     }
 });
+
+function notify(heading,text,icon,show_hide_transition='fade',hide_after=7000,position='bottom-right',text_align='left'){
+    $.toast({
+        heading: heading,
+        text: text,
+        showHideTransition: show_hide_transition, //'slide','fade','plain'
+        icon: icon, //info,warning,error,success 
+        hideAfter:hide_after, // in milli seconds or false
+        position: position,// bottom-left, bottom-right ,bottom-center,top-right,top-left,top-center,mid-center,
+        textAlign:text_align, //right, left , center
+    });
+}

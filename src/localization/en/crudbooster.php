@@ -94,10 +94,12 @@ return [
     'default_module_description' => 'Data List',
 
     'delete_description_confirm' => "You will not be able to recover this record data!",
+    'delete_filemanager_description_confirm' => "When deleting, you can select an alternative file, and the changes will not be applied until you click the Save button",
     'delete_title_confirm' => "Are you sure ?",
 
     'action_show_data' => 'Show Data',
     'action_add_data' => 'Add Data',
+    'action_add_data_by_ai' => 'Add Data By AI',
     'action_delete_selected' => 'Delete Selected',
 
     'action_label' => 'Action',

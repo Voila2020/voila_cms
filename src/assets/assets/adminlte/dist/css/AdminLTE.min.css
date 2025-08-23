@@ -5050,3 +5050,58 @@ table.text-center th {
         white-space: normal !important;
     }
 }
+
+/******* Extra styles ******/
+    .seo-btns-sect{
+        float:left;
+        width:100%;
+        margin-bottom: 10px;
+    }
+
+    .dropdown-ai-actions{
+        float:right;
+        margin-top:-15px;
+        margin-right: 15px;
+    }
+    .dropdown-ai-actions .dropdown-menu{
+        left:auto;
+        right:0;
+    }
+
+    .token-indicator {
+        position: fixed;
+        bottom: 20px;
+        right: 30px;
+        width: 60px;
+        height: 60px;
+        z-index: 2;
+    }
+
+    .token-indicator .circular-chart {
+        display: block;
+        margin: auto;
+        max-width: 100%;
+        max-height: 100%;
+    }
+
+    .token-indicator .bg {
+        fill: #fff;
+        stroke: #ecf0f5;
+        stroke-width: 3.8;
+    }
+
+    .token-indicator .progress {
+        fill: none;
+        stroke: #00a65a;
+        stroke-width: 3.8;
+        stroke-linecap: round;
+        transition: stroke-dasharray 0.6s ease;
+    }
+
+    .token-indicator .percentage {
+        fill: #000;
+        font-family: sans-serif;
+        font-size: 4px;
+        font-weight: bold;
+        text-anchor: middle;
+    }
