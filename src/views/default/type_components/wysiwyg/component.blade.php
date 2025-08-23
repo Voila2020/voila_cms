@@ -57,7 +57,7 @@
 @endpush
 @push('head')
     <style>
-        .tox-shadowhost.tox-fullscreen, 
+        .tox-shadowhost.tox-fullscreen,
         .tox.tox-tinymce.tox-fullscreen {
             z-index: 1049!important;
         }
@@ -142,18 +142,20 @@
 
 <?php
     $editorCss = Crudbooster::getSetting('editor_css_links');
-    $editorCssFiles = explode(',', $editorCss);
     $editorCssArray = [];
-    foreach ($editorCssFiles as $file) {
-        $editorCssArray[] = "'" . trim($file) . "'";
+    if($editorCss){
+        $editorCssFiles = explode(',', $editorCss);
+        foreach ($editorCssFiles as $file) {
+            $editorCssArray[] = "'" . trim($file) . "'";
+        }
     }
-?>
-<?php
     $editorJs = Crudbooster::getSetting('editor_js_links');
-    $editorJsFiles = explode(',', $editorJs);
     $editorJsArray = [];
-    foreach ($editorJsFiles as $file) {
-        $editorJsArray[] = "'" . trim($file) . "'";
+    if($editorJs){
+        $editorJsFiles = explode(',', $editorJs);
+        foreach ($editorJsFiles as $file) {
+            $editorJsArray[] = "'" . trim($file) . "'";
+        }
     }
 ?>
 
