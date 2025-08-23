@@ -1,5 +1,5 @@
 @push('bottom')
-    <script src="{{ asset('vendor/crudbooster/assets/js/tinymcMenu.js') }}"></script>
+    <script src="{{ asset('vendor/crudbooster/assets/js/customizeTinymce.js') }}"></script>
     <script type="text/javascript">
         var selectId = null;
         var $id = '';
@@ -159,6 +159,7 @@
 
 @push('bottom')
     <script>
+        editorJsArray = <?php echo json_encode($editorJsArray); ?>;
         $(function () {
             let selector = '#textarea_{{ $name }}';
 
@@ -302,6 +303,15 @@
                     if (typeof registerMenu === 'function') {
                         registerMenu(editor);
                     }
+                    /*Add Javascript Files*/
+                    editor.on('init', function () {
+                        doc = editor.getDoc();
+                        editorJsArray.forEach(element => {
+                            script1 = doc.createElement("script");
+                            script1.src = element;
+                            doc.head.appendChild(script1);
+                        });
+                    });
                 },
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
@@ -448,6 +458,15 @@
                             if (typeof registerMenu === 'function') {
                                 registerMenu(editor, '{{ $lang->direction }}');
                             }
+                            /*Add Javascript Files*/
+                            editor.on('init', function () {
+                                doc = editor.getDoc();
+                                editorJsArray.forEach(element => {
+                                    script1 = doc.createElement("script");
+                                    script1.src = element;
+                                    doc.head.appendChild(script1);
+                                });
+                            });
                         },
                         // init_instance_callback: insert_contents,
                         font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
