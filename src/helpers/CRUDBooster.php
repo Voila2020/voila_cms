@@ -1426,10 +1426,10 @@ class CRUDBooster
 		<?php
         namespace App\Http\Controllers;
 
-		use Session;
-		use Request;
-		use DB;
-		use CRUDBooster;
+		use Illuminate\Support\Facades\Session;
+		use Illuminate\Support\Facades\Request;
+		use Illuminate\Support\Facades\DB;
+		use crocodicstudio\crudbooster\helpers\CRUDBooster;
 
 		class Api' . $controller_name . 'Controller extends \crocodicstudio\crudbooster\controllers\ApiController {
 
@@ -2230,7 +2230,7 @@ class Admin' . $controllername . ' extends CBController {
     public static function generateSEOForWebsite($website,$company_name,$theme_type,$languages){
 
         $accessToken = CRUDBooster::GetApiAccessToken();
-        
+
         $data_array = array(
             "website"=> $website,
             "company_name"=> "$company_name",
@@ -2241,7 +2241,7 @@ class Admin' . $controllername . ' extends CBController {
         if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
              $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
         }
-        
+
         $header = array(
             'Authorization: Bearer '.$accessToken,
             'Content-Type: application/json',
@@ -2266,14 +2266,14 @@ class Admin' . $controllername . ' extends CBController {
                 "company_name"=> "$company_name",
                 "theme_type"=> "$theme_type",
                 "seo_mode"=> "page",
-                "languages"=> "$languages", 
+                "languages"=> "$languages",
                 "page_content"=>"$page_content",
             );
             if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
                 $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
             }
             //send api request
-          
+
             $header = array(
                 'Authorization: Bearer '.$accessToken,
                 'Content-Type: application/json',
@@ -2305,7 +2305,7 @@ class Admin' . $controllername . ' extends CBController {
                 $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
             }
             //send api request
-          
+
             $header = array(
                 'Authorization: Bearer '.$accessToken,
                 'Content-Type: application/json',
@@ -2331,14 +2331,14 @@ class Admin' . $controllername . ' extends CBController {
                 "theme_type"=> "$theme_type",
                 "seo_mode"=> "item",
                 "module_name"=> "$module_name",
-                "languages"=> "$languages", 
+                "languages"=> "$languages",
                 "item_content"=>"$item_content"
             );
             if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
                 $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
             }
             //send api request
-          
+
             $header = array(
                 'Authorization: Bearer '.$accessToken,
                 'Content-Type: application/json',
@@ -2360,9 +2360,9 @@ class Admin' . $controllername . ' extends CBController {
                 "company_name"=> "$company_name",
                 "theme_type"=> "$theme_type",
                 "module_name"=> "$module_name",
-                "languages"=> "$languages", 
+                "languages"=> "$languages",
                 "item_topic"=>"$item_topic",
-                "item_fields"=>"$item_fields"    
+                "item_fields"=>"$item_fields"
             );
            if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
                 $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
@@ -2391,9 +2391,9 @@ class Admin' . $controllername . ' extends CBController {
                 "company_name"=> "$company_name",
                 "theme_type"=> "$theme_type",
                 "module_name"=> "$module_name",
-                "language"=> "$language", 
+                "language"=> "$language",
                 "content"=>"$content",
-                "field_name"=>"$field_name"   
+                "field_name"=>"$field_name"
             );
            if(CRUDBooster::getAISetting('personal_openai_api_key') != ''){
                 $data_array['custom_openai_api_key'] = CRUDBooster::getAISetting('personal_openai_api_key');
@@ -2420,14 +2420,14 @@ class Admin' . $controllername . ' extends CBController {
 
      public static function translateContent($website, $content, $source_lang, $target_lang){
         if($content != ''){
-           
+
             $data_array = array(
                 "website"=> $website,
                 "content"=>"$content",
-                "source_lang"=> "$source_lang", 
+                "source_lang"=> "$source_lang",
                 "target_lang"=> "$target_lang"
             );
-           
+
             //send api request
             $accessToken = CRUDBooster::GetApiAccessToken();
             $header = array(
@@ -2457,7 +2457,7 @@ class Admin' . $controllername . ' extends CBController {
                 "usage_completion_tokens" => $result['usage_completion_tokens'],
                 "usage_total_tokens" => $result['usage_total_tokens']
             ];
-            
+
             DB::table('ai_content_apis_logs')->insert($values);
         }
     }
@@ -2505,17 +2505,17 @@ class Admin' . $controllername . ' extends CBController {
 
                 if($lang_effect == true){
                     $ai_translate_actions = '';
-                
+
                     $active_languages = DB::table('languages')->where('active',1)->get();
                     if($active_languages && count($active_languages)>0){
                         foreach($active_languages as $language){
                             if($language->code != $lang){
-                                $ai_translate_actions .= '<li><a href="javascript:void(0)" class="translate-content-cls" data-col="'.$column.'" data-type="'.$type.'" data-source_lang="'.$language->code.'" data-target_lang="'.$lang.'" data-post-url="'.route('AIContentGeneratorControllerTranslateContentByAi').'" > <i class="fa fa-language"></i> Translate From '.$language->name.'</a></li>';    
+                                $ai_translate_actions .= '<li><a href="javascript:void(0)" class="translate-content-cls" data-col="'.$column.'" data-type="'.$type.'" data-source_lang="'.$language->code.'" data-target_lang="'.$lang.'" data-post-url="'.route('AIContentGeneratorControllerTranslateContentByAi').'" > <i class="fa fa-language"></i> Translate From '.$language->name.'</a></li>';
                             }
                         }
                     }
                 }
-                    
+
                 $ai_actions_list = '
                             <div class="dropdown dropdown-ai-actions" >
                                 <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
@@ -2537,11 +2537,11 @@ class Admin' . $controllername . ' extends CBController {
     }
 
     public static function getAITokensUsageInfo(){
-     
+
         //get max tokens usage limit
         $max_token_usage =CRUDBooster::getAISetting('maximum_token_usage_limit') ?? INF;
-        
-        //get current tokens usage 
+
+        //get current tokens usage
         $all_ai_process_logs =  DB::table('ai_content_apis_logs')->get();
         $tokens_usage = 0;
         foreach($all_ai_process_logs as $log){
@@ -2568,14 +2568,14 @@ class Admin' . $controllername . ' extends CBController {
     }
 
     public static function showTokenUsageIndicator(){
-           
+
         if(CRUDBooster::checkUsingAIFeaturesPermission() && CRUDBooster::getAISetting('personal_openai_api_key') == ''){
             $tokens_usage_info = CRUDBooster::getAITokensUsageInfo();
             $token_usage_values = $tokens_usage_info['current_tokens_usage'] .' / '.$tokens_usage_info['max_tokens_usage_limit'];
             $token_usage_percentage = ($tokens_usage_info['current_tokens_usage'] * 100) / $tokens_usage_info['max_tokens_usage_limit'];
-            
+
             $right_position = '';
-            
+
             echo '
                 <div id="token-indicator" class="token-indicator" data-toggle="tooltip" title="AI Tokens Usage" '.$right_position.' >
                     <svg viewBox="0 0 36 36" class="circular-chart">
@@ -2591,7 +2591,7 @@ class Admin' . $controllername . ' extends CBController {
                     </svg>
                 </div>
             ';
-            
+
         }else{
             return '';
         }

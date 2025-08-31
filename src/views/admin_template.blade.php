@@ -55,7 +55,7 @@
             {!! $style_css !!}
         @endif
     </style>
-    @if ($load_css)
+    @if (isset($load_css))
         @foreach ($load_css as $css)
             <link href="{{ $css }}" rel="stylesheet" type="text/css" />
         @endforeach
@@ -115,7 +115,7 @@
 
 
 <body
-    class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ $sidebar_mode ?: '' }}">
+    class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ isset($sidebar_mode) ?: '' }}">
     <div id='app' class="wrapper">
         <div class="main-overlay"></div>
         <div class="spinner-loader">
@@ -171,7 +171,7 @@
 
 
                                 @if(CRUDBooster::checkUsingAIFeaturesPermission())
-                                    
+
                                     <a href="javascript:void(0);"
                                         id='AddDataByAI' class="btn btn-sm btn-primary"
                                         title="{{ cbLang('action_add_data_by_ai') }}">
@@ -294,7 +294,7 @@
     @include('crudbooster::admin_template_plugins')
 
     <!-- load js -->
-    @if ($load_js)
+    @if (isset($load_js))
         @foreach ($load_js as $js)
             <script src="{{ $js }}"></script>
         @endforeach
