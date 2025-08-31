@@ -1,5 +1,5 @@
 @push('bottom')
-    <script src="{{ asset('vendor/crudbooster/assets/js/tinymcMenu.js') }}"></script>
+    <script src="{{ asset('vendor/crudbooster/assets/js/customizeTinymce.js') }}"></script>
     <script type="text/javascript">
         var selectId = null;
         var $id = '';
@@ -57,7 +57,7 @@
 @endpush
 @push('head')
     <style>
-        .tox-shadowhost.tox-fullscreen, 
+        .tox-shadowhost.tox-fullscreen,
         .tox.tox-tinymce.tox-fullscreen {
             z-index: 1049!important;
         }
@@ -141,24 +141,31 @@
 </script>
 
 <?php
-    $editorCss = Crudbooster::getSetting('editor_css_links');
-    $editorCssFiles = explode(',', $editorCss);
+    $editorCss = [];
+    $editorCssFiles = [];
     $editorCssArray = [];
-    foreach ($editorCssFiles as $file) {
-        $editorCssArray[] = "'" . trim($file) . "'";
+    foreach ($websiteLanguages as $lang) {
+        $editorCss[$lang->code] = Crudbooster::getSetting('editor_css_links_' . $lang->direction);
+        $editorCssFiles[$lang->code] = explode(',', $editorCss[$lang->code]);
+        $editorCssArray[$lang->code] = [];
+        foreach ($editorCssFiles[$lang->code] as $file) {
+            $editorCssArray[$lang->code][] = "'" . trim($file) . "'";
+        }
     }
-?>
-<?php
+
     $editorJs = Crudbooster::getSetting('editor_js_links');
-    $editorJsFiles = explode(',', $editorJs);
     $editorJsArray = [];
-    foreach ($editorJsFiles as $file) {
-        $editorJsArray[] = "'" . trim($file) . "'";
+    if($editorJs){
+        $editorJsFiles = explode(',', $editorJs);
+        foreach ($editorJsFiles as $file) {
+            $editorJsArray[] = "'" . trim($file) . "'";
+        }
     }
 ?>
 
 @push('bottom')
     <script>
+        editorJsArray = <?php echo json_encode($editorJsArray); ?>;
         $(function () {
             let selector = '#textarea_{{ $name }}';
 
@@ -183,7 +190,7 @@
                 },
                 menubar: 'file edit view insert format tools table tc help cards',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
-                content_css: [<?php echo implode(',', $editorCssArray); ?>],
+                content_css: [<?php echo implode(',', $editorCssArray['en']); ?>],
                 content_js: [<?php echo implode(',', $editorJsArray); ?>],
                 setup: function (editor) {
                     //Add a custom validator to the form
@@ -302,6 +309,15 @@
                     if (typeof registerMenu === 'function') {
                         registerMenu(editor);
                     }
+                    /*Add Javascript Files*/
+                    editor.on('init', function () {
+                        doc = editor.getDoc();
+                        editorJsArray.forEach(element => {
+                            script1 = doc.createElement("script");
+                            script1.src = element;
+                            doc.head.appendChild(script1);
+                        });
+                    });
                 },
                 // init_instance_callback: insert_contents,
                 font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
@@ -330,7 +346,7 @@
                         },
                         menubar: 'file edit view insert format tools table tc help cards',
                         toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
-                        content_css: [<?php        echo implode(',', $editorCssArray); ?>],
+                        content_css: [<?php        echo implode(',', $editorCssArray[$lang->code]); ?>],
                         setup: function (editor) {
                             //Add a custom validator to the form
                             $('form').on('submit', function (e) {
@@ -448,6 +464,16 @@
                             if (typeof registerMenu === 'function') {
                                 registerMenu(editor, '{{ $lang->direction }}');
                             }
+                            /*Add Javascript Files*/
+                            editor.on('init', function () {
+                                doc = editor.getDoc();
+                                doc.documentElement.setAttribute('dir', '{{ $current_language->direction }}');
+                                editorJsArray.forEach(element => {
+                                    script1 = doc.createElement("script");
+                                    script1.src = element;
+                                    doc.head.appendChild(script1);
+                                });
+                            });
                         },
                         // init_instance_callback: insert_contents,
                         font_size_formats: "12pt 6px 7px 8px 9px 10px 11px 12px 13px 14px 15px 16px 17px 18px 19px 20px 21px 22px 23px 24px 25px 26px 27px 28px 29px 29px 30px 31px 32px 33px 34px 35px 36px 37px 38px 39px 40px",
