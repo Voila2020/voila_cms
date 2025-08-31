@@ -141,14 +141,18 @@
 </script>
 
 <?php
-    $editorCss = Crudbooster::getSetting('editor_css_links');
+    $editorCss = [];
+    $editorCssFiles = [];
     $editorCssArray = [];
-    if($editorCss){
-        $editorCssFiles = explode(',', $editorCss);
-        foreach ($editorCssFiles as $file) {
-            $editorCssArray[] = "'" . trim($file) . "'";
+    foreach ($websiteLanguages as $lang) {
+        $editorCss[$lang->code] = Crudbooster::getSetting('editor_css_links_' . $lang->direction);
+        $editorCssFiles[$lang->code] = explode(',', $editorCss[$lang->code]);
+        $editorCssArray[$lang->code] = [];
+        foreach ($editorCssFiles[$lang->code] as $file) {
+            $editorCssArray[$lang->code][] = "'" . trim($file) . "'";
         }
     }
+
     $editorJs = Crudbooster::getSetting('editor_js_links');
     $editorJsArray = [];
     if($editorJs){
@@ -186,7 +190,7 @@
                 },
                 menubar: 'file edit view insert format tools table tc help cards',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
-                content_css: [<?php echo implode(',', $editorCssArray); ?>],
+                content_css: [<?php echo implode(',', $editorCssArray['en']); ?>],
                 content_js: [<?php echo implode(',', $editorJsArray); ?>],
                 setup: function (editor) {
                     //Add a custom validator to the form
@@ -342,7 +346,7 @@
                         },
                         menubar: 'file edit view insert format tools table tc help cards',
                         toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
-                        content_css: [<?php        echo implode(',', $editorCssArray); ?>],
+                        content_css: [<?php        echo implode(',', $editorCssArray[$lang->code]); ?>],
                         setup: function (editor) {
                             //Add a custom validator to the form
                             $('form').on('submit', function (e) {
@@ -463,6 +467,7 @@
                             /*Add Javascript Files*/
                             editor.on('init', function () {
                                 doc = editor.getDoc();
+                                doc.documentElement.setAttribute('dir', '{{ $current_language->direction }}');
                                 editorJsArray.forEach(element => {
                                     script1 = doc.createElement("script");
                                     script1.src = element;
