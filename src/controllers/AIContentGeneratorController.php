@@ -5,12 +5,15 @@ namespace crocodicstudio\crudbooster\controllers;
 use App\Seo;
 use Illuminate\Support\Facades\Request;
 use crocodicstudio\crudbooster\helpers\CRUDBooster;
-use DB;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Schema;
 
-class AIContentGeneratorController extends Controller
+class AIContentGeneratorController extends CBController
 {
+    public function cbInit(){
+
+    }
 
     public function generate_SEO_By_Ai(Request $request)
     {
@@ -439,7 +442,7 @@ class AIContentGeneratorController extends Controller
 
     public function showSettings()
     {
-
+        $this->cbLoader();
         $rows = DB::table('ai_content_settings')->pluck('setting_value', 'setting_name')->toArray();
 
         $currentTokenUsage = DB::table('ai_content_apis_logs')->sum('usage_total_tokens');
@@ -453,11 +456,8 @@ class AIContentGeneratorController extends Controller
         ];
 
         $logs = DB::table('ai_content_apis_logs')->orderBy('created_at', 'desc')->limit(10)->get();
-        $page_title = "AI Settings";
         return view('crudbooster::ai_content_settings', [
             'settings' => $rows,
-            'page_title' => $page_title,
-            'style_css' => null,
             'stats'    => $stats,
             'logs'     => $logs,
             'updateAction' => url(config('crudbooster.ADMIN_PATH') . '/ai/settings/update'),
