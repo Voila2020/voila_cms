@@ -142,6 +142,13 @@ class CBController extends Controller
 
     public $websiteLanguages = [];
 
+
+    /**
+     * for using Module AI Features
+     */
+    public $button_add_by_ai = false;
+    public $form_using_ai_actions = false;
+
     public function cbLoader()
     {
         $this->cbInit();
@@ -224,6 +231,11 @@ class CBController extends Controller
             Session::put('current_row_id', CRUDBooster::myId());
             $this->data['return_url'] = Request::fullUrl();
         }
+
+    
+        //for using Module AI Features
+        $this->data['button_add_by_ai'] = $this->button_add_by_ai;
+        $this->data['form_using_ai_actions'] = $this->form_using_ai_actions;
 
         view()->share($this->data);
     }

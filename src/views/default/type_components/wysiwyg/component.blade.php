@@ -57,7 +57,7 @@
 @endpush
 @push('head')
     <style>
-        .tox-shadowhost.tox-fullscreen,
+        .tox-shadowhost.tox-fullscreen, 
         .tox.tox-tinymce.tox-fullscreen {
             z-index: 1049!important;
         }
@@ -65,7 +65,9 @@
 @endpush
 @if (!@$form['translation'])
     <div class='form-group' id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
+        @if($form_using_ai_actions)
         {!! CRUDBooster::generateAIActionsList($name,$form['type']) !!}
+        @endif
         <label class='control-label col-sm-2'>{{ cbLang($form['label']) }}
             @if ($required)
                 <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -89,7 +91,9 @@
             $value = !empty($old) ? $old : $value;
         @endphp
         <div class='form-group' id='form-group-{{ $name . '_' . $lang->code }}' style="{{ @$form['style'] }}">
+            @if($form_using_ai_actions)
             {!! CRUDBooster::generateAIActionsList($name ."_". $lang->code,$form['type'],$lang->code,$form['translation']) !!}
+            @endif
             <label class='control-label col-sm-2'>{{ cbLang($form['label']) . ' - ' . $lang->name }}
                 @if ($required)
                     <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -150,15 +154,15 @@
         $editorCssArray[$lang->code] = [];
         foreach ($editorCssFiles[$lang->code] as $file) {
             $editorCssArray[$lang->code][] = "'" . trim($file) . "'";
-        }
+    }
     }
 
     $editorJs = Crudbooster::getSetting('editor_js_links');
     $editorJsArray = [];
     if($editorJs){
         $editorJsFiles = explode(',', $editorJs);
-        foreach ($editorJsFiles as $file) {
-            $editorJsArray[] = "'" . trim($file) . "'";
+    foreach ($editorJsFiles as $file) {
+        $editorJsArray[] = "'" . trim($file) . "'";
         }
     }
 ?>
