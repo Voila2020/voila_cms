@@ -1,7 +1,8 @@
-<?php 
+<?php
 namespace App\Http\Controllers;
 
-use DB;
+use crocodicstudio\crudbooster\controllers\Controller;
+use Illuminate\Support\Facades\DB;
 use Session;
 use Request;
 
@@ -14,6 +15,6 @@ class CBHook extends Controller {
 	|
 	*/
 	public function afterLogin() {
-		
+
 	}
 }
