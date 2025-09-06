@@ -645,7 +645,8 @@ class ModulsController extends CBController
         $post = Request::all();
 
         $post['table'] = $row->table_name;
-
+        $post['translation_table'] = $row->translation_table;
+        
         $script_config = [];
         $exception = ['_token', 'id', 'submit'];
         $i = 0;

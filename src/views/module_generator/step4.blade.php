@@ -229,7 +229,22 @@
                                     </label>
                                 </div>
                             </div>
+                           
+                            <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>{{ cbLang('Page SEO') }}</label>
+                                    <label class='radio-inline'>
+                                        <input {{ $cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
+                                            value="true" /> TRUE
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{ !$cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
+                                            value="false" /> FALSE
+                                    </label>
+                                </div>
+                            </div>
 
+                           
 
                         </div>
 
@@ -294,19 +309,35 @@
                                     </label>
                                 </div>
                             </div>
+                            
                             <div class="col-sm-12">
                                 <div class="form-group">
-                                    <label>{{ cbLang('Page SEO') }}</label>
+                                    <label>{{ cbLang('Show Button Add By AI') }}</label>
                                     <label class='radio-inline'>
-                                        <input {{ $cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
-                                            value="true" /> TRUE
+                                        <input {{ $cb_button_add_by_ai ? 'checked' : '' }} type='radio' name='button_add_by_ai'
+                                            value='true' /> TRUE
                                     </label>
                                     <label class='radio-inline'>
-                                        <input {{ !$cb_page_seo ? 'checked' : '' }} type='radio' name='page_seo'
-                                            value="false" /> FALSE
+                                        <input {{ !$cb_button_add_by_ai ? 'checked' : '' }} type='radio' name='button_add_by_ai'
+                                            value='false' /> FALSE
                                     </label>
                                 </div>
                             </div>
+
+                             <div class="col-sm-12">
+                                <div class="form-group">
+                                    <label>{{ cbLang('Using AI Actions') }}</label>
+                                    <label class='radio-inline'>
+                                        <input {{ $cb_form_using_ai_actions ? 'checked' : '' }} type='radio' name='form_using_ai_actions'
+                                            value='true' /> TRUE
+                                    </label>
+                                    <label class='radio-inline'>
+                                        <input {{ !$cb_form_using_ai_actions ? 'checked' : '' }} type='radio' name='form_using_ai_actions'
+                                            value='false' /> FALSE
+                                    </label>
+                                </div>
+                            </div>
+
                         </div>
                     </div>
 
