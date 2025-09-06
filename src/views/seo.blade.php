@@ -10,7 +10,7 @@
 <div class="row">
     <div class="col-lg-12">
         @if(CRUDBooster::checkUsingAIFeaturesPermission())
-        <div class="seo-btns-sect"> 
+        <div class="seo-btns-sect">
             <a class="btn btn-primary btn-sm pull-right" href="javascript:void(0)" id="GenerateSEOByAiBtn" data-post-url="{{ route('AIContentGeneratorControllerGenerateSEOByAi') }}" data-page="{{request()->input('page')}}" data-page-id="{{ request()->input('page_id') }}"> Generate Seo With AI <i class="fa fa-magic"></i></a>
         </div>
         @endif
@@ -61,7 +61,7 @@
                             </div>
                         </div>
                     @endforeach
-                    @foreach ($languages ?? [] as $key => $lang)
+                    {{-- @foreach ($languages ?? [] as $key => $lang)
                         <div class="form-group">
                             <label class="col-sm-2 control-label">{{ 'Author ' . $lang->code }}</label>
                             <div class="col-sm-10">
@@ -70,7 +70,7 @@
                                     class="form-control">
                             </div>
                         </div>
-                    @endforeach
+                    @endforeach --}}
 
                     <!-- Start Image -->
                     <div class="form-group filemanager-form-group_image header-group-0 " id="form-group-image" style="">
@@ -85,13 +85,13 @@
                                         <img style="height:100px; " id="img-image" title="Add image for Image" src="">
                                         <p class="file-roadtrip" id="file-image" style="display:none;"></p>
                                     </a>
-                                    
+
                                         <span class="input-group-btn" >
                                                                     <a id="_image" onclick="OpenInsertImagesingle('image')" class="btn btn-primary" value="img_type">
-                                                        <i class="fa fa-picture-o"></i> Choose an image 
+                                                        <i class="fa fa-picture-o"></i> Choose an image
                                                             </a>
                                         </span>
-                                    
+
                                 </div>
                                 <div class="text-danger"></div>
                                 <div class="help-block"></div>
@@ -105,13 +105,13 @@
                                         <img style="height:100px; " id="img-image" title="Add image for Image" src="">
                                         <p class="file-roadtrip" id="file-image" style="display:none;"></p>
                                     </a>
-                                    
+
                                         <span class="input-group-btn" >
                                                                     <a id="_image" onclick="OpenInsertImagesingle('image')" class="btn btn-primary" value="img_type">
-                                                        <i class="fa fa-picture-o"></i> Choose an image 
+                                                        <i class="fa fa-picture-o"></i> Choose an image
                                                             </a>
                                         </span>
-                                    
+
                                 </div>
                                 <div class="text-danger"></div>
                                 <div class="help-block"></div>
@@ -198,7 +198,7 @@
                 return false;
             }
         });
-       
+
     </script>
 
 @endsection
