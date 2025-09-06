@@ -39,7 +39,101 @@
                         @if ($command == 'detail')
                             @include('crudbooster::default.form_detail')
                         @else
-                            @include('crudbooster::default.form_body')
+                            @if(CRUDBooster::getCurrentModule()->translation_table != null && CRUDBooster::getCurrentModule()->translation_table != '')
+                                <style>
+                                    
+                                    .tabs-buttons {
+                                        display: flex;
+                                        flex-direction: column;
+                                        min-width: 15%;
+                                    }
+
+                                    .tabs-buttons button {
+                                        background: none;
+                                        border: none;
+                                        padding: 15px;
+                                        border-radius: 0;
+                                        border: 1px solid #ddd;
+                                        margin-bottom: 5px;
+                                        transition: all .3s;
+                                    }
+
+                                    .tabs-buttons button.active,
+                                    .tabs-buttons button:hover {
+                                        color: white;
+                                        background: #dd4b39;
+                                        border: 1px solid #dd4b39;
+                                    }
+
+                                    .tabs-buttons button.active {
+                                        position: relative;
+                                    }
+
+                                    .tabs-buttons button.active::after {
+                                        font-family: 'FontAwesome';
+                                        content: '\f104';
+                                        display: inline-block;
+                                        position: absolute;
+                                        right: -13px;
+                                        color: #ddd;
+                                        font-size: 25px;
+                                        top: 50%;
+                                        transform: translateY(-50%);
+                                        background: white;
+                                        line-height: 10px;
+                                    }
+
+                                    .tabs-container {
+                                        display: flex;
+                                        flex-wrap: nowrap;
+                                    }
+
+                                    .tab-content {
+                                        padding-left: 40px;
+                                        margin-left: 10px;
+                                        border-left: 2px solid #ddd;
+                                        border-radius: 10px; 
+                                    }
+                                </style>
+
+                                <div class="tabs-container">
+                                <div class="tabs-buttons" style="">
+                                    @foreach ($websiteLanguages as $index => $lang)
+                                        <button type="button" class="{{$index == 0 ? 'active' : ''}}" id="btn-{{$lang->name}}" onclick="openTab('{{$lang->code}}', 'btn-{{$lang->name}}')">{{$lang->name}}</button>
+                                    @endforeach
+                                </div>
+                                <div class="tab-content">
+                                @foreach ($websiteLanguages as $index => $lang)
+                                <div id="{{$lang->code}}" class="tab" style="{{$index == 0? '' : 'display:none'}}">
+
+                                    @include('crudbooster::default.form_body')
+                           
+                                </div>
+                                @endforeach
+                                </div>
+                                </div>
+                                <script>
+                                    function openTab(tabName, btnName) {
+                                        var i;
+                                        var x = document.getElementsByClassName("tab");
+                                        for (i = 0; i < x.length; i++) {
+                                            x[i].style.display = "none";  
+                                        }
+                                        document.getElementById(tabName).style.display = "block"; 
+
+                                        $('.tabs-buttons button').removeClass('active');
+                                        $('#' + btnName).addClass('active');
+                                        
+                                    }
+                                </script>
+                            @else
+                                @php 
+                                $lang = $websiteLanguages->first();
+                                @endphp
+                              @include('crudbooster::default.form_body')
+                            @endif
+
+
                             @if (CRUDBooster::getCurrentModule()->has_images == 1)
                                 @include('crudbooster::model_images')
                             @endif
