@@ -1,3 +1,4 @@
+@if($button_action_style != 'dropdown')
 @foreach($addaction as $a)
     <?php
     foreach ($row as $key => $val) {
@@ -59,7 +60,7 @@
     }
     ?>
 @endforeach
-
+@endif
 @if($button_action_style == 'button_text')
 
     @if(CRUDBooster::isRead() && $button_detail)

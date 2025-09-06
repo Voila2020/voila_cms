@@ -1,8 +1,21 @@
 @extends('crudbooster::admin_template')
-@section('title', 'SEO') @section('content')
+@section('title', 'SEO')
+@section('content')
 
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
+
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <strong><i class="fa fa-language"></i> Update SEO </strong>
+        @if(CRUDBooster::checkUsingAIFeaturesPermission())
+            <a class="btn btn-primary btn-sm pull-right" style="margin-top: -5px;" href="javascript:void(0)" id="GenerateSEOByAiBtn" data-post-url="{{ route('AIContentGeneratorControllerGenerateSEOByAi') }}" data-page="{{request()->input('page')}}" data-page-id="{{ request()->input('page_id') }}"> Generate Seo With AI <i class="fa fa-magic"></i></a>
+        @endif
+    </div>
+
+    <div class="panel-body" style="padding:20px 0px 0px 0px">
+
 @php
     $languages = DB::table('languages')->where('active',1)->get();
 @endphp
@@ -27,6 +40,7 @@
                     <input type="hidden" name="page" value="{{ $type }}">
                     <input type="hidden" name="page_id" value="{{ $id }}">
                     <input type="hidden" name="back_url" value="{{ url()->previous() }}">
+                    <div class="box-body" style="padding:0px 10px;">
                     @foreach ($languages ?? [] as $key => $lang)
                         <div class="form-group">
                             <label class="col-sm-2 control-label">{{ 'Title ' . $lang->code }}</label>
@@ -160,18 +174,21 @@
                             <p class="help-block">Additional tags must be entered correctly as html code. To learn more about the mechanism of adding tags for SEO and conforming to the Open Graph protocol <a href='https://developers.facebook.com/docs/sharing/webmasters/?locale=en_US' target='_blank'>Click Here</a>.</p>
                         </div>
                     </div>
+                    </div>
                     <!-- End Optional Meta Tags -->
                     <div class="hr-line-dashed"></div>
-                    <div class="form-group">
-                        <div class="col-sm-4 col-sm-offset-2">
-                            <a class="btn btn-danger" href="{{ url()->previous() }}" >Back</a>
-                            <input class="btn btn-primary" type="submit" value="Save">
+                    <div class="box-footer" style="background: #F5F5F5">
+                        <div class="form-group">
+                            <div class="col-sm-4 col-sm-offset-2">
+                                <a class="btn btn-default" href="{{ url()->previous() }}" >Back</a>
+                                <input class="btn btn-success" type="submit" value="Save">
+                            </div>
                         </div>
                     </div>
                 </form>
             </div>
         </div>
-    </div>
+</div>
 
     <script src="{!! asset('js/imageScript.js') !!}" type="text/javascript"></script>
 
@@ -200,6 +217,10 @@
         });
 
     </script>
+
+
+    </div> <!-- end panel body -->
+</div> <!-- end panel -->
 
 @endsection
 

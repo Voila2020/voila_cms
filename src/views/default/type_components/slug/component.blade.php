@@ -1,4 +1,5 @@
 
+@if($current_language->default != null && $current_language->default == 1)
     <div class='form-group {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'
         id='form-group-{{ $name }}' style="{{ @$form['style'] }}">
         <label class='control-label col-sm-2'>
@@ -19,3 +20,4 @@
 
         </div>
     </div>
+@endif

@@ -1,5 +1,7 @@
 <?php
-
+if($lang == null){
+      $lang = $websiteLanguages->first();
+}
 //Loading Assets
 $asset_already = [];
 foreach($forms as $form) {
@@ -65,6 +67,13 @@ $form['type'] = ($form['type']) ?: 'text';
 $type = @$form['type'];
 $required = (@$form['required']) ? "required" : "";
 $required = (@strpos($form['validation'], 'required') !== FALSE) ? "required" : $required;
+
+if(CRUDBooster::getCurrentModule()->translation_table != ''){
+    if($lang->default == null) {
+        $required = '';
+    }
+}
+
 $readonly = (@$form['readonly']) ? "readonly" : "";
 $disabled = (@$form['disabled']) ? "disabled" : "";
 $placeholder = (@$form['placeholder']) ? "placeholder='".$form['placeholder']."'" : "";
@@ -81,12 +90,11 @@ if ($type == 'header') {
     $header_group_class = ($header_group_class) ?: "header-group-$index";
 }
 
-
 ?>
 @if(file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/'.$type.'/component.blade.php')))
-    @include('crudbooster::default.type_components.'.$type.'.component')
+    @include('crudbooster::default.type_components.'.$type.'.component', ['current_language' => $lang])
 @elseif(file_exists(resource_path('views/vendor/crudbooster/type_components/'.$type.'/component.blade.php')))
-    @include('vendor.crudbooster.type_components.'.$type.'.component')
+    @include('vendor.crudbooster.type_components.'.$type.'.component',['current_language' => $lang])
 @else
     <p class='text-danger'>{{$type}} is not found in type component system</p><br/>
 @endif

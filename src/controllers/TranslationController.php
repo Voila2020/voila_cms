@@ -34,6 +34,7 @@ class TranslationController extends \crocodicstudio\crudbooster\controllers\CBCo
         $this->button_import = false;
         $this->button_export = false;
         $this->page_seo = false;
+        $this->form_using_ai_actions = true;
         # END CONFIGURATION DO NOT REMOVE THIS LINE
 
         # START COLUMNS DO NOT REMOVE THIS LINE
