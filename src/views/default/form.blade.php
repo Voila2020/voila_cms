@@ -93,6 +93,7 @@
                                         margin-left: 10px;
                                         border-left: 2px solid #ddd;
                                         border-radius: 10px; 
+                                        width: 100%;
                                     }
                                 </style>
 
