@@ -255,17 +255,6 @@ class CBSeeder extends Seeder
       ],
       [
         'created_at' => date('Y-m-d H:i:s'),
-        'name' => 'Labels Translation',
-        'icon' => 'fa fa-language',
-        'path' => 'languages',
-        'table_name' => 'site_labels',
-        'translation_table' => 'site_label_translations',
-        'controller' => 'TranslationController',
-        'is_protected' => 0,
-        'is_active' => 1,
-      ],
-      [
-        'created_at' => date('Y-m-d H:i:s'),
         'name' => 'Header Menu',
         'icon' => 'fa fa-header',
         'path' => 'header_menus',
@@ -293,6 +282,20 @@ class CBSeeder extends Seeder
     }
 
     DB::table('cms_moduls')->insert($data);
+
+    # add translation module config to cms_moduls
+     DB::table('cms_moduls')->insert([
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'Labels Translation',
+        'icon' => 'fa fa-language',
+        'path' => 'languages',
+        'table_name' => 'site_labels',
+        'translation_table' => 'site_label_translations',
+        'controller' => 'TranslationController',
+        'is_protected' => 0,
+        'is_active' => 1,
+      ]);
+      
     $this->command->info("Create default cb modules completed");
     # CB Modules End
 

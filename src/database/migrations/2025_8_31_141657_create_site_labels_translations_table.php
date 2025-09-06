@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateSiteLabelsAndTranslationsTables extends Migration
+class CreateSiteLabelsTranslationsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,15 +13,6 @@ class CreateSiteLabelsAndTranslationsTables extends Migration
      */
     public function up()
     {
-        // site_labels table
-        Schema::create('site_labels', function (Blueprint $table) {
-            $table->increments('id'); // auto increment primary key
-            $table->string('label_key', 255);
-            $table->tinyInteger('active')->default(1);
-            $table->integer('sorting')->nullable();
-           
-        });
-
         // site_label_translations table
         Schema::create('site_label_translations', function (Blueprint $table) {
             $table->increments('id'); // auto increment primary key
@@ -49,6 +40,5 @@ class CreateSiteLabelsAndTranslationsTables extends Migration
     public function down()
     {
         Schema::dropIfExists('site_label_translations');
-        Schema::dropIfExists('site_labels');
     }
 }
