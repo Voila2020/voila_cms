@@ -1,5 +1,7 @@
 <?php
-
+if($lang == null){
+      $lang = $websiteLanguages->first();
+}
 //Loading Assets
 $asset_already = [];
 foreach($forms as $form) {
