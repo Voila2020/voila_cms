@@ -1,11 +1,11 @@
 @extends('crudbooster::admin_template')
-@section('title', 'SEO') 
+@section('title', 'SEO')
 @section('content')
 
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jQuery-2.1.4.min.js') }}"></script>
 <script src="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jQuery/jquery-2.2.3.min.js') }}"></script>
 
-                
+
 <div class="panel panel-default">
     <div class="panel-heading">
         <strong><i class="fa fa-language"></i> Update SEO </strong>
@@ -14,14 +14,19 @@
         @endif
     </div>
 
-    <div class="panel-body" style="padding:20px 0px 0px 0px"> 
-                       
+    <div class="panel-body" style="padding:20px 0px 0px 0px">
+
 @php
     $languages = DB::table('languages')->where('active',1)->get();
 @endphp
 
 <div class="row">
     <div class="col-lg-12">
+        @if(CRUDBooster::checkUsingAIFeaturesPermission())
+        <div class="seo-btns-sect">
+            <a class="btn btn-primary btn-sm pull-right" href="javascript:void(0)" id="GenerateSEOByAiBtn" data-post-url="{{ route('AIContentGeneratorControllerGenerateSEOByAi') }}" data-page="{{request()->input('page')}}" data-page-id="{{ request()->input('page_id') }}"> Generate Seo With AI <i class="fa fa-magic"></i></a>
+        </div>
+        @endif
         <div class="ibox float-e-margins">
             <div class="ibox-content">
 
@@ -70,7 +75,7 @@
                             </div>
                         </div>
                     @endforeach
-                    @foreach ($languages ?? [] as $key => $lang)
+                    {{-- @foreach ($languages ?? [] as $key => $lang)
                         <div class="form-group">
                             <label class="col-sm-2 control-label">{{ 'Author ' . $lang->code }}</label>
                             <div class="col-sm-10">
@@ -79,7 +84,7 @@
                                     class="form-control">
                             </div>
                         </div>
-                    @endforeach
+                    @endforeach --}}
 
                     <!-- Start Image -->
                     <div class="form-group filemanager-form-group_image header-group-0 " id="form-group-image" style="">
@@ -94,13 +99,13 @@
                                         <img style="height:100px; " id="img-image" title="Add image for Image" src="">
                                         <p class="file-roadtrip" id="file-image" style="display:none;"></p>
                                     </a>
-                                    
+
                                         <span class="input-group-btn" >
                                                                     <a id="_image" onclick="OpenInsertImagesingle('image')" class="btn btn-primary" value="img_type">
-                                                        <i class="fa fa-picture-o"></i> Choose an image 
+                                                        <i class="fa fa-picture-o"></i> Choose an image
                                                             </a>
                                         </span>
-                                    
+
                                 </div>
                                 <div class="text-danger"></div>
                                 <div class="help-block"></div>
@@ -114,13 +119,13 @@
                                         <img style="height:100px; " id="img-image" title="Add image for Image" src="">
                                         <p class="file-roadtrip" id="file-image" style="display:none;"></p>
                                     </a>
-                                    
+
                                         <span class="input-group-btn" >
                                                                     <a id="_image" onclick="OpenInsertImagesingle('image')" class="btn btn-primary" value="img_type">
-                                                        <i class="fa fa-picture-o"></i> Choose an image 
+                                                        <i class="fa fa-picture-o"></i> Choose an image
                                                             </a>
                                         </span>
-                                    
+
                                 </div>
                                 <div class="text-danger"></div>
                                 <div class="help-block"></div>
@@ -210,10 +215,10 @@
                 return false;
             }
         });
-       
+
     </script>
 
-    
+
     </div> <!-- end panel body -->
 </div> <!-- end panel -->
 

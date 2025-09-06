@@ -76,7 +76,6 @@
         <script src='{{ asset('vendor/crudbooster/assets/jquery-sortable-min.js') }}'></script>
         <script type="text/javascript">
             $(function() {
-                var id_cms_privileges = '{{ $id_cms_privileges }}';
                 var sortactive = $(".draggable-menu").sortable({
                     group: '.draggable-menu',
                     delay: 200,
@@ -133,18 +132,6 @@
                 <div class="panel-body clearfix">
                     <ul class='draggable-menu draggable-menu-active'>
                         @foreach ($menu_active ?? [] as $menu)
-                            @php
-                                $privileges = DB::table('cms_menus_privileges')
-                                    ->join(
-                                        'cms_privileges',
-                                        'cms_privileges.id',
-                                        '=',
-                                        'cms_menus_privileges.id_cms_privileges',
-                                    )
-                                    ->where('id_cms_menus', $menu->id)
-                                    ->pluck('cms_privileges.name')
-                                    ->toArray();
-                            @endphp
                             <li data-id='{{ $menu->id }}'
                                 data-name='{{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }}'>
                                 <div class='{{ $menu->is_dashboard ? 'is-dashboard' : '' }}'
@@ -157,10 +144,7 @@
                                             title='Delete' class='fa fa-trash'
                                             onclick='{{ CRUDBooster::deleteConfirm(route('AdminHeaderMenusControllerGetDelete') . '/' . $menu->id) }}'
                                             href='javascript:void(0)'></a></span>
-                                    <br /><em class="text-muted">
-                                        <small><i class="fa fa-users"></i> &nbsp; {{ implode(', ', $privileges) }}
-                                        </small>
-                                    </em>
+                                    <br />
                                 </div>
                                 {!! getBuilderMenuChildren($menu,$current_lang) !!}
                             </li>
@@ -243,12 +227,6 @@
         if ($menu->children) {
             $results .= '<ul>';
             foreach ($menu->children as $child) {
-                $privileges = DB::table('cms_menus_privileges')
-                    ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
-                    ->where('id_cms_menus', $child->id)
-                    ->pluck('cms_privileges.name')
-                    ->toArray();
-
                 $editHref =
                     route('AdminHeaderMenusControllerGetEdit') .
                     '/' .
@@ -284,10 +262,6 @@
                     "' href='javascript:void(0)'></a>";
                 $results .= '       </span>';
                 $results .= '       <br />';
-                $results .=
-                    "       <em class='text-muted'><small><i class='fa fa-users'></i> &nbsp;" .
-                    implode(', ', $privileges) .
-                    '</small></em>';
                 $results .= '   </div>';
                 $results .= getBuilderMenuChildren($child,$current_lang);
                 $results .= '</li>';
