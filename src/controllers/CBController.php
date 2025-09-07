@@ -197,8 +197,8 @@ class CBController extends Controller
 
         foreach ($this->col as $col) {
             if (isset($col['switch']) && $col['switch'] == true) {
-                $acitvLabel = cbLang('activate_label') . ' ' . $col['label'];
-                $deactiveLabel = cbLang('deactivate_label') . ' ' . $col['label'];
+                $acitvLabel =  trans('crudbooster.activate_label',['field_name'=>$col['label']]);
+                $deactiveLabel = trans('crudbooster.deactivate_label',['field_name'=>$col['label']]);
                 $this->button_selected[] = ['label' => $acitvLabel, 'icon' => 'fa fa-check', 'name' => 'active_all-' . $col['name']];
                 $this->button_selected[] = ['label' => $deactiveLabel, 'icon' => 'fa fa-ban', 'name' => 'deactive_all-' . $col['name']];
             }

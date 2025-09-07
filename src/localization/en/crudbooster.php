@@ -450,8 +450,8 @@ return [
     'block_users_setting' => 'Block Users Setting',
     'login_block_msg' => 'Sorry, it seems like you have exceeded the maximum number of login attempts. For security reasons, you have been temporarily blocked. Please try again later or contact our support team if you need assistance unblocking you. Thank you.',
     'search_for_key_values' => 'Search for keys or values',
-    'activate_label' => 'Activate Label',
-    'deactivate_label' => 'Deactivate Label',
+    'activate_label' => 'Activate :field_name Fields',
+    'deactivate_label' => 'Deactivate :field_name Fields',
     'has_images' => 'Has List Images',
     'model_images' => 'Images',
 
