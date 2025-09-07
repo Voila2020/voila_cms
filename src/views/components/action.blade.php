@@ -115,7 +115,7 @@
                 }
 
                 $label = $a['label'];
-                $url = $a['url']."?return_url=".urlencode(Request::fullUrl());
+                $url = $a['url'];
                 $icon = $a['icon'];
                 $color = $a['color'] ?: 'primary';
 
