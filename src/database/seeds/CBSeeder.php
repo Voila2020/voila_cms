@@ -119,7 +119,7 @@ class CBSeeder extends Seeder
         'path' => 'settings',
         'table_name' => 'cms_settings',
         'controller' => 'SettingsController',
-        'is_protected' => 1,
+        'is_protected' => 0,
         'is_active' => 1,
       ],
       [
