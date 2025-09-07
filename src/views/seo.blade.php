@@ -22,11 +22,6 @@
 
 <div class="row">
     <div class="col-lg-12">
-        @if(CRUDBooster::checkUsingAIFeaturesPermission())
-        <div class="seo-btns-sect">
-            <a class="btn btn-primary btn-sm pull-right" href="javascript:void(0)" id="GenerateSEOByAiBtn" data-post-url="{{ route('AIContentGeneratorControllerGenerateSEOByAi') }}" data-page="{{request()->input('page')}}" data-page-id="{{ request()->input('page_id') }}"> Generate Seo With AI <i class="fa fa-magic"></i></a>
-        </div>
-        @endif
         <div class="ibox float-e-margins">
             <div class="ibox-content">
 
