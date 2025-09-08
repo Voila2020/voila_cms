@@ -239,6 +239,22 @@
     <!-- /.sidebar -->
 </aside>
 @php
+
+    function isActiveMenu($menu)
+    {
+        if (Request::is($menu->url_path) || Request::is($menu->url_path.'/*')) {
+            return true;
+        }
+       
+        foreach ($menu->children as $child) {
+            if (isActiveMenu($child)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     function getMenuChildren($menu)
     {
         $results = '';
@@ -246,11 +262,9 @@
         if (count($menu->children)) {
             $results .= '<ul class="treeview-menu">';
             foreach ($menu->children as $key => $child) {
-                $listClass = Request::is(
-                    $child->url_path .= !Str::endsWith(Request::decodedPath(), $child->url_path) ? '/*' : '',
-                )
-                    ? 'active'
-                    : '';
+                $isActive = isActiveMenu($child);
+                $listClass = $isActive ? ' active ' : '';
+                
                 $listClass .= count($child->children) ? 'inner-level-li' : '';
                 $aClass = $child->color ? 'text-' . $child->color : '';
                 $aHref = $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url;
