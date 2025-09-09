@@ -582,6 +582,26 @@ class CBSeeder extends Seeder
         'group_setting' => 'TinyMCE Setting',
         'dataenum' => '',
         'helper' => '',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'editor_fonts_ltr',
+        'label' => 'Editor Fonts LTR',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'TinyMCE Setting',
+        'dataenum' => '',
+        'helper' => 'Separate multiple fonts with a semicolon ( ; ).',
+      ],
+      [
+        'created_at' => date('Y-m-d H:i:s'),
+        'name' => 'editor_fonts_rtl',
+        'label' => 'Editor Fonts RTL',
+        'content' => '',
+        'content_input_type' => 'text',
+        'group_setting' => 'TinyMCE Setting',
+        'dataenum' => '',
+        'helper' => 'Separate multiple fonts with a semicolon ( ; ).',
       ]
     ];
 

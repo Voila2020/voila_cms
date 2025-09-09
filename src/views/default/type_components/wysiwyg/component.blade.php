@@ -145,6 +145,8 @@
     $editorCss = [];
     $editorCssFiles = [];
     $editorCssArray = [];
+
+    $editorFonts = [];
     foreach ($websiteLanguages as $lang) {
         $editorCss[$lang->code] = Crudbooster::getSetting('editor_css_links_' . $lang->direction);
         $editorCssFiles[$lang->code] = explode(',', $editorCss[$lang->code]);
@@ -152,7 +154,15 @@
         foreach ($editorCssFiles[$lang->code] as $file) {
             $editorCssArray[$lang->code][] = "'" . trim($file) . "'";
         }
+
+        $fonts_values = Crudbooster::getSetting('editor_fonts_' . $lang->direction);
+        if($fonts_values != ''){
+            $editorFonts[$lang->code] = str_replace("'","",str_replace('"',"",$fonts_values));
+        }else{
+            $editorFonts[$lang->code] = '';
+        }
     }
+    
 
 ?>
 <?php
@@ -191,6 +201,9 @@
                 },
                 menubar: 'file edit view insert format tools table tc help cards',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
+                @if($editorFonts['en'] != '')
+                    font_family_formats:"{{ $editorFonts['en'] }}" ,
+                @endif
                 content_css: [<?php echo implode(',', $editorCssArray['en']); ?>],
                 content_js: [<?php echo implode(',', $editorJsArray); ?>],
                 setup: function (editor) {
@@ -349,6 +362,9 @@
                     },
                     menubar: 'file edit view insert format tools table tc help cards',
                     toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
+                    @if($editorFonts[$current_language->code] != '')
+                        font_family_formats:"{{ $editorFonts[$current_language->code] }}" ,
+                    @endif
                     content_css: [<?php        echo implode(',', $editorCssArray[$lang->code]); ?>],
                     setup: function (editor) {
                         //Add a custom validator to the form
