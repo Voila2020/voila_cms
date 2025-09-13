@@ -346,6 +346,12 @@
                 contextmenu: 'link image table configurepermanentpen',
                 menu: cardsMenu
             };
+
+            if (customWebsiteColors && customWebsiteColors.length > 0) {
+                options.color_map = customWebsiteColors;
+                options.color_cols = 3;
+            }
+
             @if (!@$form['translation'])
                 @if($current_language->default != null && $current_language->default == 1)
                     var tinyEditor = tinymce.init(options);
@@ -506,6 +512,12 @@
                     contextmenu: 'link image table configurepermanentpen',
                     menu: cardsMenu,
                 };
+
+                if (customWebsiteColors && customWebsiteColors.length > 0) {
+                    options.color_map = customWebsiteColors;
+                    options.color_cols = 3;
+                }
+                    
                 selector = '#textarea_{{ $name }}_{{ $current_language->code }}';
                 options.selector = selector;
                 tinymce.init(options);

@@ -1,3 +1,10 @@
+var customWebsiteColors = [
+        // "e48438", "First Color",
+        // "2a3d48", "Second Color",
+        // "9d8966", "Third Color",
+        // "f1eeea", "Forth Color",
+    ];   
+    
 const customMenu = {
     cards: {
         title: 'Cards',
