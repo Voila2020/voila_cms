@@ -167,7 +167,7 @@ class CBRouter
             Route::post('/download', [FileManagerController::class, 'forceDownload'])->name("filemanager.download");
         });
     }
-     private static function aiContentRoute()
+    private static function aiContentRoute()
     {
         Route::group([
             'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
@@ -186,6 +186,24 @@ class CBRouter
         });
     }
 
+    private static function ticketSystemRoute()
+    {
+        Route::group([
+            'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
+            'prefix' => config('crudbooster.ADMIN_PATH'),
+            'namespace' => static::$cb_namespace
+        ], function () {
+
+            Route::get('/show_tickets', 'TicketSystemController@getIndex');
+            Route::post('/add-ticket', 'TicketSystemController@addTicket');
+            Route::get( '/show_tickets/detail/{code}', 'TicketSystemController@getDetail');
+            Route::post('/close-ticket', 'TicketSystemController@closeTicket');
+            Route::get( '/comments/create', 'TicketSystemController@createComment');
+            Route::post('/add-comment', 'TicketSystemController@addComment');
+
+        });
+    }
+
     public static function route()
     {
         static::apiRoute();
@@ -195,5 +213,6 @@ class CBRouter
         static::cbRoute();
         static::voilaCMSRoutes();
         static::aiContentRoute();
+        static::ticketSystemRoute();
     }
 }

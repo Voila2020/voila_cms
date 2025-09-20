@@ -110,4 +110,9 @@ return [
     //AI Content Generator APIs Settings
     'VOILA_API_LINK' => env('VOILA_API_LINK', 'https://api.voitest.com'),
     'VOILA_API_SECRET_KEY' => env('VOILA_API_SECRET_KEY', '24a63a4c59444d2fb4e97082431fc06d'),
+    //Ticket System APIs
+    'TICKET_SYSTEM_STATUS' => env('TICKET_SYSTEM_STATUS', 'off'),
+    'TICKET_SYSTEM_LINK'=> env('TICKET_SYSTEM_LINK', 'https://support.voila.digital'),
+    'TICKETS_API_SECRET_KEY' => env('TICKETS_API_SECRET_KEY', 'b574b403906248eb24b7f80a971454b0'),
+    'TICKET_SYSTEM_PROJECT_CODE' => env('TICKET_SYSTEM_PROJECT_CODE', '000'),
 ];

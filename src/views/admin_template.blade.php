@@ -48,6 +48,7 @@
     <link rel="stylesheet" href="{{ asset('vendor/crudbooster/assets/adminlte/plugins/jquery.toast/css/jquery.toast.css') }}">
 
     <link rel='stylesheet' href='{{ asset('vendor/crudbooster/assets/css/main.css') }}' />
+    <link rel='stylesheet' href='{{ asset('vendor/crudbooster/assets/css/support-form-style.css') }}' />
 
     <!-- load css -->
     <style type="text/css">
@@ -132,9 +133,13 @@
             <div></div>
             <div></div>
         </div>
+        <div class="indicator_support_sect">
         <!--- Tokens Indicator -->
         {!! CRUDBooster::showTokenUsageIndicator() !!}
-        <!-- Header -->
+        <!-- Ticket -->
+        @include('crudbooster::tickets.support_form')
+        </div>
+        <!-- Header --> 
         @include('crudbooster::header')
         <!-- Sidebar -->
         @include('crudbooster::sidebar')
