@@ -330,8 +330,11 @@ class CBController extends Controller
                     $join_table_temp[] = $this->translation_table;
                     $result->leftJoin($this->translation_table, function ($join) {
                         $join->on($this->table . '.id', '=', $this->translation_table . '.' . $this->translation_main_column);
-                    })
-                        ->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
+                    });
+                    
+                    if (!request()->has('q') && !request()->has('filter_column')) {
+                        $result->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
+                    }
                 }
                 $translationTableJoined = true;
             }
