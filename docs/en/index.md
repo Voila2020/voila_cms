@@ -63,3 +63,7 @@
 - [How To Make A Custom Route Action](./how-to-make-custom-route-action.md)
 - [Helpers](./helpers.md)
 - [Secure Your Root Directory](./secure-root-directory.md)
+- [How Add Module With Translation Table](./module-with-translation-table.md)
+- [How Make Settings Editable By User](./make-settings-editable-by-user.md)
+- [How Active AI Content Features](./active-ai-content-features.md)
+- [How Active Multi Authentication](./active-multi-authentication.md)
