@@ -1,5 +1,5 @@
 
-# Text Form Input Type
+# Slug Form Input Type
 Showing an input slug
 
 ### Code Sample
