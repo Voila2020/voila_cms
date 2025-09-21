@@ -62,4 +62,4 @@
 - [How To Send Email](./how-to-send-Email.md)
 - [How To Make A Custom Route Action](./how-to-make-custom-route-action.md)
 - [Helpers](./helpers.md)
-- [Secure Your Root Directory](./index.md)
+- [Secure Your Root Directory](./secure-root-directory.md)
