@@ -82,7 +82,7 @@ Once completed, the CMS will automatically generate a link for the new module in
    - Foreign key columns  
 
 5. Behavior inside the CMS:  
-   - **Listing Page**: Language-sensitive fields will display based on the CMS default language.  
+   - **Listing Page**: Language-sensitive fields will display based on the Website default language.  
    - **Add/Edit Form**:  
      - Non-language fields appear once (in the default language tab).  
      - Language-dependent fields appear in all language tabs for translation.  
