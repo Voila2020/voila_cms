@@ -45,6 +45,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->col[] = ["label" => "Applications", "name" => "id", "callback" => function ($row) {
             return DB::table('applications')->where("landing_page_id", $row->id)->get()->count();
         }];
+        $this->col[] = ["label" => "Active", "name" => "active","switch"=>true];
 
         # START FORM DO NOT REMOVE THIS LINE
         $this->form = [];
@@ -485,7 +486,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
 
     public function catchView($url)
     {
-        $landingPage = DB::table('landing_pages')->where("url", $url)->first();
+        $landingPage = DB::table('landing_pages')->where("url", $url)->where('active',1)->first();
         if ($landingPage) {
             $landingPageSeo = DB::table('cms_seo')->where("page", "landing-pages")->where("page_id", $landingPage->id)->first();
             if (!$landingPageSeo) {

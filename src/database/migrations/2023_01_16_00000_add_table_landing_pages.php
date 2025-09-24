@@ -19,6 +19,7 @@ class AddTableLandingPages extends Migration
             $table->string('name')->nullable();
             $table->string('title')->nullable();
             $table->string('description')->nullable();
+            $table->text('preview_image')->nullable();
             $table->text('response_message')->nullable();
             $table->tinyInteger('is_template')->nullable();
             $table->string('url')->nullable();
