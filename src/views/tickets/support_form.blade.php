@@ -60,8 +60,8 @@
             const $well = $('.well');
 
             // Create these once, not inside the AJAX callback
-            let $successMessage = $("<span class='help-block success'></span>").hide();
-            let $errorMessage = $("<span class='help-block error'></span>").hide();
+            let $successMessage = $("<span class='help-block success'></span>").css("display","none");
+            let $errorMessage = $("<span class='help-block error'></span>").css("display","none");
 
             $well.prepend($successMessage);
             $well.prepend($errorMessage);
@@ -89,9 +89,8 @@
                     contentType: false,
                     processData: false,
                     success: function(response) {
-                        $errorMessage.hide();
-                        $successMessage.text(response.message || 'Ticket added successfully.')
-                            .show();
+                        $errorMessage.css("display","none");
+                        $successMessage.text(response.message || 'Ticket added successfully.').css("display","block");
                         $supportFormBtn.find('i').remove();
 
                         $supportFormBtn.prop('disabled', false);
@@ -105,7 +104,7 @@
                         }, 2000);
                     },
                     error: function(xhr) {
-                        $successMessage.hide();
+                        $successMessage.css("display","none");
 
                         let errorMsg = 'Something went wrong.';
                         if (xhr.responseJSON && xhr.responseJSON.message) {
@@ -113,9 +112,9 @@
                         }
                         $supportFormBtn.find('i').remove();
                         $supportFormBtn.prop('disabled', false);
-                        $errorMessage.text(errorMsg).show();
+                        $errorMessage.text(errorMsg).css("display","block");
                         setTimeout(function() {
-                            $errorMessage.hide();
+                            $errorMessage.css("display","none");
                         }, 2000);
                     }
                 });
