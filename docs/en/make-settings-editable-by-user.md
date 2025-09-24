@@ -28,9 +28,7 @@ This allows more granular control over which users can manage system settings.
   - Copy the URL.  
 
 For example:  
- ```
-       http://127.0.0.1:8000/admin/settings/show?group=email_setting&m=0
-       ```
+ http://127.0.0.1:8000/admin/settings/show?group=email_setting&m=0
 
 ### 4. Assign Role to the Menu Item
 - When creating the new sidebar items, make sure to **assign the selected role** in the **"Roles" field** so that only users with that role can see it.
