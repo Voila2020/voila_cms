@@ -53,7 +53,7 @@ For example:
        http://127.0.0.1:8000/admin/settings/show?group=email_setting&m=0
        ```
 
-3. When adding these items to the sidebar menu, make sure to assign the correct role in the **"Roles" field** so only that role can see them.
+3. When adding these items to the sidebar menu, make sure to assign the correct role in the **"Privileges" field** so only that role can see them.
 
 ---
 
