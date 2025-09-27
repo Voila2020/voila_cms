@@ -143,7 +143,7 @@
                     $.post("{{ CRUDBooster::adminPath('landing-pages/set-template') }}",
                         "_token={{ csrf_token() }}&landingPageId={{ $landingPage->id }}&templateId=" + templateId,
                         function (data) {
-                            window.location.href = "{{ CRUDBooster::mainpath('page-builder').'/'.$landingPage->id }}";
+                            window.location.href = "{{ CRUDBooster::mainpath('page-builder-iframe').'/'.$landingPage->id }}";
                         }
                     );
                 }
