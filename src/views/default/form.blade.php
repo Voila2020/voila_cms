@@ -129,7 +129,7 @@
                                 </script>
                             @else
                                 @php 
-                                $lang = $websiteLanguages->first();
+                                $lang = $websiteLanguages->where('default',1)->first();
                                 @endphp
                               @include('crudbooster::default.form_body')
                             @endif

@@ -1,6 +1,6 @@
 <?php
 if($lang == null){
-      $lang = $websiteLanguages->first();
+      $lang = $websiteLanguages->where('default',1)->first();
 }
 //Loading Assets
 $asset_already = [];
