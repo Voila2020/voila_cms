@@ -15,6 +15,26 @@ function basic_blocks(editor) {
         }
     });
 
+    editor.BlockManager.remove('text-basic');
+    editor.BlockManager.add('text-basic', {
+        label: 'Text section',
+        category: 'Basic',
+        media: `<svg viewBox="0 0 24 24">
+        <path fill="currentColor" d="M21,6V8H3V6H21M3,18H12V16H3V18M3,13H21V11H3V13Z" />
+    </svg>`,
+        activate: true,
+
+        content: `
+        <section class="bdg-sect">
+             <h1 class="heading" data-gjs-editable="true">Insert title here</h1>
+             <p class="paragraph" data-gjs-editable="true">
+             <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                 eiusmod tempor incididunt ut labore et dolore magna aliqua</span>
+             </p>
+        </section>
+    `
+    });
+
     editor.BlockManager.add('link', {
         id: 'link',
         label: 'Link',
