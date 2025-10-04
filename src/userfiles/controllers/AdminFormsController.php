@@ -361,7 +361,7 @@ class AdminFormsController extends CBController
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' enctype='multipart/form-data' class='well' style='background:#FFF;' data-gjs-editable='false' data-gjs-removable='false' data-gjs-propagate='[\"editable\", \"removable\"]'>";
             $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
