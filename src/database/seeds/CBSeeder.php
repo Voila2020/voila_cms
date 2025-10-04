@@ -292,7 +292,7 @@ class CBSeeder extends Seeder
     }
 
     DB::table('cms_moduls')->insert($data);
-      
+
     $this->command->info("Create default cb modules completed");
     # CB Modules End
 
@@ -1647,6 +1647,14 @@ class CBSeeder extends Seeder
         ],
         [
           'title' => 'file',
+          'multi' => 0,
+        ],
+        [
+          'title' => 'date',
+          'multi' => 0,
+        ],
+        [
+          'title' => 'textarea',
           'multi' => 0,
         ],
       ];
