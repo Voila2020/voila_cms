@@ -663,7 +663,12 @@ class CBController extends Controller
                         $checked = 'checked';
                     }
 
-                    $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked} style='display:none;'/>
+                    $disabled = '';
+                    if (!CRUDBooster::isUpdate()) {
+                        $disabled = 'disabled';
+                    }
+
+                    $value = "<input row_id='{$row->id}' id='{$col["name"]}_{$row->id}' class='cms_switch_input' name='{$col["name"]}' type='checkbox' value='{$value}' {$checked} {$disabled} style='display:none;'/>
                             <label class='cms_switch_label' for='{$col["name"]}_{$row->id}'>Toggle</label>";
                 }
 
