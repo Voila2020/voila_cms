@@ -99,12 +99,14 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         |
          */
         $this->addaction = array();
-        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_self', 'url' =>  CRUDBooster::mainpath('page-builder-iframe') . '/[id]', 'icon' => 'fa fa-wrench'];
+        if(CRUDBooster::isUpdate()){
+            $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_self', 'url' =>  CRUDBooster::mainpath('page-builder-iframe') . '/[id]', 'icon' => 'fa fa-wrench'];
 
 
-        $templates = DB::table('landing_pages')->where("is_template", 1)->get()->count();
-        if ($templates > 0) {
-            $this->addaction[] = ['label' => 'Build from Template', 'target' => '_blank', "color" => "primary", 'title' => 'Build from Template', "url" => CRUDBooster::mainpath('builder-template') . '/[id]', 'icon' => 'fa fa-wrench'];
+            $templates = DB::table('landing_pages')->where("is_template", 1)->get()->count();
+            if ($templates > 0) {
+                $this->addaction[] = ['label' => 'Build from Template', 'target' => '_blank', "color" => "primary", 'title' => 'Build from Template', "url" => CRUDBooster::mainpath('builder-template') . '/[id]', 'icon' => 'fa fa-wrench'];
+            }
         }
         $this->addaction[] = ['label' => 'Applications', 'title' => 'Applications', 'url' => CRUDBooster::mainpath('applications') . '/[id]', "color" => "info"];
         $this->addaction[] = ['label' => '', 'title' => 'Go TO', 'target' => '_blank', 'url' => url('/') . '/[url]', 'icon' => 'fa fa-search', "color" => "primary"];
