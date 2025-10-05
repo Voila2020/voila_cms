@@ -408,6 +408,11 @@ function components(editor) {
                 classes: ['fa', 'fa-cube', 'fa-2x'],
             },
         },
+        isComponent: (el) => {
+            if (el.tagName === 'I' && el.classList && el.classList.contains('fa')) {
+                return { type: 'icon-block' };
+            }
+        },
     });
 
     editor.DomComponents.addType('list', {
