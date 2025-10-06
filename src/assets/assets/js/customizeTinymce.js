@@ -5,12 +5,14 @@ var customWebsiteColors = [
         // "f1eeea", "Forth Color",
     ];   
     
-const customMenu = {
-    cards: {
-        title: 'Cards',
-        items: 'card-style-1'
-    }
-};
+if (typeof window.customMenu === 'undefined') {
+    window.customMenu = {
+            cards: {
+                title: 'Cards',
+                items: 'card-style-1'
+            }
+    };
+}
 
 function registerMenu(editor, direction = 'ltr') {
     //*************************************

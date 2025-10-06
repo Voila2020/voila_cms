@@ -167,15 +167,18 @@
 ?>
 <?php
     $editorJs = Crudbooster::getSetting('editor_js_links');
-    $editorJsFiles = explode(',', $editorJs);
     $editorJsArray = [];
-    foreach ($editorJsFiles as $file) {
-        $editorJsArray[] = "'" . trim($file) . "'";
+    if($editorJs != '' && $editorJs != null){
+        $editorJsFiles = explode(',', $editorJs);
+         foreach ($editorJsFiles as $file) {
+            $editorJsArray[] = "'" . trim($file) . "'";
+        }
     }
 ?>
 
 @push('bottom')
     <script>
+     
         editorJsArray = <?php echo json_encode($editorJsArray); ?>;
         $(function () {
             let selector = '#textarea_{{ $name }}';
