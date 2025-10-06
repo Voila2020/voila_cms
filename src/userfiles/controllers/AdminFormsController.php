@@ -361,7 +361,7 @@ class AdminFormsController extends CBController
         $form = DB::table('forms')->find($id);
         $element_form = "";
         if ($form) {
-            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
+            $element_form .= "<form method='POST' action='" . url('submit-form/' . $form->id) . "' enctype='multipart/form-data' class='well' style='background:#FFF;' data-gjs-editable='false' data-gjs-removable='false' data-gjs-propagate='[\"editable\", \"removable\"]'>";
             $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
@@ -401,6 +401,10 @@ class AdminFormsController extends CBController
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'file') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    } else if ($item->title == 'textarea') {
+                        $element_form .= "<textarea  class='form-textarea' name='" . $this->stripSpace($item->label_filed) . "' placeholder='" . $item->label_name . "' " . $req . "></textarea>";
+                    } else if ($item->title == 'date') {
+                        $element_form .= "<input   type='date' class='form-input' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
                     $element_form .= "</div>";
@@ -529,10 +533,10 @@ class AdminFormsController extends CBController
         }
 
         $form = DB::table('forms')->find($id);
-        $elemnt_form = "";
+        $element_form = "";
         if ($form) {
-            $elemnt_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit') . '/' . $form->id . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
-            $elemnt_form .= csrf_field();
+            $element_form .= "<form method='POST' action='" . CRUDBooster::mainpath('submit') . '/' . $form->id . "' enctype='multipart/form-data' class=' well' style='background:#FFF' >";
+            $element_form .= csrf_field();
             $fields = DB::table('form_field')->select(
                 'form_field.*',
                 'fields.title',
@@ -546,51 +550,55 @@ class AdminFormsController extends CBController
             if ($fields) {
                 foreach ($fields as $item) {
                     $req = ($item->required_filed == 'Yes') ? "required" : "";
-                    $elemnt_form .= "<div class='form-group'>";
-                    $elemnt_form .= "<label>" . $item->label_name . ":</label>";
+                    $element_form .= "<div class='form-group'>";
+                    $element_form .= "<label>" . $item->label_name . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
-                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'checkbox') {
                         $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
-                            $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
+                            $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'radio') {
                         $array_values = explode('|', $item->values);
                         foreach ($array_values as $filed) {
-                            $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
+                            $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
                     } else if ($item->title == 'select') {
                         $array_values = explode('|', $item->values);
-                        $elemnt_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
+                        $element_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
 
                         foreach ($array_values as $filed) {
-                            $elemnt_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
+                            $element_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
-                        $elemnt_form .= "</select>";
+                        $element_form .= "</select>";
                     } else if ($item->title == 'number') {
-                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     } else if ($item->title == 'file') {
-                        $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                        $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
+                    } else if ($item->title == 'textarea') {
+                        $element_form .= "<textarea  class='form-textarea' name='" . $this->stripSpace($item->label_filed) . "' placeholder='" . $item->label_name . "' " . $req . "></textarea>";
+                    } else if ($item->title == 'date') {
+                        $element_form .= "<input   type='date' class='form-input' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
-                    $elemnt_form .= "</div>";
+                    $element_form .= "</div>";
                 }
                 $recaptcha_secret_key = CRUDBooster::getSetting('recaptcha_secret_key');
                 if ($recaptcha_secret_key) {
-                    $elemnt_form .= "
+                    $element_form .= "
                 <input id='g-recaptcha-response' type='hidden' name='g-recaptcha-response'
                     data-sitekey='{{ $recaptcha_secret_key }}' />";
                 }
 
-                $elemnt_form .= "<div class='form-group'>";
+                $element_form .= "<div class='form-group'>";
 
-                $elemnt_form .= "<input type='submit' class='btn btn-primary' value='SEND' />";
-                $elemnt_form .= "</div>";
+                $element_form .= "<input type='submit' class='btn btn-primary' value='SEND' />";
+                $element_form .= "</div>";
 
-                $elemnt_form .= "</form>";
+                $element_form .= "</form>";
             }
-            return view('crudbooster::form_builder.form', array('data' => $elemnt_form));
+            return view('crudbooster::form_builder.form', array('data' => $element_form));
         }
     }
 

@@ -66,6 +66,497 @@ editor = grapesjs.init({
     },
     styleManager: {
         clearProperties: 1,
+        sectors: [{
+            name: 'Layout',
+            open: true,
+            properties: [
+                'display',
+                {
+                    property: 'position',
+                    type: 'select',
+                    defaults: 'static',
+                    options: [
+                        { value: 'static' },
+                        { value: 'relative' },
+                        { value: 'absolute' },
+                        { value: 'fixed' },
+                        { value: 'sticky' },
+                    ]
+                },
+                'top',
+                'right',
+                'left',
+                'bottom',
+                'float',
+                'clear',
+                'overflow',
+                'overflow-x',
+                'overflow-y',
+                { property: 'z-index', type: 'number', defaults: 0 },
+                {
+                    property: 'box-sizing',
+                    type: 'select',
+                    defaults: 'content-box',
+                    options: [
+                        { value: 'content-box' },
+                        { value: 'border-box' }
+                    ]
+                }
+            ],
+        }, {
+            name: 'Flexbox',
+            open: false,
+            properties: [
+                { property: 'flex', name: 'Flex', type: 'text', defaults: '0 1 auto' },
+                {
+                    property: 'flex-direction',
+                    type: 'select',
+                    defaults: 'row',
+                    options: [
+                        { value: 'row' },
+                        { value: 'row-reverse' },
+                        { value: 'column' },
+                        { value: 'column-reverse' },
+                    ]
+                },
+                {
+                    property: 'flex-wrap',
+                    type: 'select',
+                    defaults: 'nowrap',
+                    options: [
+                        { value: 'nowrap' },
+                        { value: 'wrap' },
+                        { value: 'wrap-reverse' },
+                    ]
+                },
+                {
+                    property: 'justify-content',
+                    type: 'select',
+                    defaults: 'flex-start',
+                    options: [
+                        { value: 'flex-start' },
+                        { value: 'flex-end' },
+                        { value: 'center' },
+                        { value: 'space-between' },
+                        { value: 'space-around' },
+                        { value: 'space-evenly' },
+                    ]
+                },
+                {
+                    property: 'align-items',
+                    type: 'select',
+                    defaults: 'stretch',
+                    options: [
+                        { value: 'stretch' },
+                        { value: 'flex-start' },
+                        { value: 'flex-end' },
+                        { value: 'center' },
+                        { value: 'baseline' },
+                    ]
+                },
+                {
+                    property: 'align-content',
+                    type: 'select',
+                    defaults: 'stretch',
+                    options: [
+                        { value: 'stretch' },
+                        { value: 'flex-start' },
+                        { value: 'flex-end' },
+                        { value: 'center' },
+                        { value: 'space-between' },
+                        { value: 'space-around' },
+                    ]
+                },
+                { property: 'order', type: 'number', defaults: 0, min: -100, max: 100 },
+                { property: 'flex-grow', type: 'number', defaults: 0, min: 0, max: 10 },
+                { property: 'flex-shrink', type: 'number', defaults: 1, min: 0, max: 10 },
+                { property: 'flex-basis', type: 'text', defaults: 'auto' },
+                {
+                    property: 'align-self',
+                    type: 'select',
+                    defaults: 'auto',
+                    options: [
+                        { value: 'auto' },
+                        { value: 'stretch' },
+                        { value: 'flex-start' },
+                        { value: 'flex-end' },
+                        { value: 'center' },
+                        { value: 'baseline' },
+                    ]
+                },
+                { property: 'gap', name: 'Gap', type: 'number', defaults: 0, units: ['px', '%', 'rem'], step: 1 }
+            ]
+        }, {
+            name: 'Spacing',
+            open: false,
+            properties: [
+                {
+                    property: 'margin',
+                    type: 'composite',
+                    properties: [
+                        { property: 'margin-top', name: 'Top', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'margin-right', name: 'Right', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'margin-bottom', name: 'Bottom', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'margin-left', name: 'Left', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                    ],
+                },
+                {
+                    property: 'padding',
+                    type: 'composite',
+                    properties: [
+                        { property: 'padding-top', name: 'Top', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'padding-right', name: 'Right', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'padding-bottom', name: 'Bottom', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                        { property: 'padding-left', name: 'Left', type: 'number', defaults: 0, units: ['px', 'rem', '%'] },
+                    ],
+                },
+            ],
+        }, {
+            name: 'Size',
+            open: false,
+            properties: [
+                'width',
+                'height',
+                'max-width',
+                'min-width',
+                'max-height',
+                'min-height',
+                { property: 'aspect-ratio', type: 'text', defaults: 'auto' }
+            ],
+        }, {
+            name: 'Typography',
+            open: false,
+            properties: [
+                {
+                    property: 'font-family',
+                    type: 'select',
+                    defaults: 'Inter, serif',
+                    options: [
+                        { value: 'Inter, serif' },
+                        { value: 'Almarai, sans-serif' }
+                    ]
+                },
+                'font-size',
+                'font-weight',
+                'font-style',
+                'color',
+                'line-height',
+                'letter-spacing',
+                'text-align',
+                'text-decoration',
+                'text-shadow',
+                {
+                    property: 'text-transform',
+                    type: 'select',
+                    defaults: 'none',
+                    options: [
+                        { value: 'none' },
+                        { value: 'uppercase' },
+                        { value: 'lowercase' },
+                        { value: 'capitalize' }
+                    ]
+                },
+                { property: 'text-indent', type: 'number', defaults: 0, units: ['px', 'rem', '%'] }
+            ]
+        }, {
+    name: 'Borders',
+    open: false,
+    properties: [
+        // Border Top
+        {
+            property: 'border-top-width',
+            type: 'number',
+            units: ['px', 'rem', 'em'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-top-style',
+            type: 'select',
+            defaults: 'none',
+            options: [
+                { value: 'none', name: 'None' },
+                { value: 'solid', name: 'Solid' },
+                { value: 'dashed', name: 'Dashed' },
+                { value: 'dotted', name: 'Dotted' },
+                { value: 'double', name: 'Double' },
+                { value: 'groove', name: 'Groove' },
+                { value: 'ridge', name: 'Ridge' },
+                { value: 'inset', name: 'Inset' },
+                { value: 'outset', name: 'Outset' }
+            ]
+        },
+        {
+            property: 'border-top-color',
+            type: 'color',
+            defaults: 'transparent'
+        },
+
+        // Border Right
+        {
+            property: 'border-right-width',
+            type: 'number',
+            units: ['px', 'rem', 'em'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-right-style',
+            type: 'select',
+            defaults: 'none',
+            options: [
+                { value: 'none', name: 'None' },
+                { value: 'solid', name: 'Solid' },
+                { value: 'dashed', name: 'Dashed' },
+                { value: 'dotted', name: 'Dotted' },
+                { value: 'double', name: 'Double' },
+                { value: 'groove', name: 'Groove' },
+                { value: 'ridge', name: 'Ridge' },
+                { value: 'inset', name: 'Inset' },
+                { value: 'outset', name: 'Outset' }
+            ]
+        },
+        {
+            property: 'border-right-color',
+            type: 'color',
+            defaults: 'transparent'
+        },
+
+        // Border Bottom
+        {
+            property: 'border-bottom-width',
+            type: 'number',
+            units: ['px', 'rem', 'em'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-bottom-style',
+            type: 'select',
+            defaults: 'none',
+            options: [
+                { value: 'none', name: 'None' },
+                { value: 'solid', name: 'Solid' },
+                { value: 'dashed', name: 'Dashed' },
+                { value: 'dotted', name: 'Dotted' },
+                { value: 'double', name: 'Double' },
+                { value: 'groove', name: 'Groove' },
+                { value: 'ridge', name: 'Ridge' },
+                { value: 'inset', name: 'Inset' },
+                { value: 'outset', name: 'Outset' }
+            ]
+        },
+        {
+            property: 'border-bottom-color',
+            type: 'color',
+            defaults: 'transparent'
+        },
+
+        // Border Left
+        {
+            property: 'border-left-width',
+            type: 'number',
+            units: ['px', 'rem', 'em'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-left-style',
+            type: 'select',
+            defaults: 'none',
+            options: [
+                { value: 'none', name: 'None' },
+                { value: 'solid', name: 'Solid' },
+                { value: 'dashed', name: 'Dashed' },
+                { value: 'dotted', name: 'Dotted' },
+                { value: 'double', name: 'Double' },
+                { value: 'groove', name: 'Groove' },
+                { value: 'ridge', name: 'Ridge' },
+                { value: 'inset', name: 'Inset' },
+                { value: 'outset', name: 'Outset' }
+            ]
+        },
+        {
+            property: 'border-left-color',
+            type: 'color',
+            defaults: 'transparent'
+        },
+
+        // Border Radius (Individual corners)
+        {
+            property: 'border-top-left-radius',
+            type: 'number',
+            units: ['px', 'rem', 'em', '%'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-top-right-radius',
+            type: 'number',
+            units: ['px', 'rem', 'em', '%'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-bottom-right-radius',
+            type: 'number',
+            units: ['px', 'rem', 'em', '%'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-bottom-left-radius',
+            type: 'number',
+            units: ['px', 'rem', 'em', '%'],
+            defaults: '0',
+            min: 0
+        },
+
+        // Outline
+        {
+            property: 'outline',
+            type: 'text',
+            defaults: 'none'
+        },
+        {
+            property: 'outline-offset',
+            type: 'number',
+            defaults: 0,
+            units: ['px', 'rem']
+        }
+    ]
+}, {
+            name: 'Backgrounds',
+            open: false,
+            properties: [
+                'background-color',
+                'background',
+                'background-image',
+                'background-repeat',
+                'background-position',
+                'background-size',
+                'background-attachment',
+                {
+                    property: 'background-clip',
+                    type: 'select',
+                    defaults: 'border-box',
+                    options: [
+                        { value: 'border-box' },
+                        { value: 'padding-box' },
+                        { value: 'content-box' },
+                        { value: 'text' }
+                    ]
+                },
+                {
+                    property: 'background-origin',
+                    type: 'select',
+                    defaults: 'padding-box',
+                    options: [
+                        { value: 'border-box' },
+                        { value: 'padding-box' },
+                        { value: 'content-box' }
+                    ]
+                }
+            ]
+        }, {
+            name: 'Effects',
+            open: false,
+            properties: [
+                'box-shadow',
+                'text-shadow',
+                'opacity',
+                'transition',
+                'transform',
+                { property: 'filter', type: 'text', defaults: 'none' },
+                { property: 'backdrop-filter', type: 'text', defaults: 'none' },
+                {
+                    property: 'mix-blend-mode',
+                    type: 'select',
+                    defaults: 'normal',
+                    options: [
+                        { value: 'normal' },
+                        { value: 'multiply' },
+                        { value: 'screen' },
+                        { value: 'overlay' },
+                        { value: 'darken' },
+                        { value: 'lighten' },
+                        { value: 'color-dodge' },
+                        { value: 'color-burn' },
+                        { value: 'hard-light' },
+                        { value: 'soft-light' },
+                        { value: 'difference' },
+                        { value: 'exclusion' },
+                        { value: 'hue' },
+                        { value: 'saturation' },
+                        { value: 'color' },
+                        { value: 'luminosity' }
+                    ]
+                },
+                {
+                    property: 'cursor',
+                    type: 'select',
+                    defaults: 'auto',
+                    options: [
+                        { value: 'auto' },
+                        { value: 'default' },
+                        { value: 'none' },
+                        { value: 'context-menu' },
+                        { value: 'help' },
+                        { value: 'pointer' },
+                        { value: 'progress' },
+                        { value: 'wait' },
+                        { value: 'cell' },
+                        { value: 'crosshair' },
+                        { value: 'text' },
+                        { value: 'vertical-text' },
+                        { value: 'alias' },
+                        { value: 'copy' },
+                        { value: 'move' },
+                        { value: 'no-drop' },
+                        { value: 'not-allowed' },
+                        { value: 'e-resize' },
+                        { value: 'n-resize' },
+                        { value: 'ne-resize' },
+                        { value: 'nw-resize' },
+                        { value: 's-resize' },
+                        { value: 'se-resize' },
+                        { value: 'sw-resize' },
+                        { value: 'w-resize' },
+                        { value: 'ew-resize' },
+                        { value: 'ns-resize' },
+                        { value: 'nesw-resize' },
+                        { value: 'nwse-resize' },
+                        { value: 'col-resize' },
+                        { value: 'row-resize' },
+                        { value: 'all-scroll' },
+                        { value: 'zoom-in' },
+                        { value: 'zoom-out' },
+                        { value: 'grab' },
+                        { value: 'grabbing' }
+                    ]
+                },
+                {
+                    property: 'pointer-events',
+                    type: 'select',
+                    defaults: 'auto',
+                    options: [
+                        { value: 'auto' },
+                        { value: 'none' }
+                    ]
+                },
+                {
+                    property: 'user-select',
+                    type: 'select',
+                    defaults: 'auto',
+                    options: [
+                        { value: 'auto' },
+                        { value: 'none' },
+                        { value: 'text' },
+                        { value: 'all' }
+                    ]
+                }
+            ]
+        }],
     },
 
     selectorManager: {

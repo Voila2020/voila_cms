@@ -176,7 +176,9 @@
                         <div class="form-group">
                             <div class="col-sm-4 col-sm-offset-2">
                                 <a class="btn btn-default" href="{{ url()->previous() }}" >Back</a>
-                                <input class="btn btn-success" type="submit" value="Save">
+                                 @if(CRUDBooster::isUpdate())
+                                    <input class="btn btn-success" type="submit" value="Save">
+                                @endif
                             </div>
                         </div>
                     </div>

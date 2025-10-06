@@ -45,7 +45,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->col[] = ["label" => "Applications", "name" => "id", "callback" => function ($row) {
             return DB::table('applications')->where("landing_page_id", $row->id)->get()->count();
         }];
-        $this->col[] = ["label" => "Active", "name" => "active","switch"=>true];
+         $this->col[] = ["label" => "Active", "name" => "active","switch"=>true];
 
         # START FORM DO NOT REMOVE THIS LINE
         $this->form = [];
@@ -58,6 +58,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->form[] = ['label' => 'Response Message', 'name' => 'response_message', 'type' => 'wysiwyg', 'width' => 'col-sm-10'];
         $this->form[] = ['label' => 'Active', 'name' => 'active', 'type' => 'switch', 'width' => 'col-sm-10', 'dataenum' => '1|Yes;0|No'];
         $this->form[] = ['label' => 'Is Rtl', 'name' => 'is_rtl', 'type' => 'switch', 'width' => 'col-sm-9', 'dataenum' => '1|Yes;0|No'];
+        $this->form[] = ['label' => 'Preview Image', 'name' => 'preview_image', 'type' => 'filemanager', 'width' => 'col-sm-9'];
         # END FORM DO NOT REMOVE THIS LINE
 
         # OLD START FORM
@@ -98,12 +99,14 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         |
          */
         $this->addaction = array();
-        $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_blank', 'url' =>  CRUDBooster::mainpath('page-builder') . '/[id]', 'icon' => 'fa fa-wrench'];
+        if(CRUDBooster::isUpdate()){
+            $this->addaction[] = ['label' => 'Build', 'title' => 'Build', 'target' => '_self', 'url' =>  CRUDBooster::mainpath('page-builder-iframe') . '/[id]', 'icon' => 'fa fa-wrench'];
 
 
-        $templates = DB::table('landing_pages')->where("is_template", 1)->get()->count();
-        if ($templates > 0) {
-            $this->addaction[] = ['label' => 'Build from Template', 'target' => '_blank', "color" => "primary", 'title' => 'Build from Template', "url" => CRUDBooster::mainpath('builder-template') . '/[id]', 'icon' => 'fa fa-wrench'];
+            $templates = DB::table('landing_pages')->where("is_template", 1)->get()->count();
+            if ($templates > 0) {
+                $this->addaction[] = ['label' => 'Build from Template', 'target' => '_blank', "color" => "primary", 'title' => 'Build from Template', "url" => CRUDBooster::mainpath('builder-template') . '/[id]', 'icon' => 'fa fa-wrench'];
+            }
         }
         $this->addaction[] = ['label' => 'Applications', 'title' => 'Applications', 'url' => CRUDBooster::mainpath('applications') . '/[id]', "color" => "info"];
         $this->addaction[] = ['label' => '', 'title' => 'Go TO', 'target' => '_blank', 'url' => url('/') . '/[url]', 'icon' => 'fa fa-search', "color" => "primary"];
@@ -395,11 +398,37 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         return view('crudbooster::form_builder.submits', array('data' => $applications));
     }
 
+    public function getPageBuilderIframe(Request $request, $itemId)
+     {
+        $moduleInfo = CRUDBooster::getCurrentModule();
+        $tableName = $moduleInfo->table_name;
+        $modulePath = $moduleInfo->path;
+
+        $itemTitle = "";
+        $item = DB::table($tableName)->where('id', $itemId)->first();
+        if($item->name){
+            $itemTitle = $item->name;
+        }elseif($item->title){
+            $itemTitle = $item->title;
+        }
+       
+       
+        $iframeURL = str_replace('-iframe','',$request->getRequestUri());
+
+        if(view()->exists("landing_page_builder.builder-iframe"))
+            return view('landing_page_builder.builder-iframe', compact("iframeURL","itemId","itemTitle"));
+        
+        return view('crudbooster::landing_page_builder.builder-iframe', compact("iframeURL","itemId","itemTitle"));
+     }
+
     public function getPageBuilder($landingPageId)
     {
         $blocks =  DB::table('custom_blocks')->get();
         $landingPage = DB::table('landing_pages')->where('id', $landingPageId)->first();
         $landingPageUrl = $landingPage->url;
+        if(view()->exists("landing_page_builder.builder"))
+            return view('landing_page_builder.builder', compact("landingPageId", "landingPage", "blocks","landingPageUrl"));
+        
         return view('crudbooster::landing_page_builder.builder', compact("landingPageId", "landingPage", "blocks","landingPageUrl"));
     }
 

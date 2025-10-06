@@ -139,11 +139,18 @@
                                     <i
                                         class='{{ $menu->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $menu->icon }}'></i>
                                     {{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }} <span
-                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                            href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                        class='pull-right'>
+                                        @if(CRUDBooster::isUpdate())
+                                            <a class='fa fa-pencil' title='Edit'
+                                            href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>
+                                        @endif
+                                        @if(CRUDBooster::isDelete())
+                                            &nbsp;&nbsp;<a
                                             title='Delete' class='fa fa-trash'
                                             onclick='{{ CRUDBooster::deleteConfirm(route('AdminHeaderMenusControllerGetDelete') . '/' . $menu->id) }}'
-                                            href='javascript:void(0)'></a></span>
+                                            href='javascript:void(0)'></a>
+                                        @endif                                        
+                                        </span>
                                     <br />
                                 </div>
                                 {!! getBuilderMenuChildren($menu,$current_lang) !!}
@@ -167,11 +174,19 @@
                                 data-name='{{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }}'>
                                 <div><i class='{{ $menu->icon }}'></i>
                                     {{ $current_lang == 'en' ? $menu->name_en : $menu->name_ar }} <span
-                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                            href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
+                                        class='pull-right'>
+                                            @if(CRUDBooster::isUpdate())
+                                            <a class='fa fa-pencil' title='Edit'
+                                            href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $menu->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>
+                                            @endif
+                                            @if(CRUDBooster::isDelete())
+                                            &nbsp;&nbsp;<a
                                             title='Delete' class='fa fa-trash'
                                             onclick='{{ CRUDBooster::deleteConfirm(route('AdminHeaderMenusControllerGetDelete') . '/' . $menu->id) }}'
-                                            href='javascript:void(0)'></a></span></div>
+                                            href='javascript:void(0)'></a>
+                                            @endif
+                                        
+                                        </span></div>
                                 <ul>
                                     @if ($menu->children)
                                         @foreach ($menu->children as $child)
@@ -179,11 +194,18 @@
                                                 data-name='{{ $current_lang == 'en' ? $child->name_en : $child->name_ar }}'>
                                                 <div><i class='{{ $child->icon }}'></i>
                                                     {{ $current_lang == 'en' ? $child->name_en : $child->name_ar }} <span
-                                                        class='pull-right'><a class='fa fa-pencil' title='Edit'
-                                                            href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>&nbsp;&nbsp;<a
-                                                            title="Delete" class='fa fa-trash'
-                                                            onclick='{{ CRUDBooster::deleteConfirm(route('AdminHeaderMenusControllerGetDelete') . '/' . $child->id) }}'
-                                                            href='javascript:void(0)'></a></span></div>
+                                                        class='pull-right'>
+                                                            @if(CRUDBooster::isUpdate())
+                                                                <a class='fa fa-pencil' title='Edit'
+                                                                href='{{ route('AdminHeaderMenusControllerGetEdit') . '/' . $child->id }}?return_url={{ urlencode(Request::fullUrl()) }}'></a>
+                                                            @endif
+                                                            @if(CRUDBooster::isDelete())
+                                                                &nbsp;&nbsp;<a
+                                                                title="Delete" class='fa fa-trash'
+                                                                onclick='{{ CRUDBooster::deleteConfirm(route('AdminHeaderMenusControllerGetDelete') . '/' . $child->id) }}'
+                                                                href='javascript:void(0)'></a>
+                                                            @endif
+                                                        </span></div>
                                             </li>
                                         @endforeach
                                     @endif
@@ -199,6 +221,7 @@
 
 
         </div>
+         @if(CRUDBooster::isCreate())
         <div class="col-sm-7">
             <div class="panel panel-primary">
                 <div class="panel-heading">
@@ -216,6 +239,7 @@
                 </div>
             </div>
         </div>
+        @endif
     </div>
 
 @endsection
@@ -255,11 +279,17 @@
                     "'></i>";
                 $results .= $current_lang == 'en' ? $child->name_en : $child->name_ar;
                 $results .= "       <span class='pull-right'>";
+
+                if(CRUDBooster::isUpdate()){
                 $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
+                }
+
+                if(CRUDBooster::isDelete()){
                 $results .=
                     "           <a class='fa fa-trash' title='Delete' onclick='" .
                     $deleteClick .
                     "' href='javascript:void(0)'></a>";
+                }
                 $results .= '       </span>';
                 $results .= '       <br />';
                 $results .= '   </div>';

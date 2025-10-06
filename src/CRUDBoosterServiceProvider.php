@@ -59,6 +59,7 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             $this->publishes([__DIR__ . '/views/landing_page_builder/thankyou.blade.php' => resource_path('views/landing_page_builder/thankyou.blade.php')], 'landing_page_builder_thankyou_view');
             $this->publishes([__DIR__ . '/views/landing_page_builder/view.blade.php' => resource_path('views/landing_page_builder/view.blade.php')], 'landing_page_builder_view_view');
             $this->publishes([__DIR__ . '/views/landing_page_builder/builder.blade.php' => resource_path('views/landing_page_builder/builder.blade.php')], 'landing_page_builder_view');
+            $this->publishes([__DIR__ . '/views/landing_page_builder/builder-iframe.blade.php' => resource_path('views/landing_page_builder/builder-iframe.blade.php')], 'landing_page_builder_iframe_view');
             $this->publishes([__DIR__ . '/views/landing_page_builder/templates.blade.php' => resource_path('views/landing_page_builder/templates.blade.php')], 'landing_page_builder_templates_view');
 
             $this->publishes([__DIR__ . '/landing_page_builder' => public_path('landing_page_builder')], 'landing_page_builder_files');
