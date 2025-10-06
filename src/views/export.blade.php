@@ -78,7 +78,7 @@
                                 $value = call_user_func($col['callback'], $row);
                             }
                         }
-
+                        $value = str_replace ("&","and",$value);
                         echo "<td>".$value."</td>";
                     }
                 }
