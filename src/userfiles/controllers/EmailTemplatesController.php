@@ -36,7 +36,12 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
 
         $this->form = [];
         $this->form[] = [
-            "label" => "Template Name", "name" => "name", "type" => "text", "required" => true, "validation" => "required|min:3|max:255|alpha_spaces", "placeholder" => "You can only enter the letter only",
+            "label" => "Template Name",
+            "name" => "name",
+            "type" => "text",
+            "required" => true,
+            "validation" => "required|min:3|max:255|alpha_spaces",
+            "placeholder" => "You can only enter the letter only",
         ];
         $this->form[] = ["label" => "Slug", "type" => "text", "name" => "slug", "required" => true, 'validation' => 'required|unique:cms_email_templates,slug'];
         $this->form[] = ["label" => "Subject", "name" => "subject", "type" => "text", "required" => true, "validation" => "required|min:3|max:255"];
@@ -55,6 +60,12 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
         // $this->addaction[] = ['label' => 'Build Arabic', 'title' => 'Build', 'target' => '_blank', 'url' => CRUDBooster::mainpath('email-builder') . '/[id]?lang=ar', 'icon' => 'fa fa-wrench'];
     }
     //By the way, you can still create your own method in here... :)
+
+    public function hook_query_index(&$query)
+    {
+        $query->where("id", ">", 2);
+    }
+
 
     public function getEmailBuilder(Request $request, $id)
     {
