@@ -161,7 +161,7 @@ class AdminController extends CBController
         $link = CRUDBooster::adminPath() . '/password/reset/' . $token;
         $user->link = $link;
         //$user->password = $rand_string;
-        CRUDBooster::sendEmail(['to' => [$user->email], 'data' => $user, 'template' => 'forgot_password_backend']);
+        CRUDBooster::sendEmail(['to' => $user->email, 'data' => $user, 'template' => 'forgot_password_backend']);
 
         CRUDBooster::insertLog(cbLang("log_forgot", ['email' => g('email'), 'ip' => Request::server('REMOTE_ADDR')]));
 
