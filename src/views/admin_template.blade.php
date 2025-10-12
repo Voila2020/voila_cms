@@ -117,7 +117,7 @@
 
 <body
     class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ isset($sidebar_mode) ?: '' }}">
-    <div id='app' class="wrapper">
+    <div id='app' class="{{ $mode != 'minimum' ? 'wrapper' : '' }}">
         <div class="main-overlay"></div>
         <div class="spinner-loader">
             <div></div>
@@ -133,135 +133,136 @@
             <div></div>
             <div></div>
         </div>
-        <div class="indicator_support_sect">
-        <!--- Tokens Indicator -->
-        {!! CRUDBooster::showTokenUsageIndicator() !!}
-        <!-- Ticket -->
-        @include('crudbooster::tickets.support_form')
-        </div>
-        <!-- Header --> 
-        @include('crudbooster::header')
-        <!-- Sidebar -->
-        @include('crudbooster::sidebar')
-
+        @if ($mode != 'minimum')
+            <div class="indicator_support_sect">
+            <!--- Tokens Indicator -->
+            {!! CRUDBooster::showTokenUsageIndicator() !!}
+            <!-- Ticket -->
+            @include('crudbooster::tickets.support_form')
+            </div>
+            <!-- Header --> 
+            @include('crudbooster::header')
+            <!-- Sidebar -->
+            @include('crudbooster::sidebar')
+        @endif
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper">
+        <div class="{{ $mode != 'minimum' ? 'content-wrapper' : '' }}">
+            @if ($mode != 'minimum')
+                <section class="content-header">
+                    <?php
+                    $module = CRUDBooster::getCurrentModule();
+                    ?>
+                    @if ($module)
+                        <h1>
+                            <!--Now you can define $page_icon alongside $page_tite for custom forms to follow CRUDBooster theme style -->
+                            <i class='{!! $page_icon ?: $module->icon !!}'></i> {!! ucwords(cbLang($page_title) ?: cbLang($module->name)) !!} &nbsp;&nbsp;
 
-            <section class="content-header">
-                <?php
-                $module = CRUDBooster::getCurrentModule();
-                ?>
-                @if ($module)
-                    <h1>
-                        <!--Now you can define $page_icon alongside $page_tite for custom forms to follow CRUDBooster theme style -->
-                        <i class='{!! $page_icon ?: $module->icon !!}'></i> {!! ucwords(cbLang($page_title) ?: cbLang($module->name)) !!} &nbsp;&nbsp;
+                            <!--START BUTTON -->
 
-                        <!--START BUTTON -->
-
-                        @if (CRUDBooster::getCurrentMethod() == 'getIndex')
-                            @if ($button_show)
-                                <a href="{{ CRUDBooster::mainpath() . '?' . http_build_query(Request::all()) }}"
-                                    id='btn_show_data' class="btn btn-sm btn-primary"
-                                    title="{{ cbLang('action_show_data') }}">
-                                    <i class="fa fa-table"></i> {{ cbLang('action_show_data') }}
-                                </a>
-                            @endif
-                           
-                            @if ($button_add && CRUDBooster::isCreate())
-                                <a href="{{ CRUDBooster::mainpath('add') . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_id=' . g('parent_id') . '&parent_field=' . $parent_field }}"
-                                    id='btn_add_new_data' class="btn btn-sm btn-success"
-                                    title="{{ cbLang('action_add_data') }}">
-                                    <i class="fa fa-plus-circle"></i> {{ cbLang('action_add_data') }}
-                                </a>
-                            @endif
-
+                            @if (CRUDBooster::getCurrentMethod() == 'getIndex')
+                                @if ($button_show)
+                                    <a href="{{ CRUDBooster::mainpath() . '?' . http_build_query(Request::all()) }}"
+                                        id='btn_show_data' class="btn btn-sm btn-primary"
+                                        title="{{ cbLang('action_show_data') }}">
+                                        <i class="fa fa-table"></i> {{ cbLang('action_show_data') }}
+                                    </a>
+                                @endif
                             
+                                @if ($button_add && CRUDBooster::isCreate())
+                                    <a href="{{ CRUDBooster::mainpath('add') . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_id=' . g('parent_id') . '&parent_field=' . $parent_field }}"
+                                        id='btn_add_new_data' class="btn btn-sm btn-success"
+                                        title="{{ cbLang('action_add_data') }}">
+                                        <i class="fa fa-plus-circle"></i> {{ cbLang('action_add_data') }}
+                                    </a>
+                                @endif
 
-                            @if($button_add_by_ai && CRUDBooster::checkUsingAIFeaturesPermission())
                                 
-                                <a href="javascript:void(0);"
-                                    id='AddDataByAI' class="btn btn-sm btn-primary"
-                                    title="{{ cbLang('action_add_data_by_ai') }}">
-                                    <i class="fa fa-magic"></i> {{ cbLang('action_add_data_by_ai') }}
-                                </a>
 
-                                <div class="modal fade " id="AddDataByAIModal" tabindex="-1" role="dialog" aria-labelledby="Add data by AI">
-                                    <div class="modal-dialog modal-md" role="document">
-                                        <div class="modal-content">
-                                            <div class="modal-header">
-                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                                <h3 class="modal-title" id="gridSystemModalLabel">Add Data By AI</h3>
-                                            </div>
-                                            <div class="modal-body">
-                                                <p style="font-size: initial;">Please enter the item topic you want to generate content for.</p>
-                                                <textarea id="item_topic" rows="10" class="form-control"></textarea>
-                                                <span id="error-msg" class="error-msg hidden" style="color:red;font-size: initial;">This field is required</span>
-                                            </div>
-                                            <div class="modal-footer">
-                                                <button type="button" id="NoAddByAI" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                                                <button type="button" id="YesAddByAI" class="btn btn-danger" data-post-url="{{ route('AIContentGeneratorControllerGenerateModuleItemContentByAi') }}" data-module_id="{{ CRUDBooster::getCurrentModule()->id }}" data-return-url="{{ CRUDBooster::adminPath(CRUDBooster::getCurrentModule()->path) }}">Generate Now  <i class='fa fa-magic'></i></button>
-                                            </div>
-                                        </div><!-- /.modal-content -->
+                                @if($button_add_by_ai && CRUDBooster::checkUsingAIFeaturesPermission())
+                                    
+                                    <a href="javascript:void(0);"
+                                        id='AddDataByAI' class="btn btn-sm btn-primary"
+                                        title="{{ cbLang('action_add_data_by_ai') }}">
+                                        <i class="fa fa-magic"></i> {{ cbLang('action_add_data_by_ai') }}
+                                    </a>
+
+                                    <div class="modal fade " id="AddDataByAIModal" tabindex="-1" role="dialog" aria-labelledby="Add data by AI">
+                                        <div class="modal-dialog modal-md" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                                    <h3 class="modal-title" id="gridSystemModalLabel">Add Data By AI</h3>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <p style="font-size: initial;">Please enter the item topic you want to generate content for.</p>
+                                                    <textarea id="item_topic" rows="10" class="form-control"></textarea>
+                                                    <span id="error-msg" class="error-msg hidden" style="color:red;font-size: initial;">This field is required</span>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" id="NoAddByAI" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                                                    <button type="button" id="YesAddByAI" class="btn btn-danger" data-post-url="{{ route('AIContentGeneratorControllerGenerateModuleItemContentByAi') }}" data-module_id="{{ CRUDBooster::getCurrentModule()->id }}" data-return-url="{{ CRUDBooster::adminPath(CRUDBooster::getCurrentModule()->path) }}">Generate Now  <i class='fa fa-magic'></i></button>
+                                                </div>
+                                            </div><!-- /.modal-content -->
+                                        </div>
                                     </div>
-                                </div>
+                                @endif
+
+                                @if ($page_seo)
+                                    <a href="{{ CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path }}"
+                                        id="btn_set_page_seo" class="btn btn-sm btn-success"
+                                        title="{{ cbLang('action_set_seo') }}">
+                                        <i class="fa fa-globe"></i> {{ cbLang('action_set_seo') }}
+                                    </a>
+                                @endif
                             @endif
 
-                            @if ($page_seo)
-                                <a href="{{ CRUDBooster::adminPath('seo') . '?page=' . CRUDBooster::getCurrentModule()->path }}"
-                                    id="btn_set_page_seo" class="btn btn-sm btn-success"
-                                    title="{{ cbLang('action_set_seo') }}">
-                                    <i class="fa fa-globe"></i> {{ cbLang('action_set_seo') }}
+
+                            @if ($button_export && CRUDBooster::getCurrentMethod() == 'getIndex')
+                                <a href="javascript:void(0)" id='btn_export_data' data-url-parameter='{{ $build_query }}'
+                                    title='Export Data' class="btn btn-sm btn-primary btn-export-data">
+                                    <i class="fa fa-upload"></i> {{ cbLang('button_export') }}
                                 </a>
                             @endif
-                        @endif
 
-
-                        @if ($button_export && CRUDBooster::getCurrentMethod() == 'getIndex')
-                            <a href="javascript:void(0)" id='btn_export_data' data-url-parameter='{{ $build_query }}'
-                                title='Export Data' class="btn btn-sm btn-primary btn-export-data">
-                                <i class="fa fa-upload"></i> {{ cbLang('button_export') }}
-                            </a>
-                        @endif
-
-                        @if ($button_import && CRUDBooster::getCurrentMethod() == 'getIndex')
-                            <a href="{{ CRUDBooster::mainpath('import-data') }}" id='btn_import_data'
-                                data-url-parameter='{{ $build_query }}' title='Import Data'
-                                class="btn btn-sm btn-primary btn-import-data">
-                                <i class="fa fa-download"></i> {{ cbLang('button_import') }}
-                            </a>
-                        @endif
-
-                        <!--ADD ACTIon-->
-                        @if (!empty($index_button))
-
-                            @foreach ($index_button as $ib)
-                                <a href='{{ $ib['url'] }}' id='{{ str_slug($ib['label']) }}'
-                                    class='btn {{ $ib['color'] ? 'btn-' . $ib['color'] : 'btn-primary' }} btn-sm'
-                                    @if ($ib['onClick']) onClick='return {{ $ib['onClick'] }}' @endif
-                                    @if ($ib['onMouseOver']) onMouseOver='return {{ $ib['onMouseOver'] }}' @endif
-                                    @if ($ib['onMouseOut']) onMouseOut='return {{ $ib['onMouseOut'] }}' @endif
-                                    @if ($ib['onKeyDown']) onKeyDown='return {{ $ib['onKeyDown'] }}' @endif
-                                    @if ($ib['onLoad']) onLoad='return {{ $ib['onLoad'] }}' @endif>
-                                    <i class='{{ $ib['icon'] }}'></i> {{ $ib['label'] }}
+                            @if ($button_import && CRUDBooster::getCurrentMethod() == 'getIndex')
+                                <a href="{{ CRUDBooster::mainpath('import-data') }}" id='btn_import_data'
+                                    data-url-parameter='{{ $build_query }}' title='Import Data'
+                                    class="btn btn-sm btn-primary btn-import-data">
+                                    <i class="fa fa-download"></i> {{ cbLang('button_import') }}
                                 </a>
-                            @endforeach
-                        @endif
-                        <!-- END BUTTON -->
-                    </h1>
+                            @endif
+
+                            <!--ADD ACTIon-->
+                            @if (!empty($index_button))
+
+                                @foreach ($index_button as $ib)
+                                    <a href='{{ $ib['url'] }}' id='{{ str_slug($ib['label']) }}'
+                                        class='btn {{ $ib['color'] ? 'btn-' . $ib['color'] : 'btn-primary' }} btn-sm'
+                                        @if ($ib['onClick']) onClick='return {{ $ib['onClick'] }}' @endif
+                                        @if ($ib['onMouseOver']) onMouseOver='return {{ $ib['onMouseOver'] }}' @endif
+                                        @if ($ib['onMouseOut']) onMouseOut='return {{ $ib['onMouseOut'] }}' @endif
+                                        @if ($ib['onKeyDown']) onKeyDown='return {{ $ib['onKeyDown'] }}' @endif
+                                        @if ($ib['onLoad']) onLoad='return {{ $ib['onLoad'] }}' @endif>
+                                        <i class='{{ $ib['icon'] }}'></i> {{ $ib['label'] }}
+                                    </a>
+                                @endforeach
+                            @endif
+                            <!-- END BUTTON -->
+                        </h1>
 
 
-                    <ol class="breadcrumb">
-                        <li><a href="{{ CRUDBooster::adminPath() }}"><i class="fa fa-dashboard"></i>
-                                {{ cbLang('home') }}</a></li>
-                        <li class="active">{{ $module->name }}</li>
-                    </ol>
-                @else
-                    <h1>{{ Session::get('appname') }}
-                        <small> {{ cbLang('text_dashboard') }} </small>
-                    </h1>
-                @endif
-            </section>
-
+                        <ol class="breadcrumb">
+                            <li><a href="{{ CRUDBooster::adminPath() }}"><i class="fa fa-dashboard"></i>
+                                    {{ cbLang('home') }}</a></li>
+                            <li class="active">{{ $module->name }}</li>
+                        </ol>
+                    @else
+                        <h1>{{ Session::get('appname') }}
+                            <small> {{ cbLang('text_dashboard') }} </small>
+                        </h1>
+                    @endif
+                </section>
+            @endif
 
             <!-- Main content -->
             <section id='content_section' class="content">
@@ -291,7 +292,9 @@
         </div><!-- /.content-wrapper -->
 
         <!-- Footer -->
-        @include('crudbooster::footer')
+        @if ($mode != 'minimum')
+            @include('crudbooster::footer')
+        @endif
 
     </div><!-- ./wrapper -->
 

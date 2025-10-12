@@ -1,3 +1,44 @@
+@if ($form['minimum_form']['url'])
+    @php 
+        $minimumUrl = $form['minimum_form']['url'];
+        $url = $minimumUrl . '?mode=minimum&return_url=' . $minimumUrl . '?mode=minimum';
+        $minimum_form_title = trans('crudbooster.add_data_page_title', [
+            'module' => CRUDBooster::getModuleDependOnPath($form['minimum_form']['path'])->name,
+        ]);
+    @endphp
+
+    <!-- Iframe to load the URL -->
+    <div class="modal fade" id="globalModal_{{ $name }}" tabindex="-1" role="dialog"
+        aria-labelledby="globalModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="globalModalLabel">{{ $minimum_form_title }}</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" style="margin-top: -25px;">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                     <iframe id="iframe1_{{ $name }}" src="{{ $url }}"
+                                style="width: 100%; height: 570px; border: none;"></iframe>
+                </div>
+            </div>
+        </div>
+    </div>
+
+ @push('bottom')
+    <script>
+        $(document).ready(function() {
+            // Show modal on button click
+            $(document).on('click', '#minimum-form_{{ $name }}', function() {
+                $('#globalModal_{{ $name }}').modal('show');
+            });
+        });
+     </script>  
+ @endpush     
+
+@endif
+
 @if (!@$form['translation'])
     @if ($current_language->default != null && $current_language->default == 1)
         @if ($form['datatable'])
@@ -114,138 +155,145 @@
             </label>
 
             <div class="{{ $col_width ?: 'col-sm-10' }}">
-                <select style='width:100%' class='form-control' id="{{ $name }}" {{ $required }}
-                    {{ $readonly }} {!! $placeholder !!} {{ $disabled }}
-                    name="{{ $name }}{{ $form['relationship_table'] || !empty($form['multiple']) ? '[]' : '' }}"
-                    {{ $form['relationship_table'] || !empty($form['multiple']) ? 'multiple' : '' }}>
+                <div style="display: flex ; width: 100%">
+                    <select style='width:100%' class='form-control' id="{{ $name }}" {{ $required }}
+                        {{ $readonly }} {!! $placeholder !!} {{ $disabled }}
+                        name="{{ $name }}{{ $form['relationship_table'] || !empty($form['multiple']) ? '[]' : '' }}"
+                        {{ $form['relationship_table'] || !empty($form['multiple']) ? 'multiple' : '' }}>
 
-                    @if ($form['dataenum'])
-                        <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
-                        <?php
-                        $dataenum = $form['dataenum'];
-                        $dataenum = is_array($dataenum) ? $dataenum : explode(';', $dataenum);
-                        ?>
-                        @foreach ($dataenum as $enum)
+                        @if ($form['dataenum'])
+                            <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
                             <?php
-                            $val = $lab = '';
-                            if (strpos($enum, '|') !== false) {
-                                $draw = explode('|', $enum);
-                                $val = $draw[0];
-                                $lab = $draw[1];
-                            } else {
-                                $val = $lab = $enum;
-                            }
-
-                            $select = $value == $val ? 'selected' : '';
+                            $dataenum = $form['dataenum'];
+                            $dataenum = is_array($dataenum) ? $dataenum : explode(';', $dataenum);
                             ?>
-                            <option {{ $select }} value='{{ $val }}'>{{ $lab }}</option>
-                        @endforeach
-                    @endif
-
-                    @if ($form['datatable'])
-                        @if ($form['relationship_table'])
-                            <?php
-                            $select_table = explode(',', $form['datatable'])[0];
-                            $select_title = explode(',', $form['datatable'])[1];
-                            $select_where = $form['datatable_where'];
-                            $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
-                            //-----------------------------------------
-                            if ($form['datatable_translation_table']) {
-                                $select_table = $form['datatable_translation_table'];
-                                $select_table_pk = CRUDBooster::getTranslationTableMainColumn($select_table);
-                                $select_where .= " $select_table.locale = '" . $websiteLanguages[0]->code . "'";
-                            }
-                            //-----------------------------------------
-                            $result = DB::table($select_table)->select($select_table_pk, $select_title);
-                            if ($select_where) {
-                                $result->whereraw($select_where);
-                            }
-                            $result = $result->orderby($select_title, 'asc')->get();
-
-                            if ($form['datatable_orig'] != '') {
-                                $params = explode('|', $form['datatable_orig']);
-                                if (!isset($params[2])) {
-                                    $params[2] = 'id';
+                            @foreach ($dataenum as $enum)
+                                <?php
+                                $val = $lab = '';
+                                if (strpos($enum, '|') !== false) {
+                                    $draw = explode('|', $enum);
+                                    $val = $draw[0];
+                                    $lab = $draw[1];
+                                } else {
+                                    $val = $lab = $enum;
                                 }
-                                $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
-                                $value = explode(',', $value);
-                            } else {
-                                //----------------------------------------------------------
-                                // Prevent take relation many to many with translation table
-                                $select_table = explode(',', $form['datatable'])[0];
-                                //----------------------------------------------------------
-                                $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
-                                $foreignKey2 = CRUDBooster::getForeignKey($select_table, $form['relationship_table']);
-                                $value = DB::table($form['relationship_table'])->where($foreignKey, $id);
-                                $value = $value->pluck($foreignKey2)->toArray();
-                            }
 
-                            foreach ($result as $r) {
-                                $option_label = $r->{$select_title};
-                                $option_value = $r->id;
-                                if ($form['datatable_translation_table']) {
-                                    $option_value = $r->{$select_table_pk};
-                                }
-                                $selected = is_array($value) && in_array($r->$select_table_pk, $value) ? 'selected' : '';
-                                echo "<option $selected value='$option_value'>$option_label</option>";
-                            }
-                            ?>
-                        @else
-                            @if ($form['datatable_ajax'] == false)
-                                <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}
-                                </option>
+                                $select = $value == $val ? 'selected' : '';
+                                ?>
+                                <option {{ $select }} value='{{ $val }}'>{{ $lab }}</option>
+                            @endforeach
+                        @endif
+
+                        @if ($form['datatable'])
+                            @if ($form['relationship_table'])
                                 <?php
                                 $select_table = explode(',', $form['datatable'])[0];
                                 $select_title = explode(',', $form['datatable'])[1];
                                 $select_where = $form['datatable_where'];
-                                $datatable_format = $form['datatable_format'];
                                 $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
-
+                                //-----------------------------------------
                                 if ($form['datatable_translation_table']) {
                                     $select_table = $form['datatable_translation_table'];
                                     $select_table_pk = CRUDBooster::getTranslationTableMainColumn($select_table);
                                     $select_where .= " $select_table.locale = '" . $websiteLanguages[0]->code . "'";
                                 }
+                                //-----------------------------------------
                                 $result = DB::table($select_table)->select($select_table_pk, $select_title);
-                                if ($datatable_format) {
-                                    $result->addSelect(DB::raw('CONCAT(' . $datatable_format . ") as $select_title"));
-                                }
                                 if ($select_where) {
                                     $result->whereraw($select_where);
                                 }
-                                if (CRUDBooster::isColumnExists($select_table, 'deleted_at')) {
-                                    $result->whereNull('deleted_at');
-                                }
                                 $result = $result->orderby($select_title, 'asc')->get();
 
-                                if (!empty($form['multiple'])) {
-                                    $valuesArray = is_string($value) ? explode(',', $value) : [$value]; // Convert to array
-                                    foreach ($result as $r) {
-                                        $option_label = $r->{$select_title};
-                                        $option_value = $r->$select_table_pk;
-                                        // Check if current option value is in the values array
-                                        $selected = in_array($option_value, $valuesArray) ? 'selected' : '';
-                                        echo "<option $selected value='$option_value'>$option_label</option>";
+                                if ($form['datatable_orig'] != '') {
+                                    $params = explode('|', $form['datatable_orig']);
+                                    if (!isset($params[2])) {
+                                        $params[2] = 'id';
                                     }
+                                    $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
+                                    $value = explode(',', $value);
                                 } else {
-                                    foreach ($result as $r) {
-                                        $option_label = $r->{$select_title};
-                                        $option_value = $r->$select_table_pk;
-                                        $selected = $option_value == $value ? 'selected' : '';
-                                        echo "<option $selected value='$option_value'>$option_label</option>";
-                                    }
+                                    //----------------------------------------------------------
+                                    // Prevent take relation many to many with translation table
+                                    $select_table = explode(',', $form['datatable'])[0];
+                                    //----------------------------------------------------------
+                                    $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
+                                    $foreignKey2 = CRUDBooster::getForeignKey($select_table, $form['relationship_table']);
+                                    $value = DB::table($form['relationship_table'])->where($foreignKey, $id);
+                                    $value = $value->pluck($foreignKey2)->toArray();
                                 }
 
+                                foreach ($result as $r) {
+                                    $option_label = $r->{$select_title};
+                                    $option_value = $r->id;
+                                    if ($form['datatable_translation_table']) {
+                                        $option_value = $r->{$select_table_pk};
+                                    }
+                                    $selected = is_array($value) && in_array($r->$select_table_pk, $value) ? 'selected' : '';
+                                    echo "<option $selected value='$option_value'>$option_label</option>";
+                                }
                                 ?>
-                                <!--end-datatable-ajax-->
+                            @else
+                                @if ($form['datatable_ajax'] == false)
+                                    <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}
+                                    </option>
+                                    <?php
+                                    $select_table = explode(',', $form['datatable'])[0];
+                                    $select_title = explode(',', $form['datatable'])[1];
+                                    $select_where = $form['datatable_where'];
+                                    $datatable_format = $form['datatable_format'];
+                                    $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
+
+                                    if ($form['datatable_translation_table']) {
+                                        $select_table = $form['datatable_translation_table'];
+                                        $select_table_pk = CRUDBooster::getTranslationTableMainColumn($select_table);
+                                        $select_where .= " $select_table.locale = '" . $websiteLanguages[0]->code . "'";
+                                    }
+                                    $result = DB::table($select_table)->select($select_table_pk, $select_title);
+                                    if ($datatable_format) {
+                                        $result->addSelect(DB::raw('CONCAT(' . $datatable_format . ") as $select_title"));
+                                    }
+                                    if ($select_where) {
+                                        $result->whereraw($select_where);
+                                    }
+                                    if (CRUDBooster::isColumnExists($select_table, 'deleted_at')) {
+                                        $result->whereNull('deleted_at');
+                                    }
+                                    $result = $result->orderby($select_title, 'asc')->get();
+
+                                    if (!empty($form['multiple'])) {
+                                        $valuesArray = is_string($value) ? explode(',', $value) : [$value]; // Convert to array
+                                        foreach ($result as $r) {
+                                            $option_label = $r->{$select_title};
+                                            $option_value = $r->$select_table_pk;
+                                            // Check if current option value is in the values array
+                                            $selected = in_array($option_value, $valuesArray) ? 'selected' : '';
+                                            echo "<option $selected value='$option_value'>$option_label</option>";
+                                        }
+                                    } else {
+                                        foreach ($result as $r) {
+                                            $option_label = $r->{$select_title};
+                                            $option_value = $r->$select_table_pk;
+                                            $selected = $option_value == $value ? 'selected' : '';
+                                            echo "<option $selected value='$option_value'>$option_label</option>";
+                                        }
+                                    }
+
+                                    ?>
+                                    <!--end-datatable-ajax-->
+                                @endif
+
+                                <!--end-relationship-table-->
                             @endif
 
-                            <!--end-relationship-table-->
+                            <!--end-datatable-->
                         @endif
-
-                        <!--end-datatable-->
+                    </select>
+                    @if ($form['minimum_form']['url'])
+                        <button type='button' id='minimum-form_{{ $name }}' class='btn btn-primary'
+                            title="{{ $minimum_form_title }}"><i class='fa fa-plus'></i>
+                        </button>
                     @endif
-                </select>
+                </div>
                 <div class="text-danger">
                     {!! $errors->first($name) ? "<i class='fa fa-info-circle'></i> " . $errors->first($name) : '' !!}
                 </div>
@@ -378,6 +426,7 @@
         </label>
 
         <div class="{{ $col_width ?: 'col-sm-10' }}">
+            <div style="display: flex ; width: 100%">
             <select style='width:100%' class='form-control' id="{{ $name . '_' . $current_language->code }}"
                 {{ $required }} {{ $readonly }} {!! $placeholder !!} {{ $disabled }}
                 name="{{ $name . '_' . $current_language->code }}{{ $form['relationship_table'] || !empty($form['multiple']) ? '[]' : '' }}"
@@ -496,6 +545,12 @@
                     <!--end-datatable-->
                 @endif
             </select>
+             @if ($form['minimum_form']['url'])
+                <button type='button' id='minimum-form_{{ $name }}' class='btn btn-primary'
+                    title="{{ $minimum_form_title }}"><i class='fa fa-plus'></i>
+                </button>
+            @endif
+            </div>
             <div class="text-danger">
                 {!! $errors->first($name . '_' . $current_language->code)
                     ? "<i class='fa fa-info-circle'></i> " . $errors->first($name . '_' . $current_language->code)

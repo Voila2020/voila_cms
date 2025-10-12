@@ -4,21 +4,25 @@
     <div>
 
         @if (CRUDBooster::getCurrentMethod() != 'getProfile' && $button_cancel)
-            @if (g('return_url'))
-                <p><a title='Return' href='{{ g('return_url') }}'><i class='fa fa-chevron-circle-left '></i>
-                        &nbsp; {{ cbLang('form_back_to_list', ['module' => CRUDBooster::getCurrentModule()->name]) }}</a>
-                </p>
-            @else
-                <p><a title='Main Module' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>
-                        &nbsp; {{ cbLang('form_back_to_list', ['module' => CRUDBooster::getCurrentModule()->name]) }}</a>
-                </p>
+            @if ($mode != 'minimum')
+                @if (g('return_url'))
+                    <p><a title='Return' href='{{ g('return_url') }}'><i class='fa fa-chevron-circle-left '></i>
+                            &nbsp; {{ cbLang('form_back_to_list', ['module' => CRUDBooster::getCurrentModule()->name]) }}</a>
+                    </p>
+                @else
+                    <p><a title='Main Module' href='{{ CRUDBooster::mainpath() }}'><i class='fa fa-chevron-circle-left '></i>
+                            &nbsp; {{ cbLang('form_back_to_list', ['module' => CRUDBooster::getCurrentModule()->name]) }}</a>
+                    </p>
+                @endif
             @endif
         @endif
 
-        <div class="panel panel-default">
-            <div class="panel-heading">
-                <strong><i class='{{ CRUDBooster::getCurrentModule()->icon }}'></i> {!! $page_title !!}</strong>
-            </div>
+        <div class="{{ $mode != 'minimum' ? 'panel panel-default' : '' }}">
+            @if ($mode != 'minimum')
+                <div class="panel-heading">
+                    <strong><i class='{{ CRUDBooster::getCurrentModule()->icon }}'></i> {!! $page_title !!}</strong>
+                </div>
+            @endif
 
             <div class="panel-body" style="padding:20px 0px 0px 0px">
                 <?php
@@ -147,20 +151,24 @@
                         <div class="form-group">
                             <label class="control-label col-sm-2"></label>
                             <div class="col-sm-10">
-                                @if ($button_cancel && CRUDBooster::getCurrentMethod() != 'getDetail')
-                                    @if (g('return_url'))
-                                        <a href='{{ g('return_url') }}' class='btn btn-default'><i
-                                                class='fa fa-chevron-circle-left'></i> {{ cbLang('button_back') }}</a>
-                                    @else
-                                        <a href='{{ CRUDBooster::mainpath('?' . http_build_query(@$_GET)) }}'
-                                            class='btn btn-default'><i class='fa fa-chevron-circle-left'></i>
-                                            {{ cbLang('button_back') }}</a>
+                                 @if ($mode != 'minimum')
+                                    @if ($button_cancel && CRUDBooster::getCurrentMethod() != 'getDetail')
+                                        @if (g('return_url'))
+                                            <a href='{{ g('return_url') }}' class='btn btn-default'><i
+                                                    class='fa fa-chevron-circle-left'></i> {{ cbLang('button_back') }}</a>
+                                        @else
+                                            <a href='{{ CRUDBooster::mainpath('?' . http_build_query(@$_GET)) }}'
+                                                class='btn btn-default'><i class='fa fa-chevron-circle-left'></i>
+                                                {{ cbLang('button_back') }}</a>
+                                        @endif
                                     @endif
                                 @endif
                                 @if (CRUDBooster::isCreate() || CRUDBooster::isUpdate())
-                                    @if (CRUDBooster::isCreate() && $button_addmore == true && $command == 'add')
-                                        <input type="submit" name="submit" value='{{ cbLang('button_save_more') }}'
-                                            class='btn btn-success'>
+                                    @if ($mode != 'minimum')
+                                        @if (CRUDBooster::isCreate() && $button_addmore == true && $command == 'add')
+                                            <input type="submit" name="submit" value='{{ cbLang('button_save_more') }}'
+                                                class='btn btn-success'>
+                                        @endif
                                     @endif
 
                                     @if ($button_save && $command != 'detail')

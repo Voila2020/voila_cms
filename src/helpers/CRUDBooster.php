@@ -412,6 +412,10 @@ class CRUDBooster
         }
     }
 
+    public static function getModuleDependOnPath($path){
+        return DB::table('cms_moduls')->where('path', $path)->first();
+    }
+    
     public static function getCurrentDashboardId()
     {
         if (Request::get('d') != null) {

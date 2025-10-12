@@ -1293,20 +1293,21 @@ class CBController extends Controller
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang("denied_access"));
         }
 
+        $mode = request()->get('mode', 'default');
         $page_title = cbLang("add_data_page_title", ['module' => CRUDBooster::getCurrentModule()->name]);
         $page_menu = Route::getCurrentRoute()->getActionName();
 
         $command = 'add';
         $manualView = null;
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
-            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command', 'mode'));
         }
 
         if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.form')) {
-            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command'));
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('page_title', 'page_menu', 'command', 'mode'));
         }
 
-        $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command'));
+        $view = $manualView ?: view('crudbooster::default.form', compact('page_title', 'page_menu', 'command', 'mode'));
         return $view;
     }
 
