@@ -262,6 +262,34 @@ editor = grapesjs.init({
     name: 'Borders',
     open: false,
     properties: [
+        {
+            property: 'border-width',
+            type: 'number',
+            units: ['px', 'rem', 'em'],
+            defaults: '0',
+            min: 0
+        },
+        {
+            property: 'border-style',
+            type: 'select',
+            defaults: 'none',
+            options: [
+                { value: 'none', name: 'None' },
+                { value: 'solid', name: 'Solid' },
+                { value: 'dashed', name: 'Dashed' },
+                { value: 'dotted', name: 'Dotted' },
+                { value: 'double', name: 'Double' },
+                { value: 'groove', name: 'Groove' },
+                { value: 'ridge', name: 'Ridge' },
+                { value: 'inset', name: 'Inset' },
+                { value: 'outset', name: 'Outset' }
+            ]
+        },
+        {
+            property: 'border-color',
+            type: 'color',
+            defaults: 'transparent'
+        },
         // Border Top
         {
             property: 'border-top-width',
