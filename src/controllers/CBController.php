@@ -726,6 +726,10 @@ class CBController extends Controller
         $data['html_contents'] = $html_contents;
 
         $manualView = null;
+        
+        $mode = request()->get('mode', 'default');
+        $data['mode'] = $mode;
+
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.index')) {
             $manualView = view(CRUDBooster::getCurrentModule()->path . '.index', $data);
         }
@@ -1531,6 +1535,7 @@ class CBController extends Controller
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
 
+        $mode = request()->get('mode', 'default');
         $page_menu = Route::getCurrentRoute()->getActionName();
         $page_title = cbLang("edit_data_page_title", ['module' => CRUDBooster::getCurrentModule()->name, 'name' => $row->{$this->title_field}]);
         $command = 'edit';
@@ -1539,14 +1544,14 @@ class CBController extends Controller
         $this->hook_before_get_edit($id, $row);
 
         if (view()->exists(CRUDBooster::getCurrentModule()->path . '.form')) {
-            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+            $manualView = view(CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command','mode'));
         }
 
         if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.form')) {
-            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+            $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.form', compact('id', 'row', 'page_menu', 'page_title', 'command','mode'));
         }
 
-        $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command'));
+        $view = $view = $manualView ?: view('crudbooster::default.form', compact('id', 'row', 'page_menu', 'page_title', 'command','mode'));
         return $view;
     }
 
