@@ -237,6 +237,19 @@ class CBController extends Controller
         $this->data['button_add_by_ai'] = $this->button_add_by_ai;
         $this->data['form_using_ai_actions'] = $this->form_using_ai_actions;
 
+        //set return url to session and re-set into request for minimum mode (iframe)
+        $mode = request()->input('mode');
+        if($mode == 'minimum'){
+            if(request()->input('return_url') != ''){
+                session()->forget('mode_minimum_return_url');
+                session()->put('mode_minimum_return_url',request()->input('return_url'));
+            }else{
+                if(session()->get('mode_minimum_return_url') != ''){
+                    request()->merge(['return_url' => session()->get('mode_minimum_return_url')]);
+                }
+            }
+        }
+        
         view()->share($this->data);
     }
 
