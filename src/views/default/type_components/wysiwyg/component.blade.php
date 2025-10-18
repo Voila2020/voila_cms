@@ -149,7 +149,7 @@
     $editorFonts = [];
     foreach ($websiteLanguages as $lang) {
         $editorCss[$lang->code] = Crudbooster::getSetting('editor_css_links_' . $lang->direction);
-        $editorCssFiles[$lang->code] = explode(',', $editorCss[$lang->code]);
+        $editorCssFiles[$lang->code] = explode('|', $editorCss[$lang->code]);
         $editorCssArray[$lang->code] = [];
         foreach ($editorCssFiles[$lang->code] as $file) {
             $editorCssArray[$lang->code][] = "'" . trim($file) . "'";
@@ -173,6 +173,15 @@
          foreach ($editorJsFiles as $file) {
             $editorJsArray[] = "'" . trim($file) . "'";
         }
+    }
+
+    $default_lang_code = DB::table('languages')->where('default',1)->first()->code ?? 'en';
+    if(CRUDBooster::getCurrentModule()->table_name != '' && CRUDbooster::getCurrentId() != '' && CRUDBooster::getCurrentMethod() == 'getEdit'){
+        $record_info = DB::table(CRUDBooster::getCurrentModule()->table_name)->where('id',CRUDbooster::getCurrentId())->first();   
+         $lang_id = $record_info->lang;
+         if($lang_id){
+            $default_lang_code = DB::table('languages')->where('id',$lang_id)->first()->code;
+         }
     }
 ?>
 
@@ -204,10 +213,10 @@
                 },
                 menubar: 'file edit view insert format tools table tc help cards',
                 toolbar: 'FileManager | EmailBuilder | fontfamily fontsize blocks | undo redo | bold italic underline strikethrough | alignleft aligncenter alignright alignjustify | outdent indent |  numlist bullist | forecolor backcolor removeformat all-clear-format selected-clear-format | pagebreak | charmap emoticons | fullscreen  preview print | template link anchor codesample | code | ltr rtl',
-                @if($editorFonts['en'] != '')
-                    font_family_formats:"{{ $editorFonts['en'] }}" ,
+                @if($editorFonts[$default_lang_code] != '')
+                    font_family_formats:"{{ $editorFonts[$default_lang_code] }}" ,
                 @endif
-                content_css: [<?php echo implode(',', $editorCssArray['en']); ?>],
+                content_css: [<?php echo implode(',', $editorCssArray[$default_lang_code]); ?>],
                 content_js: [<?php echo implode(',', $editorJsArray); ?>],
                 setup: function (editor) {
                     //Add a custom validator to the form

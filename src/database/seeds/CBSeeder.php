@@ -492,7 +492,7 @@ class CBSeeder extends Seeder
         'content_input_type' => 'text',
         'group_setting' => 'TinyMCE Setting',
         'dataenum' => '',
-        'helper' => '',
+        'helper' => 'Separate multiple CSS Links with a pipe symbol ( | ).',
       ],
       [
         'created_at' => date('Y-m-d H:i:s'),
@@ -502,7 +502,7 @@ class CBSeeder extends Seeder
         'content_input_type' => 'text',
         'group_setting' => 'TinyMCE Setting',
         'dataenum' => '',
-        'helper' => '',
+        'helper' => 'Separate multiple CSS Links with a pipe symbol ( | ).',
       ],
       [
         'created_at' => date('Y-m-d H:i:s'),
