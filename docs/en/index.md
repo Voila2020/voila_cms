@@ -67,3 +67,4 @@
 - [How Make Settings Editable By User](./make-settings-editable-by-user.md)
 - [How Active AI Content Features](./active-ai-content-features.md)
 - [How Active Multi Authentication](./active-multi-authentication.md)
+- [How Using Content Builder](./using-content-builder.md)
