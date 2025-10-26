@@ -32,6 +32,7 @@
         </p>
     </div>
 </div>
+@if(CRUDBooster::getCurrentModule()->translation_table != '')
 <div class="content-builder-action-sect text-right">
     <div class="dropdown" style="display:inline-block;">
         <button  class="btn btn-xs btn-primary" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" >
@@ -46,6 +47,7 @@
         </ul>
     </div>
 </div>
+@endif
 <iframe 
   src="{{ $iframeURL }}" 
   title="Content builder iframe"

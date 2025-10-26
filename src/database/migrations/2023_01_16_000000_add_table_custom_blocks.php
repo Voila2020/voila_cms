@@ -20,6 +20,7 @@ class AddTableCustomBlocks extends Migration
             $table->text('blockID')->nullable();
             $table->string('block_name')->nullable();
             $table->text('image')->nullable();
+            $table->text('builder_type')->nullable();
             $table->timestamps();
         });
     }
