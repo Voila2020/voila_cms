@@ -70,6 +70,7 @@ class CRUDBoosterServiceProvider extends ServiceProvider
             #Content Builder
             $this->publishes([__DIR__ . '/userfiles/public/content_builder' => public_path('content_builder')], 'content_builder_files');
             $this->publishes([__DIR__ . '/userfiles/resources/content_builder' => resource_path('views/content_builder')], 'content_builder_views_files');
+            $this->publishes([__DIR__ . '/userfiles/Models/Language/Language.php' => app_path('Models/Language/Language.php')], 'model_language_file');
             $this->publishes([__DIR__ . '/userfiles/Traits/ContentBuilderTrait.php' => app_path('Traits/ContentBuilderTrait.php')], 'content_builder_trait');
 
             # lang
