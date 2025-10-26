@@ -1,0 +1,32 @@
+:root {
+  --first-color: #e48438;
+  --second-color: #2a3d48;
+  --third-color: #9d8966;
+  --fourth-color: #f1eeea;
+}
+
+.first-color {
+    color: var(--first-color) !important;
+}
+.second-color {
+    color: var(--second-color) !important;
+}
+.third-color {
+    color: var(--third-color) !important;
+}
+.fourth-color {
+    color: var(--fourth-color) !important;
+}
+
+.first-background {
+    background-color: var(--first-color) !important;
+}
+.second-background {
+    background-color: var(--second-color) !important;
+}
+.third-background {
+    background-color: var(--third-color) !important;
+}
+.fourth-background {
+    background-color: var(--fourth-color) !important;
+}

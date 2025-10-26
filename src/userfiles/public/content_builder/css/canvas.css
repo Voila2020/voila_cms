@@ -1,0 +1,102 @@
+/* hide/show on desktop */
+
+@media (min-width:1025px) {
+    .hide_on_desktop {
+        display: none;
+    }
+}
+
+
+/* hide/show on tablets */
+
+@media (max-width:960px) {
+    .hide_on_tablet {
+        display: none;
+    }
+}
+
+
+/* hide/show on mobiles */
+
+@media (max-width:480px) {
+    .hide_on_mobile {
+        display: none;
+    }
+}
+
+
+
+.flex {
+    display: flex;
+}
+
+.flex-direction-column {
+    flex-direction: column;
+}
+
+.flex-direction-row {
+    flex-direction: row;
+}
+
+.align-items-center {
+    align-items: center;
+}
+
+.place-content-center {
+    place-content: center !important;
+}
+
+.left-all {
+    place-content: flex-start;
+    align-content: flex-start;
+    align-items: flex-start;
+    justify-content: flex-start;
+    margin-right: auto;
+    margin-left: 0;
+}
+
+.right-all {
+    place-content: flex-end;
+    align-content: flex-end;
+    align-items: flex-end;
+    justify-content: flex-end;
+    margin-right: 0;
+    margin-left: auto;
+}
+
+.center-all {
+    place-content: center;
+    align-content: center;
+    align-items: center;
+    justify-content: center;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.fw {
+    font-weight: 700;
+}
+
+.text-right {
+    text-align: right;
+}
+
+.text-left {
+    text-align: left;
+}
+
+.self-center {
+    align-self: center;
+}
+
+.self-right {
+    align-self: right;
+}
+
+.self-left {
+    align-self: left;
+}
+
+.nowrap{
+    white-space: nowrap;
+}
