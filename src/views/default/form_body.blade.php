@@ -1,5 +1,5 @@
 <?php
-if($lang == null){
+if($lang == null || !is_array($lang)){
       $lang = $websiteLanguages->where('default',1)->first();
 }
 //Loading Assets
