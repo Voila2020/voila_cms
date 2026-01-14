@@ -476,15 +476,17 @@ class AIContentGeneratorController extends CBController
                 'company_description',
                 'website_type'
             ];
-            if ($request::get('personal_openai_api_key') != '') {
+            if ($request::get('personal_openai_api_key') != null && $request::get('personal_openai_api_key') != '' ) {
                 $request::merge(['maximum_token_usage_limit' => INF]);
+            }else{
+                 $request::merge(['maximum_token_usage_limit' => '30000']);
             }
         } else {
             $fields = [
                 'using_ai_features',
                 'personal_openai_api_key',
             ];
-            if ($request::get('personal_openai_api_key') != '') {
+            if ($request::get('personal_openai_api_key') != null && $request::get('personal_openai_api_key') != '') {
                 $fields[] = 'maximum_token_usage_limit';
                 $request::merge(['maximum_token_usage_limit' => INF]);
             } else {
