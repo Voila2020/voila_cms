@@ -64,7 +64,7 @@ class ApiCustomController extends CBController
         $apis = DB::table('cms_apicustom')->orderby('nama', 'asc')->get();
 
         foreach ($apis as $a) {
-            $parameters = unserialize($a->parameters);
+            $parameters = (is_string($a->parameters)) ? json_decode($a->parameters, true) : [];
             $formdata = [];
             $httpbuilder = [];
             if ($parameters) {
@@ -159,8 +159,8 @@ class ApiCustomController extends CBController
         $row = DB::table('cms_apicustom')->where('id', $id)->first();
 
         $data['row'] = $row;
-        $data['parameters'] = json_encode(unserialize($row->parameters));
-        $data['responses'] = json_encode(unserialize($row->responses));
+        $data['parameters'] = json_encode((is_string($row->parameters)) ? json_decode($row->parameters, true) : []);
+        $data['responses'] = json_encode((is_string($row->responses)) ? json_decode($row->responses, true) : []);
         $data['page_title'] = 'API Generator';
         $data['page_menu'] = Route::getCurrentRoute()->getActionName();
 
@@ -307,7 +307,7 @@ class ApiCustomController extends CBController
         }
 
         $json = array_filter($json);
-        $a['parameters'] = serialize($json);
+        $a['parameters'] = json_encode($json);
 
         $a['sql_where'] = g('sql_where');
 
@@ -328,7 +328,7 @@ class ApiCustomController extends CBController
         }
 
         $json = array_filter($json);
-        $a['responses'] = serialize($json);
+        $a['responses'] = json_encode($json);
         $a['keterangan'] = g('keterangan');
 
         if (Request::get('id')) {

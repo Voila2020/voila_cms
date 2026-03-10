@@ -159,9 +159,14 @@
                             $query = str_replace('[' . $key . ']', '"' . $val . '"', $query);
                         }
 
-                        @eval("if($query) {
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              \$tr_color = \$color;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          }");
+                        try {
+                            $conditionResult = eval('return (' . $query . ');');
+                            if ($conditionResult) {
+                                $tr_color = $color;
+                            }
+                        } catch (\Throwable $e) {
+                            \Log::warning('Table row condition evaluation error: ' . $e->getMessage());
+                        }
                         ?>
                     @endforeach
                     <tr class='{{ $tr_color }}' id='{{ $html_contents['data'][$i]->id }}'>

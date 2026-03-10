@@ -410,14 +410,22 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
 
                             if (url_exists($data['path_thumb'])) {
                                 $tmp = time() . basename($data['path_thumb']);
-                                @$ftp->get($tmp, $data['path_thumb'], FTP_BINARY);
-                                @$ftp->put(DIRECTORY_SEPARATOR . $path_thumb, $tmp, FTP_BINARY);
+                                try {
+                                    $ftp->get($tmp, $data['path_thumb'], FTP_BINARY);
+                                    $ftp->put(DIRECTORY_SEPARATOR . $path_thumb, $tmp, FTP_BINARY);
+                                } catch (\Throwable $e) {
+                                    \Log::warning('FTP operation error: ' . $e->getMessage());
+                                }
                                 unlink($tmp);
                             }
                         } elseif ($action == 'cut') {
                             $ftp->rename($data['path'], DIRECTORY_SEPARATOR . $path);
                             if (url_exists($data['path_thumb'])) {
-                                @$ftp->rename($data['path_thumb'], DIRECTORY_SEPARATOR . $path_thumb);
+                                try {
+                                    $ftp->rename($data['path_thumb'], DIRECTORY_SEPARATOR . $path_thumb);
+                                } catch (\Throwable $e) {
+                                    \Log::warning('FTP rename error: ' . $e->getMessage());
+                                }
                             }
                         }
                     } else {

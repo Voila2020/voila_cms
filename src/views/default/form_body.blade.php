@@ -47,7 +47,11 @@ if ($validation_raw) {
 }
 
 if (isset($form['callback_php'])) {
-    @eval("\$value = ".$form['callback_php'].";");
+    try {
+        $value = eval('return ' . $form['callback_php'] . ';');
+    } catch (\Throwable $e) {
+        \Log::warning('Callback PHP evaluation error: ' . $e->getMessage());
+    }
 }
 
 

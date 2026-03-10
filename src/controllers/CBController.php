@@ -701,8 +701,8 @@ class CBController extends Controller
                     $value = call_user_func($col['callback'], $row);
                 }
 
-                $datavalue = @unserialize($value);
-                if ($datavalue !== false) {
+                $datavalue = (is_string($value)) ? json_decode($value, true) : null;
+                if ($datavalue !== null && is_array($datavalue)) {
                     if ($datavalue) {
                         $prevalue = [];
                         foreach ($datavalue as $d) {
@@ -1118,7 +1118,7 @@ class CBController extends Controller
     public function input_assignment($id = null, $translationLocale = false)
     {
 
-        $hide_form = (request('hide_form')) ? unserialize(request('hide_form')) : [];
+        $hide_form = (request('hide_form')) ? json_decode(request('hide_form'), true) : [];
         foreach ($this->data_inputan as $ro) {
             if (($ro["translation"] && !$translationLocale) || (!$ro["translation"] && $translationLocale)) {
                 continue;

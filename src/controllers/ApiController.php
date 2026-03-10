@@ -102,8 +102,8 @@ class ApiController extends Controller
             goto show;
         }
 
-        @$parameters = unserialize($row_api->parameters);
-        @$responses = unserialize($row_api->responses);
+        $parameters = (is_string($row_api->parameters)) ? json_decode($row_api->parameters, true) : [];
+        $responses = (is_string($row_api->responses)) ? json_decode($row_api->responses, true) : [];
 
         /*
         | ----------------------------------------------

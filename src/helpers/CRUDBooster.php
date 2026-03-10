@@ -770,7 +770,7 @@ class CRUDBooster
         $from_email = $queue->email_from_email;
         $from_name = $queue->email_from_name;
         $cc_email = $queue->email_cc_email;
-        $attachments = unserialize($queue->email_attachments);
+        $attachments = (is_string($queue->email_attachments)) ? json_decode($queue->email_attachments, true) : (array)$queue->email_attachments;
 
         Mail::send("crudbooster::emails.blank", ['content' => $html], function ($message) use (
             $html,
@@ -830,7 +830,7 @@ class CRUDBooster
             $a['email_cc_email'] = $template->cc_email;
             $a['email_subject'] = $subject;
             $a['email_content'] = $html;
-            $a['email_attachments'] = serialize($attachments);
+            $a['email_attachments'] = json_encode($attachments ?? []);
             $a['is_sent'] = 0;
             DB::table('cms_email_queues')->insert($a);
 

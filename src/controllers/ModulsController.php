@@ -299,7 +299,11 @@ class ModulsController extends CBController
             $response = file_get_contents(app_path('Http/Controllers/' . $row->controller . '.php'));
             $column_datas = extract_unit($response, "# START COLUMNS DO NOT REMOVE THIS LINE", "# END COLUMNS DO NOT REMOVE THIS LINE");
             $column_datas = str_replace('$this->', '$cb_', $column_datas);
-            eval($column_datas);
+            try {
+                eval($column_datas);
+            } catch (\Throwable $e) {
+                \Log::warning('Module column evaluation error: ' . $e->getMessage());
+            }
         }
 
         $data = [];
@@ -497,16 +501,19 @@ class ModulsController extends CBController
 
         $columns = CRUDBooster::getTableColumns($row->table_name);
 
-        if (file_exists(app_path('Http/Controllers/' . $row->controller . '.php'))) {
-            $response = file_get_contents(app_path('Http/Controllers/' . $row->controller . '.php'));
-            $column_datas = extract_unit($response, "# START FORM DO NOT REMOVE THIS LINE", "# END FORM DO NOT REMOVE THIS LINE");
-            $column_datas = str_replace('$this->', '$cb_', $column_datas);
-            eval($column_datas);
-        }
-
         $types = [];
         foreach (glob(base_path('vendor/voila_cms/crudbooster/src/views/default/type_components') . '/*', GLOB_ONLYDIR) as $dir) {
             $types[] = basename($dir);
+        }
+        if (file_exists(app_path('Http/Controllers/' . str_replace('.', '', $row->controller) . '.php'))) {
+            $response = file_get_contents(app_path('Http/Controllers/' . $row->controller . '.php'));
+            $column_datas = extract_unit($response, "# START COLUMNS DO NOT REMOVE THIS LINE", "# END COLUMNS DO NOT REMOVE THIS LINE");
+            $column_datas = str_replace('$this->', '$cb_', $column_datas);
+            try {
+                eval($column_datas);
+            } catch (\Throwable $e) {
+                \Log::warning('Module type column evaluation error: ' . $e->getMessage());
+            }
         }
         return view('crudbooster::module_generator.step3', compact('columns', 'cb_form', 'types', 'id'));
     }
@@ -630,7 +637,11 @@ class ModulsController extends CBController
             $column_datas = str_replace('$this->', '$data[\'cb_', $column_datas);
             $column_datas = str_replace(' = ', '\'] = ', $column_datas);
             $column_datas = str_replace([' ', "\t"], '', $column_datas);
-            eval($column_datas);
+            try {
+                eval($column_datas);
+            } catch (\Throwable $e) {
+                \Log::warning('Module configuration evaluation error: ' . $e->getMessage());
+            }
         }
 
         return view('crudbooster::module_generator.step4', $data);

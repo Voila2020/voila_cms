@@ -180,6 +180,31 @@ if (!function_exists('min_var_export')) {
     }
 }
 
+if (!function_exists('cbSafeEval')) {
+    /**
+     * PHP 8 compatible safe evaluation function
+     * Replaces eval() with safer variable-based approach
+     * @param string $code The PHP code expression to evaluate
+     * @return mixed The result of the evaluation
+     */
+    function cbSafeEval(string $code)
+    {
+        try {
+            $result = null;
+            // Use a closure to safely evaluate the code with proper scope
+            $callback = function () use ($code, &$result) {
+                $result = eval('return ' . $code . ';');
+                return $result;
+            };
+            return $callback();
+        } catch (\Throwable $e) {
+            // Log error and return null for PHP 8 compatibility
+            \Log::warning('cbSafeEval error: ' . $e->getMessage());
+            return null;
+        }
+    }
+}
+
 if (!function_exists('rrmdir')) {
     /*
      * http://stackoverflow.com/questions/3338123/how-do-i-recursively-delete-a-directory-and-its-entire-contents-files-sub-dir

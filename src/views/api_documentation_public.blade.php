@@ -155,8 +155,8 @@
                 </tr>
                 @foreach($apis as $api)
                     <?php
-                    $parameters = ($api->parameters) ? unserialize($api->parameters) : array();
-                    $responses = ($api->responses) ? unserialize($api->responses) : array();
+                    $parameters = ($api->parameters) ? json_decode($api->parameters, true) : array();
+                    $responses = ($api->responses) ? json_decode($api->responses, true) : array();
                     ?>
                     <tr>
                         <td><?= ++$no;?></td>

@@ -70,7 +70,11 @@
                                 foreach ($row as $k => $v) {
                                     $col['callback_php'] = str_replace("[".$k."]", $v, $col['callback_php']);
                                 }
-                                @eval("\$value = ".$col['callback_php'].";");
+                                try {
+                                    $value = eval('return ' . $col['callback_php'] . ';');
+                                } catch (\Throwable $e) {
+                                    \Log::warning('Callback PHP evaluation error: ' . $e->getMessage());
+                                }
                             }
 
                             //New method for callback

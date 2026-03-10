@@ -52,9 +52,14 @@
             $query = str_replace("[".$key."]", '"'.$val.'"', $query);
         }
 
-        @eval("if($query) {
-          echo \"<a class='btn btn-xs btn-\$color' title='\$title' onclick='\$confirm_box' href='\$url' target='\$target'><i class='\$icon'></i> $label</a>&nbsp;\";
-      }");
+        try {
+            $conditionResult = eval('return (' . $query . ');');
+            if ($conditionResult) {
+                echo "<a class='btn btn-xs btn-$color' title='$title' onclick='$confirm_box' href='$url' target='$target'><i class='$icon'></i> $label</a>&nbsp;";
+            }
+        } catch (\Throwable $e) {
+            \Log::warning('Action query evaluation error: ' . $e->getMessage());
+        }
     } else {
         echo "<a class='btn btn-xs btn-$color' title='$title' onclick='$confirm_box' href='$url' target='$target'><i class='$icon'></i> $label</a>&nbsp;";
     }
@@ -127,9 +132,14 @@
                         $query = str_replace("[".$key."]", '"'.$val.'"', $query);
                     }
 
-                    @eval("if($query) {
-                        echo \"<li><a title='\$label' href='\$url'><i class='\$icon'></i> \$label</a></li>\";
-                    }");
+                    try {
+                        $conditionResult = eval('return (' . $query . ');');
+                        if ($conditionResult) {
+                            echo "<li><a title='$label' href='$url'><i class='$icon'></i> $label</a></li>";
+                        }
+                    } catch (\Throwable $e) {
+                        \Log::warning('Action query evaluation error: ' . $e->getMessage());
+                    }
                 } else {
                     echo "<li><a title='$label' href='$url'><i class='$icon'></i> $label</a></li>";
                 }
