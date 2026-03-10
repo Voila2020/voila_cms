@@ -71,7 +71,7 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
     {
         $email_template = DB::table('cms_email_templates')->where('id', $id)->first();
         $button_lang = Request::input('lang');
-        return view('crudbooster::email_builder.templates_builder', compact("id", "email_template", "button_lang"));
+        return view('crudbooster::email_builder.templates_builder', ['id' => $id, 'email_template' => $email_template, 'button_lang' => $button_lang]);
     }
 
 
@@ -84,17 +84,17 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 $email_template = DB::table('cms_email_templates')->find($id);
 
                 return response()->json([
-                    "gjs-html" => ($email_template->content === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content,
-                    "gjs-styles" => ($email_template->css === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css,
-                    "gjs-components" => ($email_template->template === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template,
+                    "gjs-html" => $email_template->content ?? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>',
+                    "gjs-styles" => $email_template->css ?? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}',
+                    "gjs-components" => $email_template->template ?? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]',
 
                 ]);
             }
 
             return response()->json([
-                "gjs-html" => ($email_template->content === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content,
-                "gjs-styles" => ($email_template->css === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css,
-                "gjs-components" => ($email_template->template === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template,
+                "gjs-html" => $email_template->content ?? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>',
+                "gjs-styles" => $email_template->css ?? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}',
+                "gjs-components" => $email_template->template ?? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]',
 
             ]);
         }
@@ -105,17 +105,17 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 $email_template = DB::table('cms_email_templates')->find($id);
 
                 return response()->json([
-                    "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_ar,
-                    "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_ar,
-                    "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_ar,
+                    "gjs-html" => $email_template->content_ar ?? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>',
+                    "gjs-styles" => $email_template->css_ar ?? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}',
+                    "gjs-components" => $email_template->template_ar ?? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]',
 
                 ]);
             }
 
             return response()->json([
-                "gjs-html" => ($email_template->content_ar === (null)) ? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>' : $email_template->content_ar,
-                "gjs-styles" => ($email_template->css_ar === (null)) ? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}' : $email_template->css_ar,
-                "gjs-components" => ($email_template->template_ar === (null)) ? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]' : $email_template->template_ar,
+                "gjs-html" => $email_template->content_ar ?? '<body><table id="idvv"><tbody><tr><td id="ithb"></td></tr></tbody></table></body>',
+                "gjs-styles" => $email_template->css_ar ?? '* { box-sizing: border-box; } body {margin: 0;}*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}#idvv{height:550px;margin:0 auto 10px auto;padding:5px 5px 5px 5px;width:150%;max-width:550px;}#ithb{padding:0;margin:0;vertical-align:top;}',
+                "gjs-components" => $email_template->template_ar ?? '[{"type":"table","droppable":["tbody","thead","tfoot"],"attributes":{"id":"idvv"},"components":[{"type":"tbody","draggable":["table"],"droppable":["tr"],"components":[{"type":"row","draggable":["thead","tbody","tfoot"],"droppable":["th","td"],"components":[{"type":"cell","draggable":["tr"],"attributes":{"id":"ithb"}}]}]}]}]',
 
             ]);
         }

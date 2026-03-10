@@ -10,6 +10,10 @@ use Illuminate\Support\Facades\Storage;
 
 class SettingsController extends CBController
 {
+    /**
+     * @var array<string, string>
+     */
+    public $index_orderby;
     public function cbInit()
     {
         $this->module_name = "Settings";
@@ -71,7 +75,7 @@ class SettingsController extends CBController
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
         }
 
-        $data['page_title'] = urldecode(Request::get('group'));
+        $data['page_title'] = urldecode((string) Request::get('group'));
 
         return view('crudbooster::setting', $data);
     }
@@ -124,7 +128,7 @@ class SettingsController extends CBController
                 Storage::makeDirectory($directory);
 
                 //Move file to storage
-                $filename = md5(str_random(5)) . '.' . $ext;
+                $filename = md5((string) str_random(5)) . '.' . $ext;
                 $storeFile = Storage::putFileAs($directory, $file, $filename);
                 if ($storeFile) {
                     $content = $directory . '/' . $filename;

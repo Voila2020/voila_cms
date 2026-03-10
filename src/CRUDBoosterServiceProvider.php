@@ -111,46 +111,34 @@ class CRUDBoosterServiceProvider extends ServiceProvider
 
         $loader = AliasLoader::getInstance();
         $loader->alias('PDF', 'Barryvdh\DomPDF\Facade');
-        $loader->alias('Excel', 'Maatwebsite\Excel\Facades\Excel');
-        $loader->alias('Image', 'Intervention\Image\Facades\Image');
+        $loader->alias('Excel', \Maatwebsite\Excel\Facades\Excel::class);
+        $loader->alias('Image', \Intervention\Image\Facades\Image::class);
         $loader->alias('CRUDBooster', 'crocodicstudio\crudbooster\helpers\CRUDBooster');
         $loader->alias('CB', 'crocodicstudio\crudbooster\helpers\CB');
     }
 
     private function registerSingleton()
     {
-        $this->app->singleton('crudbooster', function () {
-            return true;
-        });
+        $this->app->singleton('crudbooster', fn() => true);
 
-        $this->app->singleton('crudboosterinstall', function () {
-            return new CrudboosterInstallationCommand;
-        });
+        $this->app->singleton('crudboosterinstall', fn() => new CrudboosterInstallationCommand);
 
-        $this->app->singleton('crudboosterupdate', function () {
-            return new CrudboosterUpdateCommand;
-        });
+        $this->app->singleton('crudboosterupdate', fn() => new CrudboosterUpdateCommand);
 
-        $this->app->singleton("crudboosterVersionCommand", function () {
-            return new CrudboosterVersionCommand;
-        });
+        $this->app->singleton("crudboosterVersionCommand", fn() => new CrudboosterVersionCommand);
 
-        $this->app->singleton("crudboosterMailQueue", function () {
-            return new Mailqueues;
-        });
+        $this->app->singleton("crudboosterMailQueue", fn() => new Mailqueues);
     }
 
     private function customValidation()
     {
-        Validator::extend('alpha_spaces', function ($attribute, $value) {
+        Validator::extend('alpha_spaces', 
             // This will only accept alpha and spaces.
             // If you want to accept hyphens use: /^[\pL\s-]+$/u.
-            return preg_match('/^[\pL\s]+$/u', $value);
-        }, 'The :attribute should be letters and spaces only');
+            fn($attribute, $value) => preg_match('/^[\pL\s]+$/u', (string) $value), 'The :attribute should be letters and spaces only');
 
-        Validator::extend('alpha_num_spaces', function ($attribute, $value) {
+        Validator::extend('alpha_num_spaces', 
             // This will only accept alphanumeric and spaces.
-            return preg_match('/^[a-zA-Z0-9\s]+$/', $value);
-        }, 'The :attribute should be alphanumeric characters and spaces only');
+            fn($attribute, $value) => preg_match('/^[a-zA-Z0-9\s]+$/', (string) $value), 'The :attribute should be alphanumeric characters and spaces only');
     }
 }

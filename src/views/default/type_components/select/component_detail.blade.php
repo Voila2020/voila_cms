@@ -1,6 +1,6 @@
 <?php
 if ($form['datatable']) {
-    $datatable = explode(',', $form['datatable']);
+    $datatable = explode(',', (string) $form['datatable']);
     $table = $datatable[0];
     $field = $datatable[1];
     echo CRUDBooster::first($table, ['id' => $value])->$field;

@@ -51,9 +51,8 @@ class LogsController extends CBController
         foreach ($diff as $key => $value) {
             $table .= "<tr><td>$key</td><td>$old_values[$key]</td><td>$new_values[$key]</td></tr>";
         }
-        $table .= '</tbody></table>';
 
-        return $table;
+        return $table . '</tbody></table>';
     }
 
     private static function getDiff($old_values, $new_values)

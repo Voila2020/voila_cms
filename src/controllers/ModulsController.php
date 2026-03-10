@@ -39,10 +39,10 @@ class ModulsController extends CBController
         $tables = CRUDBooster::listTables();
         $tables_list = [];
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $label = $value;
 
-                if (substr($value, 0, 4) == 'cms_') {
+                if (str_starts_with((string) $value, 'cms_')) {
                     continue;
                 }
 
@@ -50,9 +50,9 @@ class ModulsController extends CBController
             }
         }
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $label = "[Default] " . $value;
-                if (substr($value, 0, 4) == 'cms_') {
+                if (str_starts_with((string) $value, 'cms_')) {
                     $tables_list[] = $value . "|" . $label;
                 }
             }
@@ -63,7 +63,7 @@ class ModulsController extends CBController
         $fontawesome = Fontawesome::getIcons();
 
         $row = CRUDBooster::first($this->table, CRUDBooster::getCurrentId());
-        $custom = view('crudbooster::components.list_icon', compact('fontawesome', 'row'))->render();
+        $custom = view('crudbooster::components.list_icon', ['fontawesome' => $fontawesome, 'row' => $row])->render();
         $this->form[] = ['label' => 'Icon', 'name' => 'icon', 'type' => 'custom', 'html' => $custom, 'required' => true];
 
         $this->script_js = "
@@ -205,7 +205,7 @@ class ModulsController extends CBController
     public function hook_before_delete($id)
     {
         $modul = DB::table('cms_moduls')->where('id', $id)->first();
-        $menus = DB::table('cms_menus')->where('path', 'like', '%' . $modul->controller . '%')->delete();
+        DB::table('cms_menus')->where('path', 'like', '%' . $modul->controller . '%')->delete();
         @unlink(app_path('Http/Controllers/' . $modul->controller . '.php'));
     }
 
@@ -250,10 +250,10 @@ class ModulsController extends CBController
         $tables = CRUDBooster::listTables();
         $tables_list = [];
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $label = $value;
 
-                if (substr($label, 0, 4) == 'cms_' && $label != config('crudbooster.USER_TABLE')) {
+                if (str_starts_with((string) $label, 'cms_') && $label != config('crudbooster.USER_TABLE')) {
                     continue;
                 }
                 if ($label == 'migrations') {
@@ -268,7 +268,7 @@ class ModulsController extends CBController
 
         $row = CRUDBooster::first($this->table, ['id' => $id]);
 
-        return view("crudbooster::module_generator.step1", compact("tables_list", "fontawesome", "row", "id"));
+        return view("crudbooster::module_generator.step1", ['tables_list' => $tables_list, 'fontawesome' => $fontawesome, 'row' => $row, 'id' => $id]);
     }
 
     public function getStep2($id)
@@ -289,7 +289,7 @@ class ModulsController extends CBController
         $tables = CRUDBooster::listTables();
         $table_list = [];
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $label = $value;
                 $table_list[] = $value;
             }
@@ -311,7 +311,7 @@ class ModulsController extends CBController
         $data['columns'] = $columns;
         $data['translation_columns'] = $translation_columns;
         $data['table_list'] = $table_list;
-        $data['cb_col'] = (isset($cb_col)) ? $cb_col : null;
+        $data['cb_col'] = $cb_col ?? null;
 
         return view('crudbooster::module_generator.step2', $data);
     }
@@ -336,14 +336,14 @@ class ModulsController extends CBController
 
         if (!Request::get('id')) {
 
-            if (DB::table('cms_moduls')->where('path', $path)->where('deleted_at', null)->count()) {
+            if (DB::table('cms_moduls')->where('path', $path)->where('deleted_at')->count()) {
                 return redirect()->back()->with(['message' => 'Sorry the slug has already exists, please choose another !', 'message_type' => 'warning']);
             }
 
             $created_at = now();
 
             $controller = CRUDBooster::generateController($table_name, $path, $translation_table);
-            $id = DB::table($this->table)->insertGetId(compact("controller", "name", "has_images", "table_name", "translation_table", "icon", "path", "created_at"));
+            $id = DB::table($this->table)->insertGetId(['controller' => $controller, 'name' => $name, 'has_images' => $has_images, 'table_name' => $table_name, 'translation_table' => $translation_table, 'icon' => $icon, 'path' => $path, 'created_at' => $created_at]);
 
             //Insert Menu
             if ($controller && Request::get('create_menu')) {
@@ -382,7 +382,7 @@ class ModulsController extends CBController
             return redirect(Route("ModulsControllerGetStep2") . "/" . $id);
         } else {
             $id = Request::get('id');
-            DB::table($this->table)->where('id', $id)->update(compact("name", "table_name", "translation_table", "has_images", "icon", "path"));
+            DB::table($this->table)->where('id', $id)->update(['name' => $name, 'table_name' => $table_name, 'translation_table' => $translation_table, 'has_images' => $has_images, 'icon' => $icon, 'path' => $path]);
 
             $row = DB::table('cms_moduls')->where('id', $id)->first();
 
@@ -430,7 +430,7 @@ class ModulsController extends CBController
                 continue;
             }
 
-            $script_cols[$i] = "\t\t\t" . '$this->col[] = ["label"=>"' . $col . '","name"=>"' . $name[$i] . '"';
+            $script_cols[$i] = '			$this->col[] = ["label"=>"' . $col . '","name"=>"' . $name[$i] . '"';
 
             if ($join_table[$i] && $join_field[$i]) {
                 $script_cols[$i] .= ',"join"=>"' . $join_table[$i] . ',' . $join_field[$i] . '"';
@@ -476,7 +476,7 @@ class ModulsController extends CBController
 
         $file_controller = trim($raw[0]) . "\n\n";
         $file_controller .= "\t\t\t# START COLUMNS DO NOT REMOVE THIS LINE\n";
-        $file_controller .= "\t\t\t" . '$this->col = [];' . "\n";
+        $file_controller .= '			$this->col = [];' . "\n";
         $file_controller .= $scripts . "\n";
         $file_controller .= "\t\t\t# END COLUMNS DO NOT REMOVE THIS LINE\n\n";
         $file_controller .= "\t\t\t" . trim($rraw[1]);
@@ -515,7 +515,7 @@ class ModulsController extends CBController
                 \Log::warning('Module type column evaluation error: ' . $e->getMessage());
             }
         }
-        return view('crudbooster::module_generator.step3', compact('columns', 'cb_form', 'types', 'id'));
+        return view('crudbooster::module_generator.step3', ['columns' => $columns, 'cb_form' => $cb_form, 'types' => $types, 'id' => $id]);
     }
 
     public function getTypeInfo($type = 'text')
@@ -552,7 +552,7 @@ class ModulsController extends CBController
                 $form['name'] = $name[$i];
                 $form['type'] = $type[$i];
                 $form['validation'] = $validation[$i];
-                $form['translation'] = (strtolower($translation[$i]) === 'true');
+                $form['translation'] = (strtolower((string) $translation[$i]) === 'true');
                 $form['width'] = $width[$i];
                 if ($option[$i]) {
                     $form = array_merge($form, $option[$i]);
@@ -564,7 +564,7 @@ class ModulsController extends CBController
                     }
                 }
 
-                $script_form[$i] = "\t\t\t" . '$this->form[] = ' . min_var_export($form) . ";";
+                $script_form[$i] = '			$this->form[] = ' . min_var_export($form) . ";";
             }
 
             $i++;
@@ -580,7 +580,7 @@ class ModulsController extends CBController
         $bottom_script = trim($rraw[1]);
 
         //IF FOUND OLD, THEN CLEAR IT
-        if (strpos($bottom_script, '# OLD START FORM') !== false) {
+        if (str_contains($bottom_script, '# OLD START FORM')) {
             $line_end_count = strlen('# OLD END FORM');
             $line_start_old = strpos($bottom_script, '# OLD START FORM');
             $line_end_old = strpos($bottom_script, '# OLD END FORM') + $line_end_count;
@@ -591,12 +591,12 @@ class ModulsController extends CBController
         //ARRANGE THE FULL SCRIPT
         $file_controller = $top_script . "\n\n";
         $file_controller .= "\t\t\t# START FORM DO NOT REMOVE THIS LINE\n";
-        $file_controller .= "\t\t\t" . '$this->form = [];' . "\n";
+        $file_controller .= '			$this->form = [];' . "\n";
         $file_controller .= $scripts . "\n";
         $file_controller .= "\t\t\t# END FORM DO NOT REMOVE THIS LINE\n\n";
 
         //CREATE A BACKUP SCAFFOLDING TO OLD TAG
-        if ($current_scaffolding_form) {
+        if ($current_scaffolding_form !== '' && $current_scaffolding_form !== '0') {
             $current_scaffolding_form = preg_split("/\\r\\n|\\r|\\n/", $current_scaffolding_form);
             foreach ($current_scaffolding_form as &$c) {
                 $c = "\t\t\t//" . trim($c);
@@ -666,17 +666,13 @@ class ModulsController extends CBController
                 continue;
             }
 
-            if ($val != 'true' && $val != 'false') {
-                $value = '"' . $val . '"';
-            } else {
-                $value = $val;
-            }
+            $value = $val != 'true' && $val != 'false' ? '"' . $val . '"' : $val;
 
             // if($key == 'orderby') {
             //     $value = ;
             // }
 
-            $script_config[$i] = "\t\t\t" . '$this->' . $key . ' = ' . $value . ';';
+            $script_config[$i] = '			$this->' . $key . ' = ' . $value . ';';
             $i++;
         }
 
@@ -712,7 +708,7 @@ class ModulsController extends CBController
         $this->input_assignment();
 
         //Generate Controller
-        $route_basename = basename(Request::get('path'));
+        $route_basename = basename((string) Request::get('path'));
         if ($this->arr['controller'] == '') {
             $this->arr['controller'] = CRUDBooster::generateController(Request::get('table_name'), $route_basename);
         }
@@ -776,15 +772,13 @@ class ModulsController extends CBController
         $roles = DB::table('cms_privileges_roles')->where('id_cms_privileges', CRUDBooster::myPrivilegeId())->join('cms_moduls', 'cms_moduls.id', '=', 'id_cms_moduls')->select('cms_moduls.name', 'cms_moduls.path', 'is_visible', 'is_create', 'is_read', 'is_edit', 'is_delete')->get();
         Session::put('admin_privileges_roles', $roles);
 
-        $ref_parameter = Request::input('ref_parameter');
+        Request::input('ref_parameter');
         if (Request::get('return_url')) {
             CRUDBooster::redirect(Request::get('return_url'), cbLang("alert_add_data_success"), 'success');
+        } elseif (Request::get('submit') == cbLang('button_save_more')) {
+            CRUDBooster::redirect(CRUDBooster::mainpath('add'), cbLang("alert_add_data_success"), 'success');
         } else {
-            if (Request::get('submit') == cbLang('button_save_more')) {
-                CRUDBooster::redirect(CRUDBooster::mainpath('add'), cbLang("alert_add_data_success"), 'success');
-            } else {
-                CRUDBooster::redirect(CRUDBooster::mainpath(), cbLang("alert_add_data_success"), 'success');
-            }
+            CRUDBooster::redirect(CRUDBooster::mainpath(), cbLang("alert_add_data_success"), 'success');
         }
     }
 
@@ -803,7 +797,7 @@ class ModulsController extends CBController
         $this->input_assignment();
 
         //Generate Controller
-        $route_basename = basename(Request::get('path'));
+        $route_basename = basename((string) Request::get('path'));
         if ($this->arr['controller'] == '') {
             $this->arr['controller'] = CRUDBooster::generateController(Request::get('table_name'), $route_basename);
         }

@@ -26,12 +26,10 @@ class AIContentGeneratorController extends CBController
         $seo_mode = "";
         if ($page == null && $page_id == null) {
             $seo_mode = 'website';
+        } elseif ($page != null && $page_id != null) {
+            $seo_mode = 'item';
         } else {
-            if ($page != null && $page_id != null) {
-                $seo_mode = 'item';
-            } else {
-                $seo_mode = 'module';
-            }
+            $seo_mode = 'module';
         }
 
         $seo_fields_mode = 'with_lang'; //with_lang or without_lang
@@ -45,10 +43,10 @@ class AIContentGeneratorController extends CBController
             $theme_type = CRUDBooster::getAISetting('website_type');
             $languages = $this->getWebsiteLanguagesAsJSON();
 
-            if ($seo_mode == 'website') {
+            if ($seo_mode === 'website') {
                 $result = CRUDBooster::generateSEOForWebsite($website, $company_name, $theme_type, $languages);
                 $seo_fields_mode = 'with_lang';
-            } elseif ($seo_mode == 'module') {
+            } elseif ($seo_mode === 'module') {
 
                 //get module name
                 $module = DB::table('cms_moduls')->where('path', $page)->first();
@@ -56,7 +54,7 @@ class AIContentGeneratorController extends CBController
 
                 $result = CRUDBooster::generateSEOForModule($website, $company_name, $theme_type, $module_name, $languages);
                 $seo_fields_mode = 'with_lang';
-            } elseif ($seo_mode == 'item') {
+            } elseif ($seo_mode === 'item') {
                 //get module name
                 $module = DB::table('cms_moduls')->where('path', $page)->first();
                 $module_name = $module->name;
@@ -70,7 +68,7 @@ class AIContentGeneratorController extends CBController
             if ($result['status'] == 'success') {
 
                 $seo_info_json = $result['result']['seo_info'];
-                $data = json_decode($seo_info_json, true);
+                $data = json_decode((string) $seo_info_json, true);
                 $seo_array = $data['metadata'] ?? $data ?? null;
 
                 if ($seo_array && is_array($seo_array)) {
@@ -81,15 +79,15 @@ class AIContentGeneratorController extends CBController
                         unset($item['lang']); // Remove 'lang' from the item
                         $seo_by_lang[$lang] = $item;
                     }
-                    echo json_encode(array('status' => 'success', 'message' => 'generate seo with ai success', 'seo_fields_mode' => $seo_fields_mode, 'seo_by_lang' => $seo_by_lang));
+                    echo json_encode(['status' => 'success', 'message' => 'generate seo with ai success', 'seo_fields_mode' => $seo_fields_mode, 'seo_by_lang' => $seo_by_lang]);
                 } else {
-                    echo json_encode(array('status' => 'failed', 'message' => 'generate seo with ai failed response invalid'));
+                    echo json_encode(['status' => 'failed', 'message' => 'generate seo with ai failed response invalid']);
                 }
             } else {
-                echo json_encode(array('status' => 'failed', 'message' => 'generate seo with ai failed'));
+                echo json_encode(['status' => 'failed', 'message' => 'generate seo with ai failed']);
             }
         } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'you have exceeded the allowed token usage limit'));
+            echo json_encode(['status' => 'failed', 'message' => 'you have exceeded the allowed token usage limit']);
         }
     }
 
@@ -195,7 +193,7 @@ class AIContentGeneratorController extends CBController
 
             if (!empty($result) && $result['status'] == 'success') {
                 $item_content_info = $result['result']['item_content_info'];
-                $data = json_decode($item_content_info, true);
+                $data = json_decode((string) $item_content_info, true);
                 $item_content_array =  $data ?? null;
 
                 if ($item_content_array && is_array($item_content_array)) {
@@ -204,15 +202,15 @@ class AIContentGeneratorController extends CBController
 
                     $insertedID = $this->insertModuleItemData($module, $active_site_langs, $item_content_array);
 
-                    echo json_encode(array('status' => 'success', 'message' => 'generate module item by ai success', 'module_path' => $module->path, 'item_inserted_id' => $insertedID));
+                    echo json_encode(['status' => 'success', 'message' => 'generate module item by ai success', 'module_path' => $module->path, 'item_inserted_id' => $insertedID]);
                 } else {
-                    echo json_encode(array('status' => 'failed', 'message' =>  'generate module item by ai failed response invalid'));
+                    echo json_encode(['status' => 'failed', 'message' =>  'generate module item by ai failed response invalid']);
                 }
             } else {
-                echo json_encode(array('status' => 'failed', 'message' => 'generate module item by ai failed'));
+                echo json_encode(['status' => 'failed', 'message' => 'generate module item by ai failed']);
             }
         } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'you have exceeded the allowed token usage limit'));
+            echo json_encode(['status' => 'failed', 'message' => 'you have exceeded the allowed token usage limit']);
         }
     }
 
@@ -278,7 +276,7 @@ class AIContentGeneratorController extends CBController
             $values_into_module_table = [];
             $values_into_module_translation_table = [];
             foreach ($active_site_langs as $lang) {
-                $values_into_module_translation_table["$lang->code"] = array();
+                $values_into_module_translation_table["$lang->code"] = [];
             }
 
             foreach ($module_fields as $field) {
@@ -288,15 +286,15 @@ class AIContentGeneratorController extends CBController
                 if (in_array($type, ['text', 'textarea', 'wysiwyg', 'icon'])) {
                     if ($lang_effect) {
                         foreach ($active_site_langs as $lang) {
-                            array_push($values_into_module_translation_table["$lang->code"], array('name' => $name, 'value' => $item_content_array[$name . "_$lang->code"]));
+                            $values_into_module_translation_table["$lang->code"][] = ['name' => $name, 'value' => $item_content_array[$name . "_$lang->code"]];
                         }
                     } else {
-                        $values_into_module_table[] = array('name' => $name, 'value' => $item_content_array[$name]);
+                        $values_into_module_table[] = ['name' => $name, 'value' => $item_content_array[$name]];
                     }
                 } elseif ($type == 'date' || $type == 'datetime') {
-                    $values_into_module_table[] = array('name' => $name, 'value' => date('Y-m-d'));
+                    $values_into_module_table[] = ['name' => $name, 'value' => date('Y-m-d')];
                 } elseif ($type == 'switch') {
-                    $values_into_module_table[] = array('name' => $name, 'value' => 1);
+                    $values_into_module_table[] = ['name' => $name, 'value' => 1];
                 }
             }
 
@@ -336,23 +334,22 @@ class AIContentGeneratorController extends CBController
                 if (in_array($type, ['text', 'textarea', 'wysiwyg', 'icon'])) {
                     if ($lang_effect) {
                         foreach ($active_site_langs as $lang) {
-                            $values_into_module_table[] = array('name' => $name . '_' . $lang->code, 'value' => $item_content_array[$name]);
+                            $values_into_module_table[] = ['name' => $name . '_' . $lang->code, 'value' => $item_content_array[$name]];
                         }
                     } else {
-                        $values_into_module_table[] = array('name' => $name, 'value' => $item_content_array[$name]);
+                        $values_into_module_table[] = ['name' => $name, 'value' => $item_content_array[$name]];
                     }
                 } elseif ($type == 'date' || $type == 'datetime') {
-                    $values_into_module_table[] = array('name' => $name, 'value' => date('Y-m-d'));
+                    $values_into_module_table[] = ['name' => $name, 'value' => date('Y-m-d')];
                 } elseif ($type == 'switch') {
-                    $values_into_module_table[] = array('name' => $name, 'value' => 1);
+                    $values_into_module_table[] = ['name' => $name, 'value' => 1];
                 }
             }
 
             //insert values to module table
             $inserted_values_into_table = collect($values_into_module_table)->pluck('value', 'name')->toArray();
-            $module_item_insertedID = DB::table($module_table_name)->insertGetId($inserted_values_into_table);
 
-            return $module_item_insertedID;
+            return DB::table($module_table_name)->insertGetId($inserted_values_into_table);
         }
     }
 
@@ -387,18 +384,18 @@ class AIContentGeneratorController extends CBController
 
             if ($result['status'] == 'success') {
                 $improved_content = $result['result']['improved_content'];
-                $data = json_decode($improved_content, true);
-                $data =  $data ?? null;
+                $data = json_decode((string) $improved_content, true);
+                $data ??= null;
                 if ($data && is_array($data)) {
-                    echo json_encode(array('status' => 'success', 'message' => 'Improve content success', 'improved_content' => $data['improved_content']));
+                    echo json_encode(['status' => 'success', 'message' => 'Improve content success', 'improved_content' => $data['improved_content']]);
                 } else {
-                    echo json_encode(array('status' => 'failed', 'message' => 'Improve content failed response invalid'));
+                    echo json_encode(['status' => 'failed', 'message' => 'Improve content failed response invalid']);
                 }
             } else {
-                echo json_encode(array('status' => 'failed', 'message' => 'Improve content failed'));
+                echo json_encode(['status' => 'failed', 'message' => 'Improve content failed']);
             }
         } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'You have exceeded the allowed token usage limit'));
+            echo json_encode(['status' => 'failed', 'message' => 'You have exceeded the allowed token usage limit']);
         }
     }
 
@@ -424,18 +421,18 @@ class AIContentGeneratorController extends CBController
             }
             if ($result['status'] == 'success') {
                 $translated_content = $result['result']['translated_content'];
-                $data = json_decode($translated_content, true);
-                $data =  $data ?? null;
+                $data = json_decode((string) $translated_content, true);
+                $data ??= null;
                 if ($data && is_array($data)) {
-                    echo json_encode(array('status' => 'success', 'message' => 'Translate content success', 'translated_content' => $data['translated_content']));
+                    echo json_encode(['status' => 'success', 'message' => 'Translate content success', 'translated_content' => $data['translated_content']]);
                 } else {
-                    echo json_encode(array('status' => 'failed', 'message' => 'Translate content failed response invalid'));
+                    echo json_encode(['status' => 'failed', 'message' => 'Translate content failed response invalid']);
                 }
             } else {
-                echo json_encode(array('status' => 'failed', 'message' => 'Translate content failed'));
+                echo json_encode(['status' => 'failed', 'message' => 'Translate content failed']);
             }
         } else {
-            echo json_encode(array('status' => 'failed', 'message' => 'You have exceeded he allowed token usage limit'));
+            echo json_encode(['status' => 'failed', 'message' => 'You have exceeded he allowed token usage limit']);
         }
     }
 

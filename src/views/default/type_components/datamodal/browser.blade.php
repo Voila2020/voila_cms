@@ -51,13 +51,11 @@ if (count($coloms_alias) < 2 && isset($columns)) {
             $select_data = Request::get('select_to');
             if ($select_data) {
                 $select_data = explode(',', $select_data);
-                if ($select_data) {
-                    foreach ($select_data as $s) {
-                        $s_exp = explode(':', $s);
-                        $field_name = $s_exp[0];
-                        $target_field_name = $s_exp[1];
-                        $select_data_result[$target_field_name] = $row->$field_name;
-                    }
+                foreach ($select_data as $s) {
+                    $s_exp = explode(':', $s);
+                    $field_name = $s_exp[0];
+                    $target_field_name = $s_exp[1];
+                    $select_data_result[$target_field_name] = $row->$field_name;
                 }
             }
             ?>

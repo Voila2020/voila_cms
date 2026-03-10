@@ -1,3 +1,55 @@
+@php
+    if (!function_exists('isActiveMenu')) {
+        function isActiveMenu($menu)
+        {
+            if (Request::is($menu->url_path) || Request::is($menu->url_path.'/*')) {
+                return true;
+            }
+
+            foreach ($menu->children as $child) {
+                if (isActiveMenu($child)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    if (!function_exists('getMenuChildren')) {
+        function getMenuChildren($menu)
+        {
+            $results = '';
+            $listOpen = false;
+            if (count($menu->children)) {
+                $results .= '<ul class="treeview-menu">';
+                foreach ($menu->children as $key => $child) {
+                    $isActive = isActiveMenu($child);
+                    $listClass = $isActive ? ' active ' : '';
+
+                    $listClass .= count($child->children) ? 'inner-level-li' : '';
+                    $aClass = $child->color ? 'text-' . $child->color : '';
+                    $aHref = $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url;
+                    $results .= "<li data-id='{$child->id}' class='$listClass' >";
+                    $results .= "<a href='$aHref' class='$aClass' >";
+                    $results .= "<i class='{$child->icon}'></i>";
+                    $results .= '<span>' . cbLang($child->name) . '</span>';
+                    if (count($child->children)) {
+                        $results .= '<i class="fa fa-angle-' . cbLang('right') . ' pull-' . cbLang('right') . '"></i>';
+                    }
+                    $results .= '</a>';
+                    if (count($child->children)) {
+                        $results .= getMenuChildren($child);
+                    }
+                    $results .= '</li>';
+                }
+                $results .= '</ul>';
+            }
+            return $results;
+        }
+    }
+@endphp
+
 <!-- Left side column. contains the sidebar -->
 <aside class="main-sidebar">
 
@@ -27,7 +79,7 @@
                 <?php
                 $dashboard = CRUDBooster::sidebarDashboard();
                 $dashboard_href = CRUDBooster::adminPath();
-                if ($dashboard->type == 'Statistic') {
+                if ($dashboard && $dashboard->type == 'Statistic') {
                     $dashboard_href = CRUDBooster::adminPath($dashboard->path);
                 }
                 ?>
@@ -48,9 +100,9 @@
                     }
                     # regular expression to check if the next char is '/' so this route will active the current side bar item menu
                     $matches = [];
-                    $regex = '#' . preg_quote($menu->url_path) . '(.)(?=\w)#i'; // Modified regular expression with a lookahead assertion and a delimiter
+                    $regex = '#' . preg_quote((string) $menu->url_path) . '(.)(?=\w)#i'; // Modified regular expression with a lookahead assertion and a delimiter
                     $reg = preg_match($regex, Request::url(), $matches);
-                    if ($matches[1] == '/' || $matches[1] == '?') {
+                    if (isset($matches[1]) && ($matches[1] == '/' || $matches[1] == '?')) {
                         $isActiveLink = 'active';
                     }
                     ?>
@@ -82,7 +134,7 @@
                         <ul class='treeview-menu'>
                             <li
                                 class="{{ Request::is(config('crudbooster.ADMIN_PATH') . '/privileges/add*') ? 'active' : '' }}">
-                                <a href='{{ Route('PrivilegesControllerGetAdd') }}'>{{ $current_path }}<i
+                                <a href='{{ Route('PrivilegesControllerGetAdd') }}'>{{ $current_path ?? '' }}<i
                                         class='fa fa-plus'></i>
                                     <span>{{ cbLang('Add_New_Privilege') }}</span></a>
                             </li>
@@ -238,51 +290,3 @@
     </section>
     <!-- /.sidebar -->
 </aside>
-@php
-
-    function isActiveMenu($menu)
-    {
-        if (Request::is($menu->url_path) || Request::is($menu->url_path.'/*')) {
-            return true;
-        }
-       
-        foreach ($menu->children as $child) {
-            if (isActiveMenu($child)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    function getMenuChildren($menu)
-    {
-        $results = '';
-        $listOpen = false;
-        if (count($menu->children)) {
-            $results .= '<ul class="treeview-menu">';
-            foreach ($menu->children as $key => $child) {
-                $isActive = isActiveMenu($child);
-                $listClass = $isActive ? ' active ' : '';
-                
-                $listClass .= count($child->children) ? 'inner-level-li' : '';
-                $aClass = $child->color ? 'text-' . $child->color : '';
-                $aHref = $child->is_broken ? "javascript:alert('" . cbLang('controller_route_404') . "')" : $child->url;
-                $results .= "<li data-id='{$child->id}' class='$listClass' >";
-                $results .= "<a href='$aHref' class='$aClass' >";
-                $results .= "<i class='{$child->icon}'></i>";
-                $results .= '<span>' . cbLang($child->name) . '</span>';
-                if (count($child->children)) {
-                    $results .= '<i class="fa fa-angle-' . cbLang('right') . ' pull-' . cbLang('right') . '"></i>';
-                }
-                $results .= '</a>';
-                if (count($child->children)) {
-                    $results .= getMenuChildren($child);
-                }
-                $results .= '</li>';
-            }
-            $results .= '</ul>';
-        }
-        return $results;
-    }
-@endphp

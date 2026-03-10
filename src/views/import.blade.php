@@ -116,11 +116,7 @@
             </div>
 
             <?php
-            if ($data_sub_module) {
-                $action_path = Route($data_sub_module->controller . 'GetIndex');
-            } else {
-                $action_path = CRUDBooster::mainpath();
-            }
+            $action_path = $data_sub_module ? Route($data_sub_module->controller . 'GetIndex') : CRUDBooster::mainpath();
 
             $action = $action_path . '/done-import?file=' . Request::get('file') . '&import=1';
             ?>
@@ -150,12 +146,12 @@
                                     if (in_array($column, ['id', 'created_at', 'updated_at', 'deleted_at', 'active', 'sorting'])) {
                                         continue;
                                     }
-                                    if (substr($column, 0, 3) == 'id_') {
-                                        $relational_table = substr($column, 3);
+                                    if (str_starts_with((string) $column, 'id_')) {
+                                        $relational_table = substr((string) $column, 3);
                                         $help = "<a href='#' title='This is foreign key, so the System will be inserting new data to table `$relational_table` if doesn`t exists'><strong>(?)</strong></a>";
                                     }
-                                    if (substr($column, strlen($column) - 3, strlen($column)) == '_id') {
-                                        $relational_table = substr($column, 0,strlen($column) - 3);
+                                    if (substr((string) $column, strlen((string) $column) - 3, strlen((string) $column)) === '_id') {
+                                        $relational_table = substr((string) $column, 0,strlen((string) $column) - 3);
                                         $help = "<a href='#' title='This is foreign key, so the System will be inserting new data to table `$relational_table` if doesn`t exists'><strong>(?)</strong></a>";
                                     }
                                     ?>
@@ -250,11 +246,7 @@
             </div>
 
             <?php
-            if ($data_sub_module) {
-                $action_path = Route($data_sub_module->controller . 'GetIndex');
-            } else {
-                $action_path = CRUDBooster::mainpath();
-            }
+            $action_path = $data_sub_module ? Route($data_sub_module->controller . 'GetIndex') : CRUDBooster::mainpath();
 
             $action = $action_path . '/do-upload-import-data';
             ?>

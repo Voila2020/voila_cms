@@ -7,10 +7,8 @@
         <?php
         foreach ($columns as $col) {
 
-            if (Request::get('columns')) {
-                if (! in_array($col['name'], Request::get('columns'))) {
-                    continue;
-                }
+            if (Request::get('columns') && ! in_array($col['name'], Request::get('columns'))) {
+                continue;
             }
             $colname = $col['label'];
             echo "<th style='background:#eeeeee'>$colname</th>";
@@ -29,10 +27,8 @@
                 <?php
                 foreach ($columns as $col) {
 
-                    if (Request::get('columns')) {
-                        if (! in_array($col['name'], Request::get('columns'))) {
-                            continue;
-                        }
+                    if (Request::get('columns') && ! in_array($col['name'], Request::get('columns'))) {
+                        continue;
                     }
 
                     $value = @$row->{$col['field']};
@@ -42,7 +38,7 @@
                         if ($value == '') {
                             $value = "http://placehold.it/50x50&amp;text=NO+IMAGE";
                         }
-                        $pic = (strpos($value, 'http://') !== FALSE) ? $value : asset($value);
+                        $pic = (str_contains((string) $value, 'http://')) ? $value : asset($value);
                         $pic_small = $pic;
                         if (Request::input('fileformat') == 'pdf') {
                             echo "<td><a data-lightbox='roadtrip' rel='group_{{$table}}' title='$col[label]: $title' href='".$pic."'><img class='img-circle' width='40px' height='40px' src='".$pic_small."'/></a></td>";
@@ -50,18 +46,18 @@
                             echo "<td>$pic</td>";
                         }
                     } elseif (@$col['download']) {
-                        $url = (strpos($value, 'http://') !== FALSE) ? $value : asset($value);
+                        $url = (str_contains((string) $value, 'http://')) ? $value : asset($value);
                         echo "<td><a class='btn btn-sm btn-primary' href='$url' target='_blank' title='Download File'>Download</a></td>";
                     } else {
 
                         //limit character
                         if ($col['str_limit']) {
-                            $value = trim(strip_tags($value));
+                            $value = trim(strip_tags((string) $value));
                             $value = str_limit($value, $col['str_limit']);
                         }
 
                         if ($col['nl2br']) {
-                            $value = nl2br($value);
+                            $value = nl2br((string) $value);
                         }
 
                         if (Request::input('fileformat') == 'pdf') {

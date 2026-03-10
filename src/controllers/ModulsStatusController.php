@@ -28,20 +28,21 @@ class ModulsStatusController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->col[] = ["label" => "Name", "name" => "name"];
         $this->col[] = ["label" => "Table", "name" => "table_name"];
         $this->col[] = ["label" => "Path", "name" => "path"];
-        $this->col[] = ["label" => "Protected", "name" => "is_protected", "visible" => (CRUDBooster::isSuperAdmin() ? true : false), "switch" => true];
+        $this->col[] = ["label" => "Protected", "name" => "is_protected", "visible" => ((bool) CRUDBooster::isSuperAdmin()), "switch" => true];
     }
 
     function hook_query_index(&$query)
     {
-        if (!CRUDBooster::isSuperadmin())
+        if (!CRUDBooster::isSuperadmin()) {
             $query->where('is_protected', 0);
+        }
         $query->whereNotIn('cms_moduls.controller', ['AdminCmsUsersController', 'ModulsStatusController']);
     }
 
     function hook_before_delete($id)
     {
         $modul = DB::table('cms_moduls')->where('id', $id)->first();
-        $menus = DB::table('cms_menus')->where('path', 'like', '%' . $modul->controller . '%')->delete();
+        DB::table('cms_menus')->where('path', 'like', '%' . $modul->controller . '%')->delete();
         @unlink(app_path('Http/Controllers/' . $modul->controller . '.php'));
     }
 }

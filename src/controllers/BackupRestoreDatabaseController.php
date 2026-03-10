@@ -11,7 +11,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
     public function getIndex()
     {
         $admin_path = config('crudbooster.ADMIN_PATH');
-        return view('crudbooster::backup_restore_db', compact('admin_path'));
+        return view('crudbooster::backup_restore_db', ['admin_path' => $admin_path]);
     }
 
     public function getMakeBackup()
@@ -27,16 +27,16 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             mysqli_set_charset($connection, "utf8");
 
             /********************* Tables *********************/
-            if ($tables == '*') {
+            if ($tables === '*') {
                 # assign empty array into $tables
-                $tables = array();
+                $tables = [];
                 # query to get all tables in database
                 $result = mysqli_query($connection, 'SHOW TABLE STATUS');
                 # fetch all records of qieru
                 while ($row = mysqli_fetch_row($result)) {
                     # assign type of row after uppercase
-                    $type = strtoupper($row[17]);
-                    if ($type == "VIEW") {
+                    $type = strtoupper((string) $row[17]);
+                    if ($type === "VIEW") {
                         # append into tables array View that's key "table name"
                         $tables[$row[0]] = "View";
                     } else {
@@ -96,7 +96,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             session()->flash('message', cbLang('success_add_backup'));
             session()->flash('message_type', 'success');
             return response()->json(['message' => cbLang('success_add_backup'), 'message_type' => 'success']);
-        } catch (Exception $ex) {
+        } catch (Exception) {
             return response()->json(['message' => cbLang('error_add_backup')]);
         }
     }
@@ -109,7 +109,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             # query to get all records in table
             mysqli_query($connection, 'SET NAMES utf8');
             $result = mysqli_query($connection, 'SELECT * FROM ' . $table);
-            $num_fields = (($___mysqli_tmp = mysqli_num_fields($result)) ? $___mysqli_tmp : false);
+            $num_fields = ((($___mysqli_tmp = mysqli_num_fields($result)) !== 0) ? $___mysqli_tmp : false);
 
             if ($type == "Table") {
                 # query to get structre of table (structure fileds)
@@ -125,16 +125,16 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
                 $temp_insert = "";
                 # loop all structure fields and split each 100 records into one query insert
                 foreach ($result as $row) {
-                    $record = array();
-                    foreach ($row as $key => $value) {
+                    $record = [];
+                    foreach ($row as $value) {
                         if ($value == null) {
                             $value = 'NULL';
                         } else {
-                            $value = addslashes($value);
+                            $value = addslashes((string) $value);
                             $value = str_replace("\n", "\\n", $value);
                             $value = "'" . $value . "'";
                         }
-                        array_push($record, $value);
+                        $record[] = $value;
                     }
                     $arr_values_str = implode(",", $record);
                     $temp_insert .= "($arr_values_str),\n";
@@ -167,7 +167,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
                 $schema_view = mysqli_query($connection, "SELECT * FROM INFORMATION_SCHEMA.COLUMNS WHERE   TABLE_NAME='$table' AND TABLE_SCHEMA='$database'");
                 $create_table = "CREATE TABLE IF NOT EXISTS `$table`\n"
                     . "(\n";
-                $fields_view = array();
+                $fields_view = [];
                 while ($row = mysqli_fetch_row($schema_view)) {
                     $fields_view[] = "`" . $row[3] . "`" . " " . $row[15] . " " . ($row[6] == "YES" ? "NULL" : "NOT NULL") . " " . ($row[14] != "" ? "COLLATE '" . $row[14] . "'" : "");
                 }
@@ -184,7 +184,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
         $sql = '';
         $functions_result = mysqli_query($connection, "show function status");
 
-        $functions = array();
+        $functions = [];
         while ($row = mysqli_fetch_row($functions_result)) {
             if ($row[0] == $database) {
                 $functions[] = $row[1];
@@ -196,7 +196,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             $sql .= 'DROP FUNCTION IF EXISTS `' . $function . '`;';
             $row2 = mysqli_fetch_row(mysqli_query($connection, 'SHOW CREATE FUNCTION `' . $function . "`"));
             $sql .= "\n\n";
-            $sql .= "\n\n" . rtrim($row2[2], ';') . ";" . "\n\n";
+            $sql .= "\n\n" . rtrim((string) $row2[2], ';') . ";" . "\n\n";
             $sql .= "\n\n";
         }
         return $sql;
@@ -206,7 +206,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
     {
         $sql = '';
         $views_result = mysqli_query($connection, 'SHOW TABLE STATUS WHERE Engine IS NULL');
-        $views = array();
+        $views = [];
         while ($row = mysqli_fetch_row($views_result)) {
             $views[] = $row[0];
         }
@@ -240,7 +240,7 @@ class BackupRestoreDatabaseController extends \crocodicstudio\crudbooster\contro
             $sql .= 'DROP TRIGGER IF EXISTS ' . $trigger_name . ";\n";
             $sql .= "CREATE TRIGGER $trigger_name $trigger_timing $trigger_event ON $trigger_table\n";
             $sql .= "FOR EACH ROW\n";
-            if (substr($trigger_statement, -1) == ";") {
+            if (str_ends_with((string) $trigger_statement, ";")) {
                 $sql .= $trigger_statement . "\n\n\n\n";
             } else {
                 $sql .= $trigger_statement . ";\n\n\n\n";

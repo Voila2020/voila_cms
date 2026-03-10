@@ -18,17 +18,13 @@ class CBAuthAttempts
         $user = DB::table('cms_users')->where('email', $request->input('email'))->first();
         # if matches password
         $cms_login_attempts = DB::table('cms_login_attempts')->where('ip_address', $ip_address)->first();
-        if (Hash::check($request->input('password'), $user->password)) {
-            if (($cms_login_attempts && $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString()) > intval(get_setting('block_ip_in_hours')))
-                || !$cms_login_attempts->blocked_at
-            ) {
-                DB::table('cms_login_attempts')->where('ip_address', $ip_address)
-                    ->update([
-                        'attempts' => 0,
-                        'blocked_at' => null,
-                    ]);
-                return $next($request);
-            }
+        if (Hash::check($request->input('password'), $user->password) && ($cms_login_attempts && $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString()) > intval(get_setting('block_ip_in_hours')) || !$cms_login_attempts->blocked_at)) {
+            DB::table('cms_login_attempts')->where('ip_address', $ip_address)
+                ->update([
+                    'attempts' => 0,
+                    'blocked_at' => null,
+                ]);
+            return $next($request);
         }
 
         if (!$cms_login_attempts) {

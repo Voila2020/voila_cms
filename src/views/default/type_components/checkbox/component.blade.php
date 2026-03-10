@@ -8,16 +8,16 @@
 
         @if($form['dataenum']!='')
             <?php
-            @$value = explode(";", $value);
-            @array_walk($value, 'trim');
+            @$value = explode(";", (string) $value);
+            @array_walk($value, trim(...));
             $dataenum = $form['dataenum'];
-            $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", $dataenum);
+            $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", (string) $dataenum);
             ?>
             @foreach($dataenum as $k=>$d)
                 <?php
-                if (strpos($d, '|')) {
-                    $val = substr($d, 0, strpos($d, '|'));
-                    $label = substr($d, strpos($d, '|') + 1);
+                if (strpos((string) $d, '|')) {
+                    $val = substr((string) $d, 0, strpos((string) $d, '|'));
+                    $label = substr((string) $d, strpos((string) $d, '|') + 1);
                 } else {
                     $val = $label = $d;
                 }
@@ -33,7 +33,7 @@
 
         <?php
         if (@$form['datatable']):
-            $datatable_array = explode(",", $form['datatable']);
+            $datatable_array = explode(",", (string) $form['datatable']);
             $datatable_tab = $datatable_array[0];
             $datatable_field = $datatable_array[1];
 
@@ -81,7 +81,9 @@
                 foreach ($selects_data as $d) {
                     $val = $d->{$datatable_field};
                     $checked = (is_array($value) && in_array($val, $value)) ? "checked" : "";
-                    if ($val == '' || ! $d->id) continue;
+                    if ($val == '' || ! $d->id) {
+                        continue;
+                    }
 
                     echo "
 												<div data-val='$val' class='checkbox $disabled'>
@@ -96,7 +98,7 @@
         if ($form['dataquery']) {
 
             $query = DB::select(DB::raw($form['dataquery']));
-            @$value = explode(';', $value);
+            @$value = explode(';', (string) $value);
             if ($query) {
                 foreach ($query as $q) {
                     $val = $q->value;

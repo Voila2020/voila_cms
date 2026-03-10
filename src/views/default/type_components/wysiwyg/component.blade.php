@@ -156,11 +156,7 @@
         }
 
         $fonts_values = Crudbooster::getSetting('editor_fonts_' . $lang->direction);
-        if($fonts_values != ''){
-            $editorFonts[$lang->code] = str_replace("'","",str_replace('"',"",$fonts_values));
-        }else{
-            $editorFonts[$lang->code] = '';
-        }
+        $editorFonts[$lang->code] = $fonts_values != '' ? str_replace("'","",str_replace('"',"",$fonts_values)) : '';
     }
     
 

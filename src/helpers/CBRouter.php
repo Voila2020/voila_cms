@@ -26,7 +26,7 @@ class CBRouter
     private static function apiRoute()
     {
         // API Authentication
-        Route::group(['middleware' => ['api'], 'namespace' => static::$cb_namespace], function () {
+        Route::group(['middleware' => ['api'], 'namespace' => self::$cb_namespace], function () {
             Route::post("api/get-token", "ApiAuthorizationController@postGetToken");
         });
 
@@ -38,7 +38,7 @@ class CBRouter
                 $names = array_filter(preg_split('/(?=[A-Z])/', str_replace('Controller', '', $v)));
                 $names = strtolower(implode('_', $names));
 
-                if (substr($names, 0, 4) == 'api_') {
+                if (str_starts_with($names, 'api_')) {
                     $names = str_replace('api_', '', $names);
                     Route::any('api/' . $names, $v . '@execute_api');
                 }
@@ -48,7 +48,7 @@ class CBRouter
 
     private static function uploadRoute()
     {
-        Route::group(['middleware' => ['web'], 'namespace' => static::$cb_namespace], function () {
+        Route::group(['middleware' => ['web'], 'namespace' => self::$cb_namespace], function () {
             Route::get('api-documentation', ['uses' => 'ApiCustomController@apiDocumentation', 'as' => 'apiDocumentation']);
             Route::get('download-documentation-postman', ['uses' => 'ApiCustomController@getDownloadPostman', 'as' => 'downloadDocumentationPostman']);
             Route::get('uploads/{one?}/{two?}/{three?}/{four?}/{five?}', ['uses' => 'FileController@getPreview', 'as' => 'fileControllerPreview']);
@@ -57,7 +57,7 @@ class CBRouter
 
     private static function authRoute()
     {
-        Route::group(['middleware' => ['web'], 'prefix' => config('crudbooster.ADMIN_PATH'), 'namespace' => static::$cb_namespace], function () {
+        Route::group(['middleware' => ['web'], 'prefix' => config('crudbooster.ADMIN_PATH'), 'namespace' => self::$cb_namespace], function () {
 
             Route::post('unlock-screen', ['uses' => 'AdminController@postUnlockScreen', 'as' => 'postUnlockScreen']);
             Route::get('lock-screen', ['uses' => 'AdminController@getLockscreen', 'as' => 'getLockScreen']);
@@ -92,7 +92,7 @@ class CBRouter
                     ->whereNotNull("path")
                     ->whereNotNull("controller")
                     // ->where('is_protected', 0)
-                    ->where('deleted_at', null)
+                    ->where('deleted_at')
                     ->get();
             } catch (\Exception $e) {
                 Log::error("Load cms moduls is failed. Caused = " . $e->getMessage());
@@ -115,7 +115,7 @@ class CBRouter
         Route::group([
             'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
             'prefix' => config('crudbooster.ADMIN_PATH'),
-            'namespace' => static::$cb_namespace,
+            'namespace' => self::$cb_namespace,
         ], function () {
 
             // Todo: change table
@@ -123,10 +123,10 @@ class CBRouter
             if ($menus) {
                 Route::get('/', 'StatisticBuilderController@getDashboard');
             } else {
-                CRUDBooster::routeController('/', 'AdminController', static::$cb_namespace);
+                CRUDBooster::routeController('/', 'AdminController', self::$cb_namespace);
             }
 
-            CRUDBooster::routeController('api_generator', 'ApiCustomController', static::$cb_namespace);
+            CRUDBooster::routeController('api_generator', 'ApiCustomController', self::$cb_namespace);
             // Todo: change table
             $modules = [];
             try {
@@ -138,7 +138,7 @@ class CBRouter
             foreach ($modules as $v) {
                 if (@$v->path && @$v->controller) {
                     try {
-                        CRUDBooster::routeController($v->path, $v->controller, static::$cb_namespace);
+                        CRUDBooster::routeController($v->path, $v->controller, self::$cb_namespace);
                     } catch (\Exception $e) {
                         Log::error("Path = " . $v->path . "\nController = " . $v->controller . "\nError = " . $e->getMessage());
                     }
@@ -151,19 +151,19 @@ class CBRouter
     {
         # page builder
         Route::group([
-            'namespace' => static::$cb_namespace,
+            'namespace' => self::$cb_namespace,
         ], function () {
             Route::post('submit-form/{id}', [CmsFormController::class, 'submit']);
             Route::get('thankyou/{id}', [CmsFormController::class, 'getLandingPageThankyou']);
         });
         # file-manager
         Route::group([
-            'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'], 'prefix' => "", 'namespace' => static::$cb_namespace,
+            'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'], 'prefix' => "", 'namespace' => self::$cb_namespace,
         ], function () {
             Route::get('/filemanager-dialog', [FileManagerController::class, 'index'])->name('dialog');
-            Route::match(array('GET', 'POST'), '/filemanager-upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
-            Route::match(array('GET', 'POST'), '/filemanager-execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
-            Route::match(array('GET', 'POST'), '/ajax_calls', [FileManagerController::class, 'ajaxCall'])->name("filemanager.ajax_calls");
+            Route::match(['GET', 'POST'], '/filemanager-upload', [FileManagerController::class, 'upload'])->name('filemanager.upload');
+            Route::match(['GET', 'POST'], '/filemanager-execute', [FileManagerController::class, 'execute'])->name('filemanager.excute');
+            Route::match(['GET', 'POST'], '/ajax_calls', [FileManagerController::class, 'ajaxCall'])->name("filemanager.ajax_calls");
             Route::post('/download', [FileManagerController::class, 'forceDownload'])->name("filemanager.download");
         });
     }
@@ -172,7 +172,7 @@ class CBRouter
         Route::group([
             'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
             'prefix' => config('crudbooster.ADMIN_PATH'),
-            'namespace' => static::$cb_namespace
+            'namespace' => self::$cb_namespace
         ], function () {
 
             Route::get( '/ai/settings', ['uses' => 'AIContentGeneratorController@showSettings', 'as' => 'AIContentGeneratorControllerShowSettings']);
@@ -191,7 +191,7 @@ class CBRouter
         Route::group([
             'middleware' => ['web', '\crocodicstudio\crudbooster\middlewares\CBBackend'],
             'prefix' => config('crudbooster.ADMIN_PATH'),
-            'namespace' => static::$cb_namespace
+            'namespace' => self::$cb_namespace
         ], function () {
 
             Route::get('/show_tickets', 'TicketSystemController@getIndex');
@@ -206,13 +206,13 @@ class CBRouter
 
     public static function route()
     {
-        static::apiRoute();
-        static::uploadRoute();
-        static::authRoute();
-        static::userControllerRoute();
-        static::cbRoute();
-        static::voilaCMSRoutes();
-        static::aiContentRoute();
-        static::ticketSystemRoute();
+        self::apiRoute();
+        self::uploadRoute();
+        self::authRoute();
+        self::userControllerRoute();
+        self::cbRoute();
+        self::voilaCMSRoutes();
+        self::aiContentRoute();
+        self::ticketSystemRoute();
     }
 }

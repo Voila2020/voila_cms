@@ -8,13 +8,13 @@
     $confirm_box = '';
     if (isset($a['confirmation']) && ! empty($a['confirmation']) && $a['confirmation']) {
 
-        $a['confirmation_title'] = ! empty($a['confirmation_title']) ? $a['confirmation_title'] : cbLang('confirmation_title');
-        $a['confirmation_text'] = ! empty($a['confirmation_text']) ? $a['confirmation_text'] : cbLang('confirmation_text');
-        $a['confirmation_type'] = ! empty($a['confirmation_type']) ? $a['confirmation_type'] : 'warning';
+        $a['confirmation_title'] = empty($a['confirmation_title']) ? cbLang('confirmation_title') : $a['confirmation_title'];
+        $a['confirmation_text'] = empty($a['confirmation_text']) ? cbLang('confirmation_text') : $a['confirmation_text'];
+        $a['confirmation_type'] = empty($a['confirmation_type']) ? 'warning' : $a['confirmation_type'];
         $a['confirmation_showCancelButton'] = empty($a['confirmation_showCancelButton']) ? 'true' : 'false';
-        $a['confirmation_confirmButtonColor'] = ! empty($a['confirmation_confirmButtonColor']) ? $a['confirmation_confirmButtonColor'] : '#DD6B55';
-        $a['confirmation_confirmButtonText'] = ! empty($a['confirmation_confirmButtonText']) ? $a['confirmation_confirmButtonText'] : cbLang('confirmation_yes');;
-        $a['confirmation_cancelButtonText'] = ! empty($a['confirmation_cancelButtonText']) ? $a['confirmation_cancelButtonText'] : cbLang('confirmation_no');;
+        $a['confirmation_confirmButtonColor'] = empty($a['confirmation_confirmButtonColor']) ? '#DD6B55' : $a['confirmation_confirmButtonColor'];
+        $a['confirmation_confirmButtonText'] = empty($a['confirmation_confirmButtonText']) ? cbLang('confirmation_yes') : $a['confirmation_confirmButtonText'];;
+        $a['confirmation_cancelButtonText'] = empty($a['confirmation_cancelButtonText']) ? cbLang('confirmation_no') : $a['confirmation_cancelButtonText'];;
         $a['confirmation_closeOnConfirm'] = empty($a['confirmation_closeOnConfirm']) ? 'true' : 'false';
 
         $confirm_box = '

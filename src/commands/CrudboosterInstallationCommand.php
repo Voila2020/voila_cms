@@ -39,39 +39,31 @@ class CrudboosterInstallationCommand extends Command
         if ($this->confirm('Do you have setting the database configuration at .env ?')) {
 
             # delete directories
-            if (file_exists(public_path('vendor'))) {
-                if ($this->confirm('Do you want to replace your files ?')) {
-                    if (file_exists(public_path('vendor'))) {
-                        File::deleteDirectory(public_path('vendor'));
+            if (file_exists(public_path('vendor')) && $this->confirm('Do you want to replace your files ?')) {
+                File::deleteDirectory(public_path('vendor'));
+                if (file_exists(public_path('landing_page_builder'))) {
+                    File::deleteDirectory(public_path('landing_page_builder'));
+                }
+                if (file_exists(public_path('landing_page'))) {
+                    File::deleteDirectory(public_path('landing_page'));
+                }
+                $langDirectories = [
+                    resource_path('lang/ar'),
+                    resource_path('lang/en'),
+                    resource_path('lang/es'),
+                    resource_path('lang/id'),
+                    resource_path('lang/pt_br'),
+                    resource_path('lang/ru'),
+                    resource_path('lang/tr'),
+                    resource_path('lang/zh-CN'),
+                ];
+                foreach ($langDirectories as $langDirectory) {
+                    if (file_exists($langDirectory . '/crudbooster.php')) {
+                        unlink($langDirectory . '/crudbooster.php');
                     }
-
-                    if (file_exists(public_path('landing_page_builder'))) {
-                        File::deleteDirectory(public_path('landing_page_builder'));
-                    }
-
-                    if (file_exists(public_path('landing_page'))) {
-                        File::deleteDirectory(public_path('landing_page'));
-                    }
-
-                    $langDirectories = [
-                        resource_path('lang/ar'),
-                        resource_path('lang/en'),
-                        resource_path('lang/es'),
-                        resource_path('lang/id'),
-                        resource_path('lang/pt_br'),
-                        resource_path('lang/ru'),
-                        resource_path('lang/tr'),
-                        resource_path('lang/zh-CN'),
-                    ];
-                    foreach ($langDirectories as $langDirectory) {
-                        if (file_exists($langDirectory . '/crudbooster.php')) {
-                            unlink($langDirectory . '/crudbooster.php');
-                        }
-                    }
-
-                    if (file_exists(config_path('crudbooster.php'))) {
-                        File::delete(config_path('crudbooster.php'));
-                    }
+                }
+                if (file_exists(config_path('crudbooster.php'))) {
+                    File::delete(config_path('crudbooster.php'));
                 }
             }
 
@@ -294,7 +286,7 @@ class CrudboosterInstallationCommand extends Command
             $system_failed++;
         }
 
-        if ($system_failed != 0) {
+        if ($system_failed !== 0) {
             $this->info('Sorry unfortunately your system is not meet with our requirements !');
             $this->footer(false);
         }

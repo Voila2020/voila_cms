@@ -44,7 +44,7 @@ class TranslationController extends CBController
             }
         }
 
-        return view('crudbooster::languages', compact('languages', 'columns', 'columnsCount'));
+        return view('crudbooster::languages', ['languages' => $languages, 'columns' => $columns, 'columnsCount' => $columnsCount]);
     }
 
     public function postStore(Request $request)
@@ -54,8 +54,8 @@ class TranslationController extends CBController
             // 'value' => 'required',
         ]);
         foreach ($request->all() as $key => $input) {
-            if (str_contains($key, 'val')) {
-                $code = explode('_', $key);
+            if (str_contains((string) $key, 'val')) {
+                $code = explode('_', (string) $key);
                 $code = $code[1];
                 $data = $this->openJSONFile($code);
                 $data[$request->key] = $input;

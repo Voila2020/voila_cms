@@ -20,18 +20,18 @@
                     <?php
                     $columns_tbody = [];
                     $data_child = DB::table($form['table'])->where($form['foreign_key'], $id);
-                    foreach ($form['columns'] as $i => $c) {
+                    foreach ($form['columns'] as $c) {
                         $data_child->addselect($form['table'].'.'.$c['name']);
 
                         if ($c['type'] == 'datamodal') {
-                            $datamodal_title = explode(',', $c['datamodal_columns'])[0];
+                            $datamodal_title = explode(',', (string) $c['datamodal_columns'])[0];
                             $datamodal_table = $c['datamodal_table'];
                             $data_child->join($c['datamodal_table'], $c['datamodal_table'].'.id', '=', $c['name']);
                             $data_child->addselect($c['datamodal_table'].'.'.$datamodal_title.' as '.$datamodal_table.'_'.$datamodal_title);
                         } elseif ($c['type'] == 'select') {
                             if ($c['datatable']) {
-                                $join_table = explode(',', $c['datatable'])[0];
-                                $join_field = explode(',', $c['datatable'])[1];
+                                $join_table = explode(',', (string) $c['datatable'])[0];
+                                $join_field = explode(',', (string) $c['datatable'])[1];
                                 $data_child->join($join_table, $join_table.'.id', '=', $c['name']);
                                 $data_child->addselect($join_table.'.'.$join_field.' as '.$join_table.'_'.$join_field);
                             }
@@ -47,8 +47,8 @@
                                 <?php
                                 if ($col['type'] == 'select') {
                                     if ($col['datatable']) {
-                                        $join_table = explode(',', $col['datatable'])[0];
-                                        $join_field = explode(',', $col['datatable'])[1];
+                                        $join_table = explode(',', (string) $col['datatable'])[0];
+                                        $join_field = explode(',', (string) $col['datatable'])[1];
                                         echo "<span class='td-label'>";
                                         echo $d->{$join_table.'_'.$join_field};
                                         echo "</span>";
@@ -61,14 +61,14 @@
                                         echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                     }
                                 } elseif ($col['type'] == 'datamodal') {
-                                    $datamodal_title = explode(',', $col['datamodal_columns'])[0];
+                                    $datamodal_title = explode(',', (string) $col['datamodal_columns'])[0];
                                     $datamodal_table = $col['datamodal_table'];
                                     echo "<span class='td-label'>";
                                     echo $d->{$datamodal_table.'_'.$datamodal_title};
                                     echo "</span>";
                                     echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                 } elseif ($col['type'] == 'upload') {
-                                    $filename = basename($d->{$col['name']});
+                                    $filename = basename((string) $d->{$col['name']});
                                     if ($col['upload_type'] == 'image') {
                                         echo "<a href='".asset($d->{$col['name']})."' class='fancybox'><img data-label='$filename' src='".asset($d->{$col['name']})."' width='50px' height='50px'/></a>";
                                         echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";

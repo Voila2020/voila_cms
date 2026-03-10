@@ -8,6 +8,10 @@ use Illuminate\Support\Facades\Route;
 
 class ApiCustomController extends CBController
 {
+    /**
+     * @var bool
+     */
+    public $button_new;
     public function cbInit()
     {
         $this->table = 'cms_apicustom';
@@ -69,7 +73,7 @@ class ApiCustomController extends CBController
             $httpbuilder = [];
             if ($parameters) {
                 foreach ($parameters as $p) {
-                    $enabled = ($p['used'] == 0) ? false : true;
+                    $enabled = $p['used'] != 0;
                     $name = $p['name'];
                     $httpbuilder[$name] = '';
                     if ($enabled) {
@@ -78,12 +82,8 @@ class ApiCustomController extends CBController
                 }
             }
 
-            if (strtolower($a->method_type) == 'get') {
-                if ($httpbuilder) {
-                    $httpbuilder = "?".http_build_query($httpbuilder);
-                } else {
-                    $httpbuilder = '';
-                }
+            if (strtolower((string) $a->method_type) === 'get') {
+                $httpbuilder = $httpbuilder !== [] ? "?".http_build_query($httpbuilder) : '';
             } else {
                 $httpbuilder = '';
             }
@@ -137,7 +137,7 @@ class ApiCustomController extends CBController
         $tables = CRUDBooster::listTables();
         $tables_list = [];
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $tables_list[] = $value;
             }
         }
@@ -167,7 +167,7 @@ class ApiCustomController extends CBController
         $tables = CRUDBooster::listTables();
         $tables_list = [];
         foreach ($tables as $tab) {
-            foreach ($tab as $key => $value) {
+            foreach ($tab as $value) {
                 $tables_list[] = $value;
             }
         }
@@ -242,30 +242,28 @@ class ApiCustomController extends CBController
 
             $type_field = CRUDBooster::getFieldType($table, $ro);
 
-            $type_field = (array_search($ro, explode(',', config('crudbooster.EMAIL_FIELDS_CANDIDATE'))) !== false) ? "email" : $type_field;
-            $type_field = (array_search($ro, explode(',', config('crudbooster.IMAGE_FIELDS_CANDIDATE'))) !== false) ? "image" : $type_field;
-            $type_field = (array_search($ro, explode(',', config('crudbooster.PASSWORD_FIELDS_CANDIDATE'))) !== false) ? "password" : $type_field;
+            $type_field = (in_array($ro, explode(',', (string) config('crudbooster.EMAIL_FIELDS_CANDIDATE')))) ? "email" : $type_field;
+            $type_field = (in_array($ro, explode(',', (string) config('crudbooster.IMAGE_FIELDS_CANDIDATE')))) ? "image" : $type_field;
+            $type_field = (in_array($ro, explode(',', (string) config('crudbooster.PASSWORD_FIELDS_CANDIDATE')))) ? "password" : $type_field;
 
-            $type_field = (substr($ro, -3) == '_id') ? "integer" : $type_field;
-            $type_field = (substr($ro, 0, 3) == 'id_') ? "integer" : $type_field;
+            $type_field = (str_ends_with((string) $ro, '_id')) ? "integer" : $type_field;
+            $type_field = (str_starts_with((string) $ro, 'id_')) ? "integer" : $type_field;
 
             $new_result[] = ['name' => $ro, 'type' => $type_field];
 
-            if ($type == 'list' || $type == 'detail') {
-                if (substr($ro, 0, 3) == 'id_') {
-                    $table2 = substr($ro, 3);
-                    $t2 = DB::getSchemaBuilder()->getColumnListing($table2);
-                    foreach ($t2 as $t) {
-                        if ($t != 'id' && $t != 'created_at' && $t != 'updated_at' && $t != 'deleted_at') {
+            if (($type == 'list' || $type == 'detail') && str_starts_with((string) $ro, 'id_')) {
+                $table2 = substr((string) $ro, 3);
+                $t2 = DB::getSchemaBuilder()->getColumnListing($table2);
+                foreach ($t2 as $t) {
+                    if (!in_array($t, ['id', 'created_at', 'updated_at', 'deleted_at'])) {
 
-                            if (substr($t, 0, 3) == 'id_') {
-                                continue;
-                            }
-
-                            $type_field = CRUDBooster::getFieldType($table2, $t);
-                            $t = str_replace("_$table2", "", $t);
-                            $new_result[] = ['name' => $table2.'_'.$t, 'type' => $type_field];
+                        if (str_starts_with((string) $t, 'id_')) {
+                            continue;
                         }
+
+                        $type_field = CRUDBooster::getFieldType($table2, $t);
+                        $t = str_replace("_$table2", "", $t);
+                        $new_result[] = ['name' => $table2.'_'.$t, 'type' => $type_field];
                     }
                 }
             }
@@ -293,8 +291,9 @@ class ApiCustomController extends CBController
         $params_required = g('params_required');
         $params_used = g('params_used');
         $json = [];
+        $counter = count($params_name);
 
-        for ($i = 0; $i <= count($params_name); $i++) {
+        for ($i = 0; $i <= $counter; $i++) {
             if ($params_name[$i]) {
                 $json[] = [
                     'name' => $params_name[$i],
@@ -316,7 +315,8 @@ class ApiCustomController extends CBController
         $responses_subquery = g('responses_subquery');
         $responses_used = g('responses_used');
         $json = [];
-        for ($i = 0; $i <= count($responses_name); $i++) {
+        $counter = count($responses_name);
+        for ($i = 0; $i <= $counter; $i++) {
             if ($responses_name[$i]) {
                 $json[] = [
                     'name' => $responses_name[$i],

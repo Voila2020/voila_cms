@@ -8,7 +8,9 @@ $asset_already = [];
 foreach($forms as $form) {
 $type = @$form['type'] ?: 'text';
 
-if (in_array($type, $asset_already)) continue;
+if (in_array($type, $asset_already)) {
+    continue;
+}
 
 ?>
 @if (file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/' . $type . '/asset.blade.php')))
@@ -34,13 +36,13 @@ $asset_already[] = $type;
     <table id='table-detail' class='table table-striped'>
 
         <?php
-        foreach($forms as $index=>$form):
+        foreach($forms as $form):
 
         $name = $form['name'];
         @$join = $form['join'];
-        @$value = (isset($form['value'])) ? $form['value'] : '';
-        @$value = (isset($row->{$name})) ? $row->{$name} : $value;
-        @$showInDetail = (isset($form['showInDetail'])) ? $form['showInDetail'] : true;
+        @$value = $form['value'] ?? '';
+        @$value = $row->{$name} ?? $value;
+        @$showInDetail = $form['showInDetail'] ?? true;
 
         if ($showInDetail == FALSE) {
             continue;
@@ -63,8 +65,8 @@ $asset_already[] = $type;
         }
 
         if ($join && @$row) {
-            $join_arr = explode(',', $join);
-            array_walk($join_arr, 'trim');
+            $join_arr = explode(',', (string) $join);
+            array_walk($join_arr, trim(...));
             $join_table = $join_arr[0];
             $join_title = $join_arr[1];
             $join_table_pk = CB::pk($join_table);
@@ -85,7 +87,7 @@ $asset_already[] = $type;
         ?>
 
         @if (file_exists($file_location))
-            <?php $containTR = substr(trim(file_get_contents($file_location)), 0, 4) == '<tr>' ? true : false; ?>
+            <?php $containTR = str_starts_with(trim(file_get_contents($file_location)), '<tr>'); ?>
             @if ($containTR)
                 @include('crudbooster::default.type_components.' . $type . '.component_detail')
             @else
@@ -95,7 +97,7 @@ $asset_already[] = $type;
                 </tr>
             @endif
         @elseif(file_exists($user_location))
-            <?php $containTR = substr(trim(file_get_contents($user_location)), 0, 4) == '<tr>' ? true : false; ?>
+            <?php $containTR = str_starts_with(trim(file_get_contents($user_location)), '<tr>'); ?>
             @if ($containTR)
                 @include('vendor.crudbooster.type_components.' . $type . '.component_detail')
             @else

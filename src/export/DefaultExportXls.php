@@ -9,11 +9,8 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class DefaultExportXls implements FromView
 {
-    private array $data;
-
-    public function __construct(array $data)
+    public function __construct(private readonly array $data)
     {
-        $this->data = $data;
     }
 
     public function view(): View

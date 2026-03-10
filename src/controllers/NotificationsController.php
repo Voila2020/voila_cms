@@ -6,6 +6,10 @@ use Illuminate\Support\Facades\Schema;
 
 class NotificationsController extends CBController
 {
+    /**
+     * @var array<string, string>
+     */
+    public $index_orderby;
     public function cbInit()
     {
         $this->table = "cms_notifications";

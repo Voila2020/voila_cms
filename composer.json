@@ -44,5 +44,9 @@
                 "crocodicstudio\\crudbooster\\CRUDBoosterServiceProvider"
             ]
         }
+    },
+    "require-dev": {
+        "rector/rector": "^2.3",
+        "rector/rector-laravel": "^2.1"
     }
 }

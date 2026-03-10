@@ -70,7 +70,7 @@
                         <select name='theme_color' class='form-control' required>
                             <option value=''>{{ cbLang('chose_theme_color_select') }}</option>
                             <?php
-                            $skins = array(
+                            $skins = [
                                 'skin-blue',
                                 'skin-blue-light',
                                 'skin-yellow',
@@ -83,7 +83,7 @@
                                 'skin-red-light',
                                 'skin-black',
                                 'skin-black-light'
-                            );
+                            ];
                             foreach($skins as $skin):
                             ?>
                             <option <?= @$row->theme_color == $skin ? 'selected' : '' ?> value='<?= $skin ?>'>

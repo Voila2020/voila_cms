@@ -19,7 +19,7 @@ class RouterController extends Controller
             if ($landingPage->is_rtl) {
                 App::setlocale("ar");
             }
-            return response()->view("landing_page_builder.view", compact("landingPage", "landingPageSeo"));
+            return response()->view("landing_page_builder.view", ['landingPage' => $landingPage, 'landingPageSeo' => $landingPageSeo]);
         }
         abort(404);
     }

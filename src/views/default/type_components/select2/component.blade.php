@@ -48,7 +48,7 @@
                 $where = @$form['datatable_where'];
                 $format = @$form['datatable_format'];
 
-                $raw = explode(',', $datatable);
+                $raw = explode(',', (string) $datatable);
                 $url = CRUDBooster::mainpath('find-data');
 
                 $table1 = $raw[0];
@@ -165,13 +165,13 @@
                             <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
                             <?php
                             $dataenum = $form['dataenum'];
-                            $dataenum = is_array($dataenum) ? $dataenum : explode(';', $dataenum);
+                            $dataenum = is_array($dataenum) ? $dataenum : explode(';', (string) $dataenum);
                             ?>
                             @foreach ($dataenum as $enum)
                                 <?php
                                 $val = $lab = '';
-                                if (strpos($enum, '|') !== false) {
-                                    $draw = explode('|', $enum);
+                                if (str_contains((string) $enum, '|')) {
+                                    $draw = explode('|', (string) $enum);
                                     $val = $draw[0];
                                     $lab = $draw[1];
                                 } else {
@@ -187,8 +187,8 @@
                         @if ($form['datatable'])
                             @if ($form['relationship_table'])
                                 <?php
-                                $select_table = explode(',', $form['datatable'])[0];
-                                $select_title = explode(',', $form['datatable'])[1];
+                                $select_table = explode(',', (string) $form['datatable'])[0];
+                                $select_title = explode(',', (string) $form['datatable'])[1];
                                 $select_where = $form['datatable_where'];
                                 $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
                                 //-----------------------------------------
@@ -205,16 +205,16 @@
                                 $result = $result->orderby($select_title, 'asc')->get();
 
                                 if ($form['datatable_orig'] != '') {
-                                    $params = explode('|', $form['datatable_orig']);
+                                    $params = explode('|', (string) $form['datatable_orig']);
                                     if (!isset($params[2])) {
                                         $params[2] = 'id';
                                     }
                                     $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
-                                    $value = explode(',', $value);
+                                    $value = explode(',', (string) $value);
                                 } else {
                                     //----------------------------------------------------------
                                     // Prevent take relation many to many with translation table
-                                    $select_table = explode(',', $form['datatable'])[0];
+                                    $select_table = explode(',', (string) $form['datatable'])[0];
                                     //----------------------------------------------------------
                                     $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
                                     $foreignKey2 = CRUDBooster::getForeignKey($select_table, $form['relationship_table']);
@@ -237,8 +237,8 @@
                                     <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}
                                     </option>
                                     <?php
-                                    $select_table = explode(',', $form['datatable'])[0];
-                                    $select_title = explode(',', $form['datatable'])[1];
+                                    $select_table = explode(',', (string) $form['datatable'])[0];
+                                    $select_title = explode(',', (string) $form['datatable'])[1];
                                     $select_where = $form['datatable_where'];
                                     $datatable_format = $form['datatable_format'];
                                     $select_table_pk = CRUDBooster::findPrimaryKey($select_table);
@@ -319,7 +319,7 @@
             $where = @$form['datatable_where'];
             $format = @$form['datatable_format'];
 
-            $raw = explode(',', $datatable);
+            $raw = explode(',', (string) $datatable);
             $url = CRUDBooster::mainpath('find-data');
 
             $table1 = $raw[0];
@@ -436,13 +436,13 @@
                     <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
                     <?php
                     $dataenum = $form['dataenum'];
-                    $dataenum = is_array($dataenum) ? $dataenum : explode(';', $dataenum);
+                    $dataenum = is_array($dataenum) ? $dataenum : explode(';', (string) $dataenum);
                     ?>
                     @foreach ($dataenum as $enum)
                         <?php
                         $val = $lab = '';
-                        if (strpos($enum, '|') !== false) {
-                            $draw = explode('|', $enum);
+                        if (str_contains((string) $enum, '|')) {
+                            $draw = explode('|', (string) $enum);
                             $val = $draw[0];
                             $lab = $draw[1];
                         } else {
@@ -458,8 +458,8 @@
                 @if ($form['datatable'])
                     @if ($form['relationship_table'])
                         <?php
-                        $select_table = explode(',', $form['datatable'])[0];
-                        $select_title = explode(',', $form['datatable'])[1];
+                        $select_table = explode(',', (string) $form['datatable'])[0];
+                        $select_title = explode(',', (string) $form['datatable'])[1];
                         $select_where = $form['datatable_where'];
                         $pk = CRUDBooster::findPrimaryKey($select_table);
 
@@ -470,12 +470,12 @@
                         $result = $result->orderby($select_title, 'asc')->get();
 
                         if ($form['datatable_orig'] != '') {
-                            $params = explode('|', $form['datatable_orig']);
+                            $params = explode('|', (string) $form['datatable_orig']);
                             if (!isset($params[2])) {
                                 $params[2] = 'id';
                             }
                             $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
-                            $value = explode(',', $value);
+                            $value = explode(',', (string) $value);
                         } else {
                             $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
                             $foreignKey2 = CRUDBooster::getForeignKey($select_table, $form['relationship_table']);
@@ -494,8 +494,8 @@
                         @if ($form['datatable_ajax'] == false)
                             <option value=''>{{ cbLang('text_prefix_option') }} {{ $form['label'] }}</option>
                             <?php
-                            $select_table = explode(',', $form['datatable'])[0];
-                            $select_title = explode(',', $form['datatable'])[1];
+                            $select_table = explode(',', (string) $form['datatable'])[0];
+                            $select_title = explode(',', (string) $form['datatable'])[1];
                             $select_where = $form['datatable_where'];
                             $datatable_format = $form['datatable_format'];
                             $select_table_pk = CRUDBooster::findPrimaryKey($select_table);

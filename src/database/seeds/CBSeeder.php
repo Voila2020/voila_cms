@@ -42,7 +42,7 @@ class CBSeeder extends Seeder
 
     # Email Templates
     $pass_temp_email = DB::table('cms_email_templates')->where('slug', 'forgot_password_backend')->get();
-    if (!count($pass_temp_email)) {
+    if (count($pass_temp_email) === 0) {
       DB::table('cms_email_templates')->insert([
         'created_at' => date('Y-m-d H:i:s'),
         'name' => 'Email Template Forgot Password Backend',
@@ -59,7 +59,7 @@ class CBSeeder extends Seeder
     }
 
     $multi_authentication_email = DB::table('cms_email_templates')->where('slug', 'multi_authentication_email')->get();
-    if (!count($multi_authentication_email)) {
+    if (count($multi_authentication_email) === 0) {
       DB::table('cms_email_templates')->insert([
         'created_at' => date('Y-m-d H:i:s'),
         'name' => 'Multi Authentication Code',
@@ -642,8 +642,6 @@ class CBSeeder extends Seeder
             $is_edit = 0;
             break;
           case 'cms_privileges_roles':
-            $is_visible = 0;
-            break;
           case 'cms_apicustom':
             $is_visible = 0;
             break;

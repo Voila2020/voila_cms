@@ -40,20 +40,19 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
                     $elemnt_form .= "<label>" . $item->label_filed . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
                         $elemnt_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'checkbox') {
-                        $array_values = explode(',', $item->values);
+                    } elseif ($item->title == 'checkbox') {
+                        $array_values = explode(',', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'radio') {
-                        $array_values = explode(',', $item->values);
+                    } elseif ($item->title == 'radio') {
+                        $array_values = explode(',', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $elemnt_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'select') {
-                        $array_values = explode(',', $item->values);
+                    } elseif ($item->title == 'select') {
+                        $array_values = explode(',', (string) $item->values);
                         $elemnt_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
-
                         foreach ($array_values as $filed) {
                             $elemnt_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
@@ -69,7 +68,7 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
 
                 $elemnt_form .= "</form>";
             }
-            return view('form', array('data' => $elemnt_form));
+            return view('form', ['data' => $elemnt_form]);
         }
     }
 
@@ -136,7 +135,7 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
             if ($item->title == "file") {
                 $key = $item->label_filed;
                 $submit .= "<td><a target='_blank' href=\"" . config('app.url') . '/files/' . $form->name . '/' . $request->$key->getClientOriginalName() . "\">" . $request->$key->getClientOriginalName() . "</a></td>";
-            } else if (is_array($request->input($this->stripSpace($item->label_filed)))) {
+            } elseif (is_array($request->input($this->stripSpace($item->label_filed)))) {
                 $submit .= "<td>";
                 foreach ($request->input($this->stripSpace($item->label_filed)) as $val) {
                     $submit .= $val . ",";
@@ -217,11 +216,11 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
         $applications = DB::table('applications')
             ->where('form_id', $id)
             ->get();
-        return view('submits', array('data' => $applications));
+        return view('submits', ['data' => $applications]);
     }
     private function stripSpace($string)
     {
-        return $string = str_replace(' ', '', trim($string));
+        return $string = str_replace(' ', '', trim((string) $string));
     }
 
     public function getForms()
@@ -231,7 +230,7 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
         }
 
         $forms = DB::table('forms')->get();
-        return response()->json(array("data" => $forms), 200);
+        return response()->json(["data" => $forms], 200);
     }
 
     public function getLandingPageThankyou($id)
@@ -243,7 +242,7 @@ class CmsFormController extends \crocodicstudio\crudbooster\controllers\CBContro
         }
 
         $response = $landingPage->response_message;
-        return view("landing_page_builder.thankyou", compact("response"));
+        return view("landing_page_builder.thankyou", ['response' => $response]);
     }
 
     public function getApplicationsUnique(Request $request)

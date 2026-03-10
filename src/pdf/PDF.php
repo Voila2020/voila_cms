@@ -23,7 +23,7 @@ class PDF extends TCPDF
     {
         $this->page_language = $page_language;
         if ($this->page_language == 'rtl') {
-            $lg = array();
+            $lg = [];
             $lg['a_meta_charset'] = 'UTF-8';
             $lg['a_meta_dir'] = 'rtl';
             $lg['a_meta_language'] = 'ar';
@@ -42,7 +42,9 @@ class PDF extends TCPDF
 
     public function Header()
     {
-        if ($this->header_function) ($this->header_function)();
+        if ($this->header_function) {
+            ($this->header_function)();
+        }
         # example
         // $this->SetAutoPageBreak(false, 0);
         // $background_img = $_SERVER["DOCUMENT_ROOT"] . 'image/path...';
@@ -56,7 +58,9 @@ class PDF extends TCPDF
 
     public function Footer()
     {
-        if ($this->footer_function) ($this->footer_function)();
+        if ($this->footer_function) {
+            ($this->footer_function)();
+        }
         # example
         // $this->setY(-9);
         // $imageX = 0; //

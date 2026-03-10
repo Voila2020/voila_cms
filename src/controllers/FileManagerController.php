@@ -34,10 +34,10 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             exit;
         }
 
-        if (isset($_SESSION['RF']['language']) && file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename($_SESSION['RF']['language']) . '.php')) {
+        if (isset($_SESSION['RF']['language']) && file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename((string) $_SESSION['RF']['language']) . '.php')) {
             $languages = include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/languages.php';
             if (array_key_exists($_SESSION['RF']['language'], $languages)) {
-                include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename($_SESSION['RF']['language']) . '.php';
+                include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename((string) $_SESSION['RF']['language']) . '.php';
             } else {
                 response(trans('Lang_Not_Found') . AddErrorLocation())->send();
                 exit;
@@ -80,16 +80,16 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             }
             if ($_name) {
                 $name = fix_filename($_name, $config);
-                if (strpos($name, '../') !== false || strpos($name, '..\\') !== false) {
+                if (str_contains($name, '../') || str_contains($name, '..\\')) {
                     response(trans('wrong name') . AddErrorLocation())->send();
                     exit;
                 }
             }
-            return array($path, $path_thumb, $name);
+            return [$path, $path_thumb, $name];
         }
 
         if (isset($_POST['paths'])) {
-            $paths = $paths_thumb = $names = array();
+            $paths = $paths_thumb = $names = [];
             foreach ($_POST['paths'] as $key => $path) {
                 if (!checkRelativePath($path)) {
                     response(trans('wrong path') . AddErrorLocation())->send();
@@ -99,7 +99,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 if (isset($_POST['names'][$key])) {
                     $name = $_POST['names'][$key];
                 }
-                list($path, $path_thumb, $name) = returnPaths($path, $name, $config);
+                [$path, $path_thumb, $name] = returnPaths($path, $name, $config);
                 $paths[] = $path;
                 $paths_thumb[] = $path_thumb;
                 $names = $name;
@@ -109,10 +109,10 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             if (isset($_POST['name'])) {
                 $name = $_POST['name'];
             }
-            list($path, $path_thumb, $name) = returnPaths($_POST['path'], $name, $config);
+            [$path, $path_thumb, $name] = returnPaths($_POST['path'], $name, $config);
         }
 
-        $info = pathinfo($path);
+        $info = pathinfo((string) $path);
         if (
             isset($info['extension']) && !(isset($_GET['action']) && $_GET['action'] == 'delete_folder') &&
             !check_extension($info['extension'], $config)
@@ -150,12 +150,12 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             if (is_dir($path)) {
                                 deleteDir($path, null, $config);
                                 if ($config['fixed_image_creation']) {
-                                    foreach ($config['fixed_path_from_filemanager'] as $k => $paths) {
+                                    foreach ($config['fixed_path_from_filemanager'] as $paths) {
                                         if ($paths != "" && $paths[strlen($paths) - 1] != "/") {
                                             $paths .= "/";
                                         }
 
-                                        $base_dir = $paths . substr_replace($path, '', 0, strlen($config['current_path']));
+                                        $base_dir = $paths . substr_replace($path, '', 0, strlen((string) $config['current_path']));
                                         if (is_dir($base_dir)) {
                                             deleteDir($base_dir, null, $config);
                                         }
@@ -194,12 +194,12 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             }
                             rename_folder($path_thumb, $name, $ftp, $config);
                             if (!$ftp && $config['fixed_image_creation']) {
-                                foreach ($config['fixed_path_from_filemanager'] as $k => $paths) {
+                                foreach ($config['fixed_path_from_filemanager'] as $paths) {
                                     if ($paths != "" && $paths[strlen($paths) - 1] != "/") {
                                         $paths .= "/";
                                     }
 
-                                    $base_dir = $paths . substr_replace($path, '', 0, strlen($config['current_path']));
+                                    $base_dir = $paths . substr_replace($path, '', 0, strlen((string) $config['current_path']));
                                     rename_folder($base_dir, $name, $ftp, $config);
                                 }
                             }
@@ -217,11 +217,11 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     }
 
                     if (!isset($config['editable_text_file_exts']) || !is_array($config['editable_text_file_exts'])) {
-                        $config['editable_text_file_exts'] = array();
+                        $config['editable_text_file_exts'] = [];
                     }
 
                     // check if user supplied extension
-                    if (strpos($name, '.') === false) {
+                    if (!str_contains((string) $name, '.')) {
                         response(trans('No_Extension') . ' ' . sprintf(trans('Valid_Extensions'), implode(', ', $config['editable_text_file_exts'])) . AddErrorLocation())->send();
                         exit;
                     }
@@ -250,7 +250,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                         unlink($temp);
                         response(trans('File_Save_OK'))->send();
                     } else {
-                        if (!checkresultingsize(strlen($content))) {
+                        if (!checkresultingsize(strlen((string) $content))) {
                             response(sprintf(trans('max_size_reached'), $config['MaxSizeTotal']) . AddErrorLocation())->send();
                             exit;
                         }
@@ -286,14 +286,14 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             rename_file($path_thumb, $name, $ftp, $config);
 
                             if ($config['fixed_image_creation']) {
-                                $info = pathinfo($path);
+                                $info = pathinfo((string) $path);
 
                                 foreach ($config['fixed_path_from_filemanager'] as $k => $paths) {
                                     if ($paths != "" && $paths[strlen($paths) - 1] != "/") {
                                         $paths .= "/";
                                     }
 
-                                    $base_dir = $paths . substr_replace($info['dirname'] . "/", '', 0, strlen($config['current_path']));
+                                    $base_dir = $paths . substr_replace($info['dirname'] . "/", '', 0, strlen((string) $config['current_path']));
                                     if (file_exists($base_dir . $config['fixed_image_creation_name_to_prepend'][$k] . $info['filename'] . $config['fixed_image_creation_to_append'][$k] . "." . $info['extension'])) {
                                         rename_file($base_dir . $config['fixed_image_creation_name_to_prepend'][$k] . $info['filename'] . $config['fixed_image_creation_to_append'][$k] . "." . $info['extension'], $config['fixed_image_creation_name_to_prepend'][$k] . $name . $config['fixed_image_creation_to_append'][$k], $ftp, $config);
                                     }
@@ -335,13 +335,13 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             duplicate_file($path_thumb, $name, $ftp, $config);
 
                             if (!$ftp && $config['fixed_image_creation']) {
-                                $info = pathinfo($path);
+                                $info = pathinfo((string) $path);
                                 foreach ($config['fixed_path_from_filemanager'] as $k => $paths) {
                                     if ($paths != "" && $paths[strlen($paths) - 1] != "/") {
                                         $paths .= "/";
                                     }
 
-                                    $base_dir = $paths . substr_replace($info['dirname'] . "/", '', 0, strlen($config['current_path']));
+                                    $base_dir = $paths . substr_replace($info['dirname'] . "/", '', 0, strlen((string) $config['current_path']));
 
                                     if (file_exists($base_dir . $config['fixed_image_creation_name_to_prepend'][$k] . $info['filename'] . $config['fixed_image_creation_to_append'][$k] . "." . $info['extension'])) {
                                         duplicate_file($base_dir . $config['fixed_image_creation_name_to_prepend'][$k] . $info['filename'] . $config['fixed_image_creation_to_append'][$k] . "." . $info['extension'], $config['fixed_image_creation_name_to_prepend'][$k] . $name . $config['fixed_image_creation_to_append'][$k]);
@@ -373,8 +373,8 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             $path .= DIRECTORY_SEPARATOR;
                             $path_thumb .= DIRECTORY_SEPARATOR;
                         }
-                        $path_thumb .= basename($data['path']);
-                        $path .= basename($data['path']);
+                        $path_thumb .= basename((string) $data['path']);
+                        $path .= basename((string) $data['path']);
                         $data['path_thumb'] = DIRECTORY_SEPARATOR . $config['ftp_base_folder'] . $config['ftp_thumbs_dir'] . $data['path'];
                         $data['path'] = DIRECTORY_SEPARATOR . $config['ftp_base_folder'] . $config['upload_dir'] . $data['path'];
                     } else {
@@ -385,13 +385,13 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     $pinfo = pathinfo($data['path']);
 
                     // user wants to paste to the same dir. nothing to do here...
-                    if ($pinfo['dirname'] == rtrim($path, DIRECTORY_SEPARATOR)) {
+                    if ($pinfo['dirname'] == rtrim((string) $path, DIRECTORY_SEPARATOR)) {
                         response()->send();
                         exit;
                     }
 
                     // user wants to paste folder to it's own sub folder.. baaaah.
-                    if (is_dir($data['path']) && strpos($path, $data['path']) !== false) {
+                    if (is_dir($data['path']) && str_contains((string) $path, $data['path'])) {
                         response()->send();
                         exit;
                     }
@@ -409,7 +409,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             unlink($tmp);
 
                             if (url_exists($data['path_thumb'])) {
-                                $tmp = time() . basename($data['path_thumb']);
+                                $tmp = time() . basename((string) $data['path_thumb']);
                                 try {
                                     $ftp->get($tmp, $data['path_thumb'], FTP_BINARY);
                                     $ftp->put(DIRECTORY_SEPARATOR . $path_thumb, $tmp, FTP_BINARY);
@@ -441,7 +441,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             exit;
                         }
                         if ($action == 'copy') {
-                            list($sizeFolderToCopy, $fileNum, $foldersCount) = folder_info($path, false);
+                            [$sizeFolderToCopy, $fileNum, $foldersCount] = folder_info($path, false);
                             if (!checkresultingsize($sizeFolderToCopy)) {
                                 response(sprintf(trans('max_size_reached'), $config['MaxSizeTotal']) . AddErrorLocation())->send();
                                 exit;
@@ -453,7 +453,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             rrename($data['path_thumb'], $path_thumb);
 
                             // cleanup
-                            if (is_dir($data['path']) === true) {
+                            if (is_dir($data['path'])) {
                                 rrename_after_cleaner($data['path']);
                                 rrename_after_cleaner($data['path_thumb']);
                             }
@@ -469,7 +469,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 case 'chmod':
                     $mode = $_POST['new_mode'];
                     $rec_option = $_POST['is_recursive'];
-                    $valid_options = array('none', 'files', 'folders', 'both');
+                    $valid_options = ['none', 'files', 'folders', 'both'];
                     $chmod_perm = ($_POST['folder'] ? $config['chmod_dirs'] : $config['chmod_files']);
 
                     // check perm
@@ -478,7 +478,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                         exit;
                     }
                     // check mode
-                    if (!preg_match("/^[0-7]{3}$/", $mode)) {
+                    if (!preg_match("/^[0-7]{3}$/", (string) $mode)) {
                         response(trans('File_Permission_Wrong_Mode') . AddErrorLocation())->send();
                         exit;
                     }
@@ -527,7 +527,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                             exit;
                         }
 
-                        if (!checkresultingsize(strlen($content))) {
+                        if (!checkresultingsize(strlen((string) $content))) {
                             response(sprintf(trans('max_size_reached'), $config['MaxSizeTotal']) . AddErrorLocation())->send();
                             exit;
                         }
@@ -620,7 +620,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $url = $_POST['url'];
                 $urlPattern = '/^(https?:\/\/)?([\da-z\.-]+\.[a-z\.]{2,6}|[\d\.]+)([\/?=&#]{1}[\da-z\.-]+)*[\/\?]?$/i';
 
-                if (preg_match($urlPattern, $url)) {
+                if (preg_match($urlPattern, (string) $url)) {
                     $temp = tempnam('/tmp', 'RF');
 
                     $ch = curl_init($url);
@@ -628,25 +628,25 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                     curl_setopt($ch, CURLOPT_FILE, $fp);
                     curl_setopt($ch, CURLOPT_HEADER, 0);
                     curl_exec($ch);
-                    if (curl_errno($ch)) {
+                    if (curl_errno($ch) !== 0) {
                         curl_close($ch);
                         throw new Exception('Invalid URL');
                     }
                     curl_close($ch);
                     fclose($fp);
-                    $_FILES['files'] = array(
-                        'name' => array(basename($_POST['url'])),
-                        'tmp_name' => array($temp),
-                        'size' => array(filesize($temp)),
+                    $_FILES['files'] = [
+                        'name' => [basename($_POST['url'])],
+                        'tmp_name' => [$temp],
+                        'size' => [filesize($temp)],
                         'type' => null,
-                    );
+                    ];
                 } else {
                     throw new Exception('Is not a valid URL.');
                 }
             }
 
             if ($config['mime_extension_rename']) {
-                $info = pathinfo($_FILES['files']['name'][0]);
+                $info = pathinfo((string) $_FILES['files']['name'][0]);
                 $mime_type = $_FILES['files']['type'][0];
                 if (function_exists('mime_content_type')) {
                     $mime_type = mime_content_type($_FILES['files']['tmp_name'][0]);
@@ -684,18 +684,18 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 exit();
             }
 
-            $uploadConfig = array(
+            $uploadConfig = [
                 'config' => $config,
                 'storeFolder' => $storeFolder,
                 'storeFolderThumb' => $storeFolderThumb,
                 'ftp' => $ftp,
-                'upload_dir' => dirname($_SERVER['SCRIPT_FILENAME']) . '/' . $storeFolder,
+                'upload_dir' => dirname((string) $_SERVER['SCRIPT_FILENAME']) . '/' . $storeFolder,
                 'upload_url' => $config['base_url'] . $config['upload_dir'] . $_POST['fldr'],
                 'mkdir_mode' => $config['folderPermission'],
                 'max_file_size' => $config['MaxSizeUpload'] * 1024 * 1024,
                 'correct_image_extensions' => true,
                 'print_response' => false,
-            );
+            ];
 
             if (!$config['ext_blacklist']) {
                 $uploadConfig['accept_file_types'] = '/\.(' . implode('|', $config['ext']) . ')$/i';
@@ -725,20 +725,20 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             // print_r($_FILES);die();
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
         } catch (Exception $e) {
-            $return = array();
+            $return = [];
             if ($_FILES['files']) {
                 foreach ($_FILES['files']['name'] as $i => $name) {
-                    $return[] = array(
+                    $return[] = [
                         'name' => $name,
                         'error' => $e->getMessage(),
                         'size' => $_FILES['files']['size'][$i],
                         'type' => $_FILES['files']['type'][$i],
-                    );
+                    ];
                 }
-                echo json_encode(array("files" => $return));
+                echo json_encode(["files" => $return]);
                 return;
             }
-            echo json_encode(array("error" => $e->getMessage()));
+            echo json_encode(["error" => $e->getMessage()]);
         }
     }
     public function forceDownload()
@@ -752,11 +752,11 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             response(trans('forbidden') . AddErrorLocation(), 403)->send();
             exit;
         }
-        if (!checkRelativePath($_POST['path']) || strpos($_POST['path'], '/') === 0) {
+        if (!checkRelativePath($_POST['path']) || str_starts_with((string) $_POST['path'], '/')) {
             response(trans('wrong path') . AddErrorLocation(), 400)->send();
             exit;
         }
-        if (strpos($_POST['name'], '/') !== false) {
+        if (str_contains((string) $_POST['name'], '/')) {
             response(trans('wrong path') . AddErrorLocation(), 400)->send();
             exit;
         }
@@ -769,7 +769,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
         }
 
         $name = $_POST['name'];
-        $info = pathinfo($name);
+        $info = pathinfo((string) $name);
 
         if (!check_extension($info['extension'], $config)) {
             response(trans('wrong extension') . AddErrorLocation(), 400)->send();
@@ -813,15 +813,11 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             header("Content-Transfer-Encoding: binary");
             header('Accept-Ranges: bytes');
             if (isset($_SERVER['HTTP_RANGE'])) {
-                list($a, $range) = explode("=", $_SERVER['HTTP_RANGE'], 2);
-                list($range) = explode(",", $range, 2);
-                list($range, $range_end) = explode("-", $range);
+                [$a, $range] = explode("=", (string) $_SERVER['HTTP_RANGE'], 2);
+                [$range] = explode(",", $range, 2);
+                [$range, $range_end] = explode("-", $range);
                 $range = intval($range);
-                if (!$range_end) {
-                    $range_end = $size - 1;
-                } else {
-                    $range_end = intval($range_end);
-                }
+                $range_end = $range_end === '' || $range_end === '0' ? $size - 1 : intval($range_end);
                 $new_length = $range_end - $range + 1;
                 header("HTTP/1.1 206 Partial Content");
                 header("Content-Length: $new_length");
@@ -830,7 +826,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $new_length = $size;
                 header("Content-Length: " . $size);
             }
-            $chunksize = 1 * (1024 * 1024);
+            $chunksize = (1024 * 1024);
             $bytes_send = 0;
             if ($file = fopen($file_path, 'r')) {
                 if (isset($_SERVER['HTTP_RANGE'])) {

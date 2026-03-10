@@ -337,7 +337,7 @@ return [
         'Upload_base_help2' => "Drag & Drop files(modern browsers) or click in upper button to Add the file(s) to upload Files. <br/> <strong>Note: The files names should preferably be in English, If not will be translated it into English automatically.</strong>",
         'Upload_add_files' => 'Add file(s)',
         'Upload_start' => 'Start upload',
-        'Upload_error_messages' => array(
+        'Upload_error_messages' => [
             1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
             2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
             3 => 'The uploaded file was only partially uploaded',
@@ -356,7 +356,7 @@ return [
             'min_height' => 'Image requires a minimum height',
             'abort' => 'File upload aborted',
             'image_resize' => 'Failed to resize image',
-        ),
+        ],
         'Upload_url' => 'From url',
         'Type_dir' => 'dir',
         'Dimension' => 'Dimension',

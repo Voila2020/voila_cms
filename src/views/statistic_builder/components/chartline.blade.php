@@ -49,13 +49,13 @@
 
     @if($key == 'sql')
         <?php
-        $sqls = explode(';', $value);
-        $dataPoints = array();
-        $datax = array();
+        $sqls = explode(';', (string) $value);
+        $dataPoints = [];
+        $datax = [];
 
         foreach ($sqls as $i => $sql) {
 
-            $datamerger = array();
+            $datamerger = [];
 
             $sessions = Session::all();
             foreach ($sessions as $key => $val) {
@@ -68,7 +68,7 @@
                     $datax[] = $r->label;
                     $datamerger[] = $r->value;
                 }
-            } catch (\Exception $e) {
+            } catch (\Exception) {
 
             }
 
@@ -77,15 +77,15 @@
 
         $datax = array_unique($datax);
 
-        $area_name = explode(';', $config->area_name);
+        $area_name = explode(';', (string) $config->area_name);
         $area_name_safe = $area_name;
         foreach ($area_name_safe as &$a) {
             $a = str_slug($a, '_');
         }
 
-        $data_result = array();
+        $data_result = [];
         foreach ($datax as $i => $d) {
-            $dr = array();
+            $dr = [];
             $dr['y'] = $d;
             foreach ($area_name as $e => $name) {
                 $name = str_slug($name, '_');

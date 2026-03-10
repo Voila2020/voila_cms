@@ -70,7 +70,7 @@ class PrivilegesController extends CBController
         $menu_active = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 1)->orderby('sorting', 'asc')->get();
         foreach ($menu_active as &$menu) {
             $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
-            if (count($child)) {
+            if (count($child) > 0) {
                 $menu->children = $child;
             }
         }
@@ -145,20 +145,20 @@ class PrivilegesController extends CBController
 
         $page_title = cbLang('edit_data_page_title', ['module' => 'Privilege', 'name' => $row->name]);
 
-        $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at', null)->select("cms_moduls.*")->orderby("name", "asc")->get();
+        $moduls = DB::table("cms_moduls")->where('is_protected', 0)->where('deleted_at')->select("cms_moduls.*")->orderby("name", "asc")->get();
         $page_menu = Route::getCurrentRoute()->getActionName();
 
         $menu_active = DB::table('cms_menus')->where('parent_id', 0)->where('is_active', 1)->orderby('sorting', 'asc')->get();
         foreach ($menu_active as &$menu) {
             $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
-            if (count($child)) {
+            if (count($child) > 0) {
                 $menu->children = $child;
             }
         }
         $checked_menu = DB::table('cms_menus_privileges')->where('id_cms_privileges', $id)->get('id_cms_menus');
 
 
-        return view('crudbooster::privileges', compact('row', 'page_title', 'moduls', 'page_menu','menu_active','checked_menu'));
+        return view('crudbooster::privileges', ['row' => $row, 'page_title' => $page_title, 'moduls' => $moduls, 'page_menu' => $page_menu, 'menu_active' => $menu_active, 'checked_menu' => $checked_menu]);
     }
 
     public function postEditSave($id)

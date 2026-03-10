@@ -52,9 +52,9 @@
 
     <!-- load css -->
     <style type="text/css">
-        @if ($style_css)
+        @isset($style_css)
             {!! $style_css !!}
-        @endif
+        @endisset
     </style>
     @if (isset($load_css))
         @foreach ($load_css as $css)
@@ -117,7 +117,7 @@
 
 <body
     class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ isset($sidebar_mode) ?: '' }}">
-    <div id='app' class="{{ $mode != 'minimum' ? 'wrapper' : '' }}">
+    <div id='app' class="{{ ($mode ?? null) != 'minimum' ? 'wrapper' : '' }}">
         <div class="main-overlay"></div>
         <div class="spinner-loader">
             <div></div>
@@ -133,7 +133,7 @@
             <div></div>
             <div></div>
         </div>
-        @if ($mode != 'minimum')
+        @if (($mode ?? null) != 'minimum')
             <div class="indicator_support_sect">
             <!--- Tokens Indicator -->
             {!! CRUDBooster::showTokenUsageIndicator() !!}
@@ -146,8 +146,8 @@
             @include('crudbooster::sidebar')
         @endif
         <!-- Content Wrapper. Contains page content -->
-        <div class="{{ $mode != 'minimum' ? 'content-wrapper' : '' }}">
-            @if ($mode != 'minimum')
+        <div class="{{ ($mode ?? null) != 'minimum' ? 'content-wrapper' : '' }}">
+            @if (($mode ?? null) != 'minimum')
                 <section class="content-header">
                     <?php
                     $module = CRUDBooster::getCurrentModule();
@@ -292,7 +292,7 @@
         </div><!-- /.content-wrapper -->
 
         <!-- Footer -->
-        @if ($mode != 'minimum')
+        @if (($mode ?? null) != 'minimum')
             @include('crudbooster::footer')
         @endif
 
@@ -309,9 +309,9 @@
     @endif
     <script type="text/javascript">
         var site_url = "{{ url('/') }}";
-        @if ($script_js)
+        @isset($script_js)
             {!! $script_js !!}
-        @endif
+        @endisset
     </script>
 
     @stack('bottom')

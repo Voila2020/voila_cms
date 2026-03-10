@@ -48,7 +48,8 @@ class AdminHeaderMenusController extends CBController
             Session::put('current_row_id', $id);
         }
         $row = CRUDBooster::first($this->table, $id);
-        $row = (Request::segment(3) == 'edit') ? $row : null;
+        if (Request::segment(3) == 'edit') {
+        }
         $this->col = [];
         $this->col[] = ["label" => "URL", "name" => "link"];
         $this->col[] = ["label" => "Name", "name" => "name"];
@@ -122,7 +123,7 @@ class AdminHeaderMenusController extends CBController
         $return_url = Request::fullUrl();
         $page_title = 'Menu Management';
 
-        return $this->view('crudbooster::headermenus.index', compact('menu_active', 'menu_inactive', 'return_url', 'page_title', 'current_lang'));
+        return $this->view('crudbooster::headermenus.index', ['menu_active' => $menu_active, 'menu_inactive' => $menu_inactive, 'return_url' => $return_url, 'page_title' => $page_title, 'current_lang' => $current_lang]);
     }
     //-----------------------------------------------//
     private function getMenuChildren($menu)
@@ -156,7 +157,7 @@ class AdminHeaderMenusController extends CBController
     //-----------------------------------------------//
     public function postSaveMenu()
     {
-        $menus = json_decode(Request::input('menus'), true)[0];
+        $menus = json_decode((string) Request::input('menus'), true)[0];
         $isActive = Request::input('isActive');
         DB::beginTransaction();
         try {
@@ -172,7 +173,7 @@ class AdminHeaderMenusController extends CBController
                     ]);
             }
             DB::commit();
-        } catch (Exception $e) {
+        } catch (Exception) {
             DB::rollBack();
         }
 

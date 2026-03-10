@@ -44,7 +44,7 @@ class FileController extends Controller
 
         $extension = strtolower(File::extension($fullStoragePath));
         $images_ext = config('crudbooster.IMAGE_EXTENSIONS', 'jpg,png,gif,bmp');
-        $images_ext = explode(',', $images_ext);
+        $images_ext = explode(',', (string) $images_ext);
         $imageFileSize = 0;
 
         if (in_array($extension, $images_ext)) {
@@ -97,7 +97,7 @@ class FileController extends Controller
          * Is the resource cached?
          */
         $h1 = isset($_SERVER['HTTP_IF_MODIFIED_SINCE']) && $_SERVER['HTTP_IF_MODIFIED_SINCE'] == $header_last_modified;
-        $h2 = isset($_SERVER['HTTP_IF_NONE_MATCH']) && str_replace('"', '', stripslashes($_SERVER['HTTP_IF_NONE_MATCH'])) == $header_etag;
+        $h2 = isset($_SERVER['HTTP_IF_NONE_MATCH']) && str_replace('"', '', stripslashes((string) $_SERVER['HTTP_IF_NONE_MATCH'])) === $header_etag;
 
         $headers = array_merge($headers, [
             'Content-Type' => $header_content_type,
@@ -110,12 +110,10 @@ class FileController extends Controller
             } else {
                 return Response::make($imgRaw, 200, $headers);
             }
+        } elseif (Request::get('download')) {
+            return Response::download(storage_path('app/'.$fullFilePath), $filename, $headers);
         } else {
-            if (Request::get('download')) {
-                return Response::download(storage_path('app/'.$fullFilePath), $filename, $headers);
-            } else {
-                return Response::file(storage_path('app/'.$fullFilePath), $headers);
-            }
+            return Response::file(storage_path('app/'.$fullFilePath), $headers);
         }
     }
 }

@@ -7,10 +7,8 @@ use Illuminate\Support\Facades\Schema;
 class CreateAIContentAPIsLogs extends Migration
 {
     /**
-     * Run the migrations.
-     *
-     * @return void
-     */
+      * Run the migrations.
+      */
      public function up(): void
     {
         Schema::create('ai_content_apis_logs', function (Blueprint $table) {

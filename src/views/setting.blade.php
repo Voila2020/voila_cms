@@ -80,9 +80,9 @@
                             $s->label = $label;
                         }
 
-                        $dataenum = explode(',', $s->dataenum);
-                        if ($dataenum) {
-                            array_walk($dataenum, 'trim');
+                        $dataenum = explode(',', (string) $s->dataenum);
+                        if ($dataenum !== []) {
+                            array_walk($dataenum, trim(...));
                         }
 
                         ?>
@@ -141,24 +141,20 @@
                                     echo "<input type='text' class='datepicker form-control' name='$s->name' value='$value'/>";
                                     break;
                                 case 'radio':
-                                    if ($dataenum):
-                                        echo '<br/>';
-                                        foreach ($dataenum as $enum) {
-                                            $checked = $enum == $value ? 'checked' : '';
-                                            echo "<label class='radio-inline'>";
-                                            echo "<input type='radio' name='" . $s->name . "' value='$enum' $checked > $enum";
-                                            echo '</label>';
-                                        }
-                                    endif;
+                                    echo '<br/>';
+                                    foreach ($dataenum as $enum) {
+                                        $checked = $enum == $value ? 'checked' : '';
+                                        echo "<label class='radio-inline'>";
+                                        echo "<input type='radio' name='" . $s->name . "' value='$enum' $checked > $enum";
+                                        echo '</label>';
+                                    }
                                     break;
                                 case 'select':
                                     echo "<select name='$s->name' class='form-control'><option value=''>** Please select $s->label</option>";
-                                    if ($dataenum):
-                                        foreach ($dataenum as $enum) {
-                                            $selected = $enum == $value ? 'selected' : '';
-                                            echo "<option $selected value='$enum'>$enum</option>";
-                                        }
-                                    endif;
+                                    foreach ($dataenum as $enum) {
+                                        $selected = $enum == $value ? 'selected' : '';
+                                        echo "<option $selected value='$enum'>$enum</option>";
+                                    }
                                     echo '</select>';
                                     break;
                             }

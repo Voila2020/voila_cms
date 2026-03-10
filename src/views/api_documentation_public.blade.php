@@ -155,8 +155,8 @@
                 </tr>
                 @foreach($apis as $api)
                     <?php
-                    $parameters = ($api->parameters) ? json_decode($api->parameters, true) : array();
-                    $responses = ($api->responses) ? json_decode($api->responses, true) : array();
+                    $parameters = ($api->parameters) ? json_decode((string) $api->parameters, true) : [];
+                    $responses = ($api->responses) ? json_decode((string) $api->responses, true) : [];
                     ?>
                     <tr>
                         <td><?= ++$no;?></td>
@@ -212,7 +212,9 @@
                                                     @if($param['used'])
                                                         <?php
                                                         $param_exception = ['in', 'not_in', 'digits_between'];
-                                                        if ($param['config'] && substr($param['config'], 0, 1) != '*' && ! in_array($param['type'], $param_exception)) continue;?>
+                                                        if ($param['config'] && !str_starts_with((string) $param['config'], '*') && ! in_array($param['type'], $param_exception)) {
+                                                            continue;
+                                                        }?>
                                                         <tr>
                                                             <td>{{++$i}}</td>
                                                             <td width="5%"><em>{{$param['type']}}</em></td>

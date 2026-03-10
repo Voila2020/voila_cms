@@ -72,7 +72,6 @@ class FtpWrapper
      * Forward the method call to FTP functions
      *
      * @param  string       $function
-     * @param  array        $arguments
      * @return mixed
      * @throws FtpException When the function is not valid
      */

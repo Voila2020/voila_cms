@@ -7,7 +7,7 @@ class FileManager
 {
 
     public static function edit_alt_text($path,$name,$alt){
-     $alt = addslashes(strip_tags($alt));   
+     $alt = addslashes(strip_tags((string) $alt));   
      $res = DB::table('files_alternate_texts')->where("file_path",'like',"$path")->first();
      if($res){
           DB::table('files_alternate_texts')->where("id",'=',$res->id)->update([
@@ -26,7 +26,7 @@ class FileManager
         
         $res = DB::table('files_alternate_texts')->where("file_path",'like',"$path")->first();
         if($res){
-            return stripcslashes($res->alt_text) ?? "";
+            return stripcslashes((string) $res->alt_text) ?? "";
         }else{
             return "";
         }

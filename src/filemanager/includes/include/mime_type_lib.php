@@ -1,5 +1,5 @@
 <?php
-$mime_types = array(
+$mime_types = [
 	"application/postscript" => "ps",
 	"audio/x-aiff" => "aiff",
 	"text/plain" => "txt",
@@ -168,20 +168,17 @@ $mime_types = array(
 	"application/vnd.ms-powerpoint.presentation.macroEnabled.12" => "pptm",
 	"application/vnd.ms-powerpoint.template.macroEnabled.12" => "potm",
 	"application/vnd.ms-powerpoint.slideshow.macroEnabled.12" => "ppsm",
-);
+];
 
 
 if ( ! function_exists('get_extension_from_mime'))
 {
 	function get_extension_from_mime($mime){
 		global $mime_types;
-		if(strpos($mime, ';')!==FALSE){
-			$mime = substr($mime, 0,strpos($mime, ';'));
+		if(str_contains((string) $mime, ';')){
+			$mime = substr((string) $mime, 0,strpos((string) $mime, ';'));
 		}
-		if(isset($mime_types[$mime])){
-			return $mime_types[$mime];
-		}
-		return '';
+		return $mime_types[$mime] ?? '';
 	}
 }
 
@@ -195,11 +192,11 @@ if ( ! function_exists('get_file_mime_type'))
 			$mime_type = finfo_file($fileinfo, $filename);
 			finfo_close($fileinfo);
 
-			if ( ! empty($mime_type))
+			if ( ! in_array($mime_type, ['', '0', false], true))
 			{
 				if (true === $debug)
 				{
-					return array( 'mime_type' => $mime_type, 'method' => 'fileinfo' );
+					return [ 'mime_type' => $mime_type, 'method' => 'fileinfo' ];
 				}
 
 				return $mime_type;
@@ -210,11 +207,11 @@ if ( ! function_exists('get_file_mime_type'))
 		{
 			$mime_type = mime_content_type($filename);
 
-			if ( ! empty($mime_type))
+			if ( ! in_array($mime_type, ['', '0', false], true))
 			{
 				if (true === $debug)
 				{
-					return array( 'mime_type' => $mime_type, 'method' => 'mime_content_type' );
+					return [ 'mime_type' => $mime_type, 'method' => 'mime_content_type' ];
 				}
 
 				return $mime_type;
@@ -224,14 +221,14 @@ if ( ! function_exists('get_file_mime_type'))
 		global $mime_types;
 		$mime_types = array_flip($mime_types);
 
-		$tmp_array = explode('.', $filename);
+		$tmp_array = explode('.', (string) $filename);
 		$ext = strtolower(array_pop($tmp_array));
 
 		if ( ! empty($mime_types[ $ext ]))
 		{
 			if (true === $debug)
 			{
-				return array( 'mime_type' => $mime_types[ $ext ], 'method' => 'from_array' );
+				return [ 'mime_type' => $mime_types[ $ext ], 'method' => 'from_array' ];
 			}
 
 			return $mime_types[ $ext ];
@@ -239,7 +236,7 @@ if ( ! function_exists('get_file_mime_type'))
 
 		if (true === $debug)
 		{
-			return array( 'mime_type' => 'application/octet-stream', 'method' => 'last_resort' );
+			return [ 'mime_type' => 'application/octet-stream', 'method' => 'last_resort' ];
 		}
 
 		return 'application/octet-stream';

@@ -17,8 +17,8 @@ class ApiController extends Controller
     private $hook_api_message;
     private $last_id_tmp = [];
 
-    private $limit = null;
-    private $output = null;
+    private $limit;
+    private $output;
 
     public function setLimit($limit)
     {
@@ -62,8 +62,6 @@ class ApiController extends Controller
         // DB::enableQueryLog();
 
         $posts = Request::all();
-        $posts_keys = array_keys($posts);
-        $posts_values = array_values($posts);
 
         $row_api = DB::table('cms_apicustom')->where('permalink', $this->permalink)->first();
 
@@ -80,12 +78,10 @@ class ApiController extends Controller
 
         if ($row_api->method_type) {
             $method_type = $row_api->method_type;
-            if ($method_type) {
-                if (! Request::isMethod($method_type)) {
-                    $result['api_status'] = 0;
-                    $result['api_message'] = "The requested method is not allowed!";
-                    goto show;
-                }
+            if ($method_type && ! Request::isMethod($method_type)) {
+                $result['api_status'] = 0;
+                $result['api_message'] = "The requested method is not allowed!";
+                goto show;
             }
         }
 
@@ -135,29 +131,29 @@ class ApiController extends Controller
                     continue;
                 }
 
-                if ($config && substr($config, 0, 1) == '*') {
+                if ($config && str_starts_with((string) $config, '*')) {
                     continue;
                 }
 
-                $input_validator[$name] = trim($value);
+                $input_validator[$name] = trim((string) $value);
 
                 if ($required == '1') {
                     $format_validation[] = 'required';
                 }
 
                 if ($type == 'exists') {
-                    $config = explode(',', $config);
+                    $config = explode(',', (string) $config);
                     $table_exist = $config[0];
                     $table_exist = CRUDBooster::parseSqlTable($table_exist)['table'];
                     $field_exist = $config[1];
-                    $config = ($field_exist) ? $table_exist.','.$field_exist : $table_exist;
+                    $config = ($field_exist !== '' && $field_exist !== '0') ? $table_exist.','.$field_exist : $table_exist;
                     $format_validation[] = 'exists:'.$config;
                 } elseif ($type == 'unique') {
-                    $config = explode(',', $config);
+                    $config = explode(',', (string) $config);
                     $table_exist = $config[0];
                     $table_exist = CRUDBooster::parseSqlTable($table_exist)['table'];
                     $field_exist = $config[1];
-                    $config = ($field_exist) ? $table_exist.','.$field_exist : $table_exist;
+                    $config = ($field_exist !== '' && $field_exist !== '0') ? $table_exist.','.$field_exist : $table_exist;
                     $format_validation[] = 'unique:'.$config;
                 } elseif ($type == 'date_format') {
                     $format_validation[] = 'date_format:'.$config;
@@ -179,10 +175,8 @@ class ApiController extends Controller
                 } elseif ($type == 'file') {
                     $format_validation[] = 'file';
                     $input_validator[$name] = Request::file($name);
-                } else {
-                    if (! in_array($type, $type_except)) {
-                        $format_validation[] = $type;
-                    }
+                } elseif (! in_array($type, $type_except)) {
+                    $format_validation[] = $type;
                 }
 
                 if ($name == 'id') {
@@ -222,16 +216,16 @@ class ApiController extends Controller
         $limit = ($this->limit)?:$posts['limit'];
         $offset = ($posts['offset']) ?: 0;
         $orderby = ($posts['orderby']) ?: $table.'.'.$pk.',desc';
-        $uploads_format_candidate = explode(',', config("crudbooster.UPLOAD_TYPES"));
-        $uploads_candidate = explode(',', config('crudbooster.IMAGE_FIELDS_CANDIDATE'));
-        $password_candidate = explode(',', config('crudbooster.PASSWORD_FIELDS_CANDIDATE'));
-        $asset = asset('/');
+        $uploads_format_candidate = explode(',', (string) config("crudbooster.UPLOAD_TYPES"));
+        explode(',', (string) config('crudbooster.IMAGE_FIELDS_CANDIDATE'));
+        explode(',', (string) config('crudbooster.PASSWORD_FIELDS_CANDIDATE'));
+        asset('/');
 
         unset($posts['limit']);
         unset($posts['offset']);
         unset($posts['orderby']);
 
-        if ($action_type == 'list' || $action_type == 'detail' || $action_type == 'delete') {
+        if (in_array($action_type, ['list', 'detail', 'delete'])) {
             $name_tmp = [];
             $data = DB::table($table);
             if ($offset) {
@@ -247,7 +241,7 @@ class ApiController extends Controller
                 $subquery = $resp['subquery'];
                 $used = intval($resp['used']);
 
-                if ($used == 0 && ! CRUDBooster::isForeignKey($name)) {
+                if ($used === 0 && ! CRUDBooster::isForeignKey($name)) {
                     continue;
                 }
 
@@ -269,7 +263,7 @@ class ApiController extends Controller
                     continue;
                 }
 
-                if ($used) {
+                if ($used !== 0) {
                     $data->addSelect($table.'.'.$name);
                 }
 
@@ -302,38 +296,36 @@ class ApiController extends Controller
                 }
 
                 if ($type == 'search') {
-                    $search_in = explode(',', $config);
+                    $search_in = explode(',', (string) $config);
 
                     if ($required == '1') {
                         $data->where(function ($w) use ($search_in, $value) {
                             foreach ($search_in as $k => $field) {
-                                if ($k == 0) {
+                                if ($k === 0) {
                                     $w->where($field, "like", "%$value%");
                                 } else {
                                     $w->orWhere($field, "like", "%$value%");
                                 }
                             }
                         });
-                    } else {
-                        if ($used) {
-                            if ($value) {
-                                $data->where(function ($w) use ($search_in, $value) {
-                                    foreach ($search_in as $k => $field) {
-                                        if ($k == 0) {
-                                            $w->where($field, "like", "%$value%");
-                                        } else {
-                                            $w->orWhere($field, "like", "%$value%");
-                                        }
+                    } elseif ($used) {
+                        if ($value) {
+                            $data->where(function ($w) use ($search_in, $value) {
+                                foreach ($search_in as $k => $field) {
+                                    if ($k === 0) {
+                                        $w->where($field, "like", "%$value%");
+                                    } else {
+                                        $w->orWhere($field, "like", "%$value%");
                                     }
-                                });
-                            }
+                                }
+                            });
                         }
                     }
                 }
             }
 
             if (CRUDBooster::isColumnExists($table, 'deleted_at')) {
-                $data->where($table.'.deleted_at', null);
+                $data->where($table.'.deleted_at');
             }
 
             $data->where(function ($w) use ($parameters, $posts, $table, $type_except) {
@@ -354,14 +346,12 @@ class ApiController extends Controller
                         } else {
                             $w->having($name, '=', $value);
                         }
-                    } else {
-                        if ($used) {
-                            if ($value) {
-                                if (CRUDBooster::isColumnExists($table, $name)) {
-                                    $w->where($table.'.'.$name, $value);
-                                } else {
-                                    $w->having($name, '=', $value);
-                                }
+                    } elseif ($used) {
+                        if ($value) {
+                            if (CRUDBooster::isColumnExists($table, $name)) {
+                                $w->where($table.'.'.$name, $value);
+                            } else {
+                                $w->having($name, '=', $value);
                             }
                         }
                     }
@@ -372,7 +362,7 @@ class ApiController extends Controller
             if ($row_api->sql_where) {
                 $theSql = $row_api->sql_where;
                 //blow it apart at the variables;
-                preg_match_all("/\[([^\]]*)\]/", $theSql, $matches);
+                preg_match_all("/\[([^\]]*)\]/", (string) $theSql, $matches);
                 foreach ($matches[1] as $match) {
                     foreach ($parameters as $param) {
                         if (in_array($match, $param)) {
@@ -393,7 +383,7 @@ class ApiController extends Controller
                             }
                             $value = "'".$value."'";
                             //insert our $value into its place in the WHERE clause
-                            $theSql = preg_replace("/\[([^\]]*".$match.")\]/", $value, $theSql);
+                            $theSql = preg_replace("/\[([^\]]*".$match.")\]/", $value, (string) $theSql);
                         }
                     }
                 }
@@ -404,7 +394,7 @@ class ApiController extends Controller
 
             if ($action_type == 'list') {
                 if ($orderby) {
-                    $orderby_raw = explode(',', $orderby);
+                    $orderby_raw = explode(',', (string) $orderby);
                     $orderby_col = $orderby_raw[0];
                     $orderby_val = $orderby_raw[1];
                 } else {
@@ -451,24 +441,16 @@ class ApiController extends Controller
                         $required = $param['required'];
 
                         if ($required) {
-                            if ($type == 'password') {
-                                if (! Hash::check($value, $rows->{$name})) {
-                                    $result['api_status'] = 0;
-                                    $result['api_message'] = 'Invalid credentials. Check your username and password.';
-
-                                    goto show;
-                                }
+                            if ($type == 'password' && ! Hash::check($value, $rows->{$name})) {
+                                $result['api_status'] = 0;
+                                $result['api_message'] = 'Invalid credentials. Check your username and password.';
+                                goto show;
                             }
-                        } else {
-                            if ($used) {
-                                if ($value) {
-                                    if (! Hash::check($value, $rows->{$name})) {
-                                        $result['api_status'] = 0;
-                                        $result['api_message'] = 'Invalid credentials. Check your username and password.';
-
-                                        goto show;
-                                    }
-                                }
+                        } elseif ($used) {
+                            if ($value && ! Hash::check($value, $rows->{$name})) {
+                                $result['api_status'] = 0;
+                                $result['api_message'] = 'Invalid credentials. Check your username and password.';
+                                goto show;
                             }
                         }
                     }
@@ -524,16 +506,12 @@ class ApiController extends Controller
                 }
             }
 
-            if ($action_type == 'save_add') {
-                if (CRUDBooster::isColumnExists($table, 'created_at')) {
-                    $row_assign['created_at'] = date('Y-m-d H:i:s');
-                }
+            if ($action_type == 'save_add' && CRUDBooster::isColumnExists($table, 'created_at')) {
+                $row_assign['created_at'] = date('Y-m-d H:i:s');
             }
 
-            if ($action_type == 'save_edit') {
-                if (CRUDBooster::isColumnExists($table, 'updated_at')) {
-                    $row_assign['updated_at'] = date('Y-m-d H:i:s');
-                }
+            if ($action_type == 'save_edit' && CRUDBooster::isColumnExists($table, 'updated_at')) {
+                $row_assign['updated_at'] = date('Y-m-d H:i:s');
             }
 
             $row_assign_keys = array_keys($row_assign);
@@ -579,7 +557,7 @@ class ApiController extends Controller
                 }catch (\Exception $e)
                 {
                     DB::rollBack();
-                    throw new \Exception($e->getMessage());
+                    throw new \Exception($e->getMessage(), $e->getCode(), $e);
                 }
 
                 $result['api_status'] = ($id) ? 1 : 0;
@@ -637,7 +615,9 @@ class ApiController extends Controller
 
 
         $this->hook_after($posts, $result);
-        if($this->output) return response()->json($this->output);
+        if ($this->output) {
+            return response()->json($this->output);
+        }
 
         if($output == 'JSON') {
             return response()->json($result, 200);
@@ -649,40 +629,20 @@ class ApiController extends Controller
     protected function isJSON($theData)
     {
         //return either the array or JSON decoded array
-        $test = json_decode($theData[0], true);
+        $test = json_decode((string) $theData[0], true);
 
-        switch (json_last_error()) {
-            case JSON_ERROR_NONE:
-                $error = ''; // JSON is valid // No error has occurred
-                break;
-            case JSON_ERROR_DEPTH:
-                $error = 'The maximum stack depth has been exceeded.';
-                break;
-            case JSON_ERROR_STATE_MISMATCH:
-                $error = 'Invalid or malformed JSON.';
-                break;
-            case JSON_ERROR_CTRL_CHAR:
-                $error = 'Control character error, possibly incorrectly encoded.';
-                break;
-            case JSON_ERROR_SYNTAX:
-                $error = 'Syntax error, malformed JSON.';
-                break;
-            case JSON_ERROR_UTF8:
-                $error = 'Malformed UTF-8 characters, possibly incorrectly encoded.';
-                break;
-            case JSON_ERROR_RECURSION:
-                $error = 'One or more recursive references in the value to be encoded.';
-                break;
-            case JSON_ERROR_INF_OR_NAN:
-                $error = 'One or more NAN or INF values in the value to be encoded.';
-                break;
-            case JSON_ERROR_UNSUPPORTED_TYPE:
-                $error = 'A value of a type that cannot be encoded was given.';
-                break;
-            default:
-                $error = 'Unknown JSON error occured.';
-                break;
-        }
+        $error = match (json_last_error()) {
+            JSON_ERROR_NONE => '',
+            JSON_ERROR_DEPTH => 'The maximum stack depth has been exceeded.',
+            JSON_ERROR_STATE_MISMATCH => 'Invalid or malformed JSON.',
+            JSON_ERROR_CTRL_CHAR => 'Control character error, possibly incorrectly encoded.',
+            JSON_ERROR_SYNTAX => 'Syntax error, malformed JSON.',
+            JSON_ERROR_UTF8 => 'Malformed UTF-8 characters, possibly incorrectly encoded.',
+            JSON_ERROR_RECURSION => 'One or more recursive references in the value to be encoded.',
+            JSON_ERROR_INF_OR_NAN => 'One or more NAN or INF values in the value to be encoded.',
+            JSON_ERROR_UNSUPPORTED_TYPE => 'A value of a type that cannot be encoded was given.',
+            default => 'Unknown JSON error occured.',
+        };
 
         if ($error !== '') {
             Log::info('No JSON');

@@ -52,7 +52,7 @@ class TicketSystemController extends CBController
 		 | @parent_columns = Sparate with comma, e.g : name,created_at
 		 |
 		 */
-		$this->sub_module = array();
+		$this->sub_module = [];
 
 
 		/*
@@ -66,7 +66,7 @@ class TicketSystemController extends CBController
 		 | @showIf 	   = If condition when action show. Use field alias. e.g : [id] == 1
 		 |
 		 */
-		$this->addaction = array();
+		$this->addaction = [];
 
 
 		/*
@@ -79,7 +79,7 @@ class TicketSystemController extends CBController
 		 | Then about the action, you should code at actionButtonSelected method
 		 |
 		 */
-		$this->button_selected = array();
+		$this->button_selected = [];
 
 
 		/*
@@ -90,7 +90,7 @@ class TicketSystemController extends CBController
 		 | @type    = warning,success,danger,info
 		 |
 		 */
-		$this->alert = array();
+		$this->alert = [];
 
 
 
@@ -103,7 +103,7 @@ class TicketSystemController extends CBController
 		 | @icon  = Icon from Awesome.
 		 |
 		 */
-		$this->index_button = array();
+		$this->index_button = [];
 
 
 
@@ -115,7 +115,7 @@ class TicketSystemController extends CBController
 		 | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.
 		 |
 		 */
-		$this->table_row_color = array();
+		$this->table_row_color = [];
 
 
 
@@ -126,7 +126,7 @@ class TicketSystemController extends CBController
 		 | @label, @count, @icon, @color
 		 |
 		 */
-		$this->index_statistic = array();
+		$this->index_statistic = [];
 
 
 
@@ -173,7 +173,7 @@ class TicketSystemController extends CBController
 		 | $this->load_js[] = asset("myfile.js");
 		 |
 		 */
-		$this->load_js = array();
+		$this->load_js = [];
 
 
 
@@ -197,7 +197,7 @@ class TicketSystemController extends CBController
 		 | $this->load_css[] = asset("myfile.css");
 		 |
 		 */
-		$this->load_css = array();
+		$this->load_css = [];
 	}
 
 
@@ -322,22 +322,24 @@ class TicketSystemController extends CBController
 
 	}
 
-	public function callAPI($method, $url, $data ,$header = array('Content-Type: application/json')){
+	public function callAPI($method, $url, $data ,$header = ['Content-Type: application/json']){
         $curl = curl_init();
         switch ($method){
            case "POST":
               curl_setopt($curl, CURLOPT_POST, 1);
-              if ($data)
-                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+              if ($data) {
+                  curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+              }
               break;
            case "PUT":
               curl_setopt($curl, CURLOPT_CUSTOMREQUEST, "PUT");
-              if ($data)
-                 curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+              if ($data) {
+                  curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+              }
               break;
            default:
               if ($data){
-                $data = json_decode($data,1);
+                $data = json_decode((string) $data,1);
                 $url = sprintf("%s?%s", $url, http_build_query($data));
               }
 
@@ -353,7 +355,7 @@ class TicketSystemController extends CBController
         // EXECUTE:
         $result = curl_exec($curl);
         if(!$result){die("Connection Failure");}
-        if(curl_errno($curl)) {
+        if(curl_errno($curl) !== 0) {
             $error_msg = curl_error($curl);
             curl_close($curl);
             die("cURL Error: " . $error_msg);
@@ -364,9 +366,9 @@ class TicketSystemController extends CBController
     }
 
     public function GetApiAccessToken(){
-        $data_array =  array(
+        $data_array =  [
             "secret" => config('crudbooster.TICKETS_API_SECRET_KEY'),
-        );
+        ];
         $headers = [
             'Content-Type: application/json',
             'Accept: application/json',
@@ -374,9 +376,8 @@ class TicketSystemController extends CBController
         ];
 
         $res = $this->callAPI("POST",config('crudbooster.TICKET_SYSTEM_LINK')."/api/get-token", json_encode($data_array), $headers);
-        $arr = json_decode($res,1);
-        $accessToken = $arr['data']['access_token'];
-        return $accessToken;
+        $arr = json_decode((string) $res,1);
+        return $arr['data']['access_token'];
     }
 
 
@@ -389,12 +390,12 @@ class TicketSystemController extends CBController
 		$user = CRUDBooster::me();
 		//dd($user);
 		//--------------------------------------------//
-		$data_array = array(
+		$data_array = [
 			"project_id" => $projectCode,
 			"user_email" => $user->email,
 			"website_url" =>  url('/') ,
         	"is_admin" => ($user->id_cms_privileges == 1) ? 1 : 0
-		);
+		];
 		//--------------------------------------------//
 		$queryString = http_build_query($data_array);
 		//--------------------------------------------//
@@ -404,11 +405,11 @@ class TicketSystemController extends CBController
 		curl_setopt($ch, CURLOPT_URL, $apiUrl);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
 			'Authorization: Bearer ' . $accessToken,
 			'Content-Type: application/json',
 			'User-Agent: Laravel-cURL-Client',
-		));
+		]);
 		//--------------------------------------------//
 		// Execute the cURL request
 		$response = curl_exec($ch);
@@ -438,7 +439,7 @@ class TicketSystemController extends CBController
 		curl_setopt($ch, CURLOPT_HTTPGET, true);
 
 		$response = curl_exec($ch);
-		if (curl_errno($ch)) {
+		if (curl_errno($ch) !== 0) {
 			return [];
 		}
 
@@ -456,18 +457,17 @@ class TicketSystemController extends CBController
 	public function getDetail($code)
 	{
 		$user = CRUDBooster::me();
-		$accessToken = $_SESSION['accessToken'] ?? null;
 		//--------------------------------------------//
 		$accessToken = $this->GetApiAccessToken();
 		//--------------------------------------------//
 		$projectCode = config('crudbooster.TICKET_SYSTEM_PROJECT_CODE');
-		$data_array = array(
+		$data_array = [
 			"code" => "$code",
 			"website_url" =>  url('/') ,
 			"project_code" => $projectCode,
 			"client_email" => $user->email,
         	"is_admin" => ($user->id_cms_privileges == 1) ? 1 : 0
-		);
+		];
 		$queryString = http_build_query($data_array);
 		$apiUrl = config('crudbooster.TICKET_SYSTEM_LINK') . "/api/show_ticket?" . $queryString;
 		//--------------------------------------------//
@@ -475,11 +475,11 @@ class TicketSystemController extends CBController
 		curl_setopt($ch, CURLOPT_URL, $apiUrl);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+		curl_setopt($ch, CURLOPT_HTTPHEADER, [
 			'Authorization: Bearer ' . $accessToken,
 			'Content-Type: application/json',
 			'User-Agent: Laravel-cURL-Client',
-		));
+		]);
 		$response = curl_exec($ch);
 		curl_close($ch);
 		$ticketDetails = json_decode($response, true);
@@ -490,7 +490,7 @@ class TicketSystemController extends CBController
 		session(['ticket_id' => $ticket['id']]);
 		session(['ticket_code' => $ticket['code']]);
 		//--------------------------------------------//
-		return view('crudbooster::tickets.ticket_details', compact('ticket'));
+		return view('crudbooster::tickets.ticket_details', ['ticket' => $ticket]);
 	}
 	//----------------------------------------------//
 	public function addTicket(Request $request)
@@ -527,7 +527,7 @@ class TicketSystemController extends CBController
 			];
 			//--------------------------------------------//
 			$response = $this->callAPI("POST", config('crudbooster.TICKET_SYSTEM_LINK') . "/api/add_ticket", $dataArray, $headers);
-			$responseArr = json_decode($response, true);
+			$responseArr = json_decode((string) $response, true);
 			//--------------------------------------------//
 			if ($responseArr['api_message'] == "success") {
 				return response()->json([
@@ -555,9 +555,9 @@ class TicketSystemController extends CBController
 		//--------------------------------------------//
 		$accessToken = $this->GetApiAccessToken();
 		//--------------------------------------------//
-		$data_array = array(
+		$data_array = [
 			"code" => $_REQUEST['code'],
-		);
+		];
 		$headers = [
 			'Authorization: Bearer ' . $accessToken,
 			'User-Agent: Laravel-cURL-Client',
@@ -576,7 +576,7 @@ class TicketSystemController extends CBController
 	{
 		$ticketId = session('ticket_id');
 		$ticketCode = session('ticket_code');
-		return view('crudbooster::tickets.create_comment', compact('ticketId', 'ticketCode'));
+		return view('crudbooster::tickets.create_comment', ['ticketId' => $ticketId, 'ticketCode' => $ticketCode]);
 	}
 	//--------------------------------------------//
 	public function addComment(Request $request)

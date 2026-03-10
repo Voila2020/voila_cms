@@ -1,7 +1,7 @@
 <?php
 
 if ($form['datatable'] && $form['relationship_table']) {
-    $datatable_array = explode(",", $form['datatable']);
+    $datatable_array = explode(",", (string) $form['datatable']);
     $datatable_tab = $datatable_array[0];
     $datatable_field = $datatable_array[1];
     $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
@@ -21,7 +21,7 @@ if ($form['datatable'] && $form['relationship_table']) {
         }
     }
 } else {
-    $value = explode(";", $value);
+    $value = explode(";", (string) $value);
 }
 
 foreach ($value as $v) {

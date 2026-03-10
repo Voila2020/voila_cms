@@ -68,9 +68,7 @@ class AdminController extends CBController
         ]);
 
         if (CRUDBooster::getSetting('recaptcha_site_key') && CRUDBooster::getSetting('recaptcha_secret_key')) {
-            $validator->sometimes('g-recaptcha-response', ['required', new ReCaptcha], function ($input) {
-                return true;
-            });
+            $validator->sometimes('g-recaptcha-response', ['required', new ReCaptcha], fn($input) => true);
         }
 
         if ($validator->fails()) {
@@ -156,7 +154,7 @@ class AdminController extends CBController
         }
         $token = str_random(60);
         DB::table(config('crudbooster.USER_TABLE'))->where('email', Request::input('email'))->update(['token' => $token, 'token_created_at' => Carbon::now()]);
-        $appname = CRUDBooster::getSetting('appname');
+        CRUDBooster::getSetting('appname');
         $user = CRUDBooster::first(config('crudbooster.USER_TABLE'), ['email' => g('email')]);
         $link = CRUDBooster::adminPath() . '/password/reset/' . $token;
         $user->link = $link;
@@ -263,7 +261,7 @@ class AdminController extends CBController
             return redirect()->back()->with(['message' => cbLang("password_reset_not_matching")]);
         }
 
-        $cmsUser = DB::table('cms_users')->where('token', Request::input("token"))->update(['password' => Hash::make(Request::input("reset_password")), 'token' => null, 'token_created_at' => null]);
+        DB::table('cms_users')->where('token', Request::input("token"))->update(['password' => Hash::make(Request::input("reset_password")), 'token' => null, 'token_created_at' => null]);
         return redirect()->route('getLogin')->with(['message' => cbLang("password_changed_successfully"), 'message_type' => 'success']);
     }
 

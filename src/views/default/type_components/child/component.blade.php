@@ -60,7 +60,7 @@ $childTableName = $form['table'];
                                     @foreach ($form['columns'] as $col_key => $col)
                                         <?php
                                         $name_column = $name . $col['name'];
-                                        $required = strpos($col['validation'], 'required') !== false ? 'required' : '';
+                                        $required = str_contains((string) $col['validation'], 'required') ? 'required' : '';
                                         ?>
                                         <div class='form-group'>
                                             @if ($col['type'] != 'hidden')
@@ -380,15 +380,11 @@ $childTableName = $form['table'];
                                                     <?php
                                                     if($col['dataenum']):
                                                     $dataenum = $col['dataenum'];
-                                                    if (strpos($dataenum, ';') !== false) {
-                                                        $dataenum = explode(";", $dataenum);
-                                                    } else {
-                                                        $dataenum = [$dataenum];
-                                                    }
-                                                    array_walk($dataenum, 'trim');
-                                                    foreach($dataenum as $e=>$enum):
-                                                    $enum = explode('|', $enum);
-                                                    if (count($enum) == 2) {
+                                                    $dataenum = strpos((string) $dataenum, ';') !== false ? explode(";", (string) $dataenum) : [$dataenum];
+                                                    array_walk($dataenum, trim(...));
+                                                    foreach($dataenum as $enum):
+                                                    $enum = explode('|', (string) $enum);
+                                                    if (count($enum) === 2) {
                                                         $radio_value = $enum[0];
                                                         $radio_label = $enum[1];
                                                     } else {
@@ -750,8 +746,8 @@ $childTableName = $form['table'];
                                                             {{ $col['label'] }}</option>
                                                         <?php
                                                         if ($col['datatable']) {
-                                                            $tableJoin = explode(',', $col['datatable'])[0];
-                                                            $titleField = explode(',', $col['datatable'])[1];
+                                                            $tableJoin = explode(',', (string) $col['datatable'])[0];
+                                                            $titleField = explode(',', (string) $col['datatable'])[1];
                                                             if (!$col['datatable_where']) {
                                                                 $data = CRUDBooster::get($tableJoin, null, "$titleField ASC");
                                                             } else {
@@ -762,10 +758,10 @@ $childTableName = $form['table'];
                                                             }
                                                         } else {
                                                             $data = $col['dataenum'];
-                                                            $data = is_array($data) ? $data : explode(';', $data);
+                                                            $data = is_array($data) ? $data : explode(';', (string) $data);
                                                             foreach ($data as $d) {
-                                                                $enum = explode('|', $d);
-                                                                if (count($enum) == 2) {
+                                                                $enum = explode('|', (string) $d);
+                                                                if (count($enum) === 2) {
                                                                     $opt_value = $enum[0];
                                                                     $opt_label = $enum[1];
                                                                 } else {
@@ -803,7 +799,7 @@ $childTableName = $form['table'];
                                             $formula_function_name = 'formula' . str_slug($name . $col['name'], '');
                                             $script_onchange = '';
                                             foreach ($form['columns'] as $c) {
-                                                if (strpos($formula, '[' . $c['name'] . ']') !== false) {
+                                                if (str_contains((string) $formula, '[' . $c['name'] . ']')) {
                                                     $script_onchange .= "$('#$name$c[name]').change(function() {
                                                                                                                                                                                                                                                                                                                                                                                                                                                                     $formula_function_name();});";
                                                 }
@@ -1154,19 +1150,19 @@ $childTableName = $form['table'];
                                     <?php
                                 $columns_tbody = [];
                                 $data_child = DB::table($form['table'])->where($form['foreign_key'], $id);
-                                foreach ($form['columns'] as $i => $c) {
+                                foreach ($form['columns'] as $c) {
                                     $data_child->addselect($form['table'].'.'.$c['name']);
                                     $data_child->addselect($form['table'].'.id');
 
                                     if ($c['type'] == 'datamodal') {
-                                        $datamodal_title = explode(',', $c['datamodal_columns'])[0];
+                                        $datamodal_title = explode(',', (string) $c['datamodal_columns'])[0];
                                         $datamodal_table = $c['datamodal_table'];
                                         $data_child->join($c['datamodal_table'], $c['datamodal_table'].'.id', '=', $c['name']);
                                         $data_child->addselect($c['datamodal_table'].'.'.$datamodal_title.' as '.$datamodal_table.'_'.$datamodal_title);
                                     } elseif ($c['type'] == 'select') {
                                         if ($c['datatable']) {
-                                            $join_table = explode(',', $c['datatable'])[0];
-                                            $join_field = explode(',', $c['datatable'])[1];
+                                            $join_table = explode(',', (string) $c['datatable'])[0];
+                                            $join_field = explode(',', (string) $c['datatable'])[1];
                                             $data_child->join($join_table, $join_table.'.id', '=', $c['name']);
                                             $data_child->addselect($join_table.'.'.$join_field.' as '.$join_table.'_'.$join_field);
                                         }
@@ -1185,7 +1181,7 @@ $childTableName = $form['table'];
                                             value='{{ $d->id }}' />
                                         @foreach ($form['columns'] as $col)
                                             <?php //for webp images
-                                            if ($col['type'] == 'hidden' && strpos($col['name'], 'webp') != false) {
+                                            if ($col['type'] == 'hidden' && str_contains((string) $col['name'], 'webp')) {
                                                 echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                 continue;
                                             }
@@ -1194,7 +1190,7 @@ $childTableName = $form['table'];
                                                 if ($col['type'] == 'filemanager') {
                                                     $tempLink = $d->{$col['name']};
                                                     $tempLink = str_replace(url('/'), '', $tempLink);
-                                                    if (strpos($tempLink, '/') !== 0) {
+                                                    if (!str_starts_with($tempLink, '/')) {
                                                         $tempLink = "/$tempLink";
                                                     }
                                                     echo "<a data-lightbox='roadtrip' href='" . $tempLink . "'>";
@@ -1203,8 +1199,8 @@ $childTableName = $form['table'];
                                                     echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                 } elseif ($col['type'] == 'select') {
                                                     if ($col['datatable']) {
-                                                        $join_table = explode(',', $col['datatable'])[0];
-                                                        $join_field = explode(',', $col['datatable'])[1];
+                                                        $join_table = explode(',', (string) $col['datatable'])[0];
+                                                        $join_field = explode(',', (string) $col['datatable'])[1];
                                                         echo "<span class='td-label'>";
                                                         echo $d->{$join_table . '_' . $join_field};
                                                         echo '</span>';
@@ -1217,14 +1213,14 @@ $childTableName = $form['table'];
                                                         echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                     }
                                                 } elseif ($col['type'] == 'datamodal') {
-                                                    $datamodal_title = explode(',', $col['datamodal_columns'])[0];
+                                                    $datamodal_title = explode(',', (string) $col['datamodal_columns'])[0];
                                                     $datamodal_table = $col['datamodal_table'];
                                                     echo "<span class='td-label'>";
                                                     echo $d->{$datamodal_table . '_' . $datamodal_title};
                                                     echo '</span>';
                                                     echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                 } elseif ($col['type'] == 'upload') {
-                                                    $filename = basename($d->{$col['name']});
+                                                    $filename = basename((string) $d->{$col['name']});
                                                     if ($col['upload_type'] == 'image') {
                                                         echo "<a href='" . asset($d->{$col['name']}) . "' data-lightbox='roadtrip'><img data-label='$filename' src='" . asset($d->{$col['name']}) . "' width='50px' height='50px'/></a>";
                                                         echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";

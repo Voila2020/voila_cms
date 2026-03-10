@@ -90,7 +90,7 @@ class AdminFormsController extends CBController
         | @parent_columns = Sparate with comma, e.g : name,created_at
         |
          */
-        $this->sub_module = array();
+        $this->sub_module = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -103,7 +103,7 @@ class AdminFormsController extends CBController
         | @showIf        = If condition when action show. Use field alias. e.g : [id] == 1
         |
          */
-        $this->addaction = array();
+        $this->addaction = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -115,7 +115,7 @@ class AdminFormsController extends CBController
         | Then about the action, you should code at actionButtonSelected method
         |
          */
-        $this->button_selected = array();
+        $this->button_selected = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -125,7 +125,7 @@ class AdminFormsController extends CBController
         | @type    = warning,success,danger,info
         |
          */
-        $this->alert = array();
+        $this->alert = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -136,7 +136,7 @@ class AdminFormsController extends CBController
         | @icon  = Icon from Awesome.
         |
          */
-        $this->index_button = array();
+        $this->index_button = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -146,7 +146,7 @@ class AdminFormsController extends CBController
         | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.
         |
          */
-        $this->table_row_color = array();
+        $this->table_row_color = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -166,7 +166,7 @@ class AdminFormsController extends CBController
         | @label, @count, @icon, @color
         |
          */
-        $this->index_statistic = array();
+        $this->index_statistic = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -206,7 +206,7 @@ class AdminFormsController extends CBController
         | $this->load_js[] = asset("myfile.js");
         |
          */
-        $this->load_js = array();
+        $this->load_js = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -226,7 +226,7 @@ class AdminFormsController extends CBController
         | $this->load_css[] = asset("myfile.css");
         |
          */
-        $this->load_css = array();
+        $this->load_css = [];
 
         $this->addaction[] = ['label' => 'Show', 'title' => 'Show', 'url' => CRUDBooster::mainpath("show-form/[id]"), 'icon' => 'fa fa-web', 'color' => 'success', 'showIf' => "true"];
 
@@ -379,31 +379,30 @@ class AdminFormsController extends CBController
                     // $element_form .= "<label>" . $item->label_filed . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' placeholder='" . $item->label_name . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'checkbox') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'checkbox') {
+                        $array_values = explode('|', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'radio') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'radio') {
+                        $array_values = explode('|', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'select') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'select') {
+                        $array_values = explode('|', (string) $item->values);
                         $element_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
-
                         foreach ($array_values as $filed) {
                             $element_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
                         $element_form .= "</select>";
-                    } else if ($item->title == 'number') {
+                    } elseif ($item->title == 'number') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'file') {
+                    } elseif ($item->title == 'file') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'textarea') {
+                    } elseif ($item->title == 'textarea') {
                         $element_form .= "<textarea  class='form-textarea' name='" . $this->stripSpace($item->label_filed) . "' placeholder='" . $item->label_name . "' " . $req . "></textarea>";
-                    } else if ($item->title == 'date') {
+                    } elseif ($item->title == 'date') {
                         $element_form .= "<input   type='date' class='form-input' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
@@ -440,7 +439,7 @@ class AdminFormsController extends CBController
 
     private function stripSpace($string)
     {
-        return $string = str_replace(' ', '', trim($string));
+        return $string = str_replace(' ', '', trim((string) $string));
     }
 
     public function getFormApplications($id, Request $request)
@@ -457,12 +456,10 @@ class AdminFormsController extends CBController
                 ->get();
 
             // get all fields with values
-            $applicationFields = $fields->map(function ($field) {
-                return [
-                    'label_name' => $field->label_name,
-                    'value' => $field->value,
-                ];
-            });
+            $applicationFields = $fields->map(fn($field) => [
+                'label_name' => $field->label_name,
+                'value' => $field->value,
+            ]);
 
             $applicationData->push([
                 'created_at' => $application->created_at,
@@ -515,14 +512,12 @@ class AdminFormsController extends CBController
             ];
         }
 
-        $filteredColumns = array_filter($formattedColumns, function ($column) {
-            return $column["label"] !== "response" && $column["label"] !== "updated_at" && $column["label"] !== "id" && $column["label"] !== "form_id" && $column["label"] !== "landing_page_id" && $column["label"] !== "active";
-        });
+        $filteredColumns = array_filter($formattedColumns, fn($column) => !in_array($column["label"], ["response", "updated_at", "id", "form_id", "landing_page_id", "active"], true));
 
         $filteredColumns = array_values($filteredColumns);
         //---------------------------------------------------//
 
-        return view('crudbooster::form_builder.submits', array('data' => $applications, 'export_data_columns' => $filteredColumns, 'export_data_result' => $result));
+        return view('crudbooster::form_builder.submits', ['data' => $applications, 'export_data_columns' => $filteredColumns, 'export_data_result' => $result]);
     }
 
     public function getShowForm($id, Request $request)
@@ -554,31 +549,30 @@ class AdminFormsController extends CBController
                     $element_form .= "<label>" . $item->label_name . ":</label>";
                     if ($item->title == 'email' || $item->title == 'text') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'checkbox') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'checkbox') {
+                        $array_values = explode('|', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "[]' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'radio') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'radio') {
+                        $array_values = explode('|', (string) $item->values);
                         foreach ($array_values as $filed) {
                             $element_form .= "<label><input type='" . $item->title . "'  value='" . $filed . "' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />" . $filed . "</label><br>";
                         }
-                    } else if ($item->title == 'select') {
-                        $array_values = explode('|', $item->values);
+                    } elseif ($item->title == 'select') {
+                        $array_values = explode('|', (string) $item->values);
                         $element_form .= "<select name='" . $this->stripSpace($item->label_filed) . "' class='form-control' >";
-
                         foreach ($array_values as $filed) {
                             $element_form .= "<option value='" . $filed . "'>" . $filed . "</option>";
                         }
                         $element_form .= "</select>";
-                    } else if ($item->title == 'number') {
+                    } elseif ($item->title == 'number') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'file') {
+                    } elseif ($item->title == 'file') {
                         $element_form .= "<input type='" . $item->title . "' class='form-control' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
-                    } else if ($item->title == 'textarea') {
+                    } elseif ($item->title == 'textarea') {
                         $element_form .= "<textarea  class='form-textarea' name='" . $this->stripSpace($item->label_filed) . "' placeholder='" . $item->label_name . "' " . $req . "></textarea>";
-                    } else if ($item->title == 'date') {
+                    } elseif ($item->title == 'date') {
                         $element_form .= "<input   type='date' class='form-input' name='" . $this->stripSpace($item->label_filed) . "' " . $req . " />";
                     }
 
@@ -598,7 +592,7 @@ class AdminFormsController extends CBController
 
                 $element_form .= "</form>";
             }
-            return view('crudbooster::form_builder.form', array('data' => $element_form));
+            return view('crudbooster::form_builder.form', ['data' => $element_form]);
         }
     }
 
@@ -674,7 +668,7 @@ class AdminFormsController extends CBController
             if ($item->title == "file") {
                 $key = $item->label_filed;
                 $submit .= "<td><a target='_blank' href=\"" . config('app.url') . '/files/' . $form->name . '/' . $request->$key->getClientOriginalName() . "\">" . $request->$key->getClientOriginalName() . "</a></td>";
-            } else if (is_array($request->input($this->stripSpace($item->label_filed)))) {
+            } elseif (is_array($request->input($this->stripSpace($item->label_filed)))) {
                 $submit .= "<td>";
                 foreach ($request->input($this->stripSpace($item->label_filed)) as $val) {
                     $submit .= $val . ",";
@@ -766,8 +760,8 @@ class AdminFormsController extends CBController
         $response = $this->getIndex();
 
         if (facadeRequest::input('export_data_columns')) {
-            $columns = json_decode(facadeRequest::input('export_data_columns'), true);
-            $result = json_decode(facadeRequest::input('export_data_result'));
+            $columns = json_decode((string) facadeRequest::input('export_data_columns'), true);
+            $result = json_decode((string) facadeRequest::input('export_data_result'));
 
             $response = [
                 "columns" => $columns,
@@ -786,14 +780,11 @@ class AdminFormsController extends CBController
                 $pdf->setPaper($papersize, $paperorientation);
 
                 return $pdf->stream($filename . '.pdf');
-                break;
             case 'xls':
                 return Excel::download(new DefaultExportXls($response), $filename . ".xls");
-                break;
             case 'csv':
 
                 return Excel::download(new DefaultExportXls($response), $filename . ".csv");
-                break;
         }
     }
 }

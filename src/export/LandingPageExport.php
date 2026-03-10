@@ -7,12 +7,8 @@ use Maatwebsite\Excel\Concerns\FromView;
 
 class LandingPageExport implements FromView
 {
-    private array $data;
-    private array $columns;
-    public function __construct(array $data, array $columns)
+    public function __construct(private readonly array $data, private readonly array $columns)
     {
-        $this->data = $data;
-        $this->columns = $columns;
     }
 
     public function view(): View

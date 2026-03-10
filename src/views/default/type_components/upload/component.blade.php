@@ -11,7 +11,7 @@
             if(Storage::exists($value) || file_exists($value)):
             $url = asset($value);
             $ext = pathinfo($url, PATHINFO_EXTENSION);
-            $images_type = array('jpg', 'png', 'gif', 'jpeg', 'bmp', 'tiff');
+            $images_type = ['jpg', 'png', 'gif', 'jpeg', 'bmp', 'tiff'];
             if(in_array(strtolower($ext), $images_type)):
             ?>
             <p><a data-lightbox='roadtrip' href='{{$url}}'><img style='max-width:160px' title="Image For {{$form['label']}}" src='{{$url}}'/></a></p>

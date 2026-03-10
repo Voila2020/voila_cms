@@ -95,8 +95,8 @@
                     $colname = $col['label'];
                     $name = $col['name'];
                     $field = $col['field_with'];
-                    $width = isset($col['width']) ? $col['width'] : 'auto';
-                    $style = isset($col['style']) ? $col['style'] : '';
+                    $width = $col['width'] ?? 'auto';
+                    $style = $col['style'] ?? '';
                     $mainpath = trim(CRUDBooster::mainpath(), '/') . $build_query;
                     echo "<th width='$width' $style>";
                     if (isset($sort_column[$field])) {
@@ -198,8 +198,8 @@
                         continue;
                     }
                     $colname = $col['label'];
-                    $width = isset($col['width']) ? $col['width'] : 'auto';
-                    $style = isset($col['style']) ? $col['style'] : '';
+                    $width = $col['width'] ?? 'auto';
+                    $style = $col['style'] ?? '';
                     echo "<th width='$width' $style>" . cbLang($colname) . '</th>';
                 }
                 ?>
@@ -402,7 +402,7 @@ $total = $result->total();
                     </div>
                     <form method='get' action=''>
                         <div class="modal-body">
-                            <?php foreach($columns as $key => $col):?>
+                            <?php foreach($columns as $col):?>
                             <?php if (isset($col['image']) || isset($col['download']) || $col['visible'] === false) {
                                 continue;
                             } ?>

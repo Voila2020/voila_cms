@@ -156,7 +156,7 @@ class CrudboosterUpdateCommand extends Command
             $system_failed++;
         }
 
-        if ($system_failed != 0) {
+        if ($system_failed !== 0) {
             $this->info('Sorry unfortunately your system is not meet with our requirements !');
             $this->footer(false);
         }

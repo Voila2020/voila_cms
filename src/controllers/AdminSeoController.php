@@ -48,22 +48,22 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
         //$this->form[] = ['label'=>'Response','name'=>'response','type'=>'textarea','validation'=>'required|string|min:5|max:5000','width'=>'col-sm-10'];
         # OLD END FORM
 
-        $this->sub_module = array();
+        $this->sub_module = [];
 
-        $this->addaction = array();
+        $this->addaction = [];
 
-        $this->button_selected = array();
+        $this->button_selected = [];
 
-        $this->alert = array();
+        $this->alert = [];
 
-        $this->index_button = array();
+        $this->index_button = [];
 
-        $this->table_row_color = array();
+        $this->table_row_color = [];
 
         $this->table_row_color[] = ["condition" => "[active]==1", "color" => "success"];
         $this->table_row_color[] = ["condition" => "[active]==0", "color" => "danger"];
 
-        $this->index_statistic = array();
+        $this->index_statistic = [];
 
         $this->script_js = "";
 
@@ -71,11 +71,11 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
 
         $this->post_index_html = null;
 
-        $this->load_js = array();
+        $this->load_js = [];
 
         $this->style_css = null;
 
-        $this->load_css = array();
+        $this->load_css = [];
 
         $this->addaction[] = ['label' => 'Show', 'title' => 'Show', 'url' => CRUDBooster::mainpath("show-form/[id]"), 'icon' => 'fa fa-web', 'color' => 'success', 'showIf' => "true"];
 
@@ -204,23 +204,23 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
     {
         $page = Request::input('page') ?: 'home';
         $page_id = Request::input('page_id') ?: null;
-        $conditions = array();
+        $conditions = [];
         $languages = DB::table('languages')->get();
         if ($page_id != null) {
-            array_push($conditions, ['page', '=', $page]);
-            array_push($conditions, ['page_id', '=', $page_id]);
+            $conditions[] = ['page', '=', $page];
+            $conditions[] = ['page_id', '=', $page_id];
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         } else {
-            array_push($conditions, ['page', '=', $page]);
-            array_push($conditions, ['page_id', '=', null]);
+            $conditions[] = ['page', '=', $page];
+            $conditions[] = ['page_id', '=', null];
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         }
        
 
         $record_id = $data[0]->id;
         $seo_image = $data[0]->image;
-        $seo_optional_tags = stripslashes($data[0]->optional_tags);
-        $seo_optional_tags = ($seo_optional_tags) ? $seo_optional_tags:"";
+        $seo_optional_tags = stripslashes((string) $data[0]->optional_tags);
+        $seo_optional_tags = $seo_optional_tags ?: "";
        
         $keys = array_keys($data);
         foreach ($keys as $key) {
@@ -229,7 +229,7 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             unset($data[$key]);
         }
         
-        return view('crudbooster::seo', array('data' => $data,'record_id'=>$record_id,'seo_image'=>$seo_image,'seo_optional_tags'=>$seo_optional_tags,'type' => $page, 'id' => $page_id, 'languages' => $languages));
+        return view('crudbooster::seo', ['data' => $data,'record_id'=>$record_id,'seo_image'=>$seo_image,'seo_optional_tags'=>$seo_optional_tags,'type' => $page, 'id' => $page_id, 'languages' => $languages]);
     }
 
     public function postSeoStore(Request $request)
@@ -238,10 +238,10 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
         $languages = DB::table('languages')->get();
 
         foreach ($languages as $lang) {
-            $conditions = array();
-            array_push($conditions, ['page', '=', Request::input('page')]);
-            array_push($conditions, ['page_id', '=', Request::input('page_id') ?: null]);
-            array_push($conditions, ['language', '=', $lang->code]);
+            $conditions = [];
+            $conditions[] = ['page', '=', Request::input('page')];
+            $conditions[] = ['page_id', '=', Request::input('page_id') ?: null];
+            $conditions[] = ['language', '=', $lang->code];
             $oldSEO = DB::table('cms_seo')->where($conditions)->first();
 
             if ($oldSEO) {
@@ -252,7 +252,7 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
                     'keywords' => $data['keywords_' . $lang->code],
                     'author' => $data['author_' . $lang->code],
                     'image' => $data['image'],
-                    'optional_tags' => addslashes($data['optional_tags']),
+                    'optional_tags' => addslashes((string) $data['optional_tags']),
                 ]);
             } else {
                 DB::table('cms_seo')->insert([
@@ -261,8 +261,8 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
                     'keywords' => $data['keywords_' . $lang->code],
                     'author' => $data['author_' . $lang->code],
                     'image' => $data['image'],
-                    'optional_tags' => addslashes($data['optional_tags']),
-                    'page_id' => (Request::input('page_id')) ? Request::input('page_id') : null,
+                    'optional_tags' => addslashes((string) $data['optional_tags']),
+                    'page_id' => Request::input('page_id') ?: null,
                     'page' => Request::input('page'),
                     'language' => $lang->code,
                     'created_at' => Carbon::now(),
@@ -272,8 +272,9 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             }
         }
         
-        if(Request::input("back_url"))
+        if (Request::input("back_url")) {
             return redirect(Request::input("back_url"))->with(['message' => cbLang("alert_update_seo_success"), 'message_type' => 'success']);
+        }
         $module = DB::table('cms_moduls')->where('path', Request::input('page'))->first();
         if ($module) {
             return redirect(CRUDBooster::adminPath(Request::input('page')))->with(['message' => cbLang("alert_update_seo_success"), 'message_type' => 'success']);

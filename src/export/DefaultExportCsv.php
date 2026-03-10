@@ -7,11 +7,8 @@ use Illuminate\Contracts\View\View;
 
 class DefaultExportCsv implements FromView, WithCustomCsvSettings
 {
-    private array $data;
-
-    public function __construct(array $data)
+    public function __construct(private readonly array $data)
     {
-        $this->data = $data;
     }
 
     public function view(): View

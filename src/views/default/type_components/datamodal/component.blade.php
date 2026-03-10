@@ -9,7 +9,7 @@
     <div class="{{$col_width?:'col-sm-10'}}">
 
         <?php
-        $datamodal_field = explode(',', $form['datamodal_columns'])[0];
+        $datamodal_field = explode(',', (string) $form['datamodal_columns'])[0];
         $datamodal_value = DB::table($form['datamodal_table'])->where('id', $value)->first()->$datamodal_field;
 
         ?>
@@ -19,7 +19,7 @@
             <input type="text" class="form-control input-label {{$required?"required":""}}" {{$required?"required":""}} value="{{$datamodal_value}}" readonly>
             <span class="input-group-btn">
         <button class="btn btn-primary" onclick="showModal{{$name}}()" type="button"><i class='fa fa-search'></i> {{cbLang('datamodal_browse_data')}}</button>
-                <?php if(strlen($form['datamodal_module_path']) > 1){ ?>
+                <?php if(strlen((string) $form['datamodal_module_path']) > 1){ ?>
                 <a class="btn btn-info" href="{{CRUDBooster::adminPath()}}/{{$form['datamodal_module_path']}}" target="_blank"><i
                             class='fa fa-edit'></i> {{$form['label']}}</a>
                 <?php } ?>

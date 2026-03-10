@@ -28,8 +28,6 @@ if (!function_exists('ends_with')) {
 if (!function_exists('cbLang')) {
     /**
      * @param $key
-     * @param array $replace
-     * @param null $locale
      * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Contracts\Translation\Translator|string|null
      */
     function cbLang($key, array $replace = [], $locale = null)
@@ -49,7 +47,6 @@ if (!function_exists('cbLang')) {
 
 if (!function_exists('db')) {
     /**
-     * @param string $table
      * @return \Illuminate\Database\Query\Builder
      */
     function db(string $table)
@@ -69,7 +66,7 @@ if (!function_exists('assetThumbnail')) {
 if (!function_exists('assetResize')) {
     function assetResize($path, $width, $height = null, $quality = 70)
     {
-        $basename = basename($path);
+        $basename = basename((string) $path);
         $pathWithoutName = str_replace($basename, '', $path);
         $newLocation = $pathWithoutName . '/w_' . $width . '_h_' . $height . '_' . $basename;
         if (Storage::exists($newLocation)) {
@@ -89,13 +86,12 @@ if (!function_exists('extract_unit')) {
      */
     function extract_unit($string, $start, $end)
     {
-        $pos = stripos($string, $start);
-        $str = substr($string, $pos);
-        $str_two = substr($str, strlen($start));
-        $second_pos = stripos($str_two, $end);
-        $str_three = substr($str_two, 0, $second_pos);
-        $unit = trim($str_three); // remove whitespaces
-        return $unit;
+        $pos = stripos((string) $string, (string) $start);
+        $str = substr((string) $string, $pos);
+        $str_two = substr($str, strlen((string) $start));
+        $second_pos = stripos($str_two, (string) $end);
+        $str_three = substr($str_two, 0, $second_pos); // remove whitespaces
+        return trim($str_three);
     }
 }
 
@@ -117,23 +113,20 @@ if (!function_exists('now')) {
 if (!function_exists('get_setting')) {
     /**
      * @param $key
-     * @param null $default
      * @return bool
      */
     function get_setting($key, $default = null)
     {
         $setting = \crocodicstudio\crudbooster\helpers\CB::getSetting($key);
-        $setting = ($setting) ?: $default;
-        return $setting;
+        return ($setting) ?: $default;
     }
 }
 
 if (!function_exists('set_setting')) {
     function set_setting($key, $value)
     {
-        $setting = \crocodicstudio\crudbooster\helpers\CB::setSetting($key, $value);
         // $setting = ($setting) ?: null;
-        return $setting;
+        return \crocodicstudio\crudbooster\helpers\CB::setSetting($key, $value);
     }
 }
 
@@ -154,7 +147,6 @@ if (!function_exists('str_slug')) {
 if (!function_exists('g')) {
     /**
      * @param $key
-     * @param null $default
      * @return array|\Illuminate\Contracts\Foundation\Application|\Illuminate\Http\Request|string
      */
     function g($key, $default = null)
@@ -214,7 +206,7 @@ if (!function_exists('rrmdir')) {
         if (is_dir($dir)) {
             $objects = scandir($dir);
             foreach ($objects as $object) {
-                if ($object != "." && $object != "..") {
+                if ($object !== "." && $object !== "..") {
                     if (is_dir($dir . "/" . $object)) {
                         rrmdir($dir . "/" . $object);
                     } else {
@@ -231,11 +223,11 @@ if (!function_exists('rrmdir')) {
 if (!function_exists('formatBytes')) {
     function formatBytes($bytes, $precision = 2)
     {
-        $units = array('B', 'KB', 'MB', 'GB', 'TB');
+        $units = ['B', 'KB', 'MB', 'GB', 'TB'];
         $bytes = max($bytes, 0);
         $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
         $pow = min($pow, count($units) - 1);
-        $bytes /= pow(1024, $pow);
+        $bytes /= 1024 ** $pow;
         return round($bytes, $precision) . ' ' . $units[$pow];
     }
 }

@@ -8,7 +8,9 @@ foreach($forms as $form) {
 $type = @$form['type'] ?: 'text';
 $name = $form['name'];
 
-if (in_array($type, $asset_already)) continue;
+if (in_array($type, $asset_already)) {
+    continue;
+}
 ?>
 @if(file_exists(base_path('/vendor/voila_cms/crudbooster/src/views/default/type_components/'.$type.'/asset.blade.php')))
     @include('crudbooster::default.type_components.'.$type.'.asset')
@@ -26,23 +28,21 @@ foreach($forms as $index=>$form) {
 
 $name = $form['name'];
 @$join = $form['join'];
-@$value = (isset($form['value'])) ? $form['value'] : '';
-@$value = (isset($row->{$name})) ? $row->{$name} : $value;
+@$value = $form['value'] ?? '';
+@$value = $row->{$name} ?? $value;
 
 $old = old($name);
-$value = (! empty($old)) ? $old : $value;
+$value = (empty($old)) ? $value : $old;
 
-$validation = array();
-$validation_raw = isset($form['validation']) ? explode('|', $form['validation']) : array();
-if ($validation_raw) {
-    foreach ($validation_raw as $vr) {
-        $vr_a = explode(':', $vr);
-        if ($vr_a[1]) {
-            $key = $vr_a[0];
-            $validation[$key] = $vr_a[1];
-        } else {
-            $validation[$vr] = TRUE;
-        }
+$validation = [];
+$validation_raw = isset($form['validation']) ? explode('|', $form['validation']) : [];
+foreach ($validation_raw as $vr) {
+    $vr_a = explode(':', $vr);
+    if ($vr_a[1] !== '' && $vr_a[1] !== '0') {
+        $key = $vr_a[0];
+        $validation[$key] = $vr_a[1];
+    } else {
+        $validation[$vr] = TRUE;
     }
 }
 
@@ -60,8 +60,8 @@ if (isset($form['callback'])) {
 }
 
 if ($join && @$row) {
-    $join_arr = explode(',', $join);
-    array_walk($join_arr, 'trim');
+    $join_arr = explode(',', (string) $join);
+    array_walk($join_arr, trim(...));
     $join_table = $join_arr[0];
     $join_title = $join_arr[1];
     $join_query_[$join_table] = DB::table($join_table)->select($join_title)->where("id", $row->{'id_'.$join_table})->first();
@@ -70,12 +70,10 @@ if ($join && @$row) {
 $form['type'] = ($form['type']) ?: 'text';
 $type = @$form['type'];
 $required = (@$form['required']) ? "required" : "";
-$required = (@strpos($form['validation'], 'required') !== FALSE) ? "required" : $required;
+$required = (@strpos((string) $form['validation'], 'required') !== FALSE) ? "required" : $required;
 
-if(CRUDBooster::getCurrentModule()->translation_table != ''){
-    if($lang->default == null) {
-        $required = '';
-    }
+if(CRUDBooster::getCurrentModule()->translation_table != '' && $lang->default == null){
+    $required = '';
 }
 
 $readonly = (@$form['readonly']) ? "readonly" : "";

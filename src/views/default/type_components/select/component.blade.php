@@ -1,8 +1,8 @@
 @if($current_language->default != null && $current_language->default == 1)
-    <?php $default = ! empty($form['default']) ? $form['default'] : cbLang('text_prefix_option')." ".$form['label'];?>
+    <?php $default = empty($form['default']) ? cbLang('text_prefix_option')." ".$form['label'] : $form['default'];?>
     @if($form['parent_select'])
         <?php
-        $parent_select = (count(explode(",", $form['parent_select'])) > 1) ? explode(",", $form['parent_select']) : $form['parent_select'];
+        $parent_select = (count(explode(",", (string) $form['parent_select'])) > 1) ? explode(",", (string) $form['parent_select']) : $form['parent_select'];
         $parent = is_array($parent_select) ? $parent_select[0] : $parent_select;
         $add_field = is_array($parent_select) ? $parent_select[1] : '';
         ?>
@@ -85,13 +85,13 @@
 
                     if (@$form['dataenum']):
                         $dataenum = $form['dataenum'];
-                        $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", $dataenum);
+                        $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", (string) $dataenum);
 
                         foreach ($dataenum as $d) {
 
                             $val = $lab = '';
-                            if (strpos($d, '|') !== FALSE) {
-                                $draw = explode("|", $d);
+                            if (str_contains((string) $d, '|')) {
+                                $draw = explode("|", (string) $d);
                                 $val = $draw[0];
                                 $lab = $draw[1];
                             } else {
@@ -105,9 +105,9 @@
                     endif;
 
                     if (@$form['datatable']):
-                        $raw = explode(",", $form['datatable']);
+                        $raw = explode(",", (string) $form['datatable']);
                         $format = $form['datatable_format'];
-                        $datatable_order = explode(',', $form['datatable_order']);
+                        $datatable_order = explode(',', (string) $form['datatable_order']);
                         $table1 = $raw[0];
                         $column1 = $raw[1];
 

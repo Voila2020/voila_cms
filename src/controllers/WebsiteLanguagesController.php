@@ -69,7 +69,7 @@ class WebsiteLanguagesController extends CBController
         | @parent_columns = Sparate with comma, e.g : name,created_at
         |
          */
-        $this->sub_module = array();
+        $this->sub_module = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -82,7 +82,7 @@ class WebsiteLanguagesController extends CBController
         | @showIf        = If condition when action show. Use field alias. e.g : [id] == 1
         |
          */
-        $this->addaction = array();
+        $this->addaction = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -94,7 +94,7 @@ class WebsiteLanguagesController extends CBController
         | Then about the action, you should code at actionButtonSelected method
         |
          */
-        $this->button_selected = array();
+        $this->button_selected = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -104,7 +104,7 @@ class WebsiteLanguagesController extends CBController
         | @type    = warning,success,danger,info
         |
          */
-        $this->alert = array();
+        $this->alert = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -115,7 +115,7 @@ class WebsiteLanguagesController extends CBController
         | @icon  = Icon from Awesome.
         |
          */
-        $this->index_button = array();
+        $this->index_button = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -125,7 +125,7 @@ class WebsiteLanguagesController extends CBController
         | @color = Default is none. You can use bootstrap success,info,warning,danger,primary.
         |
          */
-        $this->table_row_color = array();
+        $this->table_row_color = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -134,7 +134,7 @@ class WebsiteLanguagesController extends CBController
         | @label, @count, @icon, @color
         |
          */
-        $this->index_statistic = array();
+        $this->index_statistic = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -174,7 +174,7 @@ class WebsiteLanguagesController extends CBController
         | $this->load_js[] = asset("myfile.js");
         |
          */
-        $this->load_js = array();
+        $this->load_js = [];
 
         /*
         | ----------------------------------------------------------------------
@@ -194,7 +194,7 @@ class WebsiteLanguagesController extends CBController
         | $this->load_css[] = asset("myfile.css");
         |
          */
-        $this->load_css = array();
+        $this->load_css = [];
     }
 
     /*
@@ -274,7 +274,7 @@ class WebsiteLanguagesController extends CBController
         $lang = DB::table('languages')->where('id', $id)->first();
         $newCode = $postdata['code'];
         $oldCode = $lang->code;
-        $pagesSEO = DB::table('cms_seo')->where('language', $oldCode)->update([
+        DB::table('cms_seo')->where('language', $oldCode)->update([
             'language' => $newCode,
         ]);
     }

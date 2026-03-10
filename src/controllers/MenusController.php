@@ -221,7 +221,7 @@ class MenusController extends CBController
 
         $fontawesome = Fontawesome::getIcons();
 
-        $custom = view('crudbooster::components.list_icon', compact('fontawesome', 'row'))->render();
+        $custom = view('crudbooster::components.list_icon', ['fontawesome' => $fontawesome, 'row' => $row])->render();
         $this->form[] = ['label' => 'Icon', 'name' => 'icon', 'type' => 'custom', 'html' => $custom, 'required' => true];
         $this->form[] = [
             'label' => 'Color',
@@ -278,14 +278,14 @@ class MenusController extends CBController
 
         foreach ($menu_inactive as &$menu) {
             $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
-            if (count($child)) {
+            if (count($child) > 0) {
                 $menu->children = $child;
             }
         }
 
         $return_url = Request::fullUrl();
         $page_title = 'Menu Management';
-        return view('crudbooster::menus_management', compact('menu_active', 'menu_inactive', 'privileges', 'id_cms_privileges', 'return_url', 'page_title'));
+        return view('crudbooster::menus_management', ['menu_active' => $menu_active, 'menu_inactive' => $menu_inactive, 'privileges' => $privileges, 'id_cms_privileges' => $id_cms_privileges, 'return_url' => $return_url, 'page_title' => $page_title]);
     }
 
     private function getMenuChildren($menu)
@@ -351,7 +351,7 @@ class MenusController extends CBController
     {
         $post = Request::input('menus');
         $isActive = Request::input('isActive');
-        $post = json_decode($post, true);
+        $post = json_decode((string) $post, true);
         $i = 1;
         $items = $post[0];
         foreach ($items as $ro) {

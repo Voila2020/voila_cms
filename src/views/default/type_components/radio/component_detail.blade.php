@@ -1,7 +1,7 @@
 <?php
 
 if ($form['datatable'] && $form['relationship_table']) {
-    $datatable_array = explode(",", $form['datatable']);
+    $datatable_array = explode(",", (string) $form['datatable']);
     $datatable_tab = $datatable_array[0];
     $datatable_field = $datatable_array[1];
     $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
@@ -11,15 +11,11 @@ if ($form['datatable'] && $form['relationship_table']) {
     $value = DB::table($datatable_tab)->select($datatable_field)->whereIn('id', $ids)->pluck($datatable_field)->toArray();
 } elseif ($form['datatable']) {
 
-    $datatable = explode(',', $form['datatable']);
+    $datatable = explode(',', (string) $form['datatable']);
     $table = $datatable[0];
     $field = $datatable[1];
     $r = CRUDBooster::first($table, ['id' => $value])->$field;
-    if ($r) {
-        $value = [$r];
-    } else {
-        $value = [];
-    }
+    $value = $r ? [$r] : [];
 } elseif ($form['dataquery']) {
     $dataquery = $form['dataquery'];
     $query = DB::select(DB::raw($dataquery));
@@ -30,10 +26,12 @@ if ($form['datatable'] && $form['relationship_table']) {
                 break;
             }
         }
-        if (! $value) $value = [];
+        if (! $value) {
+            $value = [];
+        }
     }
 } else {
-    $value = explode(";", $value);
+    $value = explode(";", (string) $value);
 }
 
 foreach ($value as $v) {

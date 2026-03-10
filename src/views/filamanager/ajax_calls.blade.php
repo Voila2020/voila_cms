@@ -10,9 +10,9 @@ if ($_SESSION['RF']["verify"] != "RESPONSIVEfilemanager") {
 }
 $languages = include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/languages.php';
 
-if (isset($_SESSION['RF']['language']) && file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename($_SESSION['RF']['language']) . '.php')) {
+if (isset($_SESSION['RF']['language']) && file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename((string) $_SESSION['RF']['language']) . '.php')) {
     if (array_key_exists($_SESSION['RF']['language'], $languages)) {
-        include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename($_SESSION['RF']['language']) . '.php';
+        include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . basename((string) $_SESSION['RF']['language']) . '.php';
     } else {
         response(cbLang('filemanager.Lang_Not_Found').AddErrorLocation())->send();
         exit;
@@ -79,11 +79,11 @@ if (isset($_GET['action'])) {
 			}
 			break;
 		case 'save_img':
-			$info = pathinfo($_POST['name']);
+			$info = pathinfo((string) $_POST['name']);
             $image_data = $_POST['url'];
 
-            if (preg_match('/^data:image\/(\w+);base64,/', $image_data, $type)) {
-                $image_data = substr($image_data, strpos($image_data, ',') + 1);
+            if (preg_match('/^data:image\/(\w+);base64,/', (string) $image_data, $type)) {
+                $image_data = substr((string) $image_data, strpos((string) $image_data, ',') + 1);
                 $type = strtolower($type[1]); // jpg, png, gif
 
                 $image_data = base64_decode($image_data);
@@ -109,7 +109,7 @@ if (isset($_GET['action'])) {
             if ($ftp) {
                 $temp = tempnam('/tmp', 'RF');
                 unlink($temp);
-                $temp .=".".substr(strrchr($_POST['url'], '.'), 1);
+                $temp .=".".substr(strrchr((string) $_POST['url'], '.'), 1);
                 file_put_contents($temp, $image_data);
 
                 $ftp->put($config['ftp_base_folder'].$config['upload_dir'] . $_POST['path'] . $_POST['name'], $temp, FTP_BINARY);
@@ -181,11 +181,11 @@ if (isset($_GET['action'])) {
                             $FullFileName = $zip->statIndex($i);
 
                             if (checkRelativePath($FullFileName['name'])) {
-                                if (substr($FullFileName['name'], -1, 1) == "/") {
+                                if (str_ends_with($FullFileName['name'], "/")) {
                                     create_folder($base_folder . $FullFileName['name']);
                                 }
 
-                                if (! (substr($FullFileName['name'], -1, 1) == "/")) {
+                                if (!str_ends_with($FullFileName['name'], "/")) {
                                     $fileinfo = pathinfo($FullFileName['name']);
                                     if (in_array(strtolower($fileinfo['extension']), $config['ext'])) {
                                         copy('zip://' . $path . '#' . $FullFileName['name'], $base_folder . $FullFileName['name']);
@@ -212,7 +212,7 @@ if (isset($_GET['action'])) {
                     // unarchive from the tar
                     $phar = new PharData($path);
                     $phar->decompressFiles();
-                    $files = array();
+                    $files = [];
                     check_files_extensions_on_phar($phar, $files, '', $config);
                     $phar->extractTo($base_folder, $files, true);
                     break;
@@ -297,7 +297,8 @@ if (isset($_GET['action'])) {
         </div>
     </div>
 </div>
-<?php if(in_array(strtolower($info['extension']), $config['ext_music'])): ?>
+<?php if (in_array(strtolower($info['extension']), $config['ext_music'])) {
+                ?>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -305,11 +306,20 @@ if (isset($_GET['action'])) {
         $("#jquery_jplayer_1").jPlayer({
             ready: function() {
                 $(this).jPlayer("setMedia", {
-                    title: "<?php $_GET['title']; ?>",
-                    mp3: "<?php echo $preview_file; ?>",
-                    m4a: "<?php echo $preview_file; ?>",
-                    oga: "<?php echo $preview_file; ?>",
-                    wav: "<?php echo $preview_file; ?>"
+                    title: "<?php 
+                ?>",
+                    mp3: "<?php 
+                echo $preview_file;
+                ?>",
+                    m4a: "<?php 
+                echo $preview_file;
+                ?>",
+                    oga: "<?php 
+                echo $preview_file;
+                ?>",
+                    wav: "<?php 
+                echo $preview_file;
+                ?>"
                 });
             },
             swfPath: "js",
@@ -321,7 +331,9 @@ if (isset($_GET['action'])) {
     });
 </script>
 
-<?php elseif (in_array(strtolower($info['extension']), $config['ext_video'])):	?>
+<?php 
+            } elseif (in_array(strtolower($info['extension']), $config['ext_video'])) {
+                ?>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -329,10 +341,17 @@ if (isset($_GET['action'])) {
         $("#jquery_jplayer_1").jPlayer({
             ready: function() {
                 $(this).jPlayer("setMedia", {
-                    title: "<?php $_GET['title']; ?>",
-                    m4v: "<?php echo $preview_file; ?>",
-                    ogv: "<?php echo $preview_file; ?>",
-                    flv: "<?php echo $preview_file; ?>"
+                    title: "<?php 
+                ?>",
+                    m4v: "<?php 
+                echo $preview_file;
+                ?>",
+                    ogv: "<?php 
+                echo $preview_file;
+                ?>",
+                    flv: "<?php 
+                echo $preview_file;
+                ?>"
                 });
             },
             swfPath: "js",
@@ -345,21 +364,20 @@ if (isset($_GET['action'])) {
     });
 </script>
 
-<?php endif;
+<?php 
+            }
 
             $content = ob_get_clean();
 
             response($content)->send();
             exit;
-
-            break;
         case 'copy_cut':
             if ($_POST['sub_action'] != 'copy' && $_POST['sub_action'] != 'cut') {
                 response(cbLang('filemanager.wrong sub-action').AddErrorLocation())->send();
                 exit;
             }
 
-            if (trim($_POST['path']) == '') {
+            if (trim((string) $_POST['path']) === '') {
                 response(cbLang('filemanager.no path').AddErrorLocation())->send();
                 exit;
             }
@@ -374,21 +392,17 @@ if (isset($_GET['action'])) {
                     exit;
                 }
 
-                list($sizeFolderToCopy, $fileNum, $foldersCount) = folder_info($path, false);
+                [$sizeFolderToCopy, $fileNum, $foldersCount] = folder_info($path, false);
                 // size over limit
-                if ($config['copy_cut_max_size'] !== false && is_int($config['copy_cut_max_size'])) {
-                    if (($config['copy_cut_max_size'] * 1024 * 1024) < $sizeFolderToCopy) {
-                        response(sprintf(cbLang('filemanager.Copy_Cut_Size_Limit'), $msg_sub_action, $config['copy_cut_max_size']).AddErrorLocation())->send();
-                        exit;
-                    }
+                if ($config['copy_cut_max_size'] !== false && is_int($config['copy_cut_max_size']) && $config['copy_cut_max_size'] * 1024 * 1024 < $sizeFolderToCopy) {
+                    response(sprintf(cbLang('filemanager.Copy_Cut_Size_Limit'), $msg_sub_action, $config['copy_cut_max_size']).AddErrorLocation())->send();
+                    exit;
                 }
 
                 // file count over limit
-                if ($config['copy_cut_max_count'] !== false && is_int($config['copy_cut_max_count'])) {
-                    if ($config['copy_cut_max_count'] < $fileNum) {
-                        response(sprintf(cbLang('filemanager.Copy_Cut_Count_Limit'), $msg_sub_action, $config['copy_cut_max_count']).AddErrorLocation())->send();
-                        exit;
-                    }
+                if ($config['copy_cut_max_count'] !== false && is_int($config['copy_cut_max_count']) && $config['copy_cut_max_count'] < $fileNum) {
+                    response(sprintf(cbLang('filemanager.Copy_Cut_Count_Limit'), $msg_sub_action, $config['copy_cut_max_count']).AddErrorLocation())->send();
+                    exit;
                 }
 
                 if (!checkresultingsize($sizeFolderToCopy)) {
@@ -436,25 +450,25 @@ if (isset($_GET['action'])) {
                 $info = '-';
 
                 // Owner
-                $info .= (($perms & 0x0100) ? 'r' : '-');
-                $info .= (($perms & 0x0080) ? 'w' : '-');
-                $info .= (($perms & 0x0040) ?
-                            (($perms & 0x0800) ? 's' : 'x') :
-                            (($perms & 0x0800) ? 'S' : '-'));
+                $info .= ((($perms & 0x0100) !== 0) ? 'r' : '-');
+                $info .= ((($perms & 0x0080) !== 0) ? 'w' : '-');
+                $info .= ((($perms & 0x0040) !== 0) ?
+                            ((($perms & 0x0800) !== 0) ? 's' : 'x') :
+                            ((($perms & 0x0800) !== 0) ? 'S' : '-'));
 
                 // Group
-                $info .= (($perms & 0x0020) ? 'r' : '-');
-                $info .= (($perms & 0x0010) ? 'w' : '-');
-                $info .= (($perms & 0x0008) ?
-                            (($perms & 0x0400) ? 's' : 'x') :
-                            (($perms & 0x0400) ? 'S' : '-'));
+                $info .= ((($perms & 0x0020) !== 0) ? 'r' : '-');
+                $info .= ((($perms & 0x0010) !== 0) ? 'w' : '-');
+                $info .= ((($perms & 0x0008) !== 0) ?
+                            ((($perms & 0x0400) !== 0) ? 's' : 'x') :
+                            ((($perms & 0x0400) !== 0) ? 'S' : '-'));
 
                 // World
-                $info .= (($perms & 0x0004) ? 'r' : '-');
-                $info .= (($perms & 0x0002) ? 'w' : '-');
-                $info .= (($perms & 0x0001) ?
-                            (($perms & 0x0200) ? 't' : 'x') :
-                            (($perms & 0x0200) ? 'T' : '-'));
+                $info .= ((($perms & 0x0004) !== 0) ? 'r' : '-');
+                $info .= ((($perms & 0x0002) !== 0) ? 'w' : '-');
+                $info .= ((($perms & 0x0001) !== 0) ?
+                            ((($perms & 0x0200) !== 0) ? 't' : 'x') :
+                            ((($perms & 0x0200) !== 0) ? 'T' : '-'));
             }
 
 
@@ -472,21 +486,21 @@ if (isset($_GET['action'])) {
                     <tbody>
                         <tr>
                             <td>'.cbLang('filemanager.User').'</td>
-                            <td><input id="u_4" type="checkbox" data-value="4" data-group="user" '.(substr($info, 1, 1)=='r' ? " checked" : "").'></td>
-                            <td><input id="u_2" type="checkbox" data-value="2" data-group="user" '.(substr($info, 2, 1)=='w' ? " checked" : "").'></td>
-                            <td><input id="u_1" type="checkbox" data-value="1" data-group="user" '.(substr($info, 3, 1)=='x' ? " checked" : "").'></td>
+                            <td><input id="u_4" type="checkbox" data-value="4" data-group="user" '.(substr((string) $info, 1, 1) === 'r' ? " checked" : "").'></td>
+                            <td><input id="u_2" type="checkbox" data-value="2" data-group="user" '.(substr((string) $info, 2, 1) === 'w' ? " checked" : "").'></td>
+                            <td><input id="u_1" type="checkbox" data-value="1" data-group="user" '.(substr((string) $info, 3, 1) === 'x' ? " checked" : "").'></td>
                         </tr>
                         <tr>
                             <td>'.cbLang('filemanager.Group').'</td>
-                            <td><input id="g_4" type="checkbox" data-value="4" data-group="group" '.(substr($info, 4, 1)=='r' ? " checked" : "").'></td>
-                            <td><input id="g_2" type="checkbox" data-value="2" data-group="group" '.(substr($info, 5, 1)=='w' ? " checked" : "").'></td>
-                            <td><input id="g_1" type="checkbox" data-value="1" data-group="group" '.(substr($info, 6, 1)=='x' ? " checked" : "").'></td>
+                            <td><input id="g_4" type="checkbox" data-value="4" data-group="group" '.(substr((string) $info, 4, 1) === 'r' ? " checked" : "").'></td>
+                            <td><input id="g_2" type="checkbox" data-value="2" data-group="group" '.(substr((string) $info, 5, 1) === 'w' ? " checked" : "").'></td>
+                            <td><input id="g_1" type="checkbox" data-value="1" data-group="group" '.(substr((string) $info, 6, 1) === 'x' ? " checked" : "").'></td>
                         </tr>
                         <tr>
                             <td>'.cbLang('filemanager.All').'</td>
-                            <td><input id="a_4" type="checkbox" data-value="4" data-group="all" '.(substr($info, 7, 1)=='r' ? " checked" : "").'></td>
-                            <td><input id="a_2" type="checkbox" data-value="2" data-group="all" '.(substr($info, 8, 1)=='w' ? " checked" : "").'></td>
-                            <td><input id="a_1" type="checkbox" data-value="1" data-group="all" '.(substr($info, 9, 1)=='x' ? " checked" : "").'></td>
+                            <td><input id="a_4" type="checkbox" data-value="4" data-group="all" '.(substr((string) $info, 7, 1) === 'r' ? " checked" : "").'></td>
+                            <td><input id="a_2" type="checkbox" data-value="2" data-group="all" '.(substr((string) $info, 8, 1) === 'w' ? " checked" : "").'></td>
+                            <td><input id="a_1" type="checkbox" data-value="1" data-group="all" '.(substr((string) $info, 9, 1) === 'x' ? " checked" : "").'></td>
                         </tr>
                         <tr>
                             <td></td>
@@ -510,8 +524,6 @@ if (isset($_GET['action'])) {
 
             response($ret)->send();
             exit;
-
-            break;
         case 'get_lang':
             if (! file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/languages.php')) {
                 response(cbLang('filemanager.Lang_Not_Found').AddErrorLocation())->send();
@@ -534,10 +546,8 @@ if (isset($_GET['action'])) {
 
             response($ret)->send();
             exit;
-
-            break;
         case 'change_lang':
-            $choosen_lang = (!empty($_POST['choosen_lang']))? $_POST['choosen_lang']:"en_EN";
+            $choosen_lang = (empty($_POST['choosen_lang']))? "en_EN":$_POST['choosen_lang'];
 
             if (array_key_exists($choosen_lang, $languages)) {
                 if (! file_exists(base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/lang/' . $choosen_lang . '.php')) {
@@ -602,7 +612,7 @@ if (isset($_GET['action'])) {
             }
 
             if (! isset($allowed_file_exts) || ! is_array($allowed_file_exts)) {
-                $allowed_file_exts = array();
+                $allowed_file_exts = [];
             }
 
             if (!isset($info['extension'])) {
@@ -639,7 +649,7 @@ $ret = "<iframe src=\"https://docs.google.com/viewer?url=" . $url_file . "&embed
 }
 }else{
 $data = stripslashes(htmlspecialchars(file_get_contents($selected_file)));
-if(in_array($info['extension'],array('html','html'))){
+if(in_array($info['extension'],['html','html'])){
 $ret = '
 <script src="https://cdn.ckeditor.com/ckeditor5/12.1.0/classic/ckeditor.js"></script>
 <textarea id="textfile_edit_area" style="width:100%;height:300px;">'.$data.'</textarea>
@@ -659,8 +669,6 @@ $ret = '
 
 response($ret)->send();
 exit;
-
-break;
 default:
 response(cbLang('filemanager.no action passed').AddErrorLocation())->send();
 exit;

@@ -49,7 +49,7 @@
             $value = str_replace("[".$key."]", $val, $value);
         }
         $sql = DB::select(DB::raw($value));
-    } catch (\Exception $e) {
+    } catch (\Exception) {
         die('ERROR');
     }
     ?>

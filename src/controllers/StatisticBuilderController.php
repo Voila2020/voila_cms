@@ -56,7 +56,7 @@ class StatisticBuilderController extends CBController
         $id_cms_statistics = $row->id;
         $page_title = $row->name;
 
-        return view('crudbooster::statistic_builder.show', compact('page_title', 'id_cms_statistics'));
+        return view('crudbooster::statistic_builder.show', ['page_title' => $page_title, 'id_cms_statistics' => $id_cms_statistics]);
     }
 
     public function getDashboard()
@@ -91,7 +91,7 @@ class StatisticBuilderController extends CBController
         $id_cms_statistics = $row->id;
         $page_title = $row->name;
 
-        return view('crudbooster::statistic_builder.show', compact('page_title', 'id_cms_statistics'));
+        return view('crudbooster::statistic_builder.show', ['page_title' => $page_title, 'id_cms_statistics' => $id_cms_statistics]);
     }
 
     public function getBuilder($id_cms_statistics)
@@ -105,7 +105,7 @@ class StatisticBuilderController extends CBController
 
         $page_title = 'Statistic Builder';
 
-        return view('crudbooster::statistic_builder.builder', compact('page_title', 'id_cms_statistics'));
+        return view('crudbooster::statistic_builder.builder', ['page_title' => $page_title, 'id_cms_statistics' => $id_cms_statistics]);
     }
 
     public function getListComponent($id_cms_statistics, $area_name)
@@ -120,22 +120,21 @@ class StatisticBuilderController extends CBController
 
         $component = DB::table('cms_statistic_components')->where('componentID', $componentID)->first();
         $command = 'layout';
-        $layout = view('crudbooster::statistic_builder.components.'.$component->component_name, compact('command', 'componentID'))->render();
+        $layout = view('crudbooster::statistic_builder.components.'.$component->component_name, ['command' => $command, 'componentID' => $componentID])->render();
 
         $component_name = $component->component_name;
-        $area_name = $component->area_name;
-        $config = json_decode($component->config);
+        $config = json_decode((string) $component->config);
         if ($config) {
             foreach ($config as $key => $value) {
                 if ($value) {
                     $command = 'showFunction';
-                    $value = view('crudbooster::statistic_builder.components.'.$component_name, compact('command', 'value', 'key', 'config', 'componentID'))->render();
+                    $value = view('crudbooster::statistic_builder.components.'.$component_name, ['command' => $command, 'value' => $value, 'key' => $key, 'config' => $config, 'componentID' => $componentID])->render();
                     $layout = str_replace('['.$key.']', $value, $layout);
                 }
             }
         }
 
-        return response()->json(compact('componentID', 'layout'));
+        return response()->json(['componentID' => $componentID, 'layout' => $layout]);
     }
 
     public function postAddComponent()
@@ -149,7 +148,7 @@ class StatisticBuilderController extends CBController
         $componentID = md5(time());
 
         $command = 'layout';
-        $layout = view('crudbooster::statistic_builder.components.'.$component_name, compact('command', 'componentID'))->render();
+        $layout = view('crudbooster::statistic_builder.components.'.$component_name, ['command' => $command, 'componentID' => $componentID])->render();
 
         $data = [
             'id_cms_statistics' => $id_cms_statistics,
@@ -161,7 +160,7 @@ class StatisticBuilderController extends CBController
         ];
         CRUDBooster::insert('cms_statistic_components', $data);
 
-        return response()->json(compact('layout', 'componentID'));
+        return response()->json(['layout' => $layout, 'componentID' => $componentID]);
     }
 
     public function postUpdateAreaComponent()
@@ -185,11 +184,11 @@ class StatisticBuilderController extends CBController
 
         $component_row = CRUDBooster::first('cms_statistic_components', ['componentID' => $componentID]);
 
-        $config = json_decode($component_row->config);
+        $config = json_decode((string) $component_row->config);
 
         $command = 'configuration';
 
-        return view('crudbooster::statistic_builder.components.'.$component_row->component_name, compact('command', 'componentID', 'config'));
+        return view('crudbooster::statistic_builder.components.'.$component_row->component_name, ['command' => $command, 'componentID' => $componentID, 'config' => $config]);
     }
 
     public function postSaveComponent()
