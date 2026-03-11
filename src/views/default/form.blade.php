@@ -1,5 +1,9 @@
 @extends('crudbooster::admin_template')
 @section('content')
+    @php
+        $mode = $mode ?? 'default';
+        $command = $command ?? '';
+    @endphp
 
     <div>
 

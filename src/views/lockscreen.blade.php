@@ -43,7 +43,7 @@
     <!-- Automatic element centering -->
     <div class="lockscreen-wrapper">
         <div class="lockscreen-logo">
-            <img title='{!! $appname == 'CRUDBooster' ? '<b>CRUD</b>Booster' : $appname !!}'
+            <img title='{!! ($appname ?? config('app.name', 'CRUDBooster')) == 'CRUDBooster' ? '<b>CRUD</b>Booster' : ($appname ?? config('app.name', 'CRUDBooster')) !!}'
                 src='{{ CRUDBooster::getSetting('logo') ? asset(CRUDBooster::getSetting('logo')) : asset('vendor/crudbooster/assets/voila_logo.png') }}'
                 style='max-width: 100%;max-height:170px' />
         </div>

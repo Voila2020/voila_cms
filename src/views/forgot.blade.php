@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ cbLang('page_title_forgot') }} : {{ $appname }}</title>
+    <title>{{ cbLang('page_title_forgot') }} : {{ $appname ?? config('app.name', 'CRUDBooster') }}</title>
     <meta name='generator' content='CRUDBooster.com' />
     <meta name='robots' content='noindex,nofollow' />
     <link rel="shortcut icon"

@@ -137,9 +137,10 @@ class CRUDBooster
         }
 
         $query = DB::table('cms_settings')->where('name', $name)->first();
-        Cache::forever('setting_' . $name, $query->content);
+        $value = $query?->content ?? null;
+        Cache::forever('setting_' . $name, $value);
 
-        return $query->content;
+        return $value;
     }
 
     public static function setSetting($name, $value)
@@ -823,9 +824,9 @@ class CRUDBooster
             $template->subject = str_replace('[' . $key . ']', $val, $template->subject);
         }
         $subject = $template->subject;
-        $attachments = ($config['attachments']) ?: [];
+        $attachments = $config['attachments'] ?? [];
 
-        if ($config['send_at'] != null) {
+        if (($config['send_at'] ?? null) != null) {
             $a = [];
             $a['send_at'] = $config['send_at'];
             $a['email_recipient'] = $to;
