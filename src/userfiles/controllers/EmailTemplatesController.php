@@ -148,4 +148,24 @@ class EmailTemplatesController extends \crocodicstudio\crudbooster\controllers\C
                 ]);
         }
     }
+
+      public function hook_before_add(&$postdata)
+    {
+        $postdata = is_array($postdata ?? null) ? $postdata : [];
+        $priority = $postdata['priority'] ?? null;
+        if ($priority === '' || $priority === null) {
+            $priority = 3;
+        }
+        $postdata['priority'] = (int) $priority;
+    }
+
+    public function hook_before_edit(&$postdata, $id)
+    {
+        $postdata = is_array($postdata ?? null) ? $postdata : [];
+        $priority = $postdata['priority'] ?? null;
+        if ($priority === '' || $priority === null) {
+            $priority = 3;
+        }
+        $postdata['priority'] = (int) $priority;
+    }
 }

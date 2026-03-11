@@ -417,7 +417,7 @@ class TicketSystemController extends CBController
 		$tickets = json_decode($response, true);
 		//--------------------------------------------//
 		$data = [];
-		$data['tickets'] = $tickets["data"]["tickets"];
+		$data['tickets'] = $tickets['data']['tickets'] ?? [];
 		//--------------------------------------------//
 		$sections = $this->getSections();
 		//--------------------------------------------//

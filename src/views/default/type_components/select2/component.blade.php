@@ -1,3 +1,24 @@
+@php
+    $id = $id ?? (CRUDBooster::getCurrentId() ?? 0);
+    $form = is_array($form ?? null) ? $form : [];
+    $form['translation'] = $form['translation'] ?? false;
+    $form['style'] = $form['style'] ?? '';
+    $form['label'] = $form['label'] ?? '';
+    $form['help'] = $form['help'] ?? '';
+    $form['datatable'] = $form['datatable'] ?? '';
+    $form['datatable_ajax'] = $form['datatable_ajax'] ?? false;
+    $form['datatable_where'] = $form['datatable_where'] ?? '';
+    $form['datatable_format'] = $form['datatable_format'] ?? '';
+    $form['datatable_translation_table'] = $form['datatable_translation_table'] ?? '';
+    $form['datatable_orig'] = $form['datatable_orig'] ?? '';
+    $form['relationship_table'] = $form['relationship_table'] ?? '';
+    $form['multiple'] = $form['multiple'] ?? false;
+    $form['dataenum'] = $form['dataenum'] ?? '';
+    $form['minimum_form'] = is_array($form['minimum_form'] ?? null) ? $form['minimum_form'] : [];
+    $form['minimum_form']['url'] = $form['minimum_form']['url'] ?? '';
+    $form['minimum_form']['path'] = $form['minimum_form']['path'] ?? '';
+@endphp
+
 @if ($form['minimum_form']['url'])
     @php 
         $minimumUrl = $form['minimum_form']['url'];
@@ -209,8 +230,8 @@
                                     if (!isset($params[2])) {
                                         $params[2] = 'id';
                                     }
-                                    $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
-                                    $value = explode(',', (string) $value);
+                                    $firstRecord = DB::table($params[0])->where($params[2], $id)->first();
+                                    $value = $firstRecord ? explode(',', (string) $firstRecord->{$params[1]}) : [];
                                 } else {
                                     //----------------------------------------------------------
                                     // Prevent take relation many to many with translation table
@@ -474,8 +495,8 @@
                             if (!isset($params[2])) {
                                 $params[2] = 'id';
                             }
-                            $value = DB::table($params[0])->where($params[2], $id)->first()->{$params[1]};
-                            $value = explode(',', (string) $value);
+                            $firstRecord = DB::table($params[0])->where($params[2], $id)->first();
+                            $value = $firstRecord ? explode(',', (string) $firstRecord->{$params[1]}) : [];
                         } else {
                             $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);
                             $foreignKey2 = CRUDBooster::getForeignKey($select_table, $form['relationship_table']);

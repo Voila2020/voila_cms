@@ -20,6 +20,7 @@
         <div class="box-body table-responsive no-padding">
             @php
                 $directory = storage_path('app\backups');
+                $files = [];
                 if (File::exists($directory)) {
                     $files = File::files($directory);
                     $files = array_reverse($files);

@@ -1,5 +1,19 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['style'] = $form['style'] ?? '';
+    $form['label'] = $form['label'] ?? '';
+    $form['help'] = $form['help'] ?? '';
+    $form['validation'] = $form['validation'] ?? false;
+    $form['datatable_where'] = $form['datatable_where'] ?? '';
+@endphp
+
 @if($current_language->default != null && $current_language->default == 1)
 <div class='form-group {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}' style="{{@$form['style']}}">
+    <?php
+    $dataenum = $form['dataenum'] ?? '';
+    $datatable = $form['datatable'] ?? '';
+    $dataquery = $form['dataquery'] ?? '';
+    ?>
     <label class='control-label col-sm-2'>{{cbLang($form['label'])}}
         @if($required)
             <span class='text-danger' title='{!! cbLang('this_field_is_required') !!}'>*</span>
@@ -7,15 +21,14 @@
     </label>
     <div class="{{$col_width?:'col-sm-10'}}">
 
-        @if(!$form['dataenum'] && !$form['datatable'] && !$form['dataquery'])
+        @if(!$dataenum && !$datatable && !$dataquery)
             <em>{{cbLang('there_is_no_option')}}</em>
         @endif
 
-        @if($form['dataenum']!='')
+        @if($dataenum!='')
             <?php
             @$value = explode(";", (string) $value);
             @array_walk($value, trim(...));
-            $dataenum = $form['dataenum'];
             $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", (string) $dataenum);
             ?>
             @foreach($dataenum as $k=>$d)
@@ -87,8 +100,8 @@
             }
 
         endif;
-        if ($form['dataquery']) {
-            $query = DB::select(DB::raw($form['dataquery']));
+        if ($dataquery) {
+            $query = DB::select(DB::raw($dataquery));
             if ($query) {
                 foreach ($query as $q) {
                     $checked = ($value == $q->value) ? "checked" : "";

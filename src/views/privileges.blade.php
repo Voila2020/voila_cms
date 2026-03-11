@@ -1,6 +1,11 @@
 @extends('crudbooster::admin_template')
 
 @section('content')
+    @php
+        $row = is_object($row ?? null) ? $row : (object) [];
+        $row_id = $row->id ?? 0;
+        $checked_menu = $checked_menu ?? collect();
+    @endphp
     @push('head')
         <link rel='stylesheet' href='<?php echo asset('vendor/crudbooster/assets/select2/dist/css/select2.min.css'); ?>' />
         <style>
@@ -124,7 +129,7 @@
                                 @else
                                     <option value="{{ $menu->id }}">{{ $menu->name }}</option>
                                 @endif
-                                @if ($menu->children)
+                                @if (!empty($menu->children) && is_iterable($menu->children))
                                     @foreach ($menu->children as $child)
                                         @if ($checked_menu && $checked_menu->contains('id_cms_menus', $child->id))
                                             <option value="{{ $child->id }}" selected>{{ $child->name }}</option>
@@ -212,8 +217,18 @@
                                     <?php
                                     $roles = DB::table('cms_privileges_roles')
                                         ->where('id_cms_moduls', $modul->id)
-                                        ->where('id_cms_privileges', $row->id)
+                                        ->where('id_cms_privileges', $row_id)
                                         ->first();
+
+                                    if (!is_object($roles)) {
+                                        $roles = (object) [
+                                            'is_visible' => 0,
+                                            'is_create' => 0,
+                                            'is_read' => 0,
+                                            'is_edit' => 0,
+                                            'is_delete' => 0,
+                                        ];
+                                    }
                                     ?>
                                     <tr>
                                         <td><?php echo $no++; ?></td>

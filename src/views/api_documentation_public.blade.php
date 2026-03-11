@@ -161,7 +161,7 @@
                     <tr>
                         <td><?= ++$no;?></td>
                         <td>
-                            <a href='javascript:void(0)' title='API {{$ac->nama}}' style='color:#009fe3' class='link_name_api'><?=$api->nama;?></a> &nbsp;
+                            <a href='javascript:void(0)' title='API {{$api->nama}}' style='color:#009fe3' class='link_name_api'><?=$api->nama;?></a> &nbsp;
                             <div class='detail_api' style='display:none'>
                                 <table class='table table-bordered'>
                                     <tr>

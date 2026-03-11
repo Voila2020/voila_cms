@@ -1,3 +1,11 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['parent_select'] = $form['parent_select'] ?? false;
+    $form['datatable_format'] = $form['datatable_format'] ?? '';
+    $form['datatable_order'] = $form['datatable_order'] ?? '';
+    $form['datatable'] = $form['datatable'] ?? null;
+@endphp
+
 @if($current_language->default != null && $current_language->default == 1)
     <?php $default = empty($form['default']) ? cbLang('text_prefix_option')." ".$form['label'] : $form['default'];?>
     @if($form['parent_select'])

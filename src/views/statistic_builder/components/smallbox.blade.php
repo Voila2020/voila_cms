@@ -62,8 +62,14 @@
     if ($key == 'sql') {
         try {
             $sessions = Session::all();
-            foreach ($sessions as $key => $val) {
-                $value = str_replace("[".$key."]", $val, $value);
+            $value = (string) ($value ?? '');
+            foreach ($sessions as $sessionKey => $sessionVal) {
+                if (is_scalar($sessionVal) || $sessionVal === null) {
+                    $replaceValue = (string) $sessionVal;
+                } else {
+                    $replaceValue = json_encode($sessionVal);
+                }
+                $value = str_replace("[" . $sessionKey . "]", $replaceValue, $value);
             }
             echo reset(DB::select(DB::raw($value))[0]);
         } catch (\Exception) {

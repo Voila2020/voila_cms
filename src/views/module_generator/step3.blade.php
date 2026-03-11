@@ -294,9 +294,9 @@
                                                 tr_index +
                                                 "][" +
                                                 key + "]'>" +
-                                                "<option value='' {{ $value == '' ? 'selected=true' : 'selected=false' }} >Please Choose File or Image</option>" +
-                                                "<option value='file' {{ $value == 'file' ? 'selected=true' : 'selected=false' }} >File</option>" +
-                                                "<option value='image' {{ $value == 'image' ? 'selected=true' : 'selected=false' }} >Image</option>" +
+                                                "<option value='' selected='true'>Please Choose File or Image</option>" +
+                                                "<option value='file'>File</option>" +
+                                                "<option value='image'>Image</option>" +
                                                 "</select>" +
                                                 "</div>";
                                         } else {
@@ -523,6 +523,17 @@
                     <tbody>
                         <?php $index = 0; ?>
                         @foreach ($cb_form as $form)
+                            @php
+                                $form = is_array($form ?? null) ? $form : [];
+                                $form = array_merge([
+                                    'label' => '',
+                                    'name' => '',
+                                    'type' => 'text',
+                                    'validation' => '',
+                                    'translation' => false,
+                                    'width' => 'col-sm-9',
+                                ], $form);
+                            @endphp
                             <tr>
                                 <td><input type='text' value='{{ $form['label'] }}' placeholder="Input field label"
                                         onclick='showColumnSuggest(this)' onkeyup="showColumnSuggestLike(this)"
@@ -568,14 +579,14 @@
                                         <script>
                                             let fileManagerValue = [];
                                         </script>
-                                        @if ($types->alert)
+                                        @if (is_object($types) && property_exists($types, 'alert') && $types->alert)
                                             <div class="alert alert-warning">
                                                 {!! $types->alert !!}
                                             </div>
                                         @endif
 
                                         <?php
-                                    if($types->attribute->required):
+                                    if(isset($types->attribute) && isset($types->attribute->required) && $types->attribute->required):
                                     foreach($types->attribute->required as $key=>$val):
                                     @$value = $form[$key];
                                     ?>
@@ -583,7 +594,7 @@
                                         <?php
                                     if(is_object($val)):
 
-                                    if($val->type && $val->type == 'radio'):
+                                    if(property_exists($val, 'type') && $val->type && $val->type == 'radio'):
                                     ?>
                                         <div class="form-group">
                                             <label>{{ $key }}</label>
@@ -644,7 +655,7 @@
 
 
                                         <?php
-                                    if($types->attribute->requiredOne):
+                                    if(isset($types->attribute) && isset($types->attribute->requiredOne) && $types->attribute->requiredOne):
                                     foreach($types->attribute->requiredOne as $key=>$val):
                                     @$value = $form[$key];
                                     ?>
@@ -658,7 +669,7 @@
                                         <?php endforeach; endif;?>
 
                                         <?php
-                                    if($types->attribute->optional):
+                                    if(isset($types->attribute) && isset($types->attribute->optional) && $types->attribute->optional):
                                     foreach($types->attribute->optional as $key=>$val):
                                     @$value = $form[$key];
 

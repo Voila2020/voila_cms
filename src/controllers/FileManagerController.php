@@ -557,6 +557,22 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $config = include base_path() . '/vendor/voila_cms/crudbooster/src/filemanager/includes/config/config.php';
             }
 
+            $resolveStoragePath = function ($path) {
+                $path = (string) $path;
+                if ($path === '') {
+                    return $path;
+                }
+
+                // If path is already absolute (Windows drive or Unix root), keep it as is.
+                $isWindowsAbsolute = strlen($path) > 2 && ctype_alpha($path[0]) && $path[1] === ':' && ($path[2] === '\\' || $path[2] === '/');
+                $isRootedPath = $path[0] === '\\' || $path[0] === '/';
+                if ($isWindowsAbsolute || $isRootedPath) {
+                    return $path;
+                }
+
+                return rtrim(public_path(), '\\/') . DIRECTORY_SEPARATOR . ltrim($path, '\\/');
+            };
+
             if ($_SESSION['RF']["verify"] != "RESPONSIVEfilemanager") {
                 response(trans('forbidden') . AddErrorLocation(), 403)->send();
                 exit;
@@ -571,8 +587,8 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 $source_base = $config['ftp_base_folder'] . $config['upload_dir'];
                 $thumb_base = $config['ftp_base_folder'] . $config['ftp_thumbs_dir'];
             } else {
-                $source_base = $config['current_path'];
-                $thumb_base = $config['thumbs_base_path'];
+                $source_base = $resolveStoragePath($config['current_path']);
+                $thumb_base = $resolveStoragePath($config['thumbs_base_path']);
             }
 
             if (isset($_POST["fldr"])) {
@@ -645,42 +661,60 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 }
             }
 
+            // Ensure $_FILES['files'] is properly set
+            if (!isset($_FILES['files']) || !is_array($_FILES['files'])) {
+                throw new Exception('No files uploaded');
+            }
+
+            if (!isset($_FILES['files']['name'][0])) {
+                throw new Exception('Invalid file upload data');
+            }
+
+            $mime_type = isset($_FILES['files']['type'][0]) ? $_FILES['files']['type'][0] : null;
+
             if ($config['mime_extension_rename']) {
                 $info = pathinfo((string) $_FILES['files']['name'][0]);
-                $mime_type = $_FILES['files']['type'][0];
-                if (function_exists('mime_content_type')) {
-                    $mime_type = mime_content_type($_FILES['files']['tmp_name'][0]);
-                } elseif (function_exists('finfo_open')) {
-                    $finfo = finfo_open(FILEINFO_MIME_TYPE);
-                    $mime_type = finfo_file($finfo, $_FILES['files']['tmp_name'][0]);
-                } else {
-                    $mime_type = get_file_mime_type($_FILES['files']['tmp_name'][0]);
+                $mime_type = $_FILES['files']['type'][0] ?? null;
+                if (isset($_FILES['files']['tmp_name'][0])) {
+                    if (function_exists('mime_content_type')) {
+                        $mime_type = mime_content_type($_FILES['files']['tmp_name'][0]);
+                    } elseif (function_exists('finfo_open')) {
+                        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+                        $mime_type = finfo_file($finfo, $_FILES['files']['tmp_name'][0]);
+                    } else {
+                        $mime_type = get_file_mime_type($_FILES['files']['tmp_name'][0]);
+                    }
                 }
-                $extension = get_extension_from_mime($mime_type);
+                $extension = get_extension_from_mime($mime_type ?? '');
 
                 if ($extension == 'so' || $extension == '' || $mime_type == "text/troff") {
-                    $extension = $info['extension'];
+                    $extension = $info['extension'] ?? '';
                 }
-                $filename = $info['filename'] . "." . $extension;
+                $filename = ($info['filename'] ?? 'file') . "." . $extension;
             } else {
-                $filename = $_FILES['files']['name'][0];
+                $filename = $_FILES['files']['name'][0] ?? 'file';
             }
             $_FILES['files']['name'][0] = fix_filename($filename, $config);
 
-            if (!$_FILES['files']['type'][0]) {
+            if (!($_FILES['files']['type'][0] ?? null)) {
                 $_FILES['files']['type'][0] = $mime_type;
             }
             // LowerCase
             if ($config['lower_case']) {
                 $_FILES['files']['name'][0] = fix_strtolower($_FILES['files']['name'][0]);
             }
-            if (!checkresultingsize($_FILES['files']['size'][0])) {
-                if (!isset($upload_handler->response['files'][0])) {
-                    // Avoid " Warning: Creating default object from empty value ... "
-                    $upload_handler->response['files'][0] = new stdClass();
-                }
-                $upload_handler->response['files'][0]->error = sprintf(trans('max_size_reached'), $config['MaxSizeTotal']) . AddErrorLocation();
-                echo json_encode($upload_handler->response);
+            if (!checkresultingsize(($_FILES['files']['size'][0] ?? 0))) {
+                $errorResponse = [
+                    'files' => [
+                        [
+                            'name' => $_FILES['files']['name'][0] ?? null,
+                            'size' => $_FILES['files']['size'][0] ?? 0,
+                            'type' => $_FILES['files']['type'][0] ?? null,
+                            'error' => sprintf(trans('max_size_reached'), $config['MaxSizeTotal']) . AddErrorLocation(),
+                        ],
+                    ],
+                ];
+                echo json_encode($errorResponse);
                 exit();
             }
 
@@ -689,7 +723,7 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 'storeFolder' => $storeFolder,
                 'storeFolderThumb' => $storeFolderThumb,
                 'ftp' => $ftp,
-                'upload_dir' => dirname((string) $_SERVER['SCRIPT_FILENAME']) . '/' . $storeFolder,
+                'upload_dir' => $storeFolder,
                 'upload_url' => $config['base_url'] . $config['upload_dir'] . $_POST['fldr'],
                 'mkdir_mode' => $config['folderPermission'],
                 'max_file_size' => $config['MaxSizeUpload'] * 1024 * 1024,
@@ -697,17 +731,41 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
                 'print_response' => false,
             ];
 
+            $escapeRegexParts = static function ($extensions) {
+                if (!is_array($extensions)) {
+                    return [];
+                }
+
+                $extensions = array_filter($extensions, static function ($ext) {
+                    return $ext !== null && $ext !== '';
+                });
+
+                return array_map(static function ($ext) {
+                    return preg_quote((string) $ext, '/');
+                }, array_values($extensions));
+            };
+
             if (!$config['ext_blacklist']) {
-                $uploadConfig['accept_file_types'] = '/\.(' . implode('|', $config['ext']) . ')$/i';
+                $allowedExt = $escapeRegexParts($config['ext'] ?? []);
+                $uploadConfig['accept_file_types'] = $allowedExt
+                    ? '/\.(' . implode('|', $allowedExt) . ')$/i'
+                    : '/\.[A-Za-z0-9]+$/i';
 
                 if ($config['files_without_extension']) {
-                    $uploadConfig['accept_file_types'] = '/((\.(' . implode('|', $config['ext']) . ')$)|(^[^.]+$))$/i';
+                    $uploadConfig['accept_file_types'] = $allowedExt
+                        ? '/((\.(' . implode('|', $allowedExt) . ')$)|(^[^.]+$))$/i'
+                        : '/(^[^.]+$)|\.[A-Za-z0-9]+$/i';
                 }
             } else {
-                $uploadConfig['accept_file_types'] = '/\.(?!' . implode('|', $config['ext_blacklist']) . '$)/i';
+                $blockedExt = $escapeRegexParts($config['ext_blacklist'] ?? []);
+                $uploadConfig['accept_file_types'] = $blockedExt
+                    ? '/\.(?!' . implode('|', $blockedExt) . '$)/i'
+                    : '/\.[A-Za-z0-9]+$/i';
 
                 if ($config['files_without_extension']) {
-                    $uploadConfig['accept_file_types'] = '/((\.(?!' . implode('|', $config['ext_blacklist']) . '$))|(^[^.]+$))/i';
+                    $uploadConfig['accept_file_types'] = $blockedExt
+                        ? '/((\.(?!' . implode('|', $blockedExt) . '$))|(^[^.]+$))/i'
+                        : '/(^[^.]+$)|\.[A-Za-z0-9]+$/i';
                 }
             }
 
@@ -726,13 +784,13 @@ class FileManagerController extends \crocodicstudio\crudbooster\controllers\CBCo
             $upload_handler = new UploadHandler($uploadConfig, true, $messages);
         } catch (Exception $e) {
             $return = [];
-            if ($_FILES['files']) {
+            if (isset($_FILES['files']) && is_array($_FILES['files']) && isset($_FILES['files']['name']) && is_array($_FILES['files']['name'])) {
                 foreach ($_FILES['files']['name'] as $i => $name) {
                     $return[] = [
                         'name' => $name,
                         'error' => $e->getMessage(),
-                        'size' => $_FILES['files']['size'][$i],
-                        'type' => $_FILES['files']['type'][$i],
+                        'size' => $_FILES['files']['size'][$i] ?? 0,
+                        'type' => $_FILES['files']['type'][$i] ?? null,
                     ];
                 }
                 echo json_encode(["files" => $return]);

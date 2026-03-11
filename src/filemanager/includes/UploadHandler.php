@@ -402,7 +402,12 @@ class UploadHandler
             $file->error = $this->get_error_message('post_max_size');
             return false;
         }
-        if (!preg_match($this->options['accept_file_types'], (string) $file->name)) {
+        $acceptFileTypesPattern = $this->options['accept_file_types'] ?? '/\.[A-Za-z0-9]+$/i';
+        if (@preg_match($acceptFileTypesPattern, '') === false) {
+            $acceptFileTypesPattern = '/\.[A-Za-z0-9]+$/i';
+        }
+
+        if (!preg_match($acceptFileTypesPattern, (string) $file->name)) {
             $file->error = $this->get_error_message('accept_file_types');
             return false;
         }
@@ -507,7 +512,7 @@ class UploadHandler
             $name = $this->upcount_name($name);
         }
         // Keep an existing filename if this is part of a chunked upload:
-        $uploaded_bytes = $this->fix_integer_overflow((int) $content_range[1]);
+        $uploaded_bytes = is_array($content_range) && isset($content_range[1]) ? $this->fix_integer_overflow((int) $content_range[1]) : 0;
         while (is_file($this->get_upload_path($name))) {
             if ($uploaded_bytes === $this->get_file_size(
                 $this->get_upload_path($name)
@@ -1392,7 +1397,12 @@ class UploadHandler
         $file_path = $this->get_upload_path($file_name, $this->get_version_param());
         // Prevent browsers from MIME-sniffing the content-type:
         $this->header('X-Content-Type-Options: nosniff');
-        if (!preg_match($this->options['inline_file_types'], (string) $file_name)) {
+        $inlineFileTypesPattern = $this->options['inline_file_types'] ?? '/\.(gif|jpe?g|png)$/i';
+        if (@preg_match($inlineFileTypesPattern, '') === false) {
+            $inlineFileTypesPattern = '/\.(gif|jpe?g|png)$/i';
+        }
+
+        if (!preg_match($inlineFileTypesPattern, (string) $file_name)) {
             $this->header('Content-Type: application/octet-stream');
             $this->header('Content-Disposition: attachment; filename="' . $file_name . '"');
         } else {
@@ -1431,7 +1441,12 @@ class UploadHandler
         if ($print_response) {
             $json = json_encode($content);
             $redirect = stripslashes((string) $this->get_post_param('redirect'));
-            if ($redirect && preg_match($this->options['redirect_allow_target'], $redirect)) {
+            $redirectAllowPattern = $this->options['redirect_allow_target'] ?? '/^https?:\/\//i';
+            if (@preg_match($redirectAllowPattern, '') === false) {
+                $redirectAllowPattern = '/^https?:\/\//i';
+            }
+
+            if ($redirect && preg_match($redirectAllowPattern, $redirect)) {
                 $this->header('Location: ' . sprintf($redirect, rawurlencode($json)));
                 return;
             }
@@ -1503,7 +1518,7 @@ class UploadHandler
         $content_range_header = $this->get_server_var('HTTP_CONTENT_RANGE');
         $content_range = $content_range_header ?
             preg_split('/[^0-9]+/', (string) $content_range_header) : null;
-        $size = $content_range ? $content_range[3] : null;
+        $size = (is_array($content_range) && isset($content_range[3])) ? $content_range[3] : null;
         $files = [];
         if ($upload) {
             if (is_array($upload['tmp_name'])) {
@@ -1535,12 +1550,16 @@ class UploadHandler
             }
         }
         $response = [$this->options['param_name'] => $files];
-        $name = $file_name ?: $upload['name'][0];
+        $name = $file_name ?: ($upload['name'][0] ?? null);
         $res = $this->generate_response($response, $print_response);
-        if (is_file($this->get_upload_path($name))) {
-            $uploaded_bytes = $this->fix_integer_overflow((int) $content_range[1]);
+        if ($name && is_file($this->get_upload_path($name))) {
+            $isChunkedUpload = is_array($content_range) && isset($content_range[1]);
+            $uploaded_bytes = $isChunkedUpload ? $this->fix_integer_overflow((int) $content_range[1]) : 0;
             $totalSize = $this->get_file_size($this->get_upload_path($name));
-            if ($totalSize - $uploaded_bytes - $this->options['readfile_chunk_size'] < 0) {
+
+            // For normal uploads, always finalize immediately.
+            // For chunked uploads, finalize only on the last chunk.
+            if (!$isChunkedUpload || $totalSize - $uploaded_bytes - $this->options['readfile_chunk_size'] < 0) {
                 $this->onUploadEnd($res);
             } else {
                 $this->head();
@@ -1558,6 +1577,11 @@ class UploadHandler
     {
         $targetPath = $this->options['storeFolder'];
         $targetPathThumb = $this->options['storeFolderThumb'];
+
+        // Safety check: ensure res has the expected structure
+        if (!is_array($res) || !isset($res['files']) || !is_array($res['files']) || !isset($res['files'][0])) {
+            return;
+        }
 
         if (!$this->options['ftp']) {
             $targetFile = $targetPath . $res['files'][0]->name;
@@ -1588,64 +1612,87 @@ class UploadHandler
                 $magicianObj->saveImage($targetFile);
             }
 
-            $thumbResult = create_img($targetFile, $targetFileThumb, 122, 91);
+            $extension = strtolower((string) pathinfo((string) $targetFile, PATHINFO_EXTENSION));
+            $unsupportedThumbExtensions = ['svg', 'ico'];
+            if (in_array($extension, $unsupportedThumbExtensions, true)) {
+                // These formats are not reliably handled by php_image_magician.
+                // Use direct copy as thumbnail placeholder.
+                $thumbResult = @copy($targetFile, $targetFileThumb);
+            } else {
+                $thumbResult = create_img($targetFile, $targetFileThumb, 122, 91);
+            }
+
+            // If resizing failed (e.g. unsupported GD resource), fallback to copy.
+            if ($thumbResult !== true && is_file($targetFile)) {
+                $copyFallback = @copy($targetFile, $targetFileThumb);
+                if ($copyFallback) {
+                    $thumbResult = true;
+                }
+            }
+
             if ($thumbResult !== true) {
-                $res['files'][0]->error = $thumbResult === false ? trans("Not enough Memory") : $thumbResult;
-            } elseif (!$this->options['ftp'] && !new_thumbnails_creation($targetPath, $targetFile, $_FILES['files']['name'][0], $this->options['config']['current_path'], $this->options['config'])) {
-                $res['files'][0]->error = trans("Not enough Memory");
+                if (isset($res['files'][0])) {
+                    $res['files'][0]->error = $thumbResult === false ? trans("Not enough Memory") : $thumbResult;
+                }
+            } elseif (!$this->options['ftp'] && !new_thumbnails_creation($targetPath, $targetFile, ($_FILES['files']['name'][0] ?? null), $this->options['config']['current_path'], $this->options['config'])) {
+                if (isset($res['files'][0])) {
+                    $res['files'][0]->error = trans("Not enough Memory");
+                }
             } else {
                 $imginfo = getimagesize($targetFile);
-                $srcWidth = $imginfo[0];
-                $srcHeight = $imginfo[1];
+                if ($imginfo && is_array($imginfo)) {
+                    $srcWidth = $imginfo[0] ?? 0;
+                    $srcHeight = $imginfo[1] ?? 0;
 
-                // resize images if set
-                if ($this->options['config']['image_resizing']) {
-                    if ($this->options['config']['image_resizing_width'] == 0) // if width not set
-                    {
-                        if ($this->options['config']['image_resizing_height'] == 0) {
-                            $this->options['config']['image_resizing_width'] = $srcWidth;
-                            $this->options['config']['image_resizing_height'] = $srcHeight;
-                        } else {
-                            $this->options['config']['image_resizing_width'] = $this->options['config']['image_resizing_height'] * $srcWidth / $srcHeight;
+                    // resize images if set
+                    if ($this->options['config']['image_resizing']) {
+                        if ($this->options['config']['image_resizing_width'] == 0) // if width not set
+                        {
+                            if ($this->options['config']['image_resizing_height'] == 0) {
+                                $this->options['config']['image_resizing_width'] = $srcWidth;
+                                $this->options['config']['image_resizing_height'] = $srcHeight;
+                            } else {
+                                $this->options['config']['image_resizing_width'] = $this->options['config']['image_resizing_height'] * $srcWidth / $srcHeight;
+                            }
+                        } elseif ($this->options['config']['image_resizing_height'] == 0) // if height not set
+                        {
+                            $this->options['config']['image_resizing_height'] = $this->options['config']['image_resizing_width'] * $srcHeight / $srcWidth;
                         }
-                    } elseif ($this->options['config']['image_resizing_height'] == 0) // if height not set
-                    {
-                        $this->options['config']['image_resizing_height'] = $this->options['config']['image_resizing_width'] * $srcHeight / $srcWidth;
+
+                        // new dims and create
+                        $srcWidth = $this->options['config']['image_resizing_width'];
+                        $srcHeight = $this->options['config']['image_resizing_height'];
+                        create_img($targetFile, $targetFile, $this->options['config']['image_resizing_width'], $this->options['config']['image_resizing_height'], $this->options['config']['image_resizing_mode']);
                     }
 
-                    // new dims and create
-                    $srcWidth = $this->options['config']['image_resizing_width'];
-                    $srcHeight = $this->options['config']['image_resizing_height'];
-                    create_img($targetFile, $targetFile, $this->options['config']['image_resizing_width'], $this->options['config']['image_resizing_height'], $this->options['config']['image_resizing_mode']);
-                }
+                    //max resizing limit control
+                    $resize = false;
+                    if ($this->options['config']['image_max_width'] != 0 && $srcWidth > $this->options['config']['image_max_width'] && $this->options['config']['image_resizing_override'] === false) {
+                        $resize = true;
+                        $srcWidth = $this->options['config']['image_max_width'];
 
-                //max resizing limit control
-                $resize = false;
-                if ($this->options['config']['image_max_width'] != 0 && $srcWidth > $this->options['config']['image_max_width'] && $this->options['config']['image_resizing_override'] === false) {
-                    $resize = true;
-                    $srcWidth = $this->options['config']['image_max_width'];
-
-                    if ($this->options['config']['image_max_height'] == 0) {
-                        $srcHeight = $this->options['config']['image_max_width'] * $srcHeight / $srcWidth;
+                        if ($this->options['config']['image_max_height'] == 0) {
+                            $srcHeight = $this->options['config']['image_max_width'] * $srcHeight / $srcWidth;
+                        }
                     }
-                }
 
-                if ($this->options['config']['image_max_height'] != 0 && $srcHeight > $this->options['config']['image_max_height'] && $this->options['config']['image_resizing_override'] === false) {
-                    $resize = true;
-                    $srcHeight = $this->options['config']['image_max_height'];
+                    if ($this->options['config']['image_max_height'] != 0 && $srcHeight > $this->options['config']['image_max_height'] && $this->options['config']['image_resizing_override'] === false) {
+                        $resize = true;
+                        $srcHeight = $this->options['config']['image_max_height'];
 
-                    if ($this->options['config']['image_max_width'] == 0) {
-                        $srcWidth = $this->options['config']['image_max_height'] * $srcWidth / $srcHeight;
+                        if ($this->options['config']['image_max_width'] == 0) {
+                            $srcWidth = $this->options['config']['image_max_height'] * $srcWidth / $srcHeight;
+                        }
                     }
-                }
 
-                if ($resize) {
-                    create_img($targetFile, $targetFile, $srcWidth, $srcHeight, $this->options['config']['image_max_mode']);
+                    if ($resize) {
+                        create_img($targetFile, $targetFile, $srcWidth, $srcHeight, $this->options['config']['image_max_mode']);
+                    }
                 }
             }
         }
 
-        if ($this->options['ftp']) {
+        if ($this->options['ftp'] && isset($res['files'][0]) && isset($res['files'][0]->name)) {
 
             $this->options['ftp']->put($targetPath . $res['files'][0]->name, $targetFile, FTP_BINARY);
             unlink($targetFile);

@@ -1,4 +1,54 @@
 @extends('crudbooster::admin_template')
+@php
+    if (!function_exists('getBuilderMenuChildren')) {
+        function getBuilderMenuChildren($menu)
+        {
+            $results = '';
+            if (!empty($menu->children) && is_iterable($menu->children)) {
+                $results .= '<ul>';
+                foreach ($menu->children as $child) {
+                    $privileges = DB::table('cms_menus_privileges')
+                        ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
+                        ->where('id_cms_menus', $child->id)
+                        ->pluck('cms_privileges.name')
+                        ->toArray();
+                    $editHref = route('MenusControllerGetEdit') . '/' . $child->id . '?return_url=' . urlencode(Request::fullUrl());
+                    $deleteClick = CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id, true);
+                    $results .= "<li data-id='{ $child->id }' data-name='{$child->name}'>";
+                    $results .=
+                        "   <div class='" .
+                        ($child->is_dashboard ? 'is-dashboard' : '') .
+                        "' title='" .
+                        ($child->is_dashboard ? 'This is setted as Dashboard' : '') .
+                        "'>";
+                    $results .=
+                        "       <i class='" .
+                        ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
+                        "'></i>";
+                    $results .= "       {$child->name}";
+                    $results .= "       <span class='pull-right'>";
+                    $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
+                    $results .=
+                        "           <a class='fa fa-trash' title='Delete' onclick='" .
+                        $deleteClick .
+                        "' href='javascript:void(0)'></a>";
+                    $results .= '       </span>';
+                    $results .= '       <br />';
+                    $results .=
+                        "       <em class='text-muted'><small><i class='fa fa-users'></i> &nbsp;" .
+                        implode(', ', $privileges) .
+                        '</small></em>';
+                    $results .= '   </div>';
+                    $results .= getBuilderMenuChildren($child);
+
+                    $results .= '</li>';
+                }
+                $results .= '</ul>';
+            }
+            return $results;
+        }
+    }
+@endphp
 @section('content')
     @push('head')
         <style type="text/css">
@@ -236,52 +286,3 @@
         </div>
     </div>
 @endsection
-@php
-    function getBuilderMenuChildren($menu)
-    {
-        $results = '';
-        if ($menu->children) {
-            $results .= '<ul>';
-            foreach ($menu->children as $child) {
-                $privileges = DB::table('cms_menus_privileges')
-                    ->join('cms_privileges', 'cms_privileges.id', '=', 'cms_menus_privileges.id_cms_privileges')
-                    ->where('id_cms_menus', $child->id)
-                    ->pluck('cms_privileges.name')
-                    ->toArray();
-                $editHref =
-                    route('MenusControllerGetEdit') . '/' . $child->id . '?return_url=' . urlencode(Request::fullUrl());
-                $deleteClick = CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $child->id, true);
-                $results .= "<li data-id='{ $child->id }' data-name='{$child->name}'>";
-                $results .=
-                    "   <div class='" .
-                    ($child->is_dashboard ? 'is-dashboard' : '') .
-                    "' title='" .
-                    ($child->is_dashboard ? 'This is setted as Dashboard' : '') .
-                    "'>";
-                $results .=
-                    "       <i class='" .
-                    ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
-                    "'></i>";
-                $results .= "       {$child->name}";
-                $results .= "       <span class='pull-right'>";
-                $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
-                $results .=
-                    "           <a class='fa fa-trash' title='Delete' onclick='" .
-                    $deleteClick .
-                    "' href='javascript:void(0)'></a>";
-                $results .= '       </span>';
-                $results .= '       <br />';
-                $results .=
-                    "       <em class='text-muted'><small><i class='fa fa-users'></i> &nbsp;" .
-                    implode(', ', $privileges) .
-                    '</small></em>';
-                $results .= '   </div>';
-                $results .= getBuilderMenuChildren($child);
-
-                $results .= '</li>';
-            }
-            $results .= '</ul>';
-        }
-        return $results;
-    }
-@endphp

@@ -505,9 +505,10 @@ class ModulsController extends CBController
         foreach (glob(base_path('vendor/voila_cms/crudbooster/src/views/default/type_components') . '/*', GLOB_ONLYDIR) as $dir) {
             $types[] = basename($dir);
         }
+        $cb_form = [];
         if (file_exists(app_path('Http/Controllers/' . str_replace('.', '', $row->controller) . '.php'))) {
             $response = file_get_contents(app_path('Http/Controllers/' . $row->controller . '.php'));
-            $column_datas = extract_unit($response, "# START COLUMNS DO NOT REMOVE THIS LINE", "# END COLUMNS DO NOT REMOVE THIS LINE");
+            $column_datas = extract_unit($response, "# START FORM DO NOT REMOVE THIS LINE", "# END FORM DO NOT REMOVE THIS LINE");
             $column_datas = str_replace('$this->', '$cb_', $column_datas);
             try {
                 eval($column_datas);

@@ -1,5 +1,12 @@
 <?php
 
+if (!is_array($form ?? null)) {
+    $form = [];
+}
+$form['datatable'] = $form['datatable'] ?? '';
+$form['relationship_table'] = $form['relationship_table'] ?? '';
+$form['dataquery'] = $form['dataquery'] ?? '';
+
 if ($form['datatable'] && $form['relationship_table']) {
     $datatable_array = explode(",", (string) $form['datatable']);
     $datatable_tab = $datatable_array[0];

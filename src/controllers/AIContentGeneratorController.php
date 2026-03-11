@@ -65,9 +65,9 @@ class AIContentGeneratorController extends CBController
                 $seo_fields_mode = 'with_lang';
             }
 
-            if ($result['status'] == 'success') {
+            if (($result['status'] ?? null) == 'success') {
 
-                $seo_info_json = $result['result']['seo_info'];
+                $seo_info_json = $result['result']['seo_info'] ?? null;
                 $data = json_decode((string) $seo_info_json, true);
                 $seo_array = $data['metadata'] ?? $data ?? null;
 
@@ -75,6 +75,9 @@ class AIContentGeneratorController extends CBController
                     // Re-index using lang as the key
                     $seo_by_lang = [];
                     foreach ($seo_array as $item) {
+                        if (!is_array($item) || !isset($item['lang'])) {
+                            continue;
+                        }
                         $lang = $item['lang'];
                         unset($item['lang']); // Remove 'lang' from the item
                         $seo_by_lang[$lang] = $item;
@@ -191,8 +194,8 @@ class AIContentGeneratorController extends CBController
                 $result =  CRUDBooster::generateModuleItemContent($website, $company_name, $theme_type, $module_name, $languages, $item_topic, $item_fields);
             }
 
-            if (!empty($result) && $result['status'] == 'success') {
-                $item_content_info = $result['result']['item_content_info'];
+            if (!empty($result) && ($result['status'] ?? null) == 'success') {
+                $item_content_info = $result['result']['item_content_info'] ?? null;
                 $data = json_decode((string) $item_content_info, true);
                 $item_content_array =  $data ?? null;
 
@@ -382,12 +385,12 @@ class AIContentGeneratorController extends CBController
             }
 
 
-            if ($result['status'] == 'success') {
-                $improved_content = $result['result']['improved_content'];
+            if (($result['status'] ?? null) == 'success') {
+                $improved_content = $result['result']['improved_content'] ?? null;
                 $data = json_decode((string) $improved_content, true);
                 $data ??= null;
                 if ($data && is_array($data)) {
-                    echo json_encode(['status' => 'success', 'message' => 'Improve content success', 'improved_content' => $data['improved_content']]);
+                    echo json_encode(['status' => 'success', 'message' => 'Improve content success', 'improved_content' => $data['improved_content'] ?? '']);
                 } else {
                     echo json_encode(['status' => 'failed', 'message' => 'Improve content failed response invalid']);
                 }
@@ -419,12 +422,12 @@ class AIContentGeneratorController extends CBController
                 $target_lang_json = '{"code":"' . $target_lang_info->code . '","name":"' . $target_lang_info->name . '"}';
                 $result =  CRUDBooster::translateContent($website, $content, $source_lang_json, $target_lang_json);
             }
-            if ($result['status'] == 'success') {
-                $translated_content = $result['result']['translated_content'];
+            if (($result['status'] ?? null) == 'success') {
+                $translated_content = $result['result']['translated_content'] ?? null;
                 $data = json_decode((string) $translated_content, true);
                 $data ??= null;
                 if ($data && is_array($data)) {
-                    echo json_encode(['status' => 'success', 'message' => 'Translate content success', 'translated_content' => $data['translated_content']]);
+                    echo json_encode(['status' => 'success', 'message' => 'Translate content success', 'translated_content' => $data['translated_content'] ?? '']);
                 } else {
                     echo json_encode(['status' => 'failed', 'message' => 'Translate content failed response invalid']);
                 }

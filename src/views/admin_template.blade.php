@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ $page_title ? get_setting('appname') . ': ' . strip_tags($page_title) : 'Admin Area' }}</title>
+    <title>{{ ($page_title ?? null) ? get_setting('appname') . ': ' . strip_tags($page_title) : 'Admin Area' }}</title>
     <?php
     App::setlocale(get_setting('default_language') == 'english' ? 'en' : 'ar');
     ?>
@@ -114,9 +114,25 @@
     @stack('head')
 </head>
 
+@php
+    $page_title = $page_title ?? null;
+    $page_icon = $page_icon ?? null;
+    $sidebar_mode = $sidebar_mode ?? '';
+    $button_show = $button_show ?? false;
+    $button_add = $button_add ?? false;
+    $button_add_by_ai = $button_add_by_ai ?? false;
+    $button_export = $button_export ?? false;
+    $button_import = $button_import ?? false;
+    $page_seo = $page_seo ?? false;
+    $parent_field = $parent_field ?? '';
+    $build_query = $build_query ?? '';
+    $index_button = $index_button ?? [];
+    $alerts = $alerts ?? [];
+@endphp
+
 
 <body
-    class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ isset($sidebar_mode) ?: '' }}">
+    class="@php echo (Session::get('theme_color'))?:'skin-blue'; echo ' '; echo config('crudbooster.ADMIN_LAYOUT'); @endphp {{ $sidebar_mode }}">
     <div id='app' class="{{ ($mode ?? null) != 'minimum' ? 'wrapper' : '' }}">
         <div class="main-overlay"></div>
         <div class="spinner-loader">
@@ -151,11 +167,13 @@
                 <section class="content-header">
                     <?php
                     $module = CRUDBooster::getCurrentModule();
+                    $module_icon = is_object($module) ? ($module->icon ?? 'fa fa-cog') : (is_array($module) ? ($module['icon'] ?? 'fa fa-cog') : 'fa fa-cog');
+                    $module_name = is_object($module) ? ($module->name ?? '') : (is_array($module) ? ($module['name'] ?? '') : (is_string($module) ? $module : ''));
                     ?>
                     @if ($module)
                         <h1>
                             <!--Now you can define $page_icon alongside $page_tite for custom forms to follow CRUDBooster theme style -->
-                            <i class='{!! $page_icon ?: $module->icon !!}'></i> {!! ucwords(cbLang($page_title) ?: cbLang($module->name)) !!} &nbsp;&nbsp;
+                            <i class='{!! $page_icon ?: $module_icon !!}'></i> {!! ucwords(cbLang($page_title) ?: cbLang($module_name)) !!} &nbsp;&nbsp;
 
                             <!--START BUTTON -->
 
@@ -236,14 +254,14 @@
                             @if (!empty($index_button))
 
                                 @foreach ($index_button as $ib)
-                                    <a href='{{ $ib['url'] }}' id='{{ str_slug($ib['label']) }}'
-                                        class='btn {{ $ib['color'] ? 'btn-' . $ib['color'] : 'btn-primary' }} btn-sm'
-                                        @if ($ib['onClick']) onClick='return {{ $ib['onClick'] }}' @endif
-                                        @if ($ib['onMouseOver']) onMouseOver='return {{ $ib['onMouseOver'] }}' @endif
-                                        @if ($ib['onMouseOut']) onMouseOut='return {{ $ib['onMouseOut'] }}' @endif
-                                        @if ($ib['onKeyDown']) onKeyDown='return {{ $ib['onKeyDown'] }}' @endif
-                                        @if ($ib['onLoad']) onLoad='return {{ $ib['onLoad'] }}' @endif>
-                                        <i class='{{ $ib['icon'] }}'></i> {{ $ib['label'] }}
+                                    <a href='{{ $ib['url'] ?? 'javascript:void(0)' }}' id='{{ str_slug($ib['label'] ?? 'button') }}'
+                                        class='btn {{ ($ib['color'] ?? null) ? 'btn-' . $ib['color'] : 'btn-primary' }} btn-sm'
+                                        @if ($ib['onClick'] ?? null) onClick='return {{ $ib['onClick'] }}' @endif
+                                        @if ($ib['onMouseOver'] ?? null) onMouseOver='return {{ $ib['onMouseOver'] }}' @endif
+                                        @if ($ib['onMouseOut'] ?? null) onMouseOut='return {{ $ib['onMouseOut'] }}' @endif
+                                        @if ($ib['onKeyDown'] ?? null) onKeyDown='return {{ $ib['onKeyDown'] }}' @endif
+                                        @if ($ib['onLoad'] ?? null) onLoad='return {{ $ib['onLoad'] }}' @endif>
+                                        <i class='{{ $ib['icon'] ?? 'fa fa-circle' }}'></i> {{ $ib['label'] ?? 'Button' }}
                                     </a>
                                 @endforeach
                             @endif
@@ -254,7 +272,7 @@
                         <ol class="breadcrumb">
                             <li><a href="{{ CRUDBooster::adminPath() }}"><i class="fa fa-dashboard"></i>
                                     {{ cbLang('home') }}</a></li>
-                            <li class="active">{{ $module->name }}</li>
+                            <li class="active">{{ $module_name }}</li>
                         </ol>
                     @else
                         <h1>{{ Session::get('appname') }}
@@ -267,8 +285,8 @@
             <!-- Main content -->
             <section id='content_section' class="content">
 
-                @if (@$alerts)
-                    @foreach (@$alerts as $alert)
+                @if (!empty($alerts))
+                    @foreach ($alerts as $alert)
                         <div class='callout callout-{{ $alert['type'] }}'>
                             {!! $alert['message'] !!}
                         </div>

@@ -6,7 +6,7 @@ if (session_id() == '') {
 
 mb_internal_encoding('UTF-8');
 mb_http_output('UTF-8');
-mb_http_input('UTF-8');
+// mb_http_input('UTF-8'); // PHP 8.1: mb_http_input() requires specific type parameters (G, P, C, S, I, L)
 mb_language('uni');
 mb_regex_encoding('UTF-8');
 ob_start('mb_output_handler');
@@ -31,7 +31,9 @@ setlocale(LC_CTYPE, 'en_US'); //correct transliteration
 |
 */
 
-define('USE_ACCESS_KEYS', false); // TRUE or FALSE
+if (!defined('USE_ACCESS_KEYS')) {
+    define('USE_ACCESS_KEYS', false); // TRUE or FALSE
+}
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +41,9 @@ define('USE_ACCESS_KEYS', false); // TRUE or FALSE
 |--------------------------------------------------------------------------
 */
 
-define('DEBUG_ERROR_MESSAGE', false); // TRUE or FALSE
+if (!defined('DEBUG_ERROR_MESSAGE')) {
+    define('DEBUG_ERROR_MESSAGE', false); // TRUE or FALSE
+}
 
 /*
 |--------------------------------------------------------------------------

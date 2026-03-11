@@ -37,23 +37,27 @@ class MenusController extends CBController
             Session::put('current_row_id', $id);
         }
         $row = CRUDBooster::first($this->table, $id);
-        $row = (Request::segment(3) == 'edit') ? $row : null;
+        if (!(Request::segment(3) == 'edit' && is_object($row))) {
+            $row = (object) [];
+        }
+        $row_type = $row->type ?? '';
+        $row_path = $row->path ?? '';
 
         $id_module = $id_statistic = 0;
 
-        if ($row->type == 'Module') {
-            $m = CRUDBooster::first('cms_moduls', ['path' => $row->path]);
-            $id_module = $m->id;
-        } elseif ($row->type == 'Statistic') {
-            $row->path = str_replace('statistic_builder/show/', '', $row->path);
-            $m = CRUDBooster::first('cms_statistics', ['slug' => $row->path]);
-            $id_statistic = $m->id;
+        if ($row_type == 'Module') {
+            $m = CRUDBooster::first('cms_moduls', ['path' => $row_path]);
+            $id_module = is_object($m) ? ($m->id ?? 0) : 0;
+        } elseif ($row_type == 'Statistic') {
+            $row_path = str_replace('statistic_builder/show/', '', $row_path);
+            $m = CRUDBooster::first('cms_statistics', ['slug' => $row_path]);
+            $id_statistic = is_object($m) ? ($m->id ?? 0) : 0;
         }
 
         $this->script_js = "
 			$(function() {
 				var current_id = '$id';
-				var current_type = '$row->type';
+                var current_type = '$row_type';
 				var type_menu = $('input[name=type]').val();
 				type_menu = (current_type)?current_type:type_menu;
 				if(type_menu == 'Module') {
@@ -298,23 +302,24 @@ class MenusController extends CBController
 
     public function hook_before_add(&$postdata)
     {
-        if (!$postdata['id_cms_privileges']) {
+        $postdata = is_array($postdata ?? null) ? $postdata : [];
+        if (empty($postdata['id_cms_privileges'])) {
             $postdata['id_cms_privileges'] = CRUDBooster::myPrivilegeId();
         }
         $postdata['parent_id'] = 0;
 
-        if ($postdata['type'] == 'Statistic') {
+        if (($postdata['type'] ?? null) == 'Statistic') {
             $stat = CRUDBooster::first('cms_statistics', ['id' => $postdata['statistic_slug']]);
-            $postdata['path'] = 'statistic_builder/show/' . $stat->slug;
-        } elseif ($postdata['type'] == 'Module') {
+            $postdata['path'] = 'statistic_builder/show/' . ($stat->slug ?? '');
+        } elseif (($postdata['type'] ?? null) == 'Module') {
             $stat = CRUDBooster::first('cms_moduls', ['id' => $postdata['module_slug']]);
-            $postdata['path'] = $stat->path;
+            $postdata['path'] = $stat->path ?? ($postdata['path'] ?? '');
         }
 
         unset($postdata['module_slug']);
         unset($postdata['statistic_slug']);
 
-        if ($postdata['is_dashboard'] == 1) {
+        if (($postdata['is_dashboard'] ?? 0) == 1) {
             //If set dashboard, so unset for first all dashboard
             //DB::table('cms_menus')->where('id_cms_privileges', $postdata['id_cms_privileges'])->where('is_dashboard', 1)->update(['is_dashboard' => 0]);
             Cache::forget('sidebarDashboard' . CRUDBooster::myPrivilegeId());

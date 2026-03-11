@@ -16,7 +16,7 @@ trait ContentBuilderTrait
             $website_languages = Language::where('active',1)->get();
             foreach($website_languages as $lang){
                     $code = $lang->code;
-                    $upperCode = strtoupper((string) $code);
+                    $upperCode = strtoupper($code);
                     $langName = $lang->name;
                     $addaction[] = [
                         'label'  => "Edit Content ($upperCode)",
@@ -32,7 +32,7 @@ trait ContentBuilderTrait
     public function stripBodyTag($html)
     {
         // Remove opening <body ...>
-        $html = preg_replace('/<body[^>]*>/i', '', (string) $html);
+        $html = preg_replace('/<body[^>]*>/i', '', $html);
 
         // Remove closing </body>
         $html = preg_replace('/<\/body>/i', '', $html);
@@ -58,12 +58,12 @@ trait ContentBuilderTrait
             "*{box-sizing:border-box;}body{margin-top:0px;margin-right:0px;margin-bottom:0px;margin-left:0px;}"
         ];
         // Remove all whitespace differences (normalize strings)
-        $normalizedCss = preg_replace('/\s+/', '', (string) $css);
+        $normalizedCss = preg_replace('/\s+/', '', $css);
 
         // If base CSS exists, remove it
         foreach ($baseCssVariants as $variant) {
             $normalizedVariant = preg_replace('/\s+/', '', $variant);
-            while (str_contains($normalizedCss, (string) $normalizedVariant)) {
+            while (strpos($normalizedCss, $normalizedVariant) !== false) {
                 $normalizedCss = str_replace($normalizedVariant, '', $normalizedCss);
             }
         }
@@ -87,6 +87,7 @@ trait ContentBuilderTrait
         $moduleInfo = CRUDBooster::getCurrentModule();
         $tableName = $moduleInfo->table_name;
         $translationTable = $moduleInfo->translation_table;
+        $modulePath = $moduleInfo->path;
 
         $itemTitle = "";
         $item = DB::table($tableName)->where('id', $itemId)->first();
@@ -94,16 +95,22 @@ trait ContentBuilderTrait
             if($request->lang && $request->lang != '') {
                 $foreignKeyName = Str::singular($tableName) . '_id';
                 $item_info = DB::table($translationTable)->where("$foreignKeyName", $itemId)->where('locale',$request->lang)->first();
-                if($item_info->name){
-                    $itemTitle = $item_info->name;
-                }elseif($item_info->title){
-                    $itemTitle = $item_info->title;
+                if ($item_info) {
+                    if (property_exists($item_info, 'name') && $item_info->name) {
+                        $itemTitle = $item_info->name;
+                    } elseif (property_exists($item_info, 'title') && $item_info->title) {
+                        $itemTitle = $item_info->title;
+                    }
                 }
             }
-        } elseif ($item->name) {
-            $itemTitle = $item->name;
-        } elseif($item->title){
-            $itemTitle = $item->title;
+        }else{
+            if ($item) {
+                if (property_exists($item, 'name') && $item->name) {
+                    $itemTitle = $item->name;
+                } elseif (property_exists($item, 'title') && $item->title) {
+                    $itemTitle = $item->title;
+                }
+            }
         }
        
         $iframeURL = str_replace('-iframe','',$request->getRequestUri());
@@ -112,7 +119,7 @@ trait ContentBuilderTrait
         $content_lang = $request->lang;
         $fieldName = $request->field;
 
-        return view('content_builder.builder-iframe', ['iframeURL' => $iframeURL, 'itemId' => $itemId, 'fieldName' => $fieldName, 'itemTitle' => $itemTitle, 'content_lang' => $content_lang, 'website_languages' => $website_languages]);
+        return view('content_builder.builder-iframe', compact("iframeURL","itemId",'fieldName',"itemTitle","content_lang","website_languages"));
      }
     //open content builder view with module, field information
     public function getContentBuilder(Request $request, $itemId)
@@ -144,10 +151,10 @@ trait ContentBuilderTrait
             $foreignKeyName = Str::singular($tableName) . '_id';
             $translation_item_info = DB::table($translationTable)->where($foreignKeyName, $itemId)->where('locale', $request->lang)->first();
             if ($translation_item_info) {
-                $content_fields = json_decode((string) $translation_item_info->$field);
+                $content_fields = json_decode($translation_item_info->$field);
             }
         } else {
-            $content_fields = json_decode((string) $item->$field);
+            $content_fields = json_decode($item->$field);
         }
 
         //dd($content_fields);
@@ -163,7 +170,7 @@ trait ContentBuilderTrait
         }
 
 
-        return view('content_builder.builder', ['modulePath' => $modulePath, 'itemId' => $itemId, 'itemLink' => $itemLink, 'content_fields' => $content_fields, 'is_rtl' => $is_rtl, 'extra_params' => $extra_params, 'blocks' => $blocks]);
+        return view('content_builder.builder', compact("modulePath", "itemId", "itemLink", "content_fields", "is_rtl", "extra_params", "blocks"));
     }
 
     //get content builder content from item info
@@ -184,7 +191,7 @@ trait ContentBuilderTrait
                 if ($translation_item_info) {
                     if ($translation_item_info->$field != '') {
                         if (self::is_json($translation_item_info->$field)) {
-                            $result = json_decode((string) $translation_item_info->$field);
+                            $result = json_decode($translation_item_info->$field);
                             return response()->json([
                                 "gjs-html" => $this->addBodyTag($result->html),
                                 "gjs-styles" => $this->addBaseCss($result->css),
@@ -215,21 +222,23 @@ trait ContentBuilderTrait
                         "variables" => '',
                     ]);
                 }
-            } elseif ($item->$field != '') {
-                $result = json_decode((string) $item->$field);
-                return response()->json([
-                    "gjs-html" => $this->addBodyTag($result->html),
-                    "gjs-styles" => $this->addBaseCss($result->css),
-                    "gjs-components" => $result->components == null ? "[]" : $result->components,
-                    "variables" => $result->variables,
-                ]);
             } else {
-                return response()->json([
-                    "gjs-html" => '',
-                    "gjs-styles" => '',
-                    "gjs-components" => "[]",
-                    "variables" => '',
-                ]);
+                if ($item->$field != '') {
+                    $result = json_decode($item->$field);
+                    return response()->json([
+                        "gjs-html" => $this->addBodyTag($result->html),
+                        "gjs-styles" => $this->addBaseCss($result->css),
+                        "gjs-components" => $result->components == null ? "[]" : $result->components,
+                        "variables" => $result->variables,
+                    ]);
+                } else {
+                    return response()->json([
+                        "gjs-html" => '',
+                        "gjs-styles" => '',
+                        "gjs-components" => "[]",
+                        "variables" => '',
+                    ]);
+                }
             }
         } else {
             return response()->json([
@@ -248,7 +257,7 @@ trait ContentBuilderTrait
         if ($request->custom_block_data) {
             DB::insert('insert into custom_blocks (custom_block_data,blockID,block_name) values (?, ?,?)', [$request->custom_block_data,  $request->blockId, $request->name]);
 
-            return response()->json(["message" => "done", "status" => true]);
+            return response()->json(array("message" => "done", "status" => true));
         }
 
         $moduleInfo = CRUDBooster::getCurrentModule();
@@ -281,10 +290,10 @@ trait ContentBuilderTrait
 
 
 
-            return response()->json(["message" => "done", "status" => true]);
+            return response()->json(array("message" => "done", "status" => true));
         }
 
-        return response()->json(["message" => "faild", "status" => false]);
+        return response()->json(array("message" => "faild", "status" => false));
     }
 
 
@@ -328,15 +337,15 @@ trait ContentBuilderTrait
                     DB::table($translationTable)->where($foreignKeyName, $item_id)->where('locale', $current_lang)->update([
                             "$field" => $target_translation_item_info->$field
                     ]);
-                    return response()->json(["message" => "Get Content Successfully.", "status" => true]);
+                    return response()->json(array("message" => "Get Content Successfully.", "status" => true));
                 } else {
-                   return response()->json(["message" => "Failed. Not Content in Target Item.", "status" => false]);
+                   return response()->json(array("message" => "Failed. Not Content in Target Item.", "status" => false));
                 }
             } else {
-                return response()->json(["message" => "Failed. Module don't support translation table.", "status" => false]);  
+                return response()->json(array("message" => "Failed. Module don't support translation table.", "status" => false));  
             }
         } else {
-            return response()->json(["message" => "Failed. Item don't exist.", "status" => false]);   
+            return response()->json(array("message" => "Failed. Item don't exist.", "status" => false));   
         }
     }
 }

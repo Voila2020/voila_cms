@@ -1,6 +1,16 @@
 @extends('crudbooster::admin_template')
 
 @section('content')
+    @php
+        $row = is_object($row ?? null) ? $row : (object) [];
+        $row->id = $row->id ?? null;
+        $row->nama = $row->nama ?? '';
+        $row->tabel = $row->tabel ?? '';
+        $row->permalink = $row->permalink ?? '';
+        $row->aksi = $row->aksi ?? 'list';
+        $row->method_type = $row->method_type ?? 'get';
+        $row->keterangan = $row->keterangan ?? '';
+    @endphp
 
     @push('head')
         <link href="//cdnjs.cloudflare.com/ajax/libs/summernote/0.8.2/summernote.css" rel="stylesheet">
@@ -267,7 +277,7 @@
                     }
 
                     function init_data_parameters() {
-                                @if($parameters)
+                                @if($parameters ?? false)
 
                         var resp = {!!$parameters!!};
                         var tipe_action = $('#tipe_action').val();
@@ -349,7 +359,7 @@
 
 
                     function init_data_responses() {
-                                @if($responses)
+                                @if($responses ?? false)
 
                         var t = $('#combo_tabel').val();
                         var type = 'list';

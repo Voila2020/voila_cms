@@ -291,16 +291,21 @@ class ApiCustomController extends CBController
         $params_required = g('params_required');
         $params_used = g('params_used');
         $json = [];
+        $params_name = is_array($params_name ?? null) ? $params_name : [];
+        $params_type = is_array($params_type ?? null) ? $params_type : [];
+        $params_config = is_array($params_config ?? null) ? $params_config : [];
+        $params_required = is_array($params_required ?? null) ? $params_required : [];
+        $params_used = is_array($params_used ?? null) ? $params_used : [];
         $counter = count($params_name);
 
-        for ($i = 0; $i <= $counter; $i++) {
-            if ($params_name[$i]) {
+        for ($i = 0; $i < $counter; $i++) {
+            if (!empty($params_name[$i])) {
                 $json[] = [
                     'name' => $params_name[$i],
-                    'type' => $params_type[$i],
-                    'config' => $params_config[$i],
-                    'required' => $params_required[$i],
-                    'used' => $params_used[$i],
+                    'type' => $params_type[$i] ?? null,
+                    'config' => $params_config[$i] ?? null,
+                    'required' => $params_required[$i] ?? null,
+                    'used' => $params_used[$i] ?? null,
                 ];
             }
         }
@@ -315,14 +320,18 @@ class ApiCustomController extends CBController
         $responses_subquery = g('responses_subquery');
         $responses_used = g('responses_used');
         $json = [];
+        $responses_name = is_array($responses_name ?? null) ? $responses_name : [];
+        $responses_type = is_array($responses_type ?? null) ? $responses_type : [];
+        $responses_subquery = is_array($responses_subquery ?? null) ? $responses_subquery : [];
+        $responses_used = is_array($responses_used ?? null) ? $responses_used : [];
         $counter = count($responses_name);
-        for ($i = 0; $i <= $counter; $i++) {
-            if ($responses_name[$i]) {
+        for ($i = 0; $i < $counter; $i++) {
+            if (!empty($responses_name[$i])) {
                 $json[] = [
                     'name' => $responses_name[$i],
-                    'type' => $responses_type[$i],
-                    'subquery' => $responses_subquery[$i],
-                    'used' => $responses_used[$i],
+                    'type' => $responses_type[$i] ?? null,
+                    'subquery' => $responses_subquery[$i] ?? null,
+                    'used' => $responses_used[$i] ?? null,
                 ];
             }
         }

@@ -1,3 +1,8 @@
+@php
+    $validation = is_array($validation ?? null) ? $validation : [];
+    $validation['max'] = $validation['max'] ?? '';
+@endphp
+
 @push('bottom')
     <script>
         $(document).ready(function() {

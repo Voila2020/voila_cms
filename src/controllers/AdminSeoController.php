@@ -216,6 +216,9 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             $data = DB::table('cms_seo')->where($conditions)->get()->toArray();
         }
        
+        if (empty($data)) {
+            return view('crudbooster::seo', ['data' => [], 'record_id' => null, 'seo_image' => null, 'seo_optional_tags' => '', 'type' => $page, 'id' => $page_id, 'languages' => $languages]);
+        }
 
         $record_id = $data[0]->id;
         $seo_image = $data[0]->image;
@@ -247,21 +250,21 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
             if ($oldSEO) {
                 
                 DB::table('cms_seo')->where($conditions)->update([
-                    'title' => $data['title_' . $lang->code],
-                    'description' => $data['description_' . $lang->code],
-                    'keywords' => $data['keywords_' . $lang->code],
-                    'author' => $data['author_' . $lang->code],
-                    'image' => $data['image'],
-                    'optional_tags' => addslashes((string) $data['optional_tags']),
+                    'title' => $data['title_' . $lang->code] ?? '',
+                    'description' => $data['description_' . $lang->code] ?? '',
+                    'keywords' => $data['keywords_' . $lang->code] ?? '',
+                    'author' => $data['author_' . $lang->code] ?? '',
+                    'image' => $data['image'] ?? '',
+                    'optional_tags' => addslashes((string) ($data['optional_tags'] ?? '')),
                 ]);
             } else {
                 DB::table('cms_seo')->insert([
-                    'title' => $data['title_' . $lang->code],
-                    'description' => $data['description_' . $lang->code],
-                    'keywords' => $data['keywords_' . $lang->code],
-                    'author' => $data['author_' . $lang->code],
-                    'image' => $data['image'],
-                    'optional_tags' => addslashes((string) $data['optional_tags']),
+                    'title' => $data['title_' . $lang->code] ?? '',
+                    'description' => $data['description_' . $lang->code] ?? '',
+                    'keywords' => $data['keywords_' . $lang->code] ?? '',
+                    'author' => $data['author_' . $lang->code] ?? '',
+                    'image' => $data['image'] ?? '',
+                    'optional_tags' => addslashes((string) ($data['optional_tags'] ?? '')),
                     'page_id' => Request::input('page_id') ?: null,
                     'page' => Request::input('page'),
                     'language' => $lang->code,

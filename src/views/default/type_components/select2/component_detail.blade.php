@@ -1,4 +1,12 @@
 <?php
+if (!is_array($form ?? null)) {
+    $form = [];
+}
+$form['datatable'] = $form['datatable'] ?? '';
+$form['relationship_table'] = $form['relationship_table'] ?? '';
+$form['datatable_translation_table'] = $form['datatable_translation_table'] ?? '';
+$form['datatable_orig'] = $form['datatable_orig'] ?? '';
+$form['dataenum'] = $form['dataenum'] ?? '';
 if (!$value) {
     return;
 }
@@ -27,12 +35,10 @@ if ($datatable && $form['relationship_table']) {
         if (!isset($params[2])) {
             $params[2] = 'id';
         }
-        $values = explode(
-            ',',
-            (string) DB::table($params[0])
+        $firstRecord = DB::table($params[0])
                 ->where($params[2], $id)
-                ->first()->{$params[1]},
-        );
+                ->first();
+        $values = $firstRecord ? explode(',', (string) $firstRecord->{$params[1]}) : [];
         $tableData = DB::table($datatable_table)->whereIn('id', $values)->select($datatable_field)->pluck($datatable_field)->toArray();
     } else {
         $foreignKey = CRUDBooster::getForeignKey($table, $form['relationship_table']);

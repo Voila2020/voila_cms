@@ -158,12 +158,14 @@ class CRUDBooster
 
     public static function insert($table, $data = [])
     {
-        if (!$data['created_at'] && Schema::hasColumn($table, 'created_at')) {
+        $data = is_array($data ?? null) ? $data : [];
+
+        if (Schema::hasColumn($table, 'created_at') && empty($data['created_at'])) {
             $data['created_at'] = date('Y-m-d H:i:s');
         }
 
         if (DB::table($table)->insert($data)) {
-            return $data['id'];
+            return $data['id'] ?? DB::getPdo()->lastInsertId();
         } else {
             return false;
         }
@@ -670,25 +672,43 @@ class CRUDBooster
     public static function getValueFilter($field)
     {
         $filter = Request::get('filter_column');
-        if ($filter[$field]) {
-            return $filter[$field]['value'];
+        if (!is_array($filter)) {
+            return null;
         }
+
+        if (isset($filter[$field]) && is_array($filter[$field])) {
+            return $filter[$field]['value'] ?? null;
+        }
+
+        return null;
     }
 
     public static function getSortingFilter($field)
     {
         $filter = Request::get('filter_column');
-        if ($filter[$field]) {
-            return $filter[$field]['sorting'];
+        if (!is_array($filter)) {
+            return null;
         }
+
+        if (isset($filter[$field]) && is_array($filter[$field])) {
+            return $filter[$field]['sorting'] ?? null;
+        }
+
+        return null;
     }
 
     public static function getTypeFilter($field)
     {
         $filter = Request::get('filter_column');
-        if ($filter[$field]) {
-            return $filter[$field]['type'];
+        if (!is_array($filter)) {
+            return null;
         }
+
+        if (isset($filter[$field]) && is_array($filter[$field])) {
+            return $filter[$field]['type'] ?? null;
+        }
+
+        return null;
     }
 
     public static function stringBetween($string, $start, $end)
@@ -1138,6 +1158,10 @@ class CRUDBooster
         $params = Request::all();
         $mainpath = trim((string) self::mainpath(), '/');
 
+        if (!isset($params['filter_column']) || !is_array($params['filter_column'])) {
+            $params['filter_column'] = [];
+        }
+
         if ($params['filter_column'] && $singleSorting) {
             foreach ($params['filter_column'] as $k => $filter) {
                 foreach ($filter as $t => $val) {
@@ -1220,8 +1244,8 @@ class CRUDBooster
             $string_parameters_array = explode('&', $string_parameters);
             foreach ($string_parameters_array as $s) {
                 $part = explode('=', $s);
-                $name = urldecode($part[0]);
-                $value = urldecode($part[1]);
+                $name = urldecode($part[0] ?? '');
+                $value = urldecode($part[1] ?? '');
                 if ($name !== '' && $name !== '0') {
                     $inputhtml .= "<input type='hidden' name='$name' value='$value'/>\n";
                 }
@@ -1347,6 +1371,7 @@ class CRUDBooster
             'table' => $table['table'],
         ]))->map(fn($x) => (array) $x)->toArray();
         $result = $cols;
+        $new_result = [];
 
         foreach ($result as $ro) {
             if (!in_array($ro['COLUMN_NAME'], ["id", "locale", "created_at", "updated_at", "deleted_at"])) {
@@ -2471,7 +2496,8 @@ class Admin' . $controllername . ' extends CBController {
         if(CRUDBooster::checkUsingAIFeaturesPermission()){
 
             if($lang == 'default'){
-                $lang = DB::table('languages')->where('active',1)->where('default',1)->first()->code;
+                $default_lang_record = DB::table('languages')->where('active',1)->where('default',1)->first();
+                $lang = $default_lang_record ? $default_lang_record->code : 'en';
             }
 
             $module_id = CRUDBooster::getCurrentModule()->id;

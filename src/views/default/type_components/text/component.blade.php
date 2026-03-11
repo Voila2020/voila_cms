@@ -1,3 +1,14 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['translation'] = $form['translation'] ?? false;
+    $form['style'] = $form['style'] ?? '';
+    $form['type'] = $form['type'] ?? '';
+    $form['label'] = $form['label'] ?? '';
+    $form['help'] = $form['help'] ?? '';
+    $validation = is_array($validation ?? null) ? $validation : [];
+    $validation['max'] = $validation['max'] ?? '';
+@endphp
+
 @if (!@$form['translation'])
     @if($current_language->default != null && $current_language->default == 1)
         <div class='form-group {{ $header_group_class }} {{ $errors->first($name) ? 'has-error' : '' }}'

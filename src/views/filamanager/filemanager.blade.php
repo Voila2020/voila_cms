@@ -784,47 +784,55 @@ $get_params = http_build_query($get_params);
             }
         }
 
-        function filenameSort($x, $y)
-        {
-            global $descending;
+        if (!function_exists('filenameSort')) {
+            function filenameSort($x, $y)
+            {
+                global $descending;
 
-            if ($x['is_dir'] !== $y['is_dir']) {
-                return $y['is_dir'];
-            } else {
-                return $descending ? $x['file_lcase'] < $y['file_lcase'] : $x['file_lcase'] >= $y['file_lcase'];
+                if ($x['is_dir'] !== $y['is_dir']) {
+                    return $y['is_dir'];
+                } else {
+                    return $descending ? $x['file_lcase'] < $y['file_lcase'] : $x['file_lcase'] >= $y['file_lcase'];
+                }
             }
         }
 
-        function dateSort($x, $y)
-        {
-            global $descending;
+        if (!function_exists('dateSort')) {
+            function dateSort($x, $y)
+            {
+                global $descending;
 
-            if ($x['is_dir'] !== $y['is_dir']) {
-                return $y['is_dir'];
-            } else {
-                return $descending ? $x['date'] < $y['date'] : $x['date'] >= $y['date'];
+                if ($x['is_dir'] !== $y['is_dir']) {
+                    return $y['is_dir'];
+                } else {
+                    return $descending ? $x['date'] < $y['date'] : $x['date'] >= $y['date'];
+                }
             }
         }
 
-        function sizeSort($x, $y)
-        {
-            global $descending;
+        if (!function_exists('sizeSort')) {
+            function sizeSort($x, $y)
+            {
+                global $descending;
 
-            if ($x['is_dir'] !== $y['is_dir']) {
-                return $y['is_dir'];
-            } else {
-                return $descending ? $x['size'] < $y['size'] : $x['size'] >= $y['size'];
+                if ($x['is_dir'] !== $y['is_dir']) {
+                    return $y['is_dir'];
+                } else {
+                    return $descending ? $x['size'] < $y['size'] : $x['size'] >= $y['size'];
+                }
             }
         }
 
-        function extensionSort($x, $y)
-        {
-            global $descending;
+        if (!function_exists('extensionSort')) {
+            function extensionSort($x, $y)
+            {
+                global $descending;
 
-            if ($x['is_dir'] !== $y['is_dir']) {
-                return $y['is_dir'];
-            } else {
-                return $descending ? $x['extension'] < $y['extension'] : $x['extension'] >= $y['extension'];
+                if ($x['is_dir'] !== $y['is_dir']) {
+                    return $y['is_dir'];
+                } else {
+                    return $descending ? $x['extension'] < $y['extension'] : $x['extension'] >= $y['extension'];
+                }
             }
         }
 

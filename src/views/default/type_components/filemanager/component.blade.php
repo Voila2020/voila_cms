@@ -1,4 +1,7 @@
 @php
+    $id = $id ?? null;
+    $row = is_object($row ?? null) ? $row : (object)[];
+    $row->id = $row->id ?? null;
     $images = DB::table('model_images')
         ->where('model_type', $table)
         ->where('model_id', $row->id)

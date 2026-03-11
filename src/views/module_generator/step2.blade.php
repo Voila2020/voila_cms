@@ -356,6 +356,21 @@
                     <tbody>
                         @if ($cb_col)
                             @foreach ($cb_col as $c)
+                                @php
+                                    $c = is_array($c ?? null) ? $c : [];
+                                    $c = array_merge([
+                                        'label' => '',
+                                        'name' => '',
+                                        'join' => '',
+                                        'callback_php' => '',
+                                        'width' => 0,
+                                        'image' => 0,
+                                        'download' => 0,
+                                        'switch' => 0,
+                                        'translation' => 0,
+                                        'str_limit' => 0,
+                                    ], $c);
+                                @endphp
                                 <tr>
                                     <td><input value='{{ $c['label'] }}' type='text' name='column[]'
                                             onclick='showColumnSuggest(this)' onKeyUp='showColumnSuggestLike(this)'

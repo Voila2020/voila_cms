@@ -1,5 +1,15 @@
 @extends('crudbooster::admin_template')
 @section('content')
+    @php
+        $row = is_object($row ?? null) ? $row : (object) [];
+        $row->id = $row->id ?? null;
+        $row->table_name = $row->table_name ?? '';
+        $row->translation_table = $row->translation_table ?? '';
+        $row->name = $row->name ?? '';
+        $row->has_images = $row->has_images ?? 0;
+        $row->icon = $row->icon ?? '';
+        $row->path = $row->path ?? '';
+    @endphp
     @push('head')
         <link rel='stylesheet' href='<?php echo asset('vendor/crudbooster/assets/select2/dist/css/select2.min.css'); ?>' />
         <style>
@@ -87,10 +97,10 @@
                     <label for="">{{ cbLang('Translation Table') }}</label>
                     <p>Select this field only if the table has translation table and following this <a target="_blank" href="https://docs.astrotomic.info/laravel-translatable/">package instruct</a></p>
                     <select name="translation_table" id="translation_table" class="select2 form-control"
-                        value="{{ $row->translation_table_name }}">
+                        value="{{ $row->translation_table }}">
                         <option value="">{{ cbLang('text_prefix_option') }} Translation Table</option>
                         @foreach ($tables_list as $table)
-                            <option {{ $table == $row->translation_table_name ? 'selected' : '' }} value="{{ $table }}">
+                            <option {{ $table == $row->translation_table ? 'selected' : '' }} value="{{ $table }}">
                                 {{ $table }}</option>
                         @endforeach
                     </select>

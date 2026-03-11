@@ -1,3 +1,10 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['step'] = $form['step'] ?? '1';
+    $validation = is_array($validation ?? null) ? $validation : [];
+    $validation['min'] = $validation['min'] ?? '';
+    $validation['max'] = $validation['max'] ?? '';
+@endphp
 <div class='form-group {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}' style="{{@$form['style']}}">
     <label class='control-label col-sm-2'>{{cbLang($form['label'])}}
         @if($required)

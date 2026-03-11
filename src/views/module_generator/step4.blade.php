@@ -1,5 +1,9 @@
 @extends('crudbooster::admin_template')
 @section('content')
+    @php
+        $cb_button_add_by_ai = $cb_button_add_by_ai ?? false;
+        $cb_form_using_ai_actions = $cb_form_using_ai_actions ?? false;
+    @endphp
     <ul class="nav nav-tabs">
         <li role="presentation"><a href="{{ Route('ModulsControllerGetStep1') . '/' . $id }}"><i class='fa fa-info'></i>
                 {{ cbLang('Step 1') }} - {{ cbLang('Module Information') }}</a></li>

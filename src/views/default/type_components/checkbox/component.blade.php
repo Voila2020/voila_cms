@@ -1,3 +1,15 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['style'] = $form['style'] ?? '';
+    $form['label'] = $form['label'] ?? '';
+    $form['help'] = $form['help'] ?? '';
+    $form['dataenum'] = $form['dataenum'] ?? '';
+    $form['datatable'] = $form['datatable'] ?? '';
+    $form['datatable_where'] = $form['datatable_where'] ?? '';
+    $form['relationship_table'] = $form['relationship_table'] ?? '';
+    $form['dataquery'] = $form['dataquery'] ?? '';
+@endphp
+
 <div class='form-group {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}' style="{{@$form['style']}}">
     <label class='control-label col-sm-2'>{{cbLang($form['label'])}}
         @if($required)
@@ -9,7 +21,9 @@
         @if($form['dataenum']!='')
             <?php
             @$value = explode(";", (string) $value);
-            @array_walk($value, trim(...));
+            @array_walk($value, function (&$item) {
+                $item = trim((string) $item);
+            });
             $dataenum = $form['dataenum'];
             $dataenum = (is_array($dataenum)) ? $dataenum : explode(";", (string) $dataenum);
             ?>

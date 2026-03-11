@@ -1,4 +1,63 @@
 @extends('crudbooster::admin_template')
+@php
+    if (!function_exists('getBuilderMenuChildren')) {
+        function getBuilderMenuChildren($menu, $current_lang)
+        {
+            $results = '';
+            if ($menu->children) {
+                $results .= '<ul>';
+                foreach ($menu->children as $child) {
+
+                    $editHref =
+                        route('AdminFooterMenusControllerGetEdit') .
+                        '/' .
+                        $child->id .
+                        '?return_url=' .
+                        urlencode(Request::fullUrl());
+                    $deleteClick = CRUDBooster::deleteConfirm(
+                        route('AdminFooterMenusControllerGetDelete') . '/' . $child->id,
+                        true,
+                    );
+
+                    // Corrected spacing and removed unnecessary spaces in data-id
+                    $results .=
+                        "<li data-id='{$child->id}' data-name='" .
+                        ($current_lang == 'en' ? $child->name_en : $child->name_ar) .
+                        "'>";
+                    $results .=
+                        "   <div class='" .
+                        ($child->is_dashboard ? 'is-dashboard' : '') .
+                        "' title='" .
+                        ($child->is_dashboard ? 'This is set as Dashboard' : '') .
+                        "'>";
+                    $results .=
+                        "       <i class='" .
+                        ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
+                        "'></i>";
+                    $results .= '       ' . ($current_lang == 'en' ? $child->name_en : $child->name_ar);
+                    $results .= "       <span class='pull-right'>";
+                    if(CRUDBooster::isUpdate()){
+                        $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
+                    }
+                    if(CRUDBooster::isDelete()){
+                        $results .=
+                        "           <a class='fa fa-trash' title='Delete' onclick='" .
+                        $deleteClick .
+                        "' href='javascript:void(0)'></a>";
+                    }
+                    $results .= '       </span>';
+                    $results .= '       <br />';
+                    $results .= '   </div>';
+                    $results .= getBuilderMenuChildren($child, $current_lang); // Recursive call
+
+                    $results .= '</li>';
+                }
+                $results .= '</ul>';
+            }
+            return $results;
+        }
+    }
+@endphp
 @section('content')
     @push('head')
         <style type="text/css">
@@ -242,60 +301,3 @@
         @endif
     </div>
 @endsection
-@php
-    function getBuilderMenuChildren($menu, $current_lang)
-    {
-        $results = '';
-        if ($menu->children) {
-            $results .= '<ul>';
-            foreach ($menu->children as $child) {
-
-                $editHref =
-                    route('AdminFooterMenusControllerGetEdit') .
-                    '/' .
-                    $child->id .
-                    '?return_url=' .
-                    urlencode(Request::fullUrl());
-                $deleteClick = CRUDBooster::deleteConfirm(
-                    route('AdminFooterMenusControllerGetDelete') . '/' . $child->id,
-                    true,
-                );
-
-                // Corrected spacing and removed unnecessary spaces in data-id
-                $results .=
-                    "<li data-id='{$child->id}' data-name='" .
-                    ($current_lang == 'en' ? $child->name_en : $child->name_ar) .
-                    "'>";
-                $results .=
-                    "   <div class='" .
-                    ($child->is_dashboard ? 'is-dashboard' : '') .
-                    "' title='" .
-                    ($child->is_dashboard ? 'This is set as Dashboard' : '') .
-                    "'>";
-                $results .=
-                    "       <i class='" .
-                    ($child->is_dashboard ? 'icon-is-dashboard fa fa-dashboard' : $child->icon) .
-                    "'></i>";
-                $results .= '       ' . ($current_lang == 'en' ? $child->name_en : $child->name_ar);
-                $results .= "       <span class='pull-right'>";
-                if(CRUDBooster::isUpdate()){
-                    $results .= "           <a class='fa fa-pencil' title='Edit' href='$editHref'></a>&nbsp;&nbsp;";
-                }
-                if(CRUDBooster::isDelete()){
-                    $results .=
-                    "           <a class='fa fa-trash' title='Delete' onclick='" .
-                    $deleteClick .
-                    "' href='javascript:void(0)'></a>";
-                }
-                $results .= '       </span>';
-                $results .= '       <br />';
-                $results .= '   </div>';
-                $results .= getBuilderMenuChildren($child, $current_lang); // Recursive call
-
-                $results .= '</li>';
-            }
-            $results .= '</ul>';
-        }
-        return $results;
-    }
-@endphp

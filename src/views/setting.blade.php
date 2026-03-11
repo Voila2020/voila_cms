@@ -1,5 +1,8 @@
 @extends('crudbooster::admin_template')
 @section('content')
+    @php
+        $disabled = $disabled ?? false;
+    @endphp
     @push('bottom')
         <script src="{{ asset('vendor/laravel-filemanager/js/lfm.js') }}"></script>
         <script src="//cdn.tinymce.com/4/tinymce.min.js"></script>

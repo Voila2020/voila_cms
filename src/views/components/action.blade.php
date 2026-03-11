@@ -1,6 +1,7 @@
 @if($button_action_style != 'dropdown')
 @foreach($addaction as $a)
     <?php
+    $a['url'] = $a['url'] ?? 'javascript:;';
     foreach ($row as $key => $val) {
         $a['url'] = str_replace("[".$key."]", $val, $a['url']);
     }
@@ -32,12 +33,12 @@
         ';
     }
 
-    $label = $a['label'];
-    $title = ($a['title']) ?: $a['label'];
-    $icon = $a['icon'];
-    $color = $a['color'] ?: 'primary';
-    $confirmation = $a['confirmation'];
-    $target = $a['target'] ?: '_self';
+    $label = $a['label'] ?? '';
+    $title = $a['title'] ?? $label;
+    $icon = $a['icon'] ?? 'fa fa-circle';
+    $color = $a['color'] ?? 'primary';
+    $confirmation = $a['confirmation'] ?? null;
+    $target = $a['target'] ?? '_self';
 
     $url = $a['url'];
     if (isset($confirmation) && ! empty($confirmation)) {
@@ -115,14 +116,15 @@
         <ul class='dropdown-menu dropdown-menu-action' role='menu'>
             @foreach($addaction as $a)
                 <?php
+                $a['url'] = $a['url'] ?? 'javascript:;';
                 foreach ($row as $key => $val) {
                     $a['url'] = str_replace("[".$key."]", $val, $a['url']);
                 }
 
-                $label = $a['label'];
-                $url = $a['url'];
-                $icon = $a['icon'];
-                $color = $a['color'] ?: 'primary';
+                $label = $a['label'] ?? '';
+                $url = $a['url'] ?? 'javascript:;';
+                $icon = $a['icon'] ?? 'fa fa-circle';
+                $color = $a['color'] ?? 'primary';
 
                 if (isset($a['showIf'])) {
 

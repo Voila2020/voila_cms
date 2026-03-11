@@ -1,3 +1,15 @@
+@php
+    $form = is_array($form ?? null) ? $form : [];
+    $form['translation'] = $form['translation'] ?? false;
+    $form['style'] = $form['style'] ?? '';
+    $form['type'] = $form['type'] ?? '';
+    $form['label'] = $form['label'] ?? '';
+    $form['name'] = $form['name'] ?? $name;
+    $form['help'] = $form['help'] ?? '';
+    $id = $id ?? '';
+    $row = is_object($row ?? null) ? $row : (object)[];
+@endphp
+
 @push('bottom')
     <script src="{{ asset('vendor/crudbooster/assets/js/customizeTinymce.js') }}"></script>
     <script type="text/javascript">
@@ -6,7 +18,7 @@
         var $template = '';
         $(document).ready(function () {
             $id = "{{ $id }}";
-            $template = `"{{ $row->template }}"`;
+            $template = `"{{ $row->template ?? '' }}"`;
         })
 
         $('#modalInsertPhotoEditor').on('hidden.bs.modal', function () {
@@ -171,12 +183,16 @@
         }
     }
 
-    $default_lang_code = DB::table('languages')->where('default',1)->first()->code ?? 'en';
+    $default_language = DB::table('languages')->where('default',1)->first();
+    $default_lang_code = $default_language ? $default_language->code : 'en';
     if(CRUDBooster::getCurrentModule()->table_name != '' && CRUDbooster::getCurrentId() != '' && CRUDBooster::getCurrentMethod() == 'getEdit'){
         $record_info = DB::table(CRUDBooster::getCurrentModule()->table_name)->where('id',CRUDbooster::getCurrentId())->first();   
-         $lang_id = $record_info->lang;
+         $lang_id = $record_info->lang ?? null;
          if($lang_id){
-            $default_lang_code = DB::table('languages')->where('id',$lang_id)->first()->code;
+            $lang_record = DB::table('languages')->where('id',$lang_id)->first();
+            if($lang_record) {
+                $default_lang_code = $lang_record->code;
+            }
          }
     }
 ?>

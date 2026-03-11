@@ -41,7 +41,7 @@
                             <label class="col-sm-2 control-label">{{ 'Title ' . $lang->code }}</label>
                             <div class="col-sm-10">
                                 <input type="text" name="{{ 'title_' . $lang->code }}"
-                                    title="{{ 'Title ' . $lang->code }}" value="{{ $data[$lang->code]->title }}"
+                                    title="{{ 'Title ' . $lang->code }}" value="{{ $data[$lang->code]->title ?? '' }}"
                                     class="form-control">
                             </div>
                         </div>
@@ -52,7 +52,7 @@
                             <div class="col-sm-10">
                                 <input type="text" name="{{ 'description_' . $lang->code }}"
                                     title="{{ 'Description ' . $lang->code }}"
-                                    value="{{ $data[$lang->code]->description }}" class="form-control">
+                                    value="{{ $data[$lang->code]->description ?? '' }}" class="form-control">
                             </div>
                         </div>
                     @endforeach
@@ -62,7 +62,7 @@
                             <div class="col-sm-10">
                                 <input type="text" id="keywords_{{ $lang->code }}"
                                     name="{{ 'keywords_' . $lang->code }}" title="{{ 'keywords ' . $lang->code }}"
-                                    value="{{ $data[$lang->code]->keywords }}" class="form-control">
+                                    value="{{ $data[$lang->code]->keywords ?? '' }}" class="form-control">
                                 <a class="btn btn-info add-key-{{ 'keywords_' . $lang->code }}"><span
                                         class="fa fa-plus"></span></a><input type="text"
                                     id="text-key-{{ 'keywords_' . $lang->code }}"
@@ -268,7 +268,6 @@
 
         function deleteImage(form_name) {
             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
-            let table = @json($table);
             let id = @json($id);
             let ajaxUrl = currUrl + '?table=cms_seo&column=image&value=&id={{$record_id}}';
 

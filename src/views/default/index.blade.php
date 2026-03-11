@@ -1,18 +1,22 @@
 @extends('crudbooster::admin_template')
 
 @section('content')
+    @php
+        $parent_table = $parent_table ?? null;
+        $build_query = $build_query ?? '';
+    @endphp
 
     @if($index_statistic)
         <div id='box-statistic' class='row'>
             @foreach($index_statistic as $stat)
-                <div class="{{ ($stat['width'])?:'col-sm-3' }}">
-                    <div class="small-box bg-{{ $stat['color']?:'red' }}">
+                <div class="{{ ($stat['width'] ?? 'col-sm-3') }}">
+                    <div class="small-box bg-{{ $stat['color'] ?? 'red' }}">
                         <div class="inner">
-                            <h3>{{ $stat['count'] }}</h3>
-                            <p>{{ $stat['label'] }}</p>
+                            <h3>{{ $stat['count'] ?? '' }}</h3>
+                            <p>{{ $stat['label'] ?? '' }}</p>
                         </div>
                         <div class="icon">
-                            <i class="{{ $stat['icon'] }}"></i>
+                            <i class="{{ $stat['icon'] ?? 'fa fa-bar-chart' }}"></i>
                         </div>
                     </div>
                 </div>
@@ -72,8 +76,8 @@
 
                             @if($button_selected)
                                 @foreach($button_selected as $button)
-                                    <li><a href="javascript:void(0)" data-name='{{$button["name"]}}' title='{{$button["label"]}}'><i
-                                                    class="fa fa-{{$button['icon']}}"></i> {{$button['label']}}</a></li>
+                                    <li><a href="javascript:void(0)" data-name='{{$button["name"] ?? ""}}' title='{{$button["label"] ?? ""}}'><i
+                                                    class="fa fa-{{$button['icon'] ?? 'circle'}}"></i> {{$button['label'] ?? ''}}</a></li>
                                 @endforeach
                             @endif
 
