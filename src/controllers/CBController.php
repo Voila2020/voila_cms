@@ -232,7 +232,7 @@ class CBController extends Controller
             $this->data['return_url'] = Request::fullUrl();
         }
 
-    
+
         //for using Module AI Features
         $this->data['button_add_by_ai'] = $this->button_add_by_ai;
         $this->data['form_using_ai_actions'] = $this->form_using_ai_actions;
@@ -249,7 +249,7 @@ class CBController extends Controller
                 }
             }
         }
-        
+
         view()->share($this->data);
     }
 
@@ -344,7 +344,7 @@ class CBController extends Controller
                     $result->leftJoin($this->translation_table, function ($join) {
                         $join->on($this->table . '.id', '=', $this->translation_table . '.' . $this->translation_main_column);
                     });
-                    
+
                     if (!request()->has('q') && !request()->has('filter_column')) {
                         $result->where($this->translation_table . '.locale', "=", $this->websiteLanguages[0]->code);
                     }
@@ -739,7 +739,7 @@ class CBController extends Controller
         $data['html_contents'] = $html_contents;
 
         $manualView = null;
-        
+
         $mode = request()->get('mode', 'default');
         $data['mode'] = $mode;
 
@@ -750,7 +750,7 @@ class CBController extends Controller
         if (view()->exists('modules.' . CRUDBooster::getCurrentModule()->path . '.index')) {
             $manualView = view('modules.' . CRUDBooster::getCurrentModule()->path . '.index', $data);
         }
-        
+
         $view = $manualView ?: view("crudbooster::default.index", $data);
         return $view;
     }
@@ -1164,7 +1164,7 @@ class CBController extends Controller
             if ($ro['type'] == 'child') {
                 continue;
             }
-            
+
             if($ro['type'] == 'slug'){
                 $slug_value = $inputdata;
                 //Convert to lowercase
@@ -1471,6 +1471,10 @@ class CBController extends Controller
                     }
 
                     $childtable = CRUDBooster::parseSqlTable($ro['table'])['table'];
+
+                    $allKeys = array_unique(array_merge([], ...array_map('array_keys', $child_array)));
+                    $child_array = array_map(fn($r) => $r + array_fill_keys($allKeys, null), $child_array);
+
                     DB::table($childtable)->insert($child_array);
                 }
             }

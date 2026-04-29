@@ -415,7 +415,7 @@ class CRUDBooster
     public static function getModuleDependOnPath($path){
         return DB::table('cms_moduls')->where('path', $path)->first();
     }
-    
+
     public static function getCurrentDashboardId()
     {
         if (Request::get('d') != null) {
@@ -955,7 +955,7 @@ class CRUDBooster
 
     public static function pk($table)
     {
-        return self::findPrimaryKey($table);
+        return self::findPrimaryKey($table)?:"id";
     }
 
     // public static function findPrimaryKey($table)
