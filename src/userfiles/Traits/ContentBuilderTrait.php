@@ -224,12 +224,21 @@ trait ContentBuilderTrait
                 }
             } else {
                 if ($item->$field != '') {
-                    $result = json_decode($item->$field);
+                    if (self::is_json($item->$field)) {
+                        $result = json_decode($item->$field);
+                        return response()->json([
+                            "gjs-html" => $this->addBodyTag($result->html ?? ''),
+                            "gjs-styles" => $this->addBaseCss($result->css ?? ''),
+                            "gjs-components" => ($result->components ?? null) == null ? "[]" : $result->components,
+                            "variables" => $result->variables ?? '',
+                        ]);
+                    }
+
                     return response()->json([
-                        "gjs-html" => $this->addBodyTag($result->html),
-                        "gjs-styles" => $this->addBaseCss($result->css),
-                        "gjs-components" => $result->components == null ? "[]" : $result->components,
-                        "variables" => $result->variables,
+                        "gjs-html" => $item->$field,
+                        "gjs-styles" => "",
+                        "gjs-components" => "[]",
+                        "variables" => '',
                     ]);
                 } else {
                     return response()->json([
