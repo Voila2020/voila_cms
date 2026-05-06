@@ -2504,10 +2504,9 @@ class Admin' . $controllername . ' extends CBController {
             $module_id = CRUDBooster::getCurrentModule()->id;
             $ai_actions_list = '';
             if(in_array($type,['text','textarea','wysiwyg']) && $column != 'slug'){
+                $ai_translate_actions = '';
 
                 if($lang_effect == true){
-                    $ai_translate_actions = '';
-
                     $active_languages = DB::table('languages')->where('active',1)->get();
                     if($active_languages && count($active_languages)>0){
                         foreach($active_languages as $language){

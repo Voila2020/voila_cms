@@ -593,11 +593,11 @@ class CBController extends Controller
                 $table_parent = CRUDBooster::parseSqlTable($this->table)['table'];
                 $addaction[] = [
                     'label' => $s['label'],
-                    'icon' => $s['button_icon'],
-                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . $s['parent_columns_alias'] . '&parent_id=[' . ($s['custom_parent_id'] ?? "id") . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode((string) $s['label']) . '&parent_translation_table=' . $s['parent_translation_table'],
-                    'color' => $s['button_color'],
-                    'showIf' => $s['showIf'],
-                    'target' => isset($s['target']) ?: '_self',
+                    'icon' => $s['button_icon'] ?? 'fa fa-bars',
+                    'url' => CRUDBooster::adminPath($s['path']) . '?return_url=' . urlencode(Request::fullUrl()) . '&parent_table=' . $table_parent . '&parent_columns=' . $s['parent_columns'] . '&parent_columns_alias=' . ($s['parent_columns_alias'] ?? $s['parent_columns']) . '&parent_id=[' . ($s['custom_parent_id'] ?? "id") . ']&foreign_key=' . $s['foreign_key'] . '&label=' . urlencode((string) $s['label']) . '&parent_translation_table=' . ($s['parent_translation_table'] ?? ''),
+                    'color' => $s['button_color'] ?? 'primary',
+                    'showIf' => $s['showIf'] ?? null,
+                    'target' => $s['target'] ?? '_self',
                 ];
             }
         }

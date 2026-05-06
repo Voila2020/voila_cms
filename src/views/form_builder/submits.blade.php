@@ -3,7 +3,13 @@
 
 <div class="row">
     <div class="container">
-        @if ($export_data_columns)
+        @php
+            $export_data_columns = $export_data_columns ?? [];
+            $export_data_result = $export_data_result ?? [];
+            $module_name = $module_name ?? (CRUDBooster::getCurrentModule()->name ?? '');
+            $data = $data ?? collect();
+        @endphp
+        @if (!empty($export_data_columns))
             <form method='post' target="_blank" action='{{ CRUDBooster::mainpath('export-data?t=' . time()) }}'>
                 <input type="hidden" name="_token" value="{{ csrf_token() }}">
                 <input type='hidden' name='filename' class='form-control' required

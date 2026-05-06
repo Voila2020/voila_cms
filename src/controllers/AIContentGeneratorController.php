@@ -244,7 +244,7 @@ class AIContentGeneratorController extends CBController
                 $item_fields[] = [
                     'name' => $field['name'],
                     'type' => $type,
-                    'lang_effect' => ($field['translation']) ? 'yes' : 'no',
+                    'lang_effect' => (($field['translation'] ?? false) ? 'yes' : 'no'),
                     'default_lang' => ($default_fields_lang != '') ? $default_fields_lang : 'en'
                 ];
             }
@@ -285,7 +285,7 @@ class AIContentGeneratorController extends CBController
             foreach ($module_fields as $field) {
                 $name = $field['name'];
                 $type = $field['type'];
-                $lang_effect = $field['translation'];
+                $lang_effect = $field['translation'] ?? false;
                 if (in_array($type, ['text', 'textarea', 'wysiwyg', 'icon'])) {
                     if ($lang_effect) {
                         foreach ($active_site_langs as $lang) {
@@ -333,7 +333,7 @@ class AIContentGeneratorController extends CBController
             foreach ($module_fields as $field) {
                 $name = $field['name'];
                 $type = $field['type'];
-                $lang_effect = $field['translation'];
+                $lang_effect = $field['translation'] ?? false;
                 if (in_array($type, ['text', 'textarea', 'wysiwyg', 'icon'])) {
                     if ($lang_effect) {
                         foreach ($active_site_langs as $lang) {

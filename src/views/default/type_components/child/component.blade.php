@@ -59,6 +59,15 @@ $childTableName = $form['table'];
                                     <div class="hidden-value hide"></div>
                                     @foreach ($form['columns'] as $col_key => $col)
                                         <?php
+                                        $col = array_merge([
+                                            'name' => '',
+                                            'label' => '',
+                                            'type' => 'text',
+                                            'validation' => '',
+                                            'help' => '',
+                                            'value' => '',
+                                            'filemanager_type' => 'image',
+                                        ], $col);
                                         $name_column = $name . $col['name'];
                                         $required = str_contains((string) $col['validation'], 'required') ? 'required' : '';
                                         ?>
@@ -218,7 +227,7 @@ $childTableName = $form['table'];
                                                         function deleteImageFromChild(form_name) {
                                                             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
                                                             let table = @json($table);
-                                                            let id = @json($id);
+                                                            let id = @json($id ?? request('id') ?? 0);
                                                             let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
 
                                                             $.ajax({
@@ -776,10 +785,10 @@ $childTableName = $form['table'];
                                                     <input type="{{ $col['type'] }}"
                                                         id="{{ $name . $col['name'] }}"
                                                         name="child-{{ $name . $col['name'] }}"
-                                                        value="{{ $col['value'] }}">
+                                                        value="{{ $col['value'] ?? '' }}">
                                                 @endif
 
-                                                @if ($col['help'])
+                                                @if (!empty($col['help']))
                                                     @if ($col['type'] == 'filemanager')
                                                         <div class='help-block' style="width:54%;text-align:center;">
                                                             {{ $col['help'] }}
@@ -793,7 +802,7 @@ $childTableName = $form['table'];
                                             </div>
                                         </div>
 
-                                        @if ($col['formula'])
+                                        @if (!empty($col['formula']))
                                             <?php
                                             $formula = $col['formula'];
                                             $formula_function_name = 'formula' . str_slug($name . $col['name'], '');
@@ -957,10 +966,9 @@ $childTableName = $form['table'];
                                                 trRow += "<input type='hidden' name='{{ $name }}-id[]' value='" + currValue + "'/>";
 
                                                 @foreach ($form['columns'] as $c)
-                                                    <?php $inputId = "{$name}-{$c['name']}"; ?>
                                                     @if ($c['type'] == 'hidden' && strpos($c['name'], 'webp') != false)
                                                         trRow +=
-                                                            "<input <?= $currValue !== '' ? "id='$inputId'" : '' ?> type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value='{{ $currValue }}'>";
+                                                            "<input type='hidden' name='{{ $name }}-{{ $c['name'] }}[]' value=''>";
                                                     @elseif ($c['type'] == 'filemanager')
                                                         pSRC = $('#panel-form-{{ $name }} #img-{{ $c['name'] }}').attr('src');
                                                         pSRC = pSRC.replace("{{ url('/') }}", "");
@@ -1149,7 +1157,7 @@ $childTableName = $form['table'];
 
                                     <?php
                                 $columns_tbody = [];
-                                $data_child = DB::table($form['table'])->where($form['foreign_key'], $id);
+                                $data_child = DB::table($form['table'])->where($form['foreign_key'], ($id ?? request('id') ?? 0));
                                 foreach ($form['columns'] as $c) {
                                     $data_child->addselect($form['table'].'.'.$c['name']);
                                     $data_child->addselect($form['table'].'.id');

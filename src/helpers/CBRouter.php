@@ -178,10 +178,10 @@ class CBRouter
             Route::get( '/ai/settings', ['uses' => 'AIContentGeneratorController@showSettings', 'as' => 'AIContentGeneratorControllerShowSettings']);
             Route::post('/ai/settings/update', ['uses' => 'AIContentGeneratorController@updateSettings', 'as' => 'AIContentGeneratorControllerUpdateSettings']);
             
-            Route::post('/generate_SEO_By_Ai', ['uses' => 'AIContentGeneratorController@generate_SEO_By_Ai', 'as' => 'AIContentGeneratorControllerGenerateSEOByAi']);
-            Route::post('/generate_Module_Item_Content_By_Ai', ['uses' => 'AIContentGeneratorController@generate_Module_Item_Content_By_Ai', 'as' => 'AIContentGeneratorControllerGenerateModuleItemContentByAi']);
-            Route::post('/improve_content_By_Ai', ['uses' => 'AIContentGeneratorController@improve_content_By_Ai', 'as' => 'AIContentGeneratorControllerImproveContentByAi']);
-            Route::post('/translate_content_By_Ai', ['uses' => 'AIContentGeneratorController@translate_content_By_Ai', 'as' => 'AIContentGeneratorControllerTranslateContentByAi']);
+            Route::post('/generate_seo_by_ai', ['uses' => 'AIContentGeneratorController@generate_SEO_By_Ai', 'as' => 'AIContentGeneratorControllerGenerateSEOByAi']);
+            Route::post('/generate_module_item_content_by_ai', ['uses' => 'AIContentGeneratorController@generate_Module_Item_Content_By_Ai', 'as' => 'AIContentGeneratorControllerGenerateModuleItemContentByAi']);
+            Route::post('/improve_content_by_ai', ['uses' => 'AIContentGeneratorController@improve_content_By_Ai', 'as' => 'AIContentGeneratorControllerImproveContentByAi']);
+            Route::post('/translate_content_by_ai', ['uses' => 'AIContentGeneratorController@translate_content_By_Ai', 'as' => 'AIContentGeneratorControllerTranslateContentByAi']);
 
         });
     }

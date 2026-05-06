@@ -23,13 +23,16 @@
                     foreach ($form['columns'] as $c) {
                         $data_child->addselect($form['table'].'.'.$c['name']);
 
-                        if ($c['type'] == 'datamodal') {
-                            $datamodal_title = explode(',', (string) $c['datamodal_columns'])[0];
-                            $datamodal_table = $c['datamodal_table'];
+                        if (($c['type'] ?? null) == 'datamodal') {
+                            $datamodal_title = explode(',', (string) ($c['datamodal_columns'] ?? ''))[0] ?? null;
+                            $datamodal_table = $c['datamodal_table'] ?? null;
+                            if (!$datamodal_title || !$datamodal_table) {
+                                continue;
+                            }
                             $data_child->join($c['datamodal_table'], $c['datamodal_table'].'.id', '=', $c['name']);
                             $data_child->addselect($c['datamodal_table'].'.'.$datamodal_title.' as '.$datamodal_table.'_'.$datamodal_title);
-                        } elseif ($c['type'] == 'select') {
-                            if ($c['datatable']) {
+                        } elseif (($c['type'] ?? null) == 'select') {
+                            if (!empty($c['datatable'])) {
                                 $join_table = explode(',', (string) $c['datatable'])[0];
                                 $join_field = explode(',', (string) $c['datatable'])[1];
                                 $data_child->join($join_table, $join_table.'.id', '=', $c['name']);
@@ -45,8 +48,8 @@
                         @foreach($form['columns'] as $col)
                             <td class="{{$col['name']}}">
                                 <?php
-                                if ($col['type'] == 'select') {
-                                    if ($col['datatable']) {
+                                if (($col['type'] ?? null) == 'select') {
+                                    if (!empty($col['datatable'])) {
                                         $join_table = explode(',', (string) $col['datatable'])[0];
                                         $join_field = explode(',', (string) $col['datatable'])[1];
                                         echo "<span class='td-label'>";
@@ -54,22 +57,25 @@
                                         echo "</span>";
                                         echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                     }
-                                    if ($col['dataenum']) {
+                                    if (!empty($col['dataenum'])) {
                                         echo "<span class='td-label'>";
                                         echo $d->{$col['name']};
                                         echo "</span>";
                                         echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                     }
-                                } elseif ($col['type'] == 'datamodal') {
-                                    $datamodal_title = explode(',', (string) $col['datamodal_columns'])[0];
-                                    $datamodal_table = $col['datamodal_table'];
+                                } elseif (($col['type'] ?? null) == 'datamodal') {
+                                    $datamodal_title = explode(',', (string) ($col['datamodal_columns'] ?? ''))[0] ?? null;
+                                    $datamodal_table = $col['datamodal_table'] ?? null;
+                                    if (!$datamodal_title || !$datamodal_table) {
+                                        continue;
+                                    }
                                     echo "<span class='td-label'>";
                                     echo $d->{$datamodal_table.'_'.$datamodal_title};
                                     echo "</span>";
                                     echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
-                                } elseif ($col['type'] == 'upload') {
+                                } elseif (($col['type'] ?? null) == 'upload') {
                                     $filename = basename((string) $d->{$col['name']});
-                                    if ($col['upload_type'] == 'image') {
+                                    if (($col['upload_type'] ?? null) == 'image') {
                                         echo "<a href='".asset($d->{$col['name']})."' class='fancybox'><img data-label='$filename' src='".asset($d->{$col['name']})."' width='50px' height='50px'/></a>";
                                         echo "<input type='hidden' name='".$name."-".$col['name']."[]' value='".$d->{$col['name']}."'/>";
                                     } else {

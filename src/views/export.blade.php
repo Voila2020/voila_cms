@@ -51,12 +51,12 @@
                     } else {
 
                         //limit character
-                        if ($col['str_limit']) {
+                        if (!empty($col['str_limit'])) {
                             $value = trim(strip_tags((string) $value));
-                            $value = str_limit($value, $col['str_limit']);
+                            $value = \Illuminate\Support\Str::limit($value, (int) $col['str_limit']);
                         }
 
-                        if ($col['nl2br']) {
+                        if (!empty($col['nl2br'])) {
                             $value = nl2br((string) $value);
                         }
 

@@ -1,11 +1,15 @@
 <?php
-if ($form['datatable']) {
+if (!empty($form['datatable'])) {
     $datatable = explode(',', (string) $form['datatable']);
-    $table = $datatable[0];
-    $field = $datatable[1];
-    echo CRUDBooster::first($table, ['id' => $value])->$field;
+    $table = $datatable[0] ?? null;
+    $field = $datatable[1] ?? null;
+
+    if ($table && $field) {
+        $record = CRUDBooster::first($table, ['id' => $value]);
+        echo $record->{$field} ?? '';
+    }
 }
-if ($form['dataquery']) {
+if (!empty($form['dataquery'])) {
     $dataquery = $form['dataquery'];
     $query = DB::select(DB::raw($dataquery));
     if ($query) {
@@ -17,7 +21,7 @@ if ($form['dataquery']) {
         }
     }
 }
-if ($form['dataenum']) {
+if (!empty($form['dataenum'])) {
     echo $value;
 }
 ?>

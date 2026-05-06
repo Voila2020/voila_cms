@@ -62,7 +62,7 @@ class TranslationController extends CBController
                 $this->saveJSONFile($code, $data);
             }
         }
-        $return_url = CRUDBooster::adminPath('languages');
+        $return_url = CRUDBooster::adminPath('labels_translation');
         return redirect($return_url);
     }
 
