@@ -1177,6 +1177,32 @@ $form['default_value'] = $form['default_value'] ?? null;
                                 $columns_tbody = [];
                                 $data_child = DB::table($form['table'])->where($form['foreign_key'], ($id ?? request('id') ?? 0));
                                 foreach ($form['columns'] as $c) {
+                                    $c = array_merge([
+                                        'name' => '',
+                                        'label' => '',
+                                        'type' => 'text',
+                                        'validation' => '',
+                                        'help' => '',
+                                        'value' => '',
+                                        'required' => false,
+                                        'readonly' => false,
+                                        'parent_select' => null,
+                                        'datatable' => null,
+                                        'datatable_where' => null,
+                                        'dataenum' => [],
+                                        'max' => null,
+                                        'min' => null,
+                                        'max_fields' => null,
+                                        'formula' => null,
+                                        'upload_type' => null,
+                                        'datamodal_table' => null,
+                                        'datamodal_columns' => null,
+                                        'datamodal_columns_alias' => null,
+                                        'datamodal_select_to' => null,
+                                        'datamodal_where' => null,
+                                        'datamodal_size' => null,
+                                        'filemanager_type' => 'image',
+                                    ], $c);
                                     $data_child->addselect($form['table'].'.'.$c['name']);
                                     $data_child->addselect($form['table'].'.id');
 
@@ -1207,6 +1233,32 @@ $form['default_value'] = $form['default_value'] ?? null;
                                             value='{{ $d->id }}' />
                                         @foreach ($form['columns'] as $col)
                                             <?php //for webp images
+                                            $col = array_merge([
+                                                'name' => '',
+                                                'label' => '',
+                                                'type' => 'text',
+                                                'validation' => '',
+                                                'help' => '',
+                                                'value' => '',
+                                                'required' => false,
+                                                'readonly' => false,
+                                                'parent_select' => null,
+                                                'datatable' => null,
+                                                'datatable_where' => null,
+                                                'dataenum' => [],
+                                                'max' => null,
+                                                'min' => null,
+                                                'max_fields' => null,
+                                                'formula' => null,
+                                                'upload_type' => null,
+                                                'datamodal_table' => null,
+                                                'datamodal_columns' => null,
+                                                'datamodal_columns_alias' => null,
+                                                'datamodal_select_to' => null,
+                                                'datamodal_where' => null,
+                                                'datamodal_size' => null,
+                                                'filemanager_type' => 'image',
+                                            ], $col);
                                             if ($col['type'] == 'hidden' && str_contains((string) $col['name'], 'webp')) {
                                                 echo "<input type='hidden' name='" . $name . '-' . $col['name'] . "[]' value='" . $d->{$col['name']} . "'/>";
                                                 continue;

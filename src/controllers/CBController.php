@@ -463,7 +463,7 @@ class CBController extends Controller
                     if (!$col['field_with']) {
                         continue;
                     }
-                    if ($col['is_subquery']) {
+                    if (($col['is_subquery'] ?? false)) {
                         continue;
                     }
                     $w->orwhere($col['field_with'], "like", "%" . request("q") . "%");
