@@ -1,6 +1,7 @@
 <?php
 $name = str_slug($form['label'], '');
 $childTableName = $form['table'];
+$form['default_value'] = $form['default_value'] ?? null;
 ?>
 @push('bottom')
     <script type="text/javascript">
@@ -66,6 +67,23 @@ $childTableName = $form['table'];
                                             'validation' => '',
                                             'help' => '',
                                             'value' => '',
+                                            'required' => false,
+                                            'readonly' => false,
+                                            'parent_select' => null,
+                                            'datatable' => null,
+                                            'datatable_where' => null,
+                                            'dataenum' => [],
+                                            'max' => null,
+                                            'min' => null,
+                                            'max_fields' => null,
+                                            'formula' => null,
+                                            'upload_type' => null,
+                                            'datamodal_table' => null,
+                                            'datamodal_columns' => null,
+                                            'datamodal_columns_alias' => null,
+                                            'datamodal_select_to' => null,
+                                            'datamodal_where' => null,
+                                            'datamodal_size' => null,
                                             'filemanager_type' => 'image',
                                         ], $col);
                                         $name_column = $name . $col['name'];
@@ -491,7 +509,7 @@ $childTableName = $form['table'];
                                                                 <input type='text' title="{{ $col['label'] }}"
                                                                     {{ $required }} {{ $readonly }}
                                                                     {!! $placeholder !!} {{ $disabled }}
-                                                                    {{ $validation['max'] ? 'maxlength=' . $validation['max'] : '' }}
+                                                                    {{ ($validation['max'] ?? null) ? 'maxlength=' . $validation['max'] : '' }}
                                                                     class='form-control {{ $col['name'] }} first_value'
                                                                     name="{{ $col['name'] }}[]"
                                                                     id="{{ $col['name'] }}"
@@ -543,7 +561,7 @@ $childTableName = $form['table'];
                                                                     $(".first_value").filter(".{{ $col['name'] }}").val(val[0]);
                                                                     for (i = 1; i < val.length; i++) {
                                                                         $(wrapper_{{ $col['name'] }}).append(
-                                                                            ' <div > <input class="form-control" {{ $required }} {{ $readonly }} {!! $placeholder !!} {{ $disabled }} {{ $validation['max'] ? 'maxlength=' . $validation['max'] : '' }}  type="text" name="{{ $col['name'] }}[]" value="' +
+                                                                            ' <div > <input class="form-control" {{ $required }} {{ $readonly }} {!! $placeholder !!} {{ $disabled }} {{ ($validation['max'] ?? null) ? 'maxlength=' . $validation['max'] : '' }}  type="text" name="{{ $col['name'] }}[]" value="' +
 
                                                                             val[i] +
                                                                             '"/><a href="#" class="remove_field {{ $col['name'] }}"><i class="fa fa-minus"></a></div>'
