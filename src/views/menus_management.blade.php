@@ -240,7 +240,7 @@
                                             onclick='{{ CRUDBooster::deleteConfirm(route('MenusControllerGetDelete') . '/' . $menu->id) }}'
                                             href='javascript:void(0)'></a></span></div>
                                 <ul>
-                                    @if (!empty($menu->children) && is_iterable($menu->children))
+                                    @if ($menu->children)
                                         @foreach ($menu->children as $child)
                                             <li data-id='{{ $child->id }}' data-name='{{ $child->name }}'>
                                                 <div><i class='{{ $child->icon }}'></i> {{ $child->name }} <span
@@ -274,7 +274,7 @@
                         action='{{ CRUDBooster::mainpath('add-save') }}'>
                         <input type="hidden" name="_token" value="{{ csrf_token() }}">
                         <input type='hidden' name='return_url' value='{{ Request::fullUrl() }}' />
-                        @php 
+                        @php
                             $lang = $websiteLanguages->where('default',1)->first();
                         @endphp
                         @include('crudbooster::default.form_body')

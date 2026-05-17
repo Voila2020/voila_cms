@@ -282,9 +282,7 @@ class MenusController extends CBController
 
         foreach ($menu_inactive as &$menu) {
             $child = DB::table('cms_menus')->where('is_active', 1)->where('parent_id', $menu->id)->orderby('sorting', 'asc')->get();
-            if (count($child) > 0) {
-                $menu->children = $child;
-            }
+            $menu->children = count($child) > 0 ? $child : collect();
         }
 
         $return_url = Request::fullUrl();
