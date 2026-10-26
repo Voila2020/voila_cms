@@ -11,7 +11,7 @@ if (is_array($lang)) {
     $lang = (object) $lang;
 }
 
-if ($lang === null) {
+if ($lang === null || is_string($lang)) {
     $lang = (object) ['default' => 1, 'code' => 'en'];
 }
 

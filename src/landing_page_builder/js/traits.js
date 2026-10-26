@@ -142,6 +142,86 @@ function define_new_traits(editor) {
     },
   });
   //--------------------------------
+  editor.TraitManager.addType("tag_select", {
+        events: {
+            change: "onChange",
+        },
+
+        createInput({ trait }) {
+            const component = this.target;
+            const options = this.model.get("options") || [];
+            const select = document.createElement("select");
+
+            options.forEach((opt) => {
+                const option = document.createElement("option");
+                option.text = opt.name;
+                option.value = opt.value;
+
+                if (component.get("tagName") === opt.value) {
+                    option.setAttribute("selected", "selected");
+                }
+
+                select.append(option);
+            });
+
+            return select;
+        },
+
+        onUpdate({ elInput, component }) {
+            const value = component.get("tagName");
+            elInput.value = value;
+        },
+
+        onEvent({ elInput, component, event }) {
+            const newTag = elInput.value;
+
+            if (newTag && component.get("tagName") !== newTag) {
+                const content = component.get("content"); // preserve inner HTML
+                component.set({ tagName: newTag, content }); // change the tag
+            }
+        },
+    });
+
+    editor.TraitManager.addType("list_style_select", {
+        createInput({ trait }) {
+            const input = document.createElement("select");
+            const options = [
+                { value: "none", name: "None" },
+                { value: "disc", name: "Disc" },
+                { value: "circle", name: "Circle" },
+                { value: "square", name: "Square" },
+                { value: "decimal", name: "Decimal" },
+                { value: "lower-alpha", name: "Lower Alpha" },
+                { value: "upper-alpha", name: "Upper Alpha" },
+                { value: "lower-roman", name: "Lower Roman" },
+                { value: "upper-roman", name: "Upper Roman" },
+            ];
+
+            options.forEach((opt) => {
+                const option = document.createElement("option");
+                option.value = opt.value;
+                option.text = opt.name;
+                input.appendChild(option);
+            });
+
+            return input;
+        },
+        onUpdate({ elInput, component }) {
+            const listStyle = component.getStyle()['list-style'] || 'none';
+            elInput.value = listStyle;
+        },
+        onEvent({ elInput, component }) {
+            const value = elInput.value;
+            component.addStyle({ 'list-style': value });
+
+            // Apply the same list-style to all child <li> elements
+            const childListItems = component.find('li');
+            childListItems.forEach((li) => {
+                li.addStyle({ 'list-style': value });
+            });
+        },
+    });
+  //--------------------------------
   function updateComponentClass(component, previousValue, newValue) {
     if (previousValue) {
       component.removeClass(previousValue);
@@ -1152,7 +1232,7 @@ function traits(editor) {
           name: "required",
         }
       );
-      traitArr.splice(9, 0, 
+      traitArr.splice(9, 0,
          {
           type: "class_select",
           options: [
@@ -1183,7 +1263,7 @@ function traits(editor) {
     }
 
     if (type.id == "select") {
-      traitArr.splice(5, 0, 
+      traitArr.splice(5, 0,
          {
           type: "class_select",
           options: [
