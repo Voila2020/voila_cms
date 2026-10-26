@@ -1,8 +1,2 @@
-@php
-    $original_local = setlocale(LC_TIME,0);
-    setlocale(LC_TIME,App::getLocale());
-@endphp
-{{ !empty($value) ? ucfirst(strftime("%B, %d %G", strtotime($value))) : null }}
-@php
-    setlocale(LC_TIME,$original_local);
-@endphp
+{{-- Carbon instead of strftime() (deprecated in PHP 8.1); 'Y' not '%G' (ISO week year), and UTF-8 month names --}}
+{{ !empty($value) ? ucfirst(\Carbon\Carbon::parse($value)->locale(App::getLocale())->translatedFormat('F, d Y')) : null }}

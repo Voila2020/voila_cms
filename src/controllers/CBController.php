@@ -680,7 +680,7 @@ class CBController extends Controller
 
                 if (!empty($col['callback_php'])) {
                     foreach ($row as $k => $v) {
-                        $col['callback_php'] = str_replace("[" . $k . "]", $v, $col['callback_php']);
+                        $col['callback_php'] = str_replace("[" . $k . "]", (string) $v, $col['callback_php']);
                     }
                     @eval("\$value = " . $col['callback_php'] . ";");
                 }

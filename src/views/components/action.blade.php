@@ -3,7 +3,7 @@
     <?php
     $a['url'] = $a['url'] ?? 'javascript:;';
     foreach ($row as $key => $val) {
-        $a['url'] = str_replace("[".$key."]", $val, $a['url']);
+        $a['url'] = str_replace("[".$key."]", (string) $val, $a['url']);
     }
 
     $confirm_box = '';
@@ -49,9 +49,16 @@
 
         $query = $a['showIf'];
 
-        foreach ($row as $key => $val) {
-            $query = str_replace("[".$key."]", '"'.$val.'"', $query);
-        }
+        // One pass over the condition only, so row values are never re-scanned for placeholders.
+        // var_export gives a safe PHP literal; a quoted value would let "$" / "{${...}}" in row data run inside eval().
+        // A field missing from the row becomes '' (like NULL) instead of a bare constant.
+        $rowData = (array) $row;
+        $query = preg_replace_callback('/\[([^\[\]]+)\]/', function ($m) use ($rowData) {
+            if (array_key_exists($m[1], $rowData)) {
+                return var_export((string) $rowData[$m[1]], true);
+            }
+            return preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $m[1]) ? "''" : $m[0];
+        }, $query);
 
         try {
             $conditionResult = eval('return (' . $query . ');');
@@ -118,7 +125,7 @@
                 <?php
                 $a['url'] = $a['url'] ?? 'javascript:;';
                 foreach ($row as $key => $val) {
-                    $a['url'] = str_replace("[".$key."]", $val, $a['url']);
+                    $a['url'] = str_replace("[".$key."]", (string) $val, $a['url']);
                 }
 
                 $label = $a['label'] ?? '';
@@ -130,9 +137,16 @@
 
                     $query = $a['showIf'];
 
-                    foreach ($row as $key => $val) {
-                        $query = str_replace("[".$key."]", '"'.$val.'"', $query);
-                    }
+                    // One pass over the condition only, so row values are never re-scanned for placeholders.
+                    // var_export gives a safe PHP literal; a quoted value would let "$" / "{${...}}" in row data run inside eval().
+                    // A field missing from the row becomes '' (like NULL) instead of a bare constant.
+                    $rowData = (array) $row;
+                    $query = preg_replace_callback('/\[([^\[\]]+)\]/', function ($m) use ($rowData) {
+                        if (array_key_exists($m[1], $rowData)) {
+                            return var_export((string) $rowData[$m[1]], true);
+                        }
+                        return preg_match('/^[A-Za-z_][A-Za-z0-9_]*$/', $m[1]) ? "''" : $m[0];
+                    }, $query);
 
                     try {
                         $conditionResult = eval('return (' . $query . ');');
