@@ -1463,6 +1463,9 @@ class CBController extends Controller
                     if (!$childtable) {
                         continue;
                     }
+                    // Bulk insert needs the same columns in every row (empty values are skipped above)
+                    $allKeys = array_fill_keys(array_keys(array_merge(...($child_array ?: [[]]))), null);
+                    $child_array = array_map(fn($row) => array_merge($allKeys, $row), $child_array);
                     DB::table($childtable)->insert($child_array);
                 }
             }
