@@ -1993,7 +1993,7 @@ class CBController extends Controller
         if (request('file') && !request('import')) {
             $file = base64_decode((string) request('file'));
             $file = storage_path('app/' . $file);
-            $rows = Excel::toArray([], $file)[0];
+            $rows = Excel::toArray(new \crocodicstudio\crudbooster\export\RowsImport(), $file)[0];
             $countRows = ($rows) ? count($rows) : 0;
 
             Session::put('total_data_import', $countRows);
@@ -2089,7 +2089,7 @@ class CBController extends Controller
 
         // $rows = Excel::load($file, function ($reader) {
         // })->get();
-        $rows = Excel::toArray([], $file)[0];
+        $rows = Excel::toArray(new \crocodicstudio\crudbooster\export\RowsImport(), $file)[0];
         $headerRow = $rows[0];
         $finalRows = [];
         foreach ($rows as $index => $row) {
