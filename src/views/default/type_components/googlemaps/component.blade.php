@@ -1,3 +1,8 @@
+<?php
+// Saved coordinates; empty on the add page (no $row) or when the field has no latitude/longitude columns
+$gm_latitude = (!empty($form['latitude']) && isset($row)) ? ($row->{$form['latitude']} ?? null) : null;
+$gm_longitude = (!empty($form['longitude']) && isset($row)) ? ($row->{$form['longitude']} ?? null) : null;
+?>
 <div class='form-group peta {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}'>
     <label class='control-label col-sm-2'>{{cbLang($form['label'])}}
         @if($required)
@@ -11,8 +16,8 @@
         <div class="input-group">
             <input type="text" class="form-control" id="{{$name}}" {{ ($readonly)?"readonly":"" }} {{ ($required)?"required":""}} value="{{$value}}"
                    name="{{$name}}">
-            <input type="hidden" name="input-latitude-{{$name}}" id="input-latitude-{{$name}}" value="{{ ($form['latitude'])?$row->$form['latitude']:0 }}">
-            <input type="hidden" name="input-longitude-{{$name}}" id="input-longitude-{{$name}}" value="{{ ($form['longitude'])?$row->$form['longitude']:0 }}">
+            <input type="hidden" name="input-latitude-{{$name}}" id="input-latitude-{{$name}}" value="{{ $gm_latitude ?: 0 }}">
+            <input type="hidden" name="input-longitude-{{$name}}" id="input-longitude-{{$name}}" value="{{ $gm_longitude ?: 0 }}">
             <span class="input-group-btn">
 						        <button class="btn btn-primary" onclick="showMapModal{{$name}}()" type="button"><i
                                             class='fa fa-map-marker'></i> Browse Map</button>
@@ -99,8 +104,8 @@
         function initMap{{$index}}() {
             geocoder = new google.maps.Geocoder();
             var map = new google.maps.Map(document.getElementById('map-{{$name}}'), {
-                @if($row->{$form['latitude']} && $row->{$form['longitude']})
-                center: {lat: <?php echo $row->{$form['latitude']} ?: 0;?>, lng: <?php echo $row->{$form['longitude']} ?: 0;?> },
+                @if($gm_latitude && $gm_longitude)
+                center: {lat: {{ $gm_latitude ?: 0 }}, lng: {{ $gm_longitude ?: 0 }} },
                 @endif
                 zoom: 12
             });
@@ -124,7 +129,7 @@
 
             // Try HTML5 geolocation.
 
-            @if(!$row->$form['latitude'] && !$row->$form['longitude'])
+            @if(!$gm_latitude && !$gm_longitude)
 
                 latitude_temp_{{$name}} = 0;
             longitude_temp_{{$name}} = 0;
@@ -137,12 +142,12 @@
 
                     @else
             var pos = {
-                    lat: {{ $row->$form['latitude']?:0 }},
-                    lng: {{ $row->$form['longitude']?:0 }}
+                    lat: {{ $gm_latitude ?: 0 }},
+                    lng: {{ $gm_longitude ?: 0 }}
                 };
 
-            latitude_temp_{{$name}} = {{ $row->$form['latitude']?:0 }};
-            longitude_temp_{{$name}} = {{ $row->$form['longitude']?:0 }};
+            latitude_temp_{{$name}} = {{ $gm_latitude ?: 0 }};
+            longitude_temp_{{$name}} = {{ $gm_longitude ?: 0 }};
 
             address_temp_{{$name}} = "{{$value}}";
 

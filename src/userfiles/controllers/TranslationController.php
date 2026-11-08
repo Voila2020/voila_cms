@@ -13,6 +13,7 @@ class TranslationController extends CBController
     public function cbInit()
     {
         # START CONFIGURATION DO NOT REMOVE THIS LINE
+        $this->table = "languages";
         $this->title_field = "name";
         $this->limit = "20";
         $this->orderby = "sorting,asc";
@@ -20,10 +21,11 @@ class TranslationController extends CBController
         $this->button_table_action = true;
         $this->button_bulk_action = true;
         $this->button_action_style = "button_dropdown";
-        $this->button_add = true;
-        $this->button_edit = true;
+        // The translations page edits JSON files in its own view; the generic add/edit/detail pages have no table to work on
+        $this->button_add = false;
+        $this->button_edit = false;
         $this->button_delete = true;
-        $this->button_detail = true;
+        $this->button_detail = false;
         $this->button_show = true;
         $this->button_filter = true;
         $this->button_import = false;

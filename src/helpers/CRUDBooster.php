@@ -3,6 +3,7 @@
 namespace crocodicstudio\crudbooster\helpers;
 
 use Exception;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Env;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -263,31 +264,35 @@ class CRUDBooster
         return Session::get('admin_lock');
     }
 
+    /**
+     * Stop the request and return $response to the browser. Laravel renders the exception as this
+     * exact response and still runs the rest of its lifecycle (the session, with its flash message,
+     * is saved by the session middleware), unlike send() followed by exit.
+     */
+    public static function haltWith($response)
+    {
+        throw new HttpResponseException($response);
+    }
+
     public static function redirectBack($message, $type = 'warning')
     {
 
         if (Request::ajax()) {
-            $resp = response()->json(['message' => $message, 'message_type' => $type, 'redirect_url' => $_SERVER['HTTP_REFERER']])->send();
-            exit;
+            self::haltWith(response()->json(['message' => $message, 'message_type' => $type, 'redirect_url' => Request::server('HTTP_REFERER')]));
         } else {
-            $resp = redirect()->back()->withInput()->with(['message' => $message, 'message_type' => $type]);
-            Session::driver()->save();
-            $resp->send();
-            exit;
+            self::haltWith(redirect()->back()->withInput()->with(['message' => $message, 'message_type' => $type]));
         }
     }
 
     public static function redirect($to, $message, $type = 'warning')
     {
+        // Callers often pass the referer, which browsers may leave out
+        $to = $to ?: url()->previous(self::adminPath());
 
         if (Request::ajax()) {
-            $resp = response()->json(['message' => $message, 'message_type' => $type, 'redirect_url' => $to])->send();
-            exit;
+            self::haltWith(response()->json(['message' => $message, 'message_type' => $type, 'redirect_url' => $to]));
         } else {
-            $resp = redirect($to)->with(['message' => $message, 'message_type' => $type]);
-            Session::driver()->save();
-            $resp->send();
-            exit;
+            self::haltWith(redirect($to)->with(['message' => $message, 'message_type' => $type]));
         }
     }
 
@@ -656,9 +661,10 @@ class CRUDBooster
 
         return Cache::rememberForever('field_type_' . $table . '_' . $field, function () use ($table, $field) {
 
+            $typedata = null;
             try {
                 //MySQL & SQL Server
-                $typedata = DB::select(DB::raw("select DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='$table' and COLUMN_NAME = '$field'"))[0]->DATA_TYPE;
+                $typedata = DB::select("select DATA_TYPE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = ? and COLUMN_NAME = ?", [$table, $field])[0]->DATA_TYPE;
             } catch (\Exception) {
             }
 
@@ -887,14 +893,9 @@ class CRUDBooster
                 $result = [];
                 $result['api_status'] = 0;
                 $result['api_message'] = implode(', ', $message);
-                $res = response()->json($result, 200);
-                $res->send();
-                exit;
+                self::haltWith(response()->json($result, 200));
             } else {
-                $res = redirect()->back()->with(['message' => implode('<br/>', $message), 'message_type' => 'warning'])->withInput();
-                Session::driver()->save();
-                $res->send();
-                exit;
+                self::haltWith(redirect()->back()->with(['message' => implode('<br/>', $message), 'message_type' => 'warning'])->withInput());
             }
         }
     }
@@ -1128,6 +1129,7 @@ class CRUDBooster
 
     public static function isForeignKey($fieldName)
     {
+        $table = '';
         if (str_starts_with((string) $fieldName, 'id_')) {
             $table = substr((string) $fieldName, 3);
         } elseif (str_ends_with((string) $fieldName, '_id')) {
@@ -1187,8 +1189,8 @@ class CRUDBooster
         if (CRUDBooster::getSetting('api_debug_mode')) {
             $a = [];
             $a['created_at'] = date('Y-m-d H:i:s');
-            $a['ipaddress'] = $_SERVER['REMOTE_ADDR'];
-            $a['useragent'] = $_SERVER['HTTP_USER_AGENT'];
+            $a['ipaddress'] = Request::ip();
+            $a['useragent'] = Request::userAgent();
             $a['url'] = Request::url();
             $a['description'] = $description;
             $a['details'] = $details;
@@ -1273,20 +1275,17 @@ class CRUDBooster
             if ($userAgentValid === false) {
                 $result['api_status'] = 0;
                 $result['api_message'] = "THE DEVICE AGENT IS INVALID";
-                $res = response()->json($result, 400);
-                $res->send();
-                exit;
+                self::haltWith(response()->json($result, 400));
             }
         }
 
         $accessToken = ltrim($authorization, "Bearer ");
         $accessTokenData = Cache::get("api_token_" . $accessToken);
         if (!$accessTokenData) {
-            response()->json([
+            self::haltWith(response()->json([
                 'api_status' => 0,
                 'api_message' => 'Forbidden Access!',
-            ], 403)->send();
-            exit;
+            ], 403));
         }
     }
 
@@ -1384,6 +1383,30 @@ class CRUDBooster
             }
         }
         return $new_result;
+    }
+
+    /**
+     * "table,display_column" for a foreign key column (id_xxx or xxx_id) in a generated module, or null
+     * when neither xxx nor its plural is a table (the field is then generated as a plain input).
+     */
+    public static function generatorJoin($field)
+    {
+        $field = (string) $field;
+        if (str_starts_with($field, 'id_')) {
+            $base = substr($field, 3);
+        } elseif (str_ends_with($field, '_id')) {
+            $base = substr($field, 0, -3);
+        } else {
+            return null;
+        }
+
+        foreach (array_unique([$base, Str::plural($base)]) as $table) {
+            if ($base !== '' && Schema::hasTable($table)) {
+                return $table . ',' . (self::getNameTable(self::getTableColumns($table)) ?: 'id');
+            }
+        }
+
+        return null;
     }
 
     public static function getNameTable($columns)
@@ -1951,20 +1974,13 @@ class Admin' . $controllername . ' extends CBController {
                 continue;
             }
 
-            if (str_starts_with((string) $field, 'id_')) {
-                $jointable = str_replace('id_', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $php .= '		$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
-            } elseif (str_ends_with((string) $field, '_id')) {
-                if ($translationTable) {
-                    continue;
-                }
+            if (str_ends_with((string) $field, '_id') && !str_starts_with((string) $field, 'id_') && $translationTable) {
+                continue;
+            }
 
-                $jointable = substr((string) $field, 0, (strlen((string) $field) - 3));
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $php .= '		$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $jointable . ',' . $joinname . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
+            $join = self::generatorJoin($field);
+            if ($join) {
+                $php .= '		$this->col[] = array("label"=>"' . $label . '","name"=>"' . $field . '","join"=>"' . $join . '"' . ($translationTable ? ',"translation"=>true' : '') . ');' . "\n";
             } else {
                 $image = '';
                 if (in_array($field, $image_candidate)) {
@@ -2033,31 +2049,22 @@ class Admin' . $controllername . ' extends CBController {
                     break;
             }
 
-            if (str_starts_with((string) $field, 'id_')) {
-                $jointable = str_replace('id_', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $attribute['datatable'] = $jointable . ',' . $joinname;
-                $type = 'select2';
+            if (str_ends_with((string) $field, '_id') && $translationTable) {
+                continue;
             }
 
-            if (str_ends_with((string) $field, '_id')) {
-                if ($translationTable) {
-                    continue;
-                }
-
-                $jointable = str_replace('_id', '', $field);
-                $joincols = CRUDBooster::getTableColumns($jointable);
-                $joinname = CRUDBooster::getNameTable($joincols);
-                $attribute['datatable'] = $jointable . ',' . $joinname;
+            $join = self::generatorJoin($field);
+            if ($join) {
+                $attribute['datatable'] = $join;
                 $type = 'select2';
             }
 
             if (str_starts_with((string) $field, 'is_')) {
                 $type = 'radio';
                 $label_field = ucwords(substr((string) $field, 3));
-                $validation = ['required|integer'];
-                $attribute['dataenum'] = ['1|' . $label_field, '0|Un-' . $label_field];
+                $validation = ['required', 'integer'];
+                // A string as in a hand-written module: attributes are written into the generated PHP by concatenation
+                $attribute['dataenum'] = '1|' . $label_field . ';0|Un-' . $label_field;
             }
 
             if (in_array($field, $password_candidate)) {

@@ -5,10 +5,10 @@
             @if($form['type'] == $type)
             $('.inputMoney#{{ $form['name'] }}').priceFormat({!! json_encode(array_merge(array(
 				            'prefix' 				=> '',
-				            'thousandsSeparator'    => $form['dec_point'] ? : ',',
-				            'centsLimit'          	=> $form['decimals'] ? : '0',
+				            'thousandsSeparator'    => ($form['dec_point'] ?? null) ?: ',',
+				            'centsLimit'          	=> ($form['decimals'] ?? null) ?: '0',
 				            'clearOnEmpty'         	=> false,
-				        ), (array)$form['priceformat_parameters'] 
+				        ), (array) ($form['priceformat_parameters'] ?? [])
 					)) !!});
             @endif
             @endforeach

@@ -108,18 +108,18 @@ $form['default_value'] = $form['default_value'] ?? null;
 
                                                         <a data-lightbox="roadtrip" class="hide"
                                                             id="link-{{ $col['name'] }}" href=""
-                                                            style="{{ $col['filemanager_type'] == 'file' ? 'pointer-events: none;' : '' }}">
-                                                            <img style="width:150px;height:150px; {{ $col['filemanager_type'] == 'file' ? 'display:none;' : '' }}"
+                                                            style="{{ ($col['filemanager_type'] ?? 'image') == 'file' ? 'pointer-events: none;' : '' }}">
+                                                            <img style="width:150px;height:150px; {{ ($col['filemanager_type'] ?? 'image') == 'file' ? 'display:none;' : '' }}"
                                                                 id="img-{{ $col['name'] }}"
                                                                 title="Add image for {{ $col['name'] }}"
                                                                 src="">
                                                             <p class="file-roadtrip" id="file-{{ $col['name'] }}"
-                                                                style="{{ $col['filemanager_type'] == 'file' ? '' : 'display:none;' }}">
+                                                                style="{{ ($col['filemanager_type'] ?? 'image') == 'file' ? '' : 'display:none;' }}">
                                                             </p>
                                                         </a>
 
                                                         <span class="input-group-btn">
-                                                            @if ($col['filemanager_type'] == 'file')
+                                                            @if (($col['filemanager_type'] ?? 'image') == 'file')
                                                                 <a id="_{{ $col['name'] }}"
                                                                     onclick="OpenInsertChildImagesingle('{{ $col['name'] }}')"
                                                                     class="btn btn-primary" value="file_type">
@@ -141,7 +141,7 @@ $form['default_value'] = $form['default_value'] ?? null;
                                                     style="{{ $value ? '' : 'display: none;' }}">
                                                     <input id="thumbnail-{{ $col['name'] }}" class="form-control"
                                                         type="hidden" value='{{ $value }}'>
-                                                    @if ($col['filemanager_type'] == 'file')
+                                                    @if (($col['filemanager_type'] ?? 'image') == 'file')
                                                         @if ($value)
                                                             <div style='margin-top:15px'><a
                                                                     id='holder-{{ $col['name'] }}'
@@ -242,32 +242,20 @@ $form['default_value'] = $form['default_value'] ?? null;
                                                             });
                                                         }
 
+                                                        // Clears the image in the child row being edited; it is saved with the form.
+                                                        // (It used to clear a column with the same name in the main table on the server.)
                                                         function deleteImageFromChild(form_name) {
-                                                            let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
-                                                            let table = @json($table);
-                                                            let id = @json($id ?? request('id') ?? 0);
-                                                            let ajaxUrl = currUrl + '?table=' + table + '&column=' + form_name + '&value=&id=' + id;
-
-                                                            $.ajax({
-                                                                type: 'GET',
-                                                                url: ajaxUrl,
-                                                                success: function(data) {
-                                                                    $('.filemanager-col_' + form_name).hide();
-                                                                    $('#panel-form-{{ $name }} #img-' + form_name).prop("src", "");
-                                                                    $('#panel-form-{{ $name }} #link-' + form_name).prop("href", "");
-                                                                    $('#panel-form-{{ $name }} #link-' + form_name).addClass("hide");
-                                                                    // col-sm-10 empty value clear
-                                                                    $('#panel-form-{{ $name }} #' + form_name).val("");
-                                                                    $('#panel-form-{{ $name }} #thumbnail-' + form_name).prop("src", "").val("");
-                                                                    $('#panel-form-{{ $name }} #roadtrip-' + form_name).prop("href", "");
-                                                                    $('#panel-form-{{ $name }} #holder-' + form_name).prop("src", "");
-                                                                    $('#panel-form-{{ $name }} .empty-filemanager-col_' + form_name).show();
-                                                                    swal.close();
-                                                                },
-                                                                error: function(data) {
-
-                                                                }
-                                                            });
+                                                            $('.filemanager-col_' + form_name).hide();
+                                                            $('#panel-form-{{ $name }} #img-' + form_name).prop("src", "");
+                                                            $('#panel-form-{{ $name }} #link-' + form_name).prop("href", "");
+                                                            $('#panel-form-{{ $name }} #link-' + form_name).addClass("hide");
+                                                            // col-sm-10 empty value clear
+                                                            $('#panel-form-{{ $name }} #' + form_name).val("");
+                                                            $('#panel-form-{{ $name }} #thumbnail-' + form_name).prop("src", "").val("");
+                                                            $('#panel-form-{{ $name }} #roadtrip-' + form_name).prop("href", "");
+                                                            $('#panel-form-{{ $name }} #holder-' + form_name).prop("src", "");
+                                                            $('#panel-form-{{ $name }} .empty-filemanager-col_' + form_name).show();
+                                                            swal.close();
                                                         }
                                                         $(function() {
                                                             var id = '#panel-form-{{ $name }} #modalInsertChildPhotosingle_{{ $col['name'] }}';
@@ -275,7 +263,7 @@ $form['default_value'] = $form['default_value'] ?? null;
                                                                 var check = $('#panel-form-{{ $name }} #' + _Name).val();
                                                                 if (check != "") {
                                                                     check = check.substring(1);
-                                                                    if ("{{ $col['filemanager_type'] }}" == 'file')
+                                                                    if ("{{ $col['filemanager_type'] ?? 'image' }}" == 'file')
                                                                         $("#panel-form-{{ $name }} #file-" + _Name).html(check);
                                                                     else
                                                                         $("#panel-form-{{ $name }} #img-" + _Name).attr("src",

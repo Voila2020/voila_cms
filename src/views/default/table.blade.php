@@ -105,7 +105,7 @@
                     $mainpath = trim(CRUDBooster::mainpath(), '/') . $build_query;
                     echo "<th width='$width' $style>";
                     if (isset($sort_column[$field])) {
-                        switch ($sort_column[$field]['sorting']) {
+                        switch ($sort_column[$field]['sorting'] ?? '') {
                             case 'asc':
                                 $url = CRUDBooster::urlFilterColumn($field, 'sorting', 'desc');
                                 echo "<a href='$url' title='Click to sort descending'>" . cbLang($colname) . "&nbsp; <i class='fa fa-sort-desc'></i></a>";

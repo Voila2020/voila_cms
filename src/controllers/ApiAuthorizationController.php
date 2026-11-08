@@ -22,8 +22,8 @@ class ApiAuthorizationController extends Controller
         if($exists) {
             $accessToken = str_random($this->token_length);;
             Cache::put("api_token_".$accessToken,[
-                "ip"=> $_SERVER['REMOTE_ADDR'],
-                "user_agent"=> $_SERVER['HTTP_USER_AGENT']
+                "ip"=> request()->ip(),
+                "user_agent"=> request()->userAgent()
             ], $this->ttl);
 
             return response()->json([

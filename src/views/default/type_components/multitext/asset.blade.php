@@ -1,4 +1,12 @@
 @php
+    // Assets are loaded before the fields are rendered (form_body/form_detail), so the field's
+    // variables are computed here the same way form_body.blade.php computes them.
+    $name = $name ?? ($form['name'] ?? '');
+    $value = $value ?? (isset($row) && $row ? ($row->{$name} ?? ($form['value'] ?? '')) : ($form['value'] ?? ''));
+    $required = $required ?? ((!empty($form['required']) || str_contains((string) ($form['validation'] ?? ''), 'required')) ? 'required' : '');
+    $readonly = $readonly ?? (!empty($form['readonly']) ? 'readonly' : '');
+    $disabled = $disabled ?? (!empty($form['disabled']) ? 'disabled' : '');
+    $placeholder = $placeholder ?? (!empty($form['placeholder']) ? "placeholder='" . $form['placeholder'] . "'" : '');
     $validation = is_array($validation ?? null) ? $validation : [];
     $validation['max'] = $validation['max'] ?? '';
 @endphp

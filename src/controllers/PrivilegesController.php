@@ -135,9 +135,12 @@ class PrivilegesController extends CBController
         $this->cbLoader();
 
         $row = DB::table($this->table)->where("id", $id)->first();
+        if (!$row) {
+            abort(404);
+        }
         if (!CRUDBooster::isRead() && $this->global_privilege == false) {
             CRUDBooster::insertLog(cbLang("log_try_edit", [
-                'name' => $row->{$this->title_field},
+                'name' => $this->rowTitle($row, $id),
                 'module' => CRUDBooster::getCurrentModule()->name,
             ]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));

@@ -20,10 +20,11 @@ if ($datatable && !$form['relationship_table']) {
         $select_table_pk = CRUDBooster::getTranslationTableMainColumn($table);
         $select_where = " $table.$select_table_pk = $value and $table.locale = '" . $websiteLanguages[0]->code . "'";
 
+        // The related record may have been deleted; show nothing instead of failing
         $result = CRUDBooster::get($table, $select_where);
-        echo $result[0]->$field;
+        echo $result[0]->$field ?? '';
     } else {
-        echo CRUDBooster::first($table, ['id' => $value])->$field;
+        echo CRUDBooster::first($table, ['id' => $value])?->$field ?? '';
     }
 }
 

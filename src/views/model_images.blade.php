@@ -1,8 +1,8 @@
 @php
-    $images = DB::table('model_images')
-        ->where('model_type', $table)
-        ->where('model_id', $row->id)
-        ->get();
+    // The add page has no record yet, so it starts with no images
+    $images = !empty($row)
+        ? DB::table('model_images')->where('model_type', $table)->where('model_id', $row->id)->get()
+        : collect();
     $image_paths = '[';
 @endphp
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

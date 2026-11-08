@@ -1,6 +1,6 @@
 @if ($value)
 
-    @if ($form['filemanager_type'] == 'file')
+    @if (($form['filemanager_type'] ?? 'image') == 'file')
         <a target="_blank" href="{{ asset($value) }}">
 
             {{ basename($value) }}

@@ -1,3 +1,9 @@
+<?php
+// Optional settings (see info.json)
+foreach (['datamodal_module_path', 'datamodal_where', 'datamodal_select_to', 'datamodal_columns_alias'] as $datamodal_option) {
+    $form[$datamodal_option] = $form[$datamodal_option] ?? '';
+}
+?>
 <div class='form-group form-datepicker {{$header_group_class}} {{ ($errors->first($name))?"has-error":"" }}' id='form-group-{{$name}}'
      style="{{@$form['style']}}">
     <label class='control-label col-sm-2'>{{cbLang($form['label'])}}

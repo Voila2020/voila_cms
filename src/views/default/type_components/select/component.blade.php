@@ -4,6 +4,7 @@
     $form['datatable_format'] = $form['datatable_format'] ?? '';
     $form['datatable_order'] = $form['datatable_order'] ?? '';
     $form['datatable'] = $form['datatable'] ?? null;
+    $form['datatable_where'] = $form['datatable_where'] ?? '';
 @endphp
 
 @if($current_language->default != null && $current_language->default == 1)
@@ -44,7 +45,7 @@
 
                         if (fk_value != '') {
                             $current.html("<option value=''>{{cbLang('text_loading')}} {{$form['label']}}");
-                            $.get("{{CRUDBooster::mainpath('data-table')}}?table=" + table + "&label=" + label + "&fk_name=" + fk_name + "&fk_value=" + fk_value + "&datatable_where=" + encodeURI(datatableWhere), function (response) {
+                            $.get("{{CRUDBooster::mainpath('data-table')}}?table=" + table + "&label=" + label + "&fk_name=" + fk_name + "&fk_value=" + fk_value + "&datatable_where=" + encodeURI(datatableWhere){!! !empty($add_field) ? ' + "&add_field_value=" + encodeURIComponent(add_field)' : '' !!}, function (response) {
                                 if (response) {
                                     $current.html("<option value=''>{{$default}}");
                                     $.each(response, function (i, obj) {

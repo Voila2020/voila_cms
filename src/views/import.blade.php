@@ -1,14 +1,9 @@
 @extends('crudbooster::admin_template')
 @section('content')
-
-
-    @if ($button_show_data || $button_reload_data || $button_new_data || $button_delete_data || $index_button || $columns)
-        <div id='box-actionmenu' class='box'>
-            <div class='box-body'>
-                @include('crudbooster::default.actionmenu')
-            </div>
-        </div>
-    @endif
+    @php
+        // Set only when importing into a sub module; the import controller doesn't pass it
+        $data_sub_module = $data_sub_module ?? null;
+    @endphp
 
 
     @if (Request::get('file') && Request::get('import'))

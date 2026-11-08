@@ -269,11 +269,10 @@
         function deleteImage(form_name) {
             let currUrl = @json(CRUDBooster::mainpath()) + '/update-single';
             let id = @json($id);
-            let ajaxUrl = currUrl + '?table=cms_seo&column=image&value=&id={{$record_id}}';
-
             $.ajax({
-                type: 'GET',
-                url: ajaxUrl,
+                type: 'POST',
+                url: currUrl,
+                data: {_token: @json(csrf_token()), column: 'image', id: @json($record_id)},
                 success: function(data) {
                     $('.filemanager-col_' + form_name).hide();
                     $('#img-' + form_name).prop("src", "");

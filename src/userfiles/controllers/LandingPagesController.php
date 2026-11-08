@@ -195,10 +195,11 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         $this->pre_index_html = null;
         $templates = DB::table('landing_pages')->where("is_template", 1)->get();
         $html = "";
+        // Plain PHP strings: backticks would run this HTML as a shell command (shell_exec)
         foreach ($templates as $template) {
-            $html .= `<option value="{$template->id}">{$template->name}</option>`;
+            $html .= '<option value="' . e($template->id) . '">' . e($template->name) . '</option>';
         }
-        $this->pre_index_html = `
+        $this->pre_index_html = <<<HTML
         <!-- The modal Start -->
         <div class="modal fade" id="selectTemplatesModal" tabindex="-1" role="dialog" aria-labelledby="modalLabel" aria-hidden="true">
             <div class="modal-dialog" role="document">
@@ -220,7 +221,7 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
         </div>
         <!-- The modal END -->
 
-`;
+        HTML;
 
         /*
         | ----------------------------------------------------------------------

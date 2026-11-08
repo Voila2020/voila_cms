@@ -780,45 +780,105 @@ class CBController extends Controller
         }
     }
 
-    public function postDataQuery()
-    {
-        $query = request('query');
-        $query = DB::select(DB::raw($query));
+    /*
+    | Endpoints the form fields call from the browser (F-33). The browser still sends the field's
+    | settings, but they are only used to find the field in this module's form: tables, columns,
+    | where conditions and formats always come from the field definition, never from the request.
+    */
 
-        return response()->json($query);
+    /**
+     * Fields of this module's form, including the columns of its child fields.
+     */
+    protected function formFieldsWithChildren()
+    {
+        $fields = [];
+        foreach ((array) $this->form as $field) {
+            $fields[] = $field;
+            if (($field['type'] ?? '') === 'child') {
+                foreach ((array) ($field['columns'] ?? []) as $column) {
+                    $fields[] = $column;
+                }
+            }
+        }
+
+        return $fields;
     }
 
+    /**
+     * Whether the current user may load data for this module's form fields.
+     */
+    protected function canUseFormData()
+    {
+        return $this->global_privilege || CRUDBooster::isRead() || CRUDBooster::isCreate() || CRUDBooster::isUpdate();
+    }
+
+    /**
+     * Options of a select field that depends on another field (parent_select).
+     */
     public function getDataTable()
     {
-        $table = request('table');
-        $label = request('label');
-        $datatableWhere = urldecode((string) request('datatable_where'));
-        $foreign_key_name = request('fk_name');
+        $this->cbLoader();
+        $table = (string) request('table');
+        $label = (string) request('label');
+        $foreign_key_name = (string) request('fk_name');
         $foreign_key_value = request('fk_value');
-        if ($table && $label && $foreign_key_name && $foreign_key_value) {
-            $query = DB::table($table);
-            if ($datatableWhere !== '' && $datatableWhere !== '0') {
-                $query->whereRaw($datatableWhere);
-            }
-            $query->select('id as select_value', $label . ' as select_label');
-            $query->where($foreign_key_name, $foreign_key_value);
-            $query->orderby($label, 'asc');
-
-            return response()->json($query->get());
-        } else {
+        if (!$table || !$label || !$foreign_key_name || !$foreign_key_value) {
             return response()->json([]);
         }
+
+        $field = null;
+        foreach ($this->formFieldsWithChildren() as $candidate) {
+            $datatable = array_map('trim', explode(',', (string) ($candidate['datatable'] ?? '')));
+            $parentSelect = array_map('trim', explode(',', (string) ($candidate['parent_select'] ?? '')));
+            if (($candidate['type'] ?? '') === 'select' && $parentSelect[0] !== ''
+                && $datatable[0] === $table && ($datatable[1] ?? '') === $label && $parentSelect[0] === $foreign_key_name) {
+                $field = $candidate;
+                break;
+            }
+        }
+        if (!$field || !$this->canUseFormData()) {
+            abort(403);
+        }
+
+        $query = DB::table($table);
+        if (!empty($field['datatable_where'])) {
+            $query->whereRaw($field['datatable_where']);
+        }
+        // Second part of parent_select: a column filtered by the value of the field with that name
+        $addField = trim(explode(',', (string) $field['parent_select'])[1] ?? '');
+        if ($addField !== '' && (string) request('add_field_value') !== '') {
+            $query->where($addField, request('add_field_value'));
+        }
+        $query->select('id as select_value', $label . ' as select_label');
+        $query->where($foreign_key_name, $foreign_key_value);
+        $query->orderby($label, 'asc');
+
+        return response()->json($query->get());
     }
 
+    /**
+     * Rows listed in the window of a datamodal field.
+     */
     public function getModalData()
     {
-        $table = request('table');
-        $where = request('where');
-        $where = urldecode((string) $where);
-        $columns = request('columns');
-        $columns = explode(",", $columns);
+        $this->cbLoader();
+        $table = CRUDBooster::parseSqlTable((string) request('table'))['table'];
 
-        $table = CRUDBooster::parseSqlTable($table)['table'];
+        $field = null;
+        foreach ($this->formFieldsWithChildren() as $candidate) {
+            if (($candidate['type'] ?? '') === 'datamodal'
+                && CRUDBooster::parseSqlTable((string) ($candidate['datamodal_table'] ?? ''))['table'] === $table) {
+                $field = $candidate;
+                break;
+            }
+        }
+        if (!$table || !$field || !$this->canUseFormData()) {
+            abort(403);
+        }
+
+        $columns = array_values(array_filter(array_map('trim', explode(',', 'id,' . ($field['datamodal_columns'] ?? '')))));
+        $where = (string) ($field['datamodal_where'] ?? '');
+
         $tablePK = CB::pk($table);
         $result = DB::table($table);
 
@@ -846,121 +906,149 @@ class CBController extends Controller
         return view('crudbooster::default.type_components.datamodal.browser', $data);
     }
 
-    public function getUpdateSingle()
+    /**
+     * Columns that update-single may clear: the file fields of this module's form.
+     * A controller whose page isn't built from $this->form (e.g. the SEO page) overrides it.
+     */
+    protected function updateSingleColumns()
     {
-        $this->cbLoader();
-        $table = request('table');
-        $column = request('column');
-        $value = request('value');
-        $id = request('id');
-        $lang = request('lang');
-        $tablePK = CB::pk($table);
-        if($lang && $lang != null) {
-            $column = substr((string) $column, 0, -(strlen((string) $lang) + 1));
-            DB::table($this->translation_table)->where($this->translation_main_column, $id)->where('locale', $lang)->update([$column => $value]);
-        } else {
-            DB::table($table)->where($tablePK, $id)->update([$column => $value]);
+        $columns = [];
+        foreach ((array) $this->form as $field) {
+            if (in_array($field['type'] ?? '', ['filemanager', 'upload'], true) && !empty($field['name'])) {
+                $columns[] = $field['name'];
+            }
         }
 
-        return redirect()->back()->with(['message_type' => 'success', 'message' => cbLang('alert_delete_data_success')]);
+        return $columns;
     }
 
-    public function getFindData()
+    /**
+     * Clears a file field of one record right away (the delete button of an image).
+     * POST only, for users who can edit; the value is always emptied.
+     */
+    public function postUpdateSingle()
     {
-        $q = request('q');
+        $this->cbLoader();
+        $column = (string) request('column');
         $id = request('id');
-        $limit = request('limit') ?: 10;
-        $format = request('format');
+        $lang = (string) request('lang');
 
-        $table1 = (request('table1')) ?: $this->table;
-        $table1PK = CB::pk($table1);
-        $column1 = (request('column1')) ?: $this->title_field;
-
-        $orderby_table = $table1;
-        $orderby_column = $table1PK;
-
-        @$table2 = request('table2');
-        @$column2 = request('column2');
-
-        @$table3 = request('table3');
-        @$column3 = request('column3');
-
-        $where = request('where');
-
-        $fk = request('fk');
-        $fk_value = request('fk_value');
-
-        if ($q || $id || $table1) {
-            $rows = DB::table($table1);
-            $rows->select($table1 . '.*');
-            $rows->take($limit);
-
-            if (CRUDBooster::isColumnExists($table1, 'deleted_at')) {
-                $rows->where($table1 . '.deleted_at');
-            }
-
-            if ($fk && $fk_value) {
-                $rows->where($table1 . '.' . $fk, $fk_value);
-            }
-
-            if ($table1 && $column1) {
-
-                $orderby_table = $table1;
-                $orderby_column = $column1;
-            }
-
-            if ($table2 && $column2) {
-                $table2PK = CB::pk($table2);
-                $rows->join($table2, $table2 . '.' . $table2PK, '=', $table1 . '.' . $column1);
-                $columns = CRUDBooster::getTableColumns($table2);
-                foreach ($columns as $col) {
-                    $rows->addselect($table2 . "." . $col . " as " . $table2 . "_" . $col);
-                }
-                $orderby_table = $table2;
-                $orderby_column = $column2;
-            }
-
-            if ($table3 && $column3) {
-                $table3PK = CB::pk($table3);
-                $rows->join($table3, $table3 . '.' . $table3PK, '=', $table2 . '.' . $column2);
-                $columns = CRUDBooster::getTableColumns($table3);
-                foreach ($columns as $col) {
-                    $rows->addselect($table3 . "." . $col . " as " . $table3 . "_" . $col);
-                }
-                $orderby_table = $table3;
-                $orderby_column = $column3;
-            }
-
-            if ($id) {
-                $rows->where($table1 . "." . $table1PK, $id);
-            }
-
-            if ($where) {
-                $rows->whereraw($where);
-            }
-
-            if ($format) {
-                $format = str_replace('&#039;', "'", $format);
-                $rows->addselect(DB::raw("CONCAT($format) as text"));
-                if ($q) {
-                    $rows->whereraw("CONCAT($format) like '%" . $q . "%'");
-                }
-            } else {
-                $rows->addselect($orderby_table . '.' . $orderby_column . ' as text');
-                if ($q) {
-                    $rows->where($orderby_table . '.' . $orderby_column, 'like', '%' . $q . '%');
-                }
-                $rows->orderBy($orderby_table . '.' . $orderby_column, 'asc');
-            }
-
-            $result = [];
-            $result['items'] = $rows->get();
-        } else {
-            $result = [];
-            $result['items'] = [];
+        if ($lang !== '' && str_ends_with($column, '_' . $lang)) {
+            $column = substr($column, 0, -(strlen($lang) + 1));
         }
 
-        return response()->json($result);
+        if ((!CRUDBooster::isUpdate() && $this->global_privilege == false)
+            || !in_array($column, $this->updateSingleColumns(), true)) {
+            abort(403);
+        }
+
+        if ($lang !== '' && $this->translation_table) {
+            DB::table($this->translation_table)->where($this->translation_main_column, $id)->where('locale', $lang)->update([$column => '']);
+        } else {
+            DB::table($this->table)->where($this->primary_key, $id)->update([$column => '']);
+        }
+
+        return response()->json(['message_type' => 'success', 'message' => cbLang('alert_delete_data_success')]);
+    }
+
+    /**
+     * Search results and the selected option of a select2 field with datatable_ajax.
+     */
+    public function getFindData()
+    {
+        $this->cbLoader();
+        $q = request('q');
+        $id = request('id');
+        $limit = min(max((int) request('limit') ?: 10, 1), 100);
+
+        $requested = [];
+        foreach ([1, 2, 3] as $n) {
+            $requested[] = trim((string) request('table' . $n));
+            $requested[] = trim((string) request('column' . $n));
+        }
+
+        if ($requested[0] === '') {
+            // No field settings: search this module's own table by its title
+            $field = ['datatable' => $this->table . ',' . $this->title_field];
+        } else {
+            $field = null;
+            foreach ($this->formFieldsWithChildren() as $candidate) {
+                if (($candidate['type'] ?? '') !== 'select2' || empty($candidate['datatable'])) {
+                    continue;
+                }
+                $datatable = array_pad(array_map('trim', explode(',', (string) $candidate['datatable'])), 6, '');
+                if (array_slice($datatable, 0, 6) !== $requested) {
+                    continue;
+                }
+                // Several fields can use the same tables; prefer the one with the same condition
+                if (!$field || (string) ($candidate['datatable_where'] ?? '') === (string) request('where')) {
+                    $field = $candidate;
+                }
+            }
+        }
+        if (!$field || !$this->canUseFormData()) {
+            abort(403);
+        }
+
+        [$table1, $column1, $table2, $column2, $table3, $column3] = array_pad(array_map('trim', explode(',', (string) $field['datatable'])), 6, '');
+        $where = (string) ($field['datatable_where'] ?? '');
+        $format = (string) ($field['datatable_format'] ?? '');
+
+        $table1PK = CB::pk($table1);
+        $orderby_table = $table1;
+        $orderby_column = $column1;
+
+        $rows = DB::table($table1);
+        $rows->select($table1 . '.*');
+        $rows->take($limit);
+
+        if (CRUDBooster::isColumnExists($table1, 'deleted_at')) {
+            $rows->where($table1 . '.deleted_at');
+        }
+
+        if ($table2 && $column2) {
+            $table2PK = CB::pk($table2);
+            $rows->join($table2, $table2 . '.' . $table2PK, '=', $table1 . '.' . $column1);
+            foreach (CRUDBooster::getTableColumns($table2) as $col) {
+                $rows->addselect($table2 . "." . $col . " as " . $table2 . "_" . $col);
+            }
+            $orderby_table = $table2;
+            $orderby_column = $column2;
+        }
+
+        if ($table3 && $column3) {
+            $table3PK = CB::pk($table3);
+            $rows->join($table3, $table3 . '.' . $table3PK, '=', $table2 . '.' . $column2);
+            foreach (CRUDBooster::getTableColumns($table3) as $col) {
+                $rows->addselect($table3 . "." . $col . " as " . $table3 . "_" . $col);
+            }
+            $orderby_table = $table3;
+            $orderby_column = $column3;
+        }
+
+        if ($id) {
+            $rows->where($table1 . "." . $table1PK, $id);
+        }
+
+        // Searching only: loading the saved option by id never applied the condition
+        if ($where !== '' && !$id) {
+            $rows->whereraw($where);
+        }
+
+        if ($format !== '') {
+            $rows->addselect(DB::raw("CONCAT($format) as text"));
+            if ($q) {
+                $rows->whereraw("CONCAT($format) like ?", ['%' . $q . '%']);
+            }
+        } else {
+            $rows->addselect($orderby_table . '.' . $orderby_column . ' as text');
+            if ($q) {
+                $rows->where($orderby_table . '.' . $orderby_column, 'like', '%' . $q . '%');
+            }
+            $rows->orderBy($orderby_table . '.' . $orderby_column, 'asc');
+        }
+
+        return response()->json(['items' => $rows->get()]);
     }
 
     public function validation($formArrToValidate, $id = null)
@@ -975,7 +1063,16 @@ class CBController extends Controller
                 $name = $di['name'] ?? null;
                 $type = $di['type'] ?? '';
 
-                if (!isset($request_all[$name])) {
+                // Fields that weren't sent at all are skipped (unchecked boxes, disabled inputs). A field sent
+                // empty is validated: ConvertEmptyStringsToNull makes it null, which isset() used to skip (F-35).
+                if (!$name || !array_key_exists($name, $request_all)) {
+                    continue;
+                }
+                // An optional field left empty stays unchecked as before, so rules like "string" or
+                // "integer" without "nullable" don't start rejecting it
+                $sentEmpty = in_array($request_all[$name], [null, '', []], true);
+                $appliedRules = !empty($di['validation']) ? (string) $di['validation'] : (!empty($di['required']) ? 'required' : '');
+                if ($sentEmpty && !preg_match('/(^|\|)\s*required/', $appliedRules)) {
                     continue;
                 }
 
@@ -1076,19 +1173,16 @@ class CBController extends Controller
             $message_all = $message->all();
 
             if (Request::ajax()) {
-                $res = response()->json([
+                CRUDBooster::haltWith(response()->json([
                     'message' => cbLang('alert_validation_error', ['error' => implode(', ', $message_all)]),
                     'message_type' => 'warning',
-                ])->send();
-                exit;
+                ]));
             } else {
-                $res = redirect()->back()->with("errors", $message)->with([
+                // withErrors() stores them in the ViewErrorBag that $errors and @error expect
+                CRUDBooster::haltWith(redirect()->back()->withErrors($message)->with([
                     'message' => cbLang('alert_validation_error', ['error' => implode(', ', $message_all)]),
                     'message_type' => 'warning',
-                ])->withInput();
-                \Session::driver()->save();
-                $res->send();
-                exit;
+                ])->withInput());
             }
         }
     }
@@ -1520,14 +1614,24 @@ class CBController extends Controller
         }
     }
 
+    /**
+     * Title of a record for page titles and logs, falling back to its name and then its id
+     * (the title column can live in the translation table, and the record may not exist).
+     */
+    protected function rowTitle($row, $id = null)
+    {
+        if (!$row) {
+            return $id;
+        }
+
+        return $row->{$this->title_field} ?? ($row->name ?? $id);
+    }
+
     public function getEdit($id)
     {
         $this->cbLoader();
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
-        $rowTitle = $id;
-        if ($row) {
-            $rowTitle = $row->{$this->title_field} ?? ($row->name ?? $id);
-        }
+        $rowTitle = $this->rowTitle($row, $id);
         if ($this->translation_table) {
             $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
             foreach ($translationData as $item) {
@@ -1840,6 +1944,9 @@ class CBController extends Controller
     {
         $this->cbLoader();
         $row = DB::table($this->table)->where($this->primary_key, $id)->first();
+        if (!$row) {
+            abort(404);
+        }
         if ($this->translation_table) {
             $translationData = DB::table($this->translation_table)->where($this->translation_main_column, $id)->get();
             foreach ($translationData as $item) {
@@ -1853,7 +1960,7 @@ class CBController extends Controller
 
         if (!CRUDBooster::isRead() && $this->global_privilege == false || $this->button_detail == false) {
             CRUDBooster::insertLog(cbLang("log_try_view", [
-                'name' => $row->{$this->title_field},
+                'name' => $this->rowTitle($row, $id),
                 'module' => CRUDBooster::getCurrentModule()->name,
             ]));
             CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
@@ -1862,7 +1969,7 @@ class CBController extends Controller
         $module = CRUDBooster::getCurrentModule();
 
         $page_menu = Route::getCurrentRoute()->getActionName();
-        $page_title = cbLang("detail_data_page_title", ['module' => $module->name, 'name' => $row->{$this->title_field}]);
+        $page_title = cbLang("detail_data_page_title", ['module' => $module->name, 'name' => $this->rowTitle($row, $id)]);
         $command = 'detail';
 
         Session::put('current_row_id', $id);
@@ -1989,7 +2096,7 @@ class CBController extends Controller
             if ($index == 0) {
                 continue;
             }
-            $temp = new stdClass();
+            $temp = new \stdClass();
             foreach ($headerRow as $headerIndex => $headerValue) {
                 $temp->$headerValue = $row[$headerIndex];
             }
@@ -2087,7 +2194,8 @@ class CBController extends Controller
                 $dataToInsert = [];
                 foreach (array_keys($a) as $column) {
                     if (in_array($column, $tableMainColumns)) {
-                        if (in_array($column, $dateColumns)) {
+                        // Excel stores dates as serial numbers; text dates (CSV, created_at above) are kept as they are
+                        if (in_array($column, $dateColumns) && is_numeric($a[$column])) {
                             $dateValue = \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($a[$column])->format('Y-m-d');
                             $dataToInsert[$column] = $dateValue;
                         } else {
@@ -2166,7 +2274,7 @@ class CBController extends Controller
         $button_name = Request::input('button_name');
 
         if (!$id_selected) {
-            CRUDBooster::redirect($_SERVER['HTTP_REFERER'], cbLang("alert_select_a_data"), 'warning');
+            CRUDBooster::redirect(Request::server('HTTP_REFERER'), cbLang("alert_select_a_data"), 'warning');
         }
 
         if ($button_name == 'delete') {
@@ -2175,7 +2283,7 @@ class CBController extends Controller
                 CRUDBooster::redirect(CRUDBooster::adminPath(), cbLang('denied_access'));
             }
             if ($this->translation_table) {
-                DB::table($this->translation_table)->where($this->translation_main_column, $id)->delete();
+                DB::table($this->translation_table)->whereIn($this->translation_main_column, $id_selected)->delete();
             }
             $this->hook_before_delete($id_selected);
             $tablePK = CB::pk($this->table);
@@ -2310,21 +2418,52 @@ class CBController extends Controller
     }
 
     # voila additional functions
+    /**
+     * Toggle of a switch column on the list page. Only this module's table and its switch
+     * columns can be changed, by users who can edit (the list disables the toggle otherwise).
+     */
     public function postEditSwitchAction(Request $request)
     {
-        DB::table(Request::input('table'))
-            ->where('id', Request::input('id'))
-            ->update([Request::input('feild') => Request::input('value')]);
+        $this->cbLoader();
+        $field = Request::input('feild');
+        $switchColumns = array_column(array_filter($this->col, fn ($col) => !empty($col['switch'])), 'name');
+
+        if ((!CRUDBooster::isUpdate() && $this->global_privilege == false)
+            || Request::input('table') !== $this->table
+            || !in_array($field, $switchColumns, true)) {
+            abort(403);
+        }
+
+        DB::table($this->table)
+            ->where($this->primary_key, Request::input('id'))
+            ->update([$field => Request::input('value') ? 1 : 0]);
         CRUDBooster::insertLog(cbLang('log_switch_value', [
             'module' => CRUDBooster::getCurrentModule()->name,
-            'name' => Request::input('feild'),
+            'name' => $field,
         ]));
     }
 
+    /**
+     * Drag-and-drop sorting on the list page and in child fields. Only this module's table
+     * and the child tables of its form can be sorted, by users who can edit.
+     */
     public function postSortTable(Request $request)
     {
+        $this->cbLoader();
+        $sortableTables = [$this->table];
+        foreach ($this->form as $field) {
+            if (($field['type'] ?? '') === 'child' && !empty($field['table'])) {
+                $sortableTables[] = CRUDBooster::parseSqlTable($field['table'])['table'];
+            }
+        }
+
+        if ((!CRUDBooster::isUpdate() && $this->global_privilege == false)
+            || !in_array(Request::input('table_name'), $sortableTables, true)) {
+            abort(403);
+        }
+
         if (Request::input("data")) {
-            $sortedItems = Request::input('data');
+            $sortedItems = (array) Request::input('data');
             $table_name = Request::input("table_name");
             foreach ($sortedItems as $key => $sortedItem) {
                 DB::table($table_name)->where("id", $sortedItems[$key])->update([

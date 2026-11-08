@@ -199,6 +199,14 @@ class AdminSeoController extends \crocodicstudio\crudbooster\controllers\CBContr
 
     }
 
+    /**
+     * The SEO page is a custom view, not $this->form; its image is the only field it clears right away.
+     */
+    protected function updateSingleColumns()
+    {
+        return ['image'];
+    }
+
     //By the way, you can still create your own method in here... :)
     public function getIndex()
     {

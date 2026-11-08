@@ -28,7 +28,7 @@ class SettingsController extends CBController
         $this->button_export = false;
 
         $this->col = [];
-        $this->col[] = ["label" => "Nama", "name" => "name", "callback_php" => "ucwords(str_replace('_',' ',%field%))"];
+        $this->col[] = ["label" => "Nama", "name" => "name", "callback" => fn ($row) => ucwords(str_replace('_', ' ', (string) $row->name))];
         $this->col[] = ["label" => "Setting", "name" => "content"];
 
         $this->form = [];
