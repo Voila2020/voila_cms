@@ -71,7 +71,7 @@
                 }
                 $value = str_replace("[" . $sessionKey . "]", $replaceValue, $value);
             }
-            echo reset(DB::select(DB::raw($value))[0]);
+            echo reset(DB::select($value)[0]);
         } catch (\Exception) {
             echo 'ERROR';
         }

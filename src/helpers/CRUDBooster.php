@@ -642,7 +642,9 @@ class CRUDBooster
 
         try {
             //MySQL & SQL Server
-            $isNULL = DB::select(DB::raw("select IS_NULLABLE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME='$table' and COLUMN_NAME = '$field'"))[0]->IS_NULLABLE;
+            // A plain SQL string: Laravel 10 no longer casts DB::raw() to string, and the catch below
+            // would have cached "not nullable" for every column
+            $isNULL = DB::select("select IS_NULLABLE from INFORMATION_SCHEMA.COLUMNS where TABLE_NAME = ? and COLUMN_NAME = ?", [$table, $field])[0]->IS_NULLABLE;
             $isNULL = $isNULL == 'YES';
             Cache::forever('field_isNull_' . $table . '_' . $field, $isNULL);
         } catch (\Exception) {

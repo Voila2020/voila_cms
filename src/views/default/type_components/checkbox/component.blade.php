@@ -111,7 +111,7 @@
         endif;
         if ($form['dataquery']) {
 
-            $query = DB::select(DB::raw($form['dataquery']));
+            $query = DB::select($form['dataquery']);
             @$value = explode(';', (string) $value);
             if ($query) {
                 foreach ($query as $q) {

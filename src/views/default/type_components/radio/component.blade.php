@@ -101,7 +101,7 @@
 
         endif;
         if ($dataquery) {
-            $query = DB::select(DB::raw($dataquery));
+            $query = DB::select($dataquery);
             if ($query) {
                 foreach ($query as $q) {
                     $checked = ($value == $q->value) ? "checked" : "";
