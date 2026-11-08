@@ -11,14 +11,21 @@ use Illuminate\Support\Facades\Request;
 
 class CBAuthAttempts
 {
+    /**
+     * Whole hours since the IP was blocked, as Carbon 2 returned them (Carbon 3 returns a float).
+     */
+    private static function hoursSinceBlocked($blockedAt): int
+    {
+        return (int) Carbon::parse($blockedAt)->diffInHours(Carbon::now(), true);
+    }
+
     public function handle($request, Closure $next)
     {
         $ip_address = Request::ip();
-        $diffInHours = new Carbon();
         $user = DB::table('cms_users')->where('email', $request->input('email'))->first();
         # if matches password
         $cms_login_attempts = DB::table('cms_login_attempts')->where('ip_address', $ip_address)->first();
-        if ($user && Hash::check($request->input('password'), $user->password) && ($cms_login_attempts && $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString()) > intval(get_setting('block_ip_in_hours')) || $cms_login_attempts && !$cms_login_attempts->blocked_at)) {
+        if ($user && Hash::check($request->input('password'), $user->password) && ($cms_login_attempts && self::hoursSinceBlocked($cms_login_attempts->blocked_at) > intval(get_setting('block_ip_in_hours')) || $cms_login_attempts && !$cms_login_attempts->blocked_at)) {
             DB::table('cms_login_attempts')->where('ip_address', $ip_address)
                 ->update([
                     'attempts' => 0,
@@ -38,7 +45,7 @@ class CBAuthAttempts
         $block_msg = cbLang('login_block_msg');
 
         if ($cms_login_attempts->blocked_at) {
-            $diffInHours = $diffInHours->diffInHours($cms_login_attempts->blocked_at, Carbon::now()->toDateTimeString());
+            $diffInHours = self::hoursSinceBlocked($cms_login_attempts->blocked_at);
             # Still expired
             if ($diffInHours < intval(get_setting('block_ip_in_hours'))) {
                 return redirect()->back()->with([

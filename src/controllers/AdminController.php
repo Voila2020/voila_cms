@@ -252,8 +252,9 @@ class AdminController extends CBController
             return redirect()->route('getLogin')->with(['message' => cbLang("message_not_valid_reset_token")]);
         }
 
-        $currentTime = Carbon::now();
-        if ($currentTime->diffInMinutes($tokenData->token_created_at) > config('crudbooster.reset_password_expired_time')) {
+        // Absolute whole minutes: Carbon 3 returns a signed float, which made a past token never expire.
+        $tokenAgeMinutes = (int) Carbon::parse($tokenData->token_created_at)->diffInMinutes(Carbon::now(), true);
+        if ($tokenAgeMinutes > config('crudbooster.reset_password_expired_time')) {
             return redirect()->route('getLogin')->with(['message' => cbLang("message_expired_reset_token")]);
         }
 
