@@ -1003,12 +1003,19 @@ class CRUDBooster
             return self::getCache('table_' . $table, 'primary_key');
         }
 
-        $pk = DB::getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
-        if (!$pk) {
+        // Native schema inspection (Laravel 10.30+); Laravel 11 removed getDoctrineSchemaManager()
+        if (method_exists(Schema::getFacadeRoot(), 'getIndexes')) {
+            $primary = collect(Schema::getIndexes($table))->firstWhere('primary', true);
+            $column = $primary['columns'][0] ?? null;
+        } else {
+            $pk = DB::getDoctrineSchemaManager()->listTableDetails($table)->getPrimaryKey();
+            $column = $pk ? $pk->getColumns()[0] : null;
+        }
+        if (!$column) {
             return null;
         }
-        self::putCache('table_' . $table, 'primary_key', $pk->getColumns()[0]);
-        return $pk->getColumns()[0];
+        self::putCache('table_' . $table, 'primary_key', $column);
+        return $column;
     }
 
     public static function getTranslationTableMainColumn($table)

@@ -1,5 +1,6 @@
 <?php namespace crocodicstudio\crudbooster\controllers;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\File;
 use Image;
 use Illuminate\Support\Facades\Request;
@@ -57,8 +58,11 @@ class FileController extends Controller
                 $h = Request::get('h') ?: $w;
             }
 
-            $imgRaw = Image::cache(function ($image) use ($fullStoragePath, $w, $h) {
-                $im = $image->make($fullStoragePath);
+            // Resized copy cached for 30 days, as intervention/imagecache did (abandoned, no Laravel 11 support).
+            // The key includes the file's modification time, so a replaced file gets a new copy.
+            $cacheKey = 'cb_preview_' . md5($fullFilePath . '|' . filemtime($fullStoragePath) . '|' . $w . '|' . $h);
+            $imgRaw = Cache::remember($cacheKey, now()->addDays(30), function () use ($fullStoragePath, $w, $h) {
+                $im = Image::make($fullStoragePath);
                 if ($w) {
                     if (! $h) {
                         $im->fit($w);
@@ -67,7 +71,7 @@ class FileController extends Controller
                     }
                 }
 
-                return $im;
+                return (string) $im->encode();
             });
 
             $imageFileSize = mb_strlen($imgRaw, '8bit') ?: 0;
