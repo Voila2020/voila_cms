@@ -482,10 +482,11 @@ class LandingPagesController extends \crocodicstudio\crudbooster\controllers\CBC
     public function getExportExcel($id)
     {
         $landingPage = DB::table('landing_pages')->where('id', $id)->first();
+        abort_if(!$landingPage, 404);
         $applications = DB::table('applications')->where('landing_page_id', $id)->get();
         $columns = [];
-        if ($applications) {
-            $columns = DB::table('form_field')->where("form_id", $applications[0]->form_id)->get();
+        if ($applications->isNotEmpty()) {
+            $columns = DB::table('form_field')->where("form_id", $applications->first()->form_id)->get();
         }
 
         foreach ($applications as $application) {

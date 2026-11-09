@@ -1296,7 +1296,9 @@ foreach ($bc as $k => $b) {
                     $src_thumb = $mini_src = "";
                 }
                 //check if is smaller than thumb
-                [$img_width, $img_height, $img_type, $attr] = @getimagesize($file_path);
+                // getimagesize() returns false for SVG and unreadable files; PHP 8.5 warns when destructuring false.
+                // 0 keeps the old behaviour (null): the original file is shown.
+                [$img_width, $img_height] = @getimagesize($file_path) ?: [0, 0];
                 if ($img_width < 122 && $img_height < 91) {
                     $src_thumb = $file_path;
                     $show_original = true;

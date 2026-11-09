@@ -22,7 +22,7 @@
                 <tr>
                     <?php
                     foreach ($columns as $col) {
-                        $value = $row->fields[$col->id];
+                        $value = $row->fields[$col->id] ?? '';
 
                         echo '<td>' . $value . '</td>';
                     }
