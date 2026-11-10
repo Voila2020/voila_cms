@@ -163,13 +163,13 @@ class CrudboosterInstallationCommand extends Command
             $this->call('vendor:publish', ['--provider' => 'crocodicstudio\crudbooster\CRUDBoosterServiceProvider']);
 
             $this->info('Dumping the autoloaded files and reloading all new files...');
-            $composer = $this->findComposer();
-
-            $process = (app()->version() >= 7.0)
-                ? new Process([$composer . ' dumpautoload'])
-                : new Process($composer . ' dumpautoload');
-
-            $process->setWorkingDirectory(base_path())->run();
+            // Comparing app()->version() with a number compared strings on PHP 8 ("13.0" < "7"), so Laravel 10+
+            // passed a string to Process and failed. A shell command line works on every supported version.
+            $process = Process::fromShellCommandline($this->findComposer() . ' dump-autoload', base_path());
+            $process->setTimeout(300)->run();
+            if (! $process->isSuccessful()) {
+                $this->warn('composer dump-autoload failed. Run it yourself after the installation.');
+            }
 
             $this->info('Migrating database...');
 
@@ -180,9 +180,6 @@ class CrudboosterInstallationCommand extends Command
             $this->call('migrate');
             $this->call('db:seed', ['--class' => 'crocodicstudio\crudbooster\database\seeds\CBSeeder']);
             $this->call('config:clear');
-            if (app()->version() < 5.6) {
-                $this->call('optimize');
-            }
 
             $this->info('Installing CRUDBooster Is Completed ! Thank You :)');
         } else {
@@ -316,7 +313,7 @@ class CrudboosterInstallationCommand extends Command
     protected function findComposer()
     {
         if (file_exists(getcwd() . '/composer.phar')) {
-            return '"' . PHP_BINARY . '" ' . getcwd() . '/composer.phar';
+            return '"' . PHP_BINARY . '" "' . getcwd() . '/composer.phar"';
         }
 
         return 'composer';
